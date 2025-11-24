@@ -1,0 +1,6007 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Entity | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Entity | VintageStory API ">
+      
+      <meta name="description" content="The basic class for all entities in the game Open in GitHub">
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.Common.Entities.Entity">
+
+
+
+  <h1 id="Vintagestory_API_Common_Entities_Entity" data-uid="Vintagestory.API.Common.Entities.Entity" class="text-break">
+Class Entity  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.Common.html">Common</a>.<a class="xref" href="Vintagestory.API.Common.Entities.html">Entities</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>The basic class for all entities in the game <a href="https://github.com/anegostudios/vsapi/blob/master///Common/Entity/Entity.cs">Open in GitHub</a></p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class Entity : RegistryObject</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Vintagestory.API.Common.RegistryObject.html">RegistryObject</a></div>
+      <div><span class="xref">Entity</span></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Vintagestory.API.Common.EntityAgent.html">EntityAgent</a></div>
+      <div><a class="xref" href="Vintagestory.API.Common.EntityChunky.html">EntityChunky</a></div>
+      <div><a class="xref" href="Vintagestory.API.Common.EntityItem.html">EntityItem</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_Code">RegistryObject.Code</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_VariantStrict">RegistryObject.VariantStrict</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_Variant">RegistryObject.Variant</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_Class">RegistryObject.Class</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_CodeWithPath_System_String_">RegistryObject.CodeWithPath(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_CodeWithoutParts_System_Int32_">RegistryObject.CodeWithoutParts(int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_CodeEndWithoutParts_System_Int32_">RegistryObject.CodeEndWithoutParts(int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_CodeWithParts_System_String___">RegistryObject.CodeWithParts(params string[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_CodeWithParts_System_String_">RegistryObject.CodeWithParts(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_CodeWithVariant_System_String_System_String_">RegistryObject.CodeWithVariant(string, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_CodeWithVariants_System_Collections_Generic_Dictionary_System_String_System_String__">RegistryObject.CodeWithVariants(Dictionary&lt;string, string&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_CodeWithVariants_System_String___System_String___">RegistryObject.CodeWithVariants(string[], string[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_CodeWithPart_System_String_System_Int32_">RegistryObject.CodeWithPart(string, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_LastCodePart_System_Int32_">RegistryObject.LastCodePart(int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_FirstCodePart_System_Int32_">RegistryObject.FirstCodePart(int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_WildCardMatch_Vintagestory_API_Common_AssetLocation___">RegistryObject.WildCardMatch(AssetLocation[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_WildCardMatch_Vintagestory_API_Common_AssetLocation_">RegistryObject.WildCardMatch(AssetLocation)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_WildCardMatch_System_String___">RegistryObject.WildCardMatch(string[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_WildCardMatch_System_String_">RegistryObject.WildCardMatch(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_FillPlaceHolder_Vintagestory_API_Common_AssetLocation_Vintagestory_API_Datastructures_OrderedDictionary_System_String_System_String__">RegistryObject.FillPlaceHolder(AssetLocation, OrderedDictionary&lt;string, string&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_FillPlaceHolder_System_String_Vintagestory_API_Datastructures_OrderedDictionary_System_String_System_String__">RegistryObject.FillPlaceHolder(string, OrderedDictionary&lt;string, string&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.RegistryObject.html#Vintagestory_API_Common_RegistryObject_FillPlaceHolder_System_String_System_String_System_String_">RegistryObject.FillPlaceHolder(string, string, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity__ctor_" data-uid="Vintagestory.API.Common.Entities.Entity.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity__ctor" data-uid="Vintagestory.API.Common.Entities.Entity.#ctor">
+  Entity()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new instance of an entity</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Entity()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity__ctor_" data-uid="Vintagestory.API.Common.Entities.Entity.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity__ctor_System_Int32_" data-uid="Vintagestory.API.Common.Entities.Entity.#ctor(System.Int32)">
+  Entity(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a minimally populated entity with configurable tracking range, no Stats, no AnimManager and no animations attribute. Currently used by EntityItem.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected Entity(int trackingRange)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>trackingRange</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ActivityTimers" data-uid="Vintagestory.API.Common.Entities.Entity.ActivityTimers">
+  ActivityTimers
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>An uptime value running activities. Available on the game client and server. Not synchronized.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Dictionary&lt;string, long&gt; ActivityTimers</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_AfterPhysicsTick" data-uid="Vintagestory.API.Common.Entities.Entity.AfterPhysicsTick">
+  AfterPhysicsTick
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Invoked once per server tick, immediately following the physics ticking, if this Entity has any of the Physics behaviors. Example use, anything which requires an update of the entity's current position, such as BehaviorRepulseAgents</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Action AfterPhysicsTick</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_AirBubbleParticleProps" data-uid="Vintagestory.API.Common.Entities.Entity.AirBubbleParticleProps">
+  AirBubbleParticleProps
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static AirBubbleParticles AirBubbleParticleProps</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.AirBubbleParticles.html">AirBubbleParticles</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Api" data-uid="Vintagestory.API.Common.Entities.Entity.Api">
+  Api
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The api, if you need it. Available on the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ICoreAPI Api</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ICoreAPI.html">ICoreAPI</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Attributes" data-uid="Vintagestory.API.Common.Entities.Entity.Attributes">
+  Attributes
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Permanently stored entity attributes that are only client or only server side</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SyncedTreeAttribute Attributes</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Datastructures.SyncedTreeAttribute.html">SyncedTreeAttribute</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_BHRepulseAgents" data-uid="Vintagestory.API.Common.Entities.Entity.BHRepulseAgents">
+  BHRepulseAgents
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The Entity's BehaviorRepulseAgents, if it has one - here for critical performance reasons. This may also be accessed from Physics ticking</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EntityBehavior BHRepulseAgents</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Entities.EntityBehavior.html">EntityBehavior</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ClimbingIntoFace" data-uid="Vintagestory.API.Common.Entities.Entity.ClimbingIntoFace">
+  ClimbingIntoFace
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockFacing ClimbingIntoFace</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockFacing.html">BlockFacing</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ClimbingOnCollBox" data-uid="Vintagestory.API.Common.Entities.Entity.ClimbingOnCollBox">
+  ClimbingOnCollBox
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Cuboidf ClimbingOnCollBox</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Cuboidf.html">Cuboidf</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ClimbingOnFace" data-uid="Vintagestory.API.Common.Entities.Entity.ClimbingOnFace">
+  ClimbingOnFace
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The face the entity is climbing on. Null if the entity is not climbing. Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockFacing ClimbingOnFace</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockFacing.html">BlockFacing</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_CollidedHorizontally" data-uid="Vintagestory.API.Common.Entities.Entity.CollidedHorizontally">
+  CollidedHorizontally
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>True if the entity is in touch with something solid on both horizontal axes. Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool CollidedHorizontally</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_CollidedVertically" data-uid="Vintagestory.API.Common.Entities.Entity.CollidedVertically">
+  CollidedVertically
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>True if the entity is in touch with something solid on the vertical axis. Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool CollidedVertically</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_CollisionBox" data-uid="Vintagestory.API.Common.Entities.Entity.CollisionBox">
+  CollisionBox
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The entities collision box. Offseted by the animation system when necessary. Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Cuboidf CollisionBox</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Cuboidf.html">Cuboidf</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_DebugAttributes" data-uid="Vintagestory.API.Common.Entities.Entity.DebugAttributes">
+  DebugAttributes
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If entity debug mode is on, this info will be transitted to client and displayed above the entities head</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SyncedTreeAttribute DebugAttributes</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Datastructures.SyncedTreeAttribute.html">SyncedTreeAttribute</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_DespawnReason" data-uid="Vintagestory.API.Common.Entities.Entity.DespawnReason">
+  DespawnReason
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EntityDespawnData DespawnReason</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Entities.EntityDespawnData.html">EntityDespawnData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_EntityId" data-uid="Vintagestory.API.Common.Entities.Entity.EntityId">
+  EntityId
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>A unique identifier for this entity. Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long EntityId</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_FeetInLiquid" data-uid="Vintagestory.API.Common.Entities.Entity.FeetInLiquid">
+  FeetInLiquid
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>True if the bottom of the collisionbox is inside a liquid. Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool FeetInLiquid</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_FireParticleProps" data-uid="Vintagestory.API.Common.Entities.Entity.FireParticleProps">
+  FireParticleProps
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static AdvancedParticleProperties[] FireParticleProps</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.AdvancedParticleProperties.html">AdvancedParticleProperties</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_FloatingSedimentParticles" data-uid="Vintagestory.API.Common.Entities.Entity.FloatingSedimentParticles">
+  FloatingSedimentParticles
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static FloatingSedimentParticles FloatingSedimentParticles</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.FloatingSedimentParticles.html">FloatingSedimentParticles</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_HurtColor" data-uid="Vintagestory.API.Common.Entities.Entity.HurtColor">
+  HurtColor
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Color used when the entity is being attacked</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected int HurtColor</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_InChunkIndex3d" data-uid="Vintagestory.API.Common.Entities.Entity.InChunkIndex3d">
+  InChunkIndex3d
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long InChunkIndex3d</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_InLava" data-uid="Vintagestory.API.Common.Entities.Entity.InLava">
+  InLava
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool InLava</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_InLavaBeginTotalMs" data-uid="Vintagestory.API.Common.Entities.Entity.InLavaBeginTotalMs">
+  InLavaBeginTotalMs
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long InLavaBeginTotalMs</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_IsRendered" data-uid="Vintagestory.API.Common.Entities.Entity.IsRendered">
+  IsRendered
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set by the client renderer when the entity was rendered last frame</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsRendered</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_IsShadowRendered" data-uid="Vintagestory.API.Common.Entities.Entity.IsShadowRendered">
+  IsShadowRendered
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set by the client renderer when the entity shadow was rendered last frame</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsShadowRendered</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_IsTeleport" data-uid="Vintagestory.API.Common.Entities.Entity.IsTeleport">
+  IsTeleport
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Used by the PhysicsManager to tell connected clients that the next entity position packet should not have its position change get interpolated. Gets set to false after the packet was sent</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsTeleport</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_IsTracked" data-uid="Vintagestory.API.Common.Entities.Entity.IsTracked">
+  IsTracked
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Used by PhysicsManager. Added here to increase performance
+0 = not tracked, 1 = lowResTracked, 2 = fullyTracked</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public byte IsTracked</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_NearestPlayerDistance" data-uid="Vintagestory.API.Common.Entities.Entity.NearestPlayerDistance">
+  NearestPlayerDistance
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float NearestPlayerDistance</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnFireBeginTotalMs" data-uid="Vintagestory.API.Common.Entities.Entity.OnFireBeginTotalMs">
+  OnFireBeginTotalMs
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long OnFireBeginTotalMs</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnGround" data-uid="Vintagestory.API.Common.Entities.Entity.OnGround">
+  OnGround
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>True if this entity is in touch with the ground. Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OnGround</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OriginCollisionBox" data-uid="Vintagestory.API.Common.Entities.Entity.OriginCollisionBox">
+  OriginCollisionBox
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The entities collision box. Not Offseted. Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Cuboidf OriginCollisionBox</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Cuboidf.html">Cuboidf</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OriginSelectionBox" data-uid="Vintagestory.API.Common.Entities.Entity.OriginSelectionBox">
+  OriginSelectionBox
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The entities selection box. Not Offseted. Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Cuboidf OriginSelectionBox</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Cuboidf.html">Cuboidf</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_PhysicsUpdateWatcher" data-uid="Vintagestory.API.Common.Entities.Entity.PhysicsUpdateWatcher">
+  PhysicsUpdateWatcher
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The vanilla physics systems will call this method if a physics behavior was assigned to it. The game client for example requires this to be called for the current player to properly render the player. Available on the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PhysicsTickDelegate PhysicsUpdateWatcher</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Entities.PhysicsTickDelegate.html">PhysicsTickDelegate</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Pos" data-uid="Vintagestory.API.Common.Entities.Entity.Pos">
+  Pos
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Client position</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EntityPos Pos</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Entities.EntityPos.html">EntityPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_PositionBeforeFalling" data-uid="Vintagestory.API.Common.Entities.Entity.PositionBeforeFalling">
+  PositionBeforeFalling
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The position where the entity last had contact with the ground. Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vec3d PositionBeforeFalling</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_PositionTicked" data-uid="Vintagestory.API.Common.Entities.Entity.PositionTicked">
+  PositionTicked
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Used by PhysicsManager. Added here to increase performance
+Set to true when position packet prepared during physics ticking, set to false following AfterPhysicsTick()</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool PositionTicked</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_PreviousServerPos" data-uid="Vintagestory.API.Common.Entities.Entity.PreviousServerPos">
+  PreviousServerPos
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Server simulated position copy. Needed by Entities server system to send pos updatess only if ServerPos differs noticably from PreviousServerPos</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EntityPos PreviousServerPos</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Entities.EntityPos.html">EntityPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_SelectionBox" data-uid="Vintagestory.API.Common.Entities.Entity.SelectionBox">
+  SelectionBox
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The entities selection box. Offseted by the animation system when necessary. Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Cuboidf SelectionBox</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Cuboidf.html">Cuboidf</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ServerBehaviorsMainThread" data-uid="Vintagestory.API.Common.Entities.Entity.ServerBehaviorsMainThread">
+  ServerBehaviorsMainThread
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Used for efficiency in multi-player servers, to speed up iterating over relevant behaviors only. These are the behaviors returning Threadsafe == false (which is the default)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EntityBehavior[] ServerBehaviorsMainThread</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Entities.EntityBehavior.html">EntityBehavior</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ServerBehaviorsThreadsafe" data-uid="Vintagestory.API.Common.Entities.Entity.ServerBehaviorsThreadsafe">
+  ServerBehaviorsThreadsafe
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Used for efficiency in multi-player servers, to speed up iterating over relevant behaviors only. These are the behaviors returning Threadsafe == true;
+These behaviors may have their regular ticking (including ShouldExecute() etc) called EITHER from the main thread OR from another physics thread, depending on PhysicsManager logic</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EntityBehavior[] ServerBehaviorsThreadsafe</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Entities.EntityBehavior.html">EntityBehavior</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ServerPos" data-uid="Vintagestory.API.Common.Entities.Entity.ServerPos">
+  ServerPos
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Server simulated position. May not exactly match the client positon</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EntityPos ServerPos</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Entities.EntityPos.html">EntityPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_SimulationRange" data-uid="Vintagestory.API.Common.Entities.Entity.SimulationRange">
+  SimulationRange
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The range in blocks the entity has to be to a client to do physics and AI. When outside range, then <a class="xref" href="Vintagestory.API.Common.Entities.Entity.html#Vintagestory_API_Common_Entities_Entity_State">State</a> will be set to inactive</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int SimulationRange</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_SplashParticleProps" data-uid="Vintagestory.API.Common.Entities.Entity.SplashParticleProps">
+  SplashParticleProps
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static WaterSplashParticles SplashParticleProps</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.WaterSplashParticles.html">WaterSplashParticles</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_State" data-uid="Vintagestory.API.Common.Entities.Entity.State">
+  State
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The current entity state. NOT stored in WatchedAttributes in from/tobytes when sending to client as always set to Active on client-side Initialize().  Server-side if saved it would likely initially be Despawned when an entity is first loaded from the save due to entities being despawned during the UnloadChunks process, so let's make it always Despawned for consistent behavior (it will be set to Active/Inactive during Initialize() anyhow)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EnumEntityState State</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.EnumEntityState.html">EnumEntityState</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Stats" data-uid="Vintagestory.API.Common.Entities.Entity.Stats">
+  Stats
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EntityStats Stats</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.EntityStats.html">EntityStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Swimming" data-uid="Vintagestory.API.Common.Entities.Entity.Swimming">
+  Swimming
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>True if the collisionbox is 2/3rds submerged in liquid. Set by the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Swimming</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Tags" data-uid="Vintagestory.API.Common.Entities.Entity.Tags">
+  Tags
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>List of current entity tags. Synced after initialization. Synchronization can be triggered by calling 'MarkTagDirty()' method.
+<br>Dont set on client side, unless you setting it to the same value on server side at the same time.
+<br>If set only on server side, 'MarkTagDirty()' should be called to sync value with clients. This will trigger full entity synchronization, which can be performance heavy.
+<br>Tags are not saved into save file, and always loaded from entity type when entity is created. Indexes of tags are dynamically assigned on game start, and are not consistent between saves.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EntityTagArray Tags</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Datastructures.EntityTagArray.html">EntityTagArray</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Teleporting" data-uid="Vintagestory.API.Common.Entities.Entity.Teleporting">
+  Teleporting
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Used by the teleporter block</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Teleporting</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_WatchedAttributes" data-uid="Vintagestory.API.Common.Entities.Entity.WatchedAttributes">
+  WatchedAttributes
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Permanently stored entity attributes that are sent to client everytime they have been changed</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SyncedTreeAttribute WatchedAttributes</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Datastructures.SyncedTreeAttribute.html">SyncedTreeAttribute</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_World" data-uid="Vintagestory.API.Common.Entities.Entity.World">
+  World
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>World where the entity is spawned in. Available on the game client and server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IWorldAccessor World</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IWorldAccessor.html">IWorldAccessor</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_alive" data-uid="Vintagestory.API.Common.Entities.Entity.alive">
+  alive
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool alive</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_bioLumiNoise" data-uid="Vintagestory.API.Common.Entities.Entity.bioLumiNoise">
+  bioLumiNoise
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static NormalizedSimplexNoise bioLumiNoise</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.NormalizedSimplexNoise.html">NormalizedSimplexNoise</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_bioLumiParticles" data-uid="Vintagestory.API.Common.Entities.Entity.bioLumiParticles">
+  bioLumiParticles
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SimpleParticleProperties bioLumiParticles</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.SimpleParticleProperties.html">SimpleParticleProperties</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_customRepulseBehavior" data-uid="Vintagestory.API.Common.Entities.Entity.customRepulseBehavior">
+  customRepulseBehavior
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Unused but retained for mod API backwards compatibility&quot;)]
+public bool customRepulseBehavior</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_fireDamageAccum" data-uid="Vintagestory.API.Common.Entities.Entity.fireDamageAccum">
+  fireDamageAccum
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected float fireDamageAccum</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_hasRepulseBehavior" data-uid="Vintagestory.API.Common.Entities.Entity.hasRepulseBehavior">
+  hasRepulseBehavior
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Unused but retained for mod API backwards compatibility&quot;)]
+public bool hasRepulseBehavior</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_packet" data-uid="Vintagestory.API.Common.Entities.Entity.packet">
+  packet
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Used for efficiency in multi-player servers, to avoid regenerating the packet again for each connected client</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object packet</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_requirePosesOnServer" data-uid="Vintagestory.API.Common.Entities.Entity.requirePosesOnServer">
+  requirePosesOnServer
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If true, will fully simulate animations on the server so one has access to the positions of all attachment points.
+If false, only root level attachment points will be available server side</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool requirePosesOnServer</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_resetLightHsv" data-uid="Vintagestory.API.Common.Entities.Entity.resetLightHsv">
+  resetLightHsv
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool resetLightHsv</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_shapeFresh" data-uid="Vintagestory.API.Common.Entities.Entity.shapeFresh">
+  shapeFresh
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool shapeFresh</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_touchDistance" data-uid="Vintagestory.API.Common.Entities.Entity.touchDistance">
+  touchDistance
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set during initialization by calling Entity.GetTouchDistance().  A mod wishing to change the value returned by .GetTouchDistance() dynamically should probably call .updateColSelBoxes() or update this field directly</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double touchDistance</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_touchDistanceSq" data-uid="Vintagestory.API.Common.Entities.Entity.touchDistanceSq">
+  touchDistanceSq
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double touchDistanceSq</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_trickleDownRayIntersects" data-uid="Vintagestory.API.Common.Entities.Entity.trickleDownRayIntersects">
+  trickleDownRayIntersects
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If true, will call EntityBehavior.IntersectsRay. Default off to increase performance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool trickleDownRayIntersects</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_AdjustCollisionBoxToAnimation_" data-uid="Vintagestory.API.Common.Entities.Entity.AdjustCollisionBoxToAnimation*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_AdjustCollisionBoxToAnimation" data-uid="Vintagestory.API.Common.Entities.Entity.AdjustCollisionBoxToAnimation">
+  AdjustCollisionBoxToAnimation
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool AdjustCollisionBoxToAnimation { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_Alive_" data-uid="Vintagestory.API.Common.Entities.Entity.Alive*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Alive" data-uid="Vintagestory.API.Common.Entities.Entity.Alive">
+  Alive
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>True if the entity is in state active or inactive, or generally not dead (for non-living entities, 'dead' means ready to despawn)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool Alive { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_AllowOutsideLoadedRange_" data-uid="Vintagestory.API.Common.Entities.Entity.AllowOutsideLoadedRange*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_AllowOutsideLoadedRange" data-uid="Vintagestory.API.Common.Entities.Entity.AllowOutsideLoadedRange">
+  AllowOutsideLoadedRange
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool AllowOutsideLoadedRange { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_AlwaysActive_" data-uid="Vintagestory.API.Common.Entities.Entity.AlwaysActive*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_AlwaysActive" data-uid="Vintagestory.API.Common.Entities.Entity.AlwaysActive">
+  AlwaysActive
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Whether this entity should always stay in Active model, regardless on how far away other player are</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool AlwaysActive { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_AnimManager_" data-uid="Vintagestory.API.Common.Entities.Entity.AnimManager*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_AnimManager" data-uid="Vintagestory.API.Common.Entities.Entity.AnimManager">
+  AnimManager
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Server simulated animations. Only takes care of stopping animations once they're done
+Set and Called by the Entities ServerSystem</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual IAnimationManager AnimManager { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IAnimationManager.html">IAnimationManager</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_ApplyGravity_" data-uid="Vintagestory.API.Common.Entities.Entity.ApplyGravity*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ApplyGravity" data-uid="Vintagestory.API.Common.Entities.Entity.ApplyGravity">
+  ApplyGravity
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If gravity should applied to this entity</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool ApplyGravity { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_CanAttackInside_" data-uid="Vintagestory.API.Common.Entities.Entity.CanAttackInside*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_CanAttackInside" data-uid="Vintagestory.API.Common.Entities.Entity.CanAttackInside">
+  CanAttackInside
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool CanAttackInside { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_CanStepPitch_" data-uid="Vintagestory.API.Common.Entities.Entity.CanStepPitch*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_CanStepPitch" data-uid="Vintagestory.API.Common.Entities.Entity.CanStepPitch">
+  CanStepPitch
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool CanStepPitch { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_CanSwivel_" data-uid="Vintagestory.API.Common.Entities.Entity.CanSwivel*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_CanSwivel" data-uid="Vintagestory.API.Common.Entities.Entity.CanSwivel">
+  CanSwivel
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool CanSwivel { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_CanSwivelNow_" data-uid="Vintagestory.API.Common.Entities.Entity.CanSwivelNow*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_CanSwivelNow" data-uid="Vintagestory.API.Common.Entities.Entity.CanSwivelNow">
+  CanSwivelNow
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool CanSwivelNow { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_Collided_" data-uid="Vintagestory.API.Common.Entities.Entity.Collided*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Collided" data-uid="Vintagestory.API.Common.Entities.Entity.Collided">
+  Collided
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>CollidedVertically || CollidedHorizontally</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Collided { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_FrustumSphereRadius_" data-uid="Vintagestory.API.Common.Entities.Entity.FrustumSphereRadius*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_FrustumSphereRadius" data-uid="Vintagestory.API.Common.Entities.Entity.FrustumSphereRadius">
+  FrustumSphereRadius
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual double FrustumSphereRadius { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_IdleSoundChanceModifier_" data-uid="Vintagestory.API.Common.Entities.Entity.IdleSoundChanceModifier*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_IdleSoundChanceModifier" data-uid="Vintagestory.API.Common.Entities.Entity.IdleSoundChanceModifier">
+  IdleSoundChanceModifier
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float IdleSoundChanceModifier { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_ImpactBlockUpdateChance_" data-uid="Vintagestory.API.Common.Entities.Entity.ImpactBlockUpdateChance*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ImpactBlockUpdateChance" data-uid="Vintagestory.API.Common.Entities.Entity.ImpactBlockUpdateChance">
+  ImpactBlockUpdateChance
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The chance that this entity, walking or jumping on or falling onto a block, will trigger a block-update - so potentially unstable dirt or sand falling, avalanche etc.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual float ImpactBlockUpdateChance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_IsCreature_" data-uid="Vintagestory.API.Common.Entities.Entity.IsCreature*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_IsCreature" data-uid="Vintagestory.API.Common.Entities.Entity.IsCreature">
+  IsCreature
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Used by AItasks for perfomance. When searching for nearby entities we distinguish between (A) Creatures and (B) Inanimate entitie. Inanimate entities are items on the ground, projectiles, armor stands, rafts, falling blocks etc
+<br>Note 1: Dead creatures / corpses count as a Creature. EntityPlayer is a Creature of course.
+<br>Note 2: Straw Dummy we count as a Creature, because weapons can target it and bees can attack it. In contrast, Armor Stand we count as Inanimate, because nothing should ever attack or target it.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool IsCreature { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_IsInteractable_" data-uid="Vintagestory.API.Common.Entities.Entity.IsInteractable*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_IsInteractable" data-uid="Vintagestory.API.Common.Entities.Entity.IsInteractable">
+  IsInteractable
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Should return true when this entity should be interactable by a player or other entities</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool IsInteractable { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_IsOnFire_" data-uid="Vintagestory.API.Common.Entities.Entity.IsOnFire*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_IsOnFire" data-uid="Vintagestory.API.Common.Entities.Entity.IsOnFire">
+  IsOnFire
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsOnFire { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_LadderFixDelta_" data-uid="Vintagestory.API.Common.Entities.Entity.LadderFixDelta*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_LadderFixDelta" data-uid="Vintagestory.API.Common.Entities.Entity.LadderFixDelta">
+  LadderFixDelta
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>A small offset used to prevent players from clipping through the blocks above ladders: relevant if the entity's collision box is sometimes adjusted by the game code</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual double LadderFixDelta { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_LightHsv_" data-uid="Vintagestory.API.Common.Entities.Entity.LightHsv*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_LightHsv" data-uid="Vintagestory.API.Common.Entities.Entity.LightHsv">
+  LightHsv
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If set, the entity will emit dynamic light</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual byte[] LightHsv { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_LocalEyePos_" data-uid="Vintagestory.API.Common.Entities.Entity.LocalEyePos*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_LocalEyePos" data-uid="Vintagestory.API.Common.Entities.Entity.LocalEyePos">
+  LocalEyePos
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The height of the eyes for the given entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Vec3d LocalEyePos { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_MaterialDensity_" data-uid="Vintagestory.API.Common.Entities.Entity.MaterialDensity*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_MaterialDensity" data-uid="Vintagestory.API.Common.Entities.Entity.MaterialDensity">
+  MaterialDensity
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines on whether an entity floats on liquids or not and how strongly items get pushed by water. Water has a density of 1000.
+A density below 1000 means the entity floats on top of water if has a physics simulation behavior attached to it.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual float MaterialDensity { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_Properties_" data-uid="Vintagestory.API.Common.Entities.Entity.Properties*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Properties" data-uid="Vintagestory.API.Common.Entities.Entity.Properties">
+  Properties
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EntityProperties Properties { get; protected set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Entities.EntityProperties.html">EntityProperties</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_RenderColor_" data-uid="Vintagestory.API.Common.Entities.Entity.RenderColor*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_RenderColor" data-uid="Vintagestory.API.Common.Entities.Entity.RenderColor">
+  RenderColor
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Used by some renderers to apply an overal color tint on the entity</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RenderColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_ShapeFresh_" data-uid="Vintagestory.API.Common.Entities.Entity.ShapeFresh*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ShapeFresh" data-uid="Vintagestory.API.Common.Entities.Entity.ShapeFresh">
+  ShapeFresh
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool ShapeFresh { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_ShouldDespawn_" data-uid="Vintagestory.API.Common.Entities.Entity.ShouldDespawn*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ShouldDespawn" data-uid="Vintagestory.API.Common.Entities.Entity.ShouldDespawn">
+  ShouldDespawn
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If the entity should despawn next server tick. By default returns !Alive for non-creatures and creatures that don't have a Decay behavior</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool ShouldDespawn { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_SidedPos_" data-uid="Vintagestory.API.Common.Entities.Entity.SidedPos*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_SidedPos" data-uid="Vintagestory.API.Common.Entities.Entity.SidedPos">
+  SidedPos
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>ServerPos on server, Pos on client</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EntityPos SidedPos { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Entities.EntityPos.html">EntityPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_SidedProperties_" data-uid="Vintagestory.API.Common.Entities.Entity.SidedProperties*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_SidedProperties" data-uid="Vintagestory.API.Common.Entities.Entity.SidedProperties">
+  SidedProperties
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EntitySidedProperties SidedProperties { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Entities.EntitySidedProperties.html">EntitySidedProperties</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_StoreWithChunk_" data-uid="Vintagestory.API.Common.Entities.Entity.StoreWithChunk*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_StoreWithChunk" data-uid="Vintagestory.API.Common.Entities.Entity.StoreWithChunk">
+  StoreWithChunk
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Players and whatever the player rides on will be stored seperatly</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool StoreWithChunk { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_SwimmingOffsetY_" data-uid="Vintagestory.API.Common.Entities.Entity.SwimmingOffsetY*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_SwimmingOffsetY" data-uid="Vintagestory.API.Common.Entities.Entity.SwimmingOffsetY">
+  SwimmingOffsetY
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Used for passive physics simulation, together with the MaterialDensity to check how deep in the water the entity should float</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual double SwimmingOffsetY { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_AddBehavior_" data-uid="Vintagestory.API.Common.Entities.Entity.AddBehavior*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_AddBehavior_Vintagestory_API_Common_Entities_EntityBehavior_" data-uid="Vintagestory.API.Common.Entities.Entity.AddBehavior(Vintagestory.API.Common.Entities.EntityBehavior)">
+  AddBehavior(EntityBehavior)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds given behavior to the entities list of active behaviors</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void AddBehavior(EntityBehavior behavior)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>behavior</code> <a class="xref" href="Vintagestory.API.Common.Entities.EntityBehavior.html">EntityBehavior</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_AfterInitialized_" data-uid="Vintagestory.API.Common.Entities.Entity.AfterInitialized*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_AfterInitialized_System_Boolean_" data-uid="Vintagestory.API.Common.Entities.Entity.AfterInitialized(System.Boolean)">
+  AfterInitialized(bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void AfterInitialized(bool onFirstSpawn)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>onFirstSpawn</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_ApplyFireDamage_" data-uid="Vintagestory.API.Common.Entities.Entity.ApplyFireDamage*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ApplyFireDamage_System_Single_" data-uid="Vintagestory.API.Common.Entities.Entity.ApplyFireDamage(System.Single)">
+  ApplyFireDamage(float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void ApplyFireDamage(float dt)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dt</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_CacheServerBehaviors_" data-uid="Vintagestory.API.Common.Entities.Entity.CacheServerBehaviors*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_CacheServerBehaviors" data-uid="Vintagestory.API.Common.Entities.Entity.CacheServerBehaviors">
+  CacheServerBehaviors()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Create the cached arrays of thread-safe and mainthread behaviors, for ticking performance</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CacheServerBehaviors()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_CanCollect_" data-uid="Vintagestory.API.Common.Entities.Entity.CanCollect*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_CanCollect_Vintagestory_API_Common_Entities_Entity_" data-uid="Vintagestory.API.Common.Entities.Entity.CanCollect(Vintagestory.API.Common.Entities.Entity)">
+  CanCollect(Entity)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Should return true if this item can be picked up as an itemstack</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool CanCollect(Entity byEntity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>byEntity</code> <a class="xref" href="Vintagestory.API.Common.Entities.Entity.html">Entity</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_DidImportOrExport_" data-uid="Vintagestory.API.Common.Entities.Entity.DidImportOrExport*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_DidImportOrExport_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.Common.Entities.Entity.DidImportOrExport(Vintagestory.API.MathTools.BlockPos)">
+  DidImportOrExport(BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>This method is called by the BlockSchematic class a moment after a schematic containing this entity has been exported.
+Since a schematic can be placed anywhere in the world, this method has to make sure the entities position is set to the correct
+position in relation to the target position of the schematic to be imported.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void DidImportOrExport(BlockPos startPos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>startPos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_Die_" data-uid="Vintagestory.API.Common.Entities.Entity.Die*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Die_Vintagestory_API_Common_EnumDespawnReason_Vintagestory_API_Common_DamageSource_" data-uid="Vintagestory.API.Common.Entities.Entity.Die(Vintagestory.API.Common.EnumDespawnReason,Vintagestory.API.Common.DamageSource)">
+  Die(EnumDespawnReason, DamageSource)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Makes the entity despawn. Entities only drop something on EnumDespawnReason.Death</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Die(EnumDespawnReason reason = EnumDespawnReason.Death, DamageSource damageSourceForDeath = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reason</code> <a class="xref" href="Vintagestory.API.Common.EnumDespawnReason.html">EnumDespawnReason</a></dt>
+    <dd></dd>
+    <dt><code>damageSourceForDeath</code> <a class="xref" href="Vintagestory.API.Common.DamageSource.html">DamageSource</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_DieInLava_" data-uid="Vintagestory.API.Common.Entities.Entity.DieInLava*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_DieInLava" data-uid="Vintagestory.API.Common.Entities.Entity.DieInLava">
+  DieInLava()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void DieInLava()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_DoInitialActiveCheck_" data-uid="Vintagestory.API.Common.Entities.Entity.DoInitialActiveCheck*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_DoInitialActiveCheck_Vintagestory_API_Common_ICoreAPI_" data-uid="Vintagestory.API.Common.Entities.Entity.DoInitialActiveCheck(Vintagestory.API.Common.ICoreAPI)">
+  DoInitialActiveCheck(ICoreAPI)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void DoInitialActiveCheck(ICoreAPI api)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Common.ICoreAPI.html">ICoreAPI</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_FromBytes_" data-uid="Vintagestory.API.Common.Entities.Entity.FromBytes*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_FromBytes_System_IO_BinaryReader_System_Boolean_" data-uid="Vintagestory.API.Common.Entities.Entity.FromBytes(System.IO.BinaryReader,System.Boolean)">
+  FromBytes(BinaryReader, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads the entity from a stored byte array from the SaveGame</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void FromBytes(BinaryReader reader, bool isSync)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reader</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.binaryreader">BinaryReader</a></dt>
+    <dd></dd>
+    <dt><code>isSync</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if this is a sync operation, not a chunk read operation</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_FromBytes_" data-uid="Vintagestory.API.Common.Entities.Entity.FromBytes*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_FromBytes_System_IO_BinaryReader_System_Boolean_System_Collections_Generic_Dictionary_System_String_System_String__" data-uid="Vintagestory.API.Common.Entities.Entity.FromBytes(System.IO.BinaryReader,System.Boolean,System.Collections.Generic.Dictionary{System.String,System.String})">
+  FromBytes(BinaryReader, bool, Dictionary&lt;string, string&gt;)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>In order to maintain legacy mod API compatibility of FromBytes(BinaryReader reader, bool isSync), we create an overload which server-side calling code will actually call, and store the remaps parameter in a field</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void FromBytes(BinaryReader reader, bool isSync, Dictionary&lt;string, string&gt; serversideRemaps)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reader</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.binaryreader">BinaryReader</a></dt>
+    <dd></dd>
+    <dt><code>isSync</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>serversideRemaps</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_GetBehavior_" data-uid="Vintagestory.API.Common.Entities.Entity.GetBehavior*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_GetBehavior_System_String_" data-uid="Vintagestory.API.Common.Entities.Entity.GetBehavior(System.String)">
+  GetBehavior(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the behavior instance for given entity. Returns null if it doesn't exist.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual EntityBehavior? GetBehavior(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Entities.EntityBehavior.html">EntityBehavior</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_GetBehavior_" data-uid="Vintagestory.API.Common.Entities.Entity.GetBehavior*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_GetBehavior__1" data-uid="Vintagestory.API.Common.Entities.Entity.GetBehavior``1">
+  GetBehavior&lt;T&gt;()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the first behavior instance for given entity of given type. Returns null if it doesn't exist.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual T? GetBehavior&lt;T&gt;() where T : EntityBehavior</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_GetDrops_" data-uid="Vintagestory.API.Common.Entities.Entity.GetDrops*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_GetDrops_Vintagestory_API_Common_IWorldAccessor_Vintagestory_API_MathTools_BlockPos_Vintagestory_API_Common_IPlayer_" data-uid="Vintagestory.API.Common.Entities.Entity.GetDrops(Vintagestory.API.Common.IWorldAccessor,Vintagestory.API.MathTools.BlockPos,Vintagestory.API.Common.IPlayer)">
+  GetDrops(IWorldAccessor, BlockPos, IPlayer)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Is called before the entity is killed, should return what items this entity should drop. Return null or empty array for no drops.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <a class="xref" href="Vintagestory.API.Common.IWorldAccessor.html">IWorldAccessor</a></dt>
+    <dd></dd>
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+    <dt><code>byPlayer</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_GetHeadPositionFromWatchedAttributes_" data-uid="Vintagestory.API.Common.Entities.Entity.GetHeadPositionFromWatchedAttributes*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_GetHeadPositionFromWatchedAttributes" data-uid="Vintagestory.API.Common.Entities.Entity.GetHeadPositionFromWatchedAttributes">
+  GetHeadPositionFromWatchedAttributes()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Relevant only for entities with heads, implemented in EntityAgent.  Other sub-classes of Entity (if not EntityAgent) should similarly override this if the headYaw/headPitch are relevant to them</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void GetHeadPositionFromWatchedAttributes()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_GetInfoText_" data-uid="Vintagestory.API.Common.Entities.Entity.GetInfoText*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_GetInfoText" data-uid="Vintagestory.API.Common.Entities.Entity.GetInfoText">
+  GetInfoText()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>gets the info text for the entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual string GetInfoText()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_GetInteractionHelp_" data-uid="Vintagestory.API.Common.Entities.Entity.GetInteractionHelp*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_GetInteractionHelp_Vintagestory_API_Client_IClientWorldAccessor_Vintagestory_API_Common_EntitySelection_Vintagestory_API_Client_IClientPlayer_" data-uid="Vintagestory.API.Common.Entities.Entity.GetInteractionHelp(Vintagestory.API.Client.IClientWorldAccessor,Vintagestory.API.Common.EntitySelection,Vintagestory.API.Client.IClientPlayer)">
+  GetInteractionHelp(IClientWorldAccessor, EntitySelection, IClientPlayer)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when a player looks at the entity with interaction help enabled</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual WorldInteraction[] GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <a class="xref" href="Vintagestory.API.Client.IClientWorldAccessor.html">IClientWorldAccessor</a></dt>
+    <dd></dd>
+    <dt><code>es</code> <a class="xref" href="Vintagestory.API.Common.EntitySelection.html">EntitySelection</a></dt>
+    <dd></dd>
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Client.IClientPlayer.html">IClientPlayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Client.WorldInteraction.html">WorldInteraction</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_GetInterface_" data-uid="Vintagestory.API.Common.Entities.Entity.GetInterface*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_GetInterface__1" data-uid="Vintagestory.API.Common.Entities.Entity.GetInterface``1">
+  GetInterface&lt;T&gt;()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns itself or the first behavior that implements the interface T</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual T GetInterface&lt;T&gt;() where T : class</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_GetInterfaces_" data-uid="Vintagestory.API.Common.Entities.Entity.GetInterfaces*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_GetInterfaces__1" data-uid="Vintagestory.API.Common.Entities.Entity.GetInterfaces``1">
+  GetInterfaces&lt;T&gt;()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns itself and any behaviors that implement the interface T as a List</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual List&lt;T&gt; GetInterfaces&lt;T&gt;() where T : class</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_GetName_" data-uid="Vintagestory.API.Common.Entities.Entity.GetName*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_GetName" data-uid="Vintagestory.API.Common.Entities.Entity.GetName">
+  GetName()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the name for this entity</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual string GetName()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_GetPrefixAndCreatureName_" data-uid="Vintagestory.API.Common.Entities.Entity.GetPrefixAndCreatureName*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_GetPrefixAndCreatureName_System_String_" data-uid="Vintagestory.API.Common.Entities.Entity.GetPrefixAndCreatureName(System.String)">
+  GetPrefixAndCreatureName(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the translated prefix and creature name, e.g. &quot;a goat&quot;</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual string GetPrefixAndCreatureName(string languageCode = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>languageCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_GetTextureSource_" data-uid="Vintagestory.API.Common.Entities.Entity.GetTextureSource*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_GetTextureSource" data-uid="Vintagestory.API.Common.Entities.Entity.GetTextureSource">
+  GetTextureSource()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ITexPositionSource GetTextureSource()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Client.ITexPositionSource.html">ITexPositionSource</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_GetTouchDistance_" data-uid="Vintagestory.API.Common.Entities.Entity.GetTouchDistance*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_GetTouchDistance" data-uid="Vintagestory.API.Common.Entities.Entity.GetTouchDistance">
+  GetTouchDistance()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The distance at which entities are counted as &quot;touching&quot; each other, for example used by EntityPartitioning and RepulseAgents
+<br>Note: from 1.20.4 this is gathered and cached in a field when each entity is Initialized, if for any reason a mod or behavior needs to change the result later than Initialization then you should also update the Entity field .touchDistance</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual double GetTouchDistance()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_HasBehavior_" data-uid="Vintagestory.API.Common.Entities.Entity.HasBehavior*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_HasBehavior_System_String_" data-uid="Vintagestory.API.Common.Entities.Entity.HasBehavior(System.String)">
+  HasBehavior(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns true if the entity has given active behavior</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool HasBehavior(string behaviorName)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>behaviorName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_HasBehavior_" data-uid="Vintagestory.API.Common.Entities.Entity.HasBehavior*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_HasBehavior__1" data-uid="Vintagestory.API.Common.Entities.Entity.HasBehavior``1">
+  HasBehavior&lt;T&gt;()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool HasBehavior&lt;T&gt;() where T : EntityBehavior</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_HasTags_" data-uid="Vintagestory.API.Common.Entities.Entity.HasTags*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_HasTags_System_String___" data-uid="Vintagestory.API.Common.Entities.Entity.HasTags(System.String[])">
+  HasTags(params string[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns true if all named tags are present</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool HasTags(params string[] tagsToMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tagsToMatch</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_Ignite_" data-uid="Vintagestory.API.Common.Entities.Entity.Ignite*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Ignite" data-uid="Vintagestory.API.Common.Entities.Entity.Ignite">
+  Ignite()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Ignite()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_InRangeOf_" data-uid="Vintagestory.API.Common.Entities.Entity.InRangeOf*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_InRangeOf_Vintagestory_API_MathTools_Vec3d_System_Single_System_Single_" data-uid="Vintagestory.API.Common.Entities.Entity.InRangeOf(Vintagestory.API.MathTools.Vec3d,System.Single,System.Single)">
+  InRangeOf(Vec3d, float, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool InRangeOf(Vec3d position, float horRangeSq, float vertRange)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>position</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd></dd>
+    <dt><code>horRangeSq</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>vertRange</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_Initialize_" data-uid="Vintagestory.API.Common.Entities.Entity.Initialize*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Initialize_Vintagestory_API_Common_Entities_EntityProperties_Vintagestory_API_Common_ICoreAPI_System_Int64_" data-uid="Vintagestory.API.Common.Entities.Entity.Initialize(Vintagestory.API.Common.Entities.EntityProperties,Vintagestory.API.Common.ICoreAPI,System.Int64)">
+  Initialize(EntityProperties, ICoreAPI, long)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when this entity got created or loaded</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Initialize(EntityProperties properties, ICoreAPI api, long InChunkIndex3d)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>properties</code> <a class="xref" href="Vintagestory.API.Common.Entities.EntityProperties.html">EntityProperties</a></dt>
+    <dd></dd>
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Common.ICoreAPI.html">ICoreAPI</a></dt>
+    <dd></dd>
+    <dt><code>InChunkIndex3d</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_IntersectsRay_" data-uid="Vintagestory.API.Common.Entities.Entity.IntersectsRay*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_IntersectsRay_Vintagestory_API_MathTools_Ray_Vintagestory_API_MathTools_AABBIntersectionTest_System_Double__System_Int32__" data-uid="Vintagestory.API.Common.Entities.Entity.IntersectsRay(Vintagestory.API.MathTools.Ray,Vintagestory.API.MathTools.AABBIntersectionTest,System.Double@,System.Int32@)">
+  IntersectsRay(Ray, AABBIntersectionTest, out double, ref int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>To test for player-&gt;entity selection.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool IntersectsRay(Ray ray, AABBIntersectionTest interesectionTester, out double intersectionDistance, ref int selectionBoxIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ray</code> <a class="xref" href="Vintagestory.API.MathTools.Ray.html">Ray</a></dt>
+    <dd></dd>
+    <dt><code>interesectionTester</code> <a class="xref" href="Vintagestory.API.MathTools.AABBIntersectionTest.html">AABBIntersectionTest</a></dt>
+    <dd><p>Is already preloaded with the ray</p>
+</dd>
+    <dt><code>intersectionDistance</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>selectionBoxIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_IsActivityRunning_" data-uid="Vintagestory.API.Common.Entities.Entity.IsActivityRunning*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_IsActivityRunning_System_String_" data-uid="Vintagestory.API.Common.Entities.Entity.IsActivityRunning(System.String)">
+  IsActivityRunning(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns true if given activity is running</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool IsActivityRunning(string key)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_IsFirstTick_" data-uid="Vintagestory.API.Common.Entities.Entity.IsFirstTick*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_IsFirstTick" data-uid="Vintagestory.API.Common.Entities.Entity.IsFirstTick">
+  IsFirstTick()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsFirstTick()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_MarkShapeModified_" data-uid="Vintagestory.API.Common.Entities.Entity.MarkShapeModified*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_MarkShapeModified" data-uid="Vintagestory.API.Common.Entities.Entity.MarkShapeModified">
+  MarkShapeModified()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void MarkShapeModified()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_MarkTagsDirty_" data-uid="Vintagestory.API.Common.Entities.Entity.MarkTagsDirty*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_MarkTagsDirty" data-uid="Vintagestory.API.Common.Entities.Entity.MarkTagsDirty">
+  MarkTagsDirty()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Triggers full entity synchronization, including entity tags. Should not be called too frequently.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void MarkTagsDirty()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_Notify_" data-uid="Vintagestory.API.Common.Entities.Entity.Notify*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Notify_System_String_System_Object_" data-uid="Vintagestory.API.Common.Entities.Entity.Notify(System.String,System.Object)">
+  Notify(string, object)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>This method pings the Notify() method of all behaviors and ai tasks. Can be used to spread information to other creatures.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Notify(string key, object data)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>data</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnAsyncParticleTick_" data-uid="Vintagestory.API.Common.Entities.Entity.OnAsyncParticleTick*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnAsyncParticleTick_System_Single_Vintagestory_API_Client_IAsyncParticleManager_" data-uid="Vintagestory.API.Common.Entities.Entity.OnAsyncParticleTick(System.Single,Vintagestory.API.Client.IAsyncParticleManager)">
+  OnAsyncParticleTick(float, IAsyncParticleManager)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnAsyncParticleTick(float dt, IAsyncParticleManager manager)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dt</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>manager</code> <a class="xref" href="Vintagestory.API.Client.IAsyncParticleManager.html">IAsyncParticleManager</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnCollected_" data-uid="Vintagestory.API.Common.Entities.Entity.OnCollected*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnCollected_Vintagestory_API_Common_Entities_Entity_" data-uid="Vintagestory.API.Common.Entities.Entity.OnCollected(Vintagestory.API.Common.Entities.Entity)">
+  OnCollected(Entity)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called by BehaviorCollectEntities of nearby entities. Should return the itemstack that should be collected. If the item stack was fully picked up, BehaviorCollectEntities will kill this entity</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ItemStack OnCollected(Entity byEntity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>byEntity</code> <a class="xref" href="Vintagestory.API.Common.Entities.Entity.html">Entity</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnCollideWithLiquid_" data-uid="Vintagestory.API.Common.Entities.Entity.OnCollideWithLiquid*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnCollideWithLiquid" data-uid="Vintagestory.API.Common.Entities.Entity.OnCollideWithLiquid">
+  OnCollideWithLiquid()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when the entity got in touch with a liquid</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnCollideWithLiquid()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnCollided_" data-uid="Vintagestory.API.Common.Entities.Entity.OnCollided*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnCollided" data-uid="Vintagestory.API.Common.Entities.Entity.OnCollided">
+  OnCollided()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when the entity collided with something solid and <a class="xref" href="Vintagestory.API.Common.Entities.Entity.html#Vintagestory_API_Common_Entities_Entity_Collided">Collided</a> was false before</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnCollided()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnEntityDespawn_" data-uid="Vintagestory.API.Common.Entities.Entity.OnEntityDespawn*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnEntityDespawn_Vintagestory_API_Common_Entities_EntityDespawnData_" data-uid="Vintagestory.API.Common.Entities.Entity.OnEntityDespawn(Vintagestory.API.Common.Entities.EntityDespawnData)">
+  OnEntityDespawn(EntityDespawnData)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when the entity despawns</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnEntityDespawn(EntityDespawnData despawn)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>despawn</code> <a class="xref" href="Vintagestory.API.Common.Entities.EntityDespawnData.html">EntityDespawnData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnEntityLoaded_" data-uid="Vintagestory.API.Common.Entities.Entity.OnEntityLoaded*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnEntityLoaded" data-uid="Vintagestory.API.Common.Entities.Entity.OnEntityLoaded">
+  OnEntityLoaded()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when after the got loaded from the savegame (not called during spawn)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnEntityLoaded()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnEntitySpawn_" data-uid="Vintagestory.API.Common.Entities.Entity.OnEntitySpawn*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnEntitySpawn" data-uid="Vintagestory.API.Common.Entities.Entity.OnEntitySpawn">
+  OnEntitySpawn()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when the entity spawns (not called when loaded from the savegame).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnEntitySpawn()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnExitedLiquid_" data-uid="Vintagestory.API.Common.Entities.Entity.OnExitedLiquid*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnExitedLiquid" data-uid="Vintagestory.API.Common.Entities.Entity.OnExitedLiquid">
+  OnExitedLiquid()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when the entity has left a liquid</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnExitedLiquid()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnFallToGround_" data-uid="Vintagestory.API.Common.Entities.Entity.OnFallToGround*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnFallToGround_System_Double_" data-uid="Vintagestory.API.Common.Entities.Entity.OnFallToGround(System.Double)">
+  OnFallToGround(double)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when the entity collided vertically</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnFallToGround(double motionY)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>motionY</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnGameTick_" data-uid="Vintagestory.API.Common.Entities.Entity.OnGameTick*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnGameTick_System_Single_" data-uid="Vintagestory.API.Common.Entities.Entity.OnGameTick(System.Single)">
+  OnGameTick(float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called every 1/75 second</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnGameTick(float dt)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dt</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnHurt_" data-uid="Vintagestory.API.Common.Entities.Entity.OnHurt*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnHurt_Vintagestory_API_Common_DamageSource_System_Single_" data-uid="Vintagestory.API.Common.Entities.Entity.OnHurt(Vintagestory.API.Common.DamageSource,System.Single)">
+  OnHurt(DamageSource, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when the entity got hurt. On the client side, dmgSource is null</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnHurt(DamageSource dmgSource, float damage)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dmgSource</code> <a class="xref" href="Vintagestory.API.Common.DamageSource.html">DamageSource</a></dt>
+    <dd></dd>
+    <dt><code>damage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnInteract_" data-uid="Vintagestory.API.Common.Entities.Entity.OnInteract*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnInteract_Vintagestory_API_Common_EntityAgent_Vintagestory_API_Common_ItemSlot_Vintagestory_API_MathTools_Vec3d_Vintagestory_API_Common_EnumInteractMode_" data-uid="Vintagestory.API.Common.Entities.Entity.OnInteract(Vintagestory.API.Common.EntityAgent,Vintagestory.API.Common.ItemSlot,Vintagestory.API.MathTools.Vec3d,Vintagestory.API.Common.EnumInteractMode)">
+  OnInteract(EntityAgent, ItemSlot, Vec3d, EnumInteractMode)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when an entity has interacted with this entity</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>byEntity</code> <a class="xref" href="Vintagestory.API.Common.EntityAgent.html">EntityAgent</a></dt>
+    <dd></dd>
+    <dt><code>itemslot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd><p>If being interacted with a block/item, this should be the slot the item is being held in</p>
+</dd>
+    <dt><code>hitPosition</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd><p>Relative position on the entites hitbox where the entity interacted at</p>
+</dd>
+    <dt><code>mode</code> <a class="xref" href="Vintagestory.API.Common.EnumInteractMode.html">EnumInteractMode</a></dt>
+    <dd><p>0 = attack, 1 = interact</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnLoadCollectibleMappings_" data-uid="Vintagestory.API.Common.Entities.Entity.OnLoadCollectibleMappings*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnLoadCollectibleMappings_Vintagestory_API_Common_IWorldAccessor_System_Collections_Generic_Dictionary_System_Int32_Vintagestory_API_Common_AssetLocation__System_Collections_Generic_Dictionary_System_Int32_Vintagestory_API_Common_AssetLocation__System_Int32_System_Boolean_" data-uid="Vintagestory.API.Common.Entities.Entity.OnLoadCollectibleMappings(Vintagestory.API.Common.IWorldAccessor,System.Collections.Generic.Dictionary{System.Int32,Vintagestory.API.Common.AssetLocation},System.Collections.Generic.Dictionary{System.Int32,Vintagestory.API.Common.AssetLocation},System.Int32,System.Boolean)">
+  OnLoadCollectibleMappings(IWorldAccessor, Dictionary&lt;int, AssetLocation&gt;, Dictionary&lt;int, AssetLocation&gt;, int, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called by the blockschematic loader so that you may fix any blockid/itemid mappings against the mapping of the savegame, if you store any collectibles in this blockentity.
+Note: Some vanilla blocks resolve randomized contents in this method.
+Hint: Use itemstack.FixMapping() to do the job for you.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnLoadCollectibleMappings(IWorldAccessor worldForNewMappings, Dictionary&lt;int, AssetLocation&gt; oldBlockIdMapping, Dictionary&lt;int, AssetLocation&gt; oldItemIdMapping, int schematicSeed, bool resolveImports)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldForNewMappings</code> <a class="xref" href="Vintagestory.API.Common.IWorldAccessor.html">IWorldAccessor</a></dt>
+    <dd></dd>
+    <dt><code>oldBlockIdMapping</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Vintagestory.API.Common.AssetLocation.html">AssetLocation</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>oldItemIdMapping</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Vintagestory.API.Common.AssetLocation.html">AssetLocation</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>schematicSeed</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>If you need some sort of randomness consistency accross an imported schematic, you can use this value</p>
+</dd>
+    <dt><code>resolveImports</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Turn it off to spawn structures as they are. For example, in this mode, instead of traders, their meta spawners will spawn</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnReceivedClientPacket_" data-uid="Vintagestory.API.Common.Entities.Entity.OnReceivedClientPacket*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnReceivedClientPacket_Vintagestory_API_Server_IServerPlayer_System_Int32_System_Byte___" data-uid="Vintagestory.API.Common.Entities.Entity.OnReceivedClientPacket(Vintagestory.API.Server.IServerPlayer,System.Int32,System.Byte[])">
+  OnReceivedClientPacket(IServerPlayer, int, byte[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when on the client side something called capi.Network.SendEntityPacket()</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnReceivedClientPacket(IServerPlayer player, int packetid, byte[] data)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Server.IServerPlayer.html">IServerPlayer</a></dt>
+    <dd></dd>
+    <dt><code>packetid</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>data</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnReceivedServerAnimations_" data-uid="Vintagestory.API.Common.Entities.Entity.OnReceivedServerAnimations*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnReceivedServerAnimations_System_Int32___System_Int32_System_Single___" data-uid="Vintagestory.API.Common.Entities.Entity.OnReceivedServerAnimations(System.Int32[],System.Int32,System.Single[])">
+  OnReceivedServerAnimations(int[], int, float[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnReceivedServerAnimations(int[] activeAnimations, int activeAnimationsCount, float[] activeAnimationSpeeds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>activeAnimations</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>[]</dt>
+    <dd></dd>
+    <dt><code>activeAnimationsCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>activeAnimationSpeeds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnReceivedServerPacket_" data-uid="Vintagestory.API.Common.Entities.Entity.OnReceivedServerPacket*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnReceivedServerPacket_System_Int32_System_Byte___" data-uid="Vintagestory.API.Common.Entities.Entity.OnReceivedServerPacket(System.Int32,System.Byte[])">
+  OnReceivedServerPacket(int, byte[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when on the server side something called sapi.Network.SendEntityPacket()
+Packetid = 1 is used for teleporting
+Packetid = 2 is used for BehaviorHarvestable</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnReceivedServerPacket(int packetid, byte[] data)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>packetid</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>data</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnReceivedServerPos_" data-uid="Vintagestory.API.Common.Entities.Entity.OnReceivedServerPos*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnReceivedServerPos_System_Boolean_" data-uid="Vintagestory.API.Common.Entities.Entity.OnReceivedServerPos(System.Boolean)">
+  OnReceivedServerPos(bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called by client when a new server pos arrived</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnReceivedServerPos(bool isTeleport)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>isTeleport</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnStateChanged_" data-uid="Vintagestory.API.Common.Entities.Entity.OnStateChanged*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnStateChanged_Vintagestory_API_Common_EnumEntityState_" data-uid="Vintagestory.API.Common.Entities.Entity.OnStateChanged(Vintagestory.API.Common.EnumEntityState)">
+  OnStateChanged(EnumEntityState)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called on the server when the entity was changed from active to inactive state or vice versa</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnStateChanged(EnumEntityState beforeState)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>beforeState</code> <a class="xref" href="Vintagestory.API.Common.EnumEntityState.html">EnumEntityState</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnStoreCollectibleMappings_" data-uid="Vintagestory.API.Common.Entities.Entity.OnStoreCollectibleMappings*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnStoreCollectibleMappings_System_Collections_Generic_Dictionary_System_Int32_Vintagestory_API_Common_AssetLocation__System_Collections_Generic_Dictionary_System_Int32_Vintagestory_API_Common_AssetLocation__" data-uid="Vintagestory.API.Common.Entities.Entity.OnStoreCollectibleMappings(System.Collections.Generic.Dictionary{System.Int32,Vintagestory.API.Common.AssetLocation},System.Collections.Generic.Dictionary{System.Int32,Vintagestory.API.Common.AssetLocation})">
+  OnStoreCollectibleMappings(Dictionary&lt;int, AssetLocation&gt;, Dictionary&lt;int, AssetLocation&gt;)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called by the worldedit schematic exporter so that it can also export the mappings of items/blocks stored inside blockentities</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnStoreCollectibleMappings(Dictionary&lt;int, AssetLocation&gt; blockIdMapping, Dictionary&lt;int, AssetLocation&gt; itemIdMapping)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>blockIdMapping</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Vintagestory.API.Common.AssetLocation.html">AssetLocation</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>itemIdMapping</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Vintagestory.API.Common.AssetLocation.html">AssetLocation</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnTesselated_" data-uid="Vintagestory.API.Common.Entities.Entity.OnTesselated*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnTesselated" data-uid="Vintagestory.API.Common.Entities.Entity.OnTesselated">
+  OnTesselated()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnTesselated()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnTesselation_" data-uid="Vintagestory.API.Common.Entities.Entity.OnTesselation*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnTesselation_Vintagestory_API_Common_Shape__System_String_" data-uid="Vintagestory.API.Common.Entities.Entity.OnTesselation(Vintagestory.API.Common.Shape@,System.String)">
+  OnTesselation(ref Shape, string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called by EntityShapeRenderer.cs before tesselating the entity shape</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnTesselation(ref Shape entityShape, string shapePathForLogging)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>entityShape</code> <a class="xref" href="Vintagestory.API.Common.Shape.html">Shape</a></dt>
+    <dd></dd>
+    <dt><code>shapePathForLogging</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_OnTesselation_" data-uid="Vintagestory.API.Common.Entities.Entity.OnTesselation*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnTesselation_Vintagestory_API_Common_Shape__System_String_System_Boolean__" data-uid="Vintagestory.API.Common.Entities.Entity.OnTesselation(Vintagestory.API.Common.Shape@,System.String,System.Boolean@)">
+  OnTesselation(ref Shape, string, ref bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>entityShape</code> <a class="xref" href="Vintagestory.API.Common.Shape.html">Shape</a></dt>
+    <dd></dd>
+    <dt><code>shapePathForLogging</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>shapeIsCloned</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_PlayEntitySound_" data-uid="Vintagestory.API.Common.Entities.Entity.PlayEntitySound*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_PlayEntitySound_System_String_Vintagestory_API_Common_IPlayer_System_Boolean_System_Single_" data-uid="Vintagestory.API.Common.Entities.Entity.PlayEntitySound(System.String,Vintagestory.API.Common.IPlayer,System.Boolean,System.Single)">
+  PlayEntitySound(string, IPlayer, bool, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Assumes that it is only called on the server</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void PlayEntitySound(string type, IPlayer dualCallByPlayer = null, bool randomizePitch = true, float range = 24)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>type</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>dualCallByPlayer</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd></dd>
+    <dt><code>randomizePitch</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>range</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_ReceiveDamage_" data-uid="Vintagestory.API.Common.Entities.Entity.ReceiveDamage*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ReceiveDamage_Vintagestory_API_Common_DamageSource_System_Single_" data-uid="Vintagestory.API.Common.Entities.Entity.ReceiveDamage(Vintagestory.API.Common.DamageSource,System.Single)">
+  ReceiveDamage(DamageSource, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when the entity should be receiving damage from given source</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool ReceiveDamage(DamageSource damageSource, float damage)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>damageSource</code> <a class="xref" href="Vintagestory.API.Common.DamageSource.html">DamageSource</a></dt>
+    <dd></dd>
+    <dt><code>damage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the entity actually received damage</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_RemainingActivityTime_" data-uid="Vintagestory.API.Common.Entities.Entity.RemainingActivityTime*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_RemainingActivityTime_System_String_" data-uid="Vintagestory.API.Common.Entities.Entity.RemainingActivityTime(System.String)">
+  RemainingActivityTime(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the remaining time on an activity in milliesconds</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual int RemainingActivityTime(string key)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_RemoveBehavior_" data-uid="Vintagestory.API.Common.Entities.Entity.RemoveBehavior*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_RemoveBehavior_Vintagestory_API_Common_Entities_EntityBehavior_" data-uid="Vintagestory.API.Common.Entities.Entity.RemoveBehavior(Vintagestory.API.Common.Entities.EntityBehavior)">
+  RemoveBehavior(EntityBehavior)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes given behavior to the entities list of active behaviors. Does nothing if the behavior has already been removed</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void RemoveBehavior(EntityBehavior behavior)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>behavior</code> <a class="xref" href="Vintagestory.API.Common.Entities.EntityBehavior.html">EntityBehavior</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_Revive_" data-uid="Vintagestory.API.Common.Entities.Entity.Revive*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_Revive" data-uid="Vintagestory.API.Common.Entities.Entity.Revive">
+  Revive()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Revives the entity and heals for 9999.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Revive()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_SetActivityRunning_" data-uid="Vintagestory.API.Common.Entities.Entity.SetActivityRunning*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_SetActivityRunning_System_String_System_Int32_" data-uid="Vintagestory.API.Common.Entities.Entity.SetActivityRunning(System.String,System.Int32)">
+  SetActivityRunning(string, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Starts an activity for a given duration</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void SetActivityRunning(string key, int milliseconds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>milliseconds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_SetCollisionBox_" data-uid="Vintagestory.API.Common.Entities.Entity.SetCollisionBox*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_SetCollisionBox_System_Single_System_Single_" data-uid="Vintagestory.API.Common.Entities.Entity.SetCollisionBox(System.Single,System.Single)">
+  SetCollisionBox(float, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Helper method to set the CollisionBox</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void SetCollisionBox(float length, float height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_SetHeadPositionToWatchedAttributes_" data-uid="Vintagestory.API.Common.Entities.Entity.SetHeadPositionToWatchedAttributes*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_SetHeadPositionToWatchedAttributes" data-uid="Vintagestory.API.Common.Entities.Entity.SetHeadPositionToWatchedAttributes">
+  SetHeadPositionToWatchedAttributes()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Relevant only for entities with heads, implemented in EntityAgent.  Other sub-classes of Entity (if not EntityAgent) should similarly override this if the headYaw/headPitch are relevant to them</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void SetHeadPositionToWatchedAttributes()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_SetSelectionBox_" data-uid="Vintagestory.API.Common.Entities.Entity.SetSelectionBox*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_SetSelectionBox_System_Single_System_Single_" data-uid="Vintagestory.API.Common.Entities.Entity.SetSelectionBox(System.Single,System.Single)">
+  SetSelectionBox(float, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void SetSelectionBox(float length, float height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_ShouldReceiveDamage_" data-uid="Vintagestory.API.Common.Entities.Entity.ShouldReceiveDamage*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ShouldReceiveDamage_Vintagestory_API_Common_DamageSource_System_Single_" data-uid="Vintagestory.API.Common.Entities.Entity.ShouldReceiveDamage(Vintagestory.API.Common.DamageSource,System.Single)">
+  ShouldReceiveDamage(DamageSource, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Should return true if the entity can get damaged by given damageSource. Is called by ReceiveDamage.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool ShouldReceiveDamage(DamageSource damageSource, float damage)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>damageSource</code> <a class="xref" href="Vintagestory.API.Common.DamageSource.html">DamageSource</a></dt>
+    <dd></dd>
+    <dt><code>damage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_SpawnWaterMovementParticles_" data-uid="Vintagestory.API.Common.Entities.Entity.SpawnWaterMovementParticles*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_SpawnWaterMovementParticles_System_Single_System_Double_System_Double_System_Double_" data-uid="Vintagestory.API.Common.Entities.Entity.SpawnWaterMovementParticles(System.Single,System.Double,System.Double,System.Double)">
+  SpawnWaterMovementParticles(float, double, double, double)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void SpawnWaterMovementParticles(float quantityMul, double offx = 0, double offy = 0, double offz = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>quantityMul</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>offx</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>offy</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>offz</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_StartAnimation_" data-uid="Vintagestory.API.Common.Entities.Entity.StartAnimation*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_StartAnimation_System_String_" data-uid="Vintagestory.API.Common.Entities.Entity.StartAnimation(System.String)">
+  StartAnimation(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Starts the animation for the entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void StartAnimation(string code)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_StopAnimation_" data-uid="Vintagestory.API.Common.Entities.Entity.StopAnimation*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_StopAnimation_System_String_" data-uid="Vintagestory.API.Common.Entities.Entity.StopAnimation(System.String)">
+  StopAnimation(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>stops the animation for the entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void StopAnimation(string code)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_TeleportTo_" data-uid="Vintagestory.API.Common.Entities.Entity.TeleportTo*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_TeleportTo_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.Common.Entities.Entity.TeleportTo(System.Int32,System.Int32,System.Int32)">
+  TeleportTo(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Teleports the entity to given position</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void TeleportTo(int x, int y, int z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_TeleportTo_" data-uid="Vintagestory.API.Common.Entities.Entity.TeleportTo*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_TeleportTo_Vintagestory_API_Common_Entities_EntityPos_System_Action_" data-uid="Vintagestory.API.Common.Entities.Entity.TeleportTo(Vintagestory.API.Common.Entities.EntityPos,System.Action)">
+  TeleportTo(EntityPos, Action)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Teleports the entity to given position</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void TeleportTo(EntityPos position, Action onTeleported = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>position</code> <a class="xref" href="Vintagestory.API.Common.Entities.EntityPos.html">EntityPos</a></dt>
+    <dd></dd>
+    <dt><code>onTeleported</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_TeleportTo_" data-uid="Vintagestory.API.Common.Entities.Entity.TeleportTo*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_TeleportTo_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.Common.Entities.Entity.TeleportTo(Vintagestory.API.MathTools.BlockPos)">
+  TeleportTo(BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Teleports the entity to given position</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void TeleportTo(BlockPos position)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>position</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_TeleportTo_" data-uid="Vintagestory.API.Common.Entities.Entity.TeleportTo*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_TeleportTo_Vintagestory_API_MathTools_Vec3d_" data-uid="Vintagestory.API.Common.Entities.Entity.TeleportTo(Vintagestory.API.MathTools.Vec3d)">
+  TeleportTo(Vec3d)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Teleports the entity to given position</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void TeleportTo(Vec3d position)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>position</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_TeleportToDouble_" data-uid="Vintagestory.API.Common.Entities.Entity.TeleportToDouble*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_TeleportToDouble_System_Double_System_Double_System_Double_System_Action_" data-uid="Vintagestory.API.Common.Entities.Entity.TeleportToDouble(System.Double,System.Double,System.Double,System.Action)">
+  TeleportToDouble(double, double, double, Action)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Teleports the entity to given position. Actual teleport is delayed until target chunk is loaded.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void TeleportToDouble(double x, double y, double z, Action onTeleported = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>onTeleported</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_ToBytes_" data-uid="Vintagestory.API.Common.Entities.Entity.ToBytes*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_ToBytes_System_IO_BinaryWriter_System_Boolean_" data-uid="Vintagestory.API.Common.Entities.Entity.ToBytes(System.IO.BinaryWriter,System.Boolean)">
+  ToBytes(BinaryWriter, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Serializes the slots contents to be stored in the SaveGame</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void ToBytes(BinaryWriter writer, bool forClient)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>writer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.binarywriter">BinaryWriter</a></dt>
+    <dd></dd>
+    <dt><code>forClient</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True when being used to send an entity to the client</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_TriggerOnInitialized_" data-uid="Vintagestory.API.Common.Entities.Entity.TriggerOnInitialized*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_TriggerOnInitialized" data-uid="Vintagestory.API.Common.Entities.Entity.TriggerOnInitialized">
+  TriggerOnInitialized()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void TriggerOnInitialized()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_TryEarlyLoadCollectibleMappings_" data-uid="Vintagestory.API.Common.Entities.Entity.TryEarlyLoadCollectibleMappings*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_TryEarlyLoadCollectibleMappings_Vintagestory_API_Common_IWorldAccessor_System_Collections_Generic_Dictionary_System_Int32_Vintagestory_API_Common_AssetLocation__System_Collections_Generic_Dictionary_System_Int32_Vintagestory_API_Common_AssetLocation__System_Int32_System_Boolean_" data-uid="Vintagestory.API.Common.Entities.Entity.TryEarlyLoadCollectibleMappings(Vintagestory.API.Common.IWorldAccessor,System.Collections.Generic.Dictionary{System.Int32,Vintagestory.API.Common.AssetLocation},System.Collections.Generic.Dictionary{System.Int32,Vintagestory.API.Common.AssetLocation},System.Int32,System.Boolean)">
+  TryEarlyLoadCollectibleMappings(IWorldAccessor, Dictionary&lt;int, AssetLocation&gt;, Dictionary&lt;int, AssetLocation&gt;, int, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Used only during worldgen when an entity is placed by a schematic. Overall purpose is like OnLoadCollectibleMappings() except that it is called prior to initialising the Entity
+<br>Should typically do nothing and return false
+<br>May optionally load the collectible mappings here (doing any necessary initialisation itself, e.g. initialising the Inventory) in which case return true. For example, this is useful for Armorstands</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool TryEarlyLoadCollectibleMappings(IWorldAccessor worldForNewMappings, Dictionary&lt;int, AssetLocation&gt; oldBlockIdMapping, Dictionary&lt;int, AssetLocation&gt; oldItemIdMapping, int schematicSeed, bool resolveImports)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldForNewMappings</code> <a class="xref" href="Vintagestory.API.Common.IWorldAccessor.html">IWorldAccessor</a></dt>
+    <dd></dd>
+    <dt><code>oldBlockIdMapping</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Vintagestory.API.Common.AssetLocation.html">AssetLocation</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>oldItemIdMapping</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Vintagestory.API.Common.AssetLocation.html">AssetLocation</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>schematicSeed</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>resolveImports</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>If returns true, the caller should skip calling OnLoadCollectibleMappings()</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_TryGiveItemStack_" data-uid="Vintagestory.API.Common.Entities.Entity.TryGiveItemStack*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_TryGiveItemStack_Vintagestory_API_Common_ItemStack_" data-uid="Vintagestory.API.Common.Entities.Entity.TryGiveItemStack(Vintagestory.API.Common.ItemStack)">
+  TryGiveItemStack(ItemStack)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when something tries to given an itemstack to this entity</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool TryGiveItemStack(ItemStack itemstack)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemstack</code> <a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_UpdateAnimationDebugAttributes_" data-uid="Vintagestory.API.Common.Entities.Entity.UpdateAnimationDebugAttributes*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_UpdateAnimationDebugAttributes" data-uid="Vintagestory.API.Common.Entities.Entity.UpdateAnimationDebugAttributes">
+  UpdateAnimationDebugAttributes()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void UpdateAnimationDebugAttributes()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_UpdateDebugAttributes_" data-uid="Vintagestory.API.Common.Entities.Entity.UpdateDebugAttributes*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_UpdateDebugAttributes" data-uid="Vintagestory.API.Common.Entities.Entity.UpdateDebugAttributes">
+  UpdateDebugAttributes()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the DebugAttributes tree</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void UpdateDebugAttributes()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_WillExport_" data-uid="Vintagestory.API.Common.Entities.Entity.WillExport*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_WillExport_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.Common.Entities.Entity.WillExport(Vintagestory.API.MathTools.BlockPos)">
+  WillExport(BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>This method is called by the BlockSchematic class a moment before a schematic containing this entity is getting exported.
+Since a schematic can be placed anywhere in the world, this method has to make sure the entities position is set to a value
+relative of the schematic origin point defined by startPos
+Right after calling this method, the world edit system will call .ToBytes() to serialize the entity</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void WillExport(BlockPos startPos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>startPos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_updateColSelBoxes_" data-uid="Vintagestory.API.Common.Entities.Entity.updateColSelBoxes*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_updateColSelBoxes" data-uid="Vintagestory.API.Common.Entities.Entity.updateColSelBoxes">
+  updateColSelBoxes()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void updateColSelBoxes()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_Entities_Entity_updateOnFire_" data-uid="Vintagestory.API.Common.Entities.Entity.updateOnFire*"></a>
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_updateOnFire" data-uid="Vintagestory.API.Common.Entities.Entity.updateOnFire">
+  updateOnFire()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void updateOnFire()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="Vintagestory_API_Common_Entities_Entity_OnInitialized" data-uid="Vintagestory.API.Common.Entities.Entity.OnInitialized">
+  OnInitialized
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Action OnInitialized</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

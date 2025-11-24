@@ -1,0 +1,1926 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class PlayerAnimationManager | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class PlayerAnimationManager | VintageStory API ">
+      
+      <meta name="description" content="Open in GitHub">
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.Common.PlayerAnimationManager">
+
+
+
+  <h1 id="Vintagestory_API_Common_PlayerAnimationManager" data-uid="Vintagestory.API.Common.PlayerAnimationManager" class="text-break">
+Class PlayerAnimationManager  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.Common.html">Common</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p><a href="https://github.com/anegostudios/vsapi/blob/master///Common/Entity/PlayerAnimationManager.cs">Open in GitHub</a></p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class PlayerAnimationManager : AnimationManager, IAnimationManager, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Vintagestory.API.Common.AnimationManager.html">AnimationManager</a></div>
+      <div><span class="xref">PlayerAnimationManager</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Vintagestory.API.Common.IAnimationManager.html">IAnimationManager</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_api">AnimationManager.api</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_capi">AnimationManager.capi</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_AnimationsDirty">AnimationManager.AnimationsDirty</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_Animator">AnimationManager.Animator</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_HeadController">AnimationManager.HeadController</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_ActiveAnimationsByAnimCode">AnimationManager.ActiveAnimationsByAnimCode</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_AdjustCollisionBoxToAnimation">AnimationManager.AdjustCollisionBoxToAnimation</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_Triggers">AnimationManager.Triggers</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_OnStartAnimation">AnimationManager.OnStartAnimation</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_OnAnimationReceived">AnimationManager.OnAnimationReceived</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_OnAnimationStopped">AnimationManager.OnAnimationStopped</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_entity">AnimationManager.entity</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_LoadAnimator_Vintagestory_API_Common_ICoreAPI_Vintagestory_API_Common_Entities_Entity_Vintagestory_API_Common_Shape_Vintagestory_API_Common_RunningAnimation___System_Boolean_System_String___">AnimationManager.LoadAnimator(ICoreAPI, Entity, Shape, RunningAnimation[], bool, params string[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_CopyOverAnimStates_Vintagestory_API_Common_RunningAnimation___Vintagestory_API_Common_IAnimator_">AnimationManager.CopyOverAnimStates(RunningAnimation[], IAnimator)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_TryStartAnimation_Vintagestory_API_Common_AnimationMetaData_">AnimationManager.TryStartAnimation(AnimationMetaData)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_StopAllAnimations">AnimationManager.StopAllAnimations()</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_SerializeActiveAnimations_System_Boolean_System_Action_System_String_Vintagestory_API_Datastructures_FastMemoryStream__">AnimationManager.SerializeActiveAnimations(bool, Action&lt;string, FastMemoryStream&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_OnServerTick_System_Single_">AnimationManager.OnServerTick(float)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_Dispose">AnimationManager.Dispose()</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_TriggerAnimationStopped_System_String_">AnimationManager.TriggerAnimationStopped(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationManager.html#Vintagestory_API_Common_AnimationManager_ShouldPlaySound_Vintagestory_API_Common_AnimationSound_">AnimationManager.ShouldPlaySound(AnimationSound)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Common.AnimationCache.html#Vintagestory_API_Common_AnimationCache_LoadAnimatorCached_Vintagestory_API_Common_IAnimationManager_Vintagestory_API_Common_ICoreAPI_Vintagestory_API_Common_Entities_Entity_Vintagestory_API_Common_Shape_Vintagestory_API_Common_RunningAnimation___System_Boolean_System_String___">AnimationCache.LoadAnimatorCached(IAnimationManager, ICoreAPI, Entity, Shape, RunningAnimation[], bool, params string[])</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_UseFpAnmations" data-uid="Vintagestory.API.Common.PlayerAnimationManager.UseFpAnmations">
+  UseFpAnmations
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool UseFpAnmations</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_lastActiveHeldHitAnimation" data-uid="Vintagestory.API.Common.PlayerAnimationManager.lastActiveHeldHitAnimation">
+  lastActiveHeldHitAnimation
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected string lastActiveHeldHitAnimation</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_lastActiveHeldReadyAnimation" data-uid="Vintagestory.API.Common.PlayerAnimationManager.lastActiveHeldReadyAnimation">
+  lastActiveHeldReadyAnimation
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected string lastActiveHeldReadyAnimation</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_lastActiveHeldUseAnimation" data-uid="Vintagestory.API.Common.PlayerAnimationManager.lastActiveHeldUseAnimation">
+  lastActiveHeldUseAnimation
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected string lastActiveHeldUseAnimation</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_lastActiveLeftHeldIdleAnimation" data-uid="Vintagestory.API.Common.PlayerAnimationManager.lastActiveLeftHeldIdleAnimation">
+  lastActiveLeftHeldIdleAnimation
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected string lastActiveLeftHeldIdleAnimation</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_lastActiveRightHeldIdleAnimation" data-uid="Vintagestory.API.Common.PlayerAnimationManager.lastActiveRightHeldIdleAnimation">
+  lastActiveRightHeldIdleAnimation
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected string lastActiveRightHeldIdleAnimation</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_lastRunningHeldHitAnimation" data-uid="Vintagestory.API.Common.PlayerAnimationManager.lastRunningHeldHitAnimation">
+  lastRunningHeldHitAnimation
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string lastRunningHeldHitAnimation</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_lastRunningHeldUseAnimation" data-uid="Vintagestory.API.Common.PlayerAnimationManager.lastRunningHeldUseAnimation">
+  lastRunningHeldUseAnimation
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string lastRunningHeldUseAnimation</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_FromAttributes_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.FromAttributes*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_FromAttributes_Vintagestory_API_Datastructures_ITreeAttribute_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.FromAttributes(Vintagestory.API.Datastructures.ITreeAttribute,System.String)">
+  FromAttributes(ITreeAttribute, string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Loads the entity from a stored byte array from the SaveGame</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void FromAttributes(ITreeAttribute tree, string version)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tree</code> <a class="xref" href="Vintagestory.API.Datastructures.ITreeAttribute.html">ITreeAttribute</a></dt>
+    <dd></dd>
+    <dt><code>version</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_GetAnimationState_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.GetAnimationState*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_GetAnimationState_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.GetAnimationState(System.String)">
+  GetAnimationState(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override RunningAnimation GetAnimationState(string anim)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>anim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.RunningAnimation.html">RunningAnimation</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_HeldHitAnimChanged_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.HeldHitAnimChanged*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_HeldHitAnimChanged_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.HeldHitAnimChanged(System.String)">
+  HeldHitAnimChanged(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HeldHitAnimChanged(string nowHeldRightHitAnim)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nowHeldRightHitAnim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_HeldRightReadyAnimChanged_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.HeldRightReadyAnimChanged*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_HeldRightReadyAnimChanged_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.HeldRightReadyAnimChanged(System.String)">
+  HeldRightReadyAnimChanged(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HeldRightReadyAnimChanged(string nowHeldRightReadyAnim)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nowHeldRightReadyAnim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_HeldUseAnimChanged_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.HeldUseAnimChanged*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_HeldUseAnimChanged_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.HeldUseAnimChanged(System.String)">
+  HeldUseAnimChanged(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HeldUseAnimChanged(string nowHeldRightUseAnim)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nowHeldRightUseAnim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_Init_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.Init*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_Init_Vintagestory_API_Common_ICoreAPI_Vintagestory_API_Common_Entities_Entity_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.Init(Vintagestory.API.Common.ICoreAPI,Vintagestory.API.Common.Entities.Entity)">
+  Init(ICoreAPI, Entity)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes the Animation Manager.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Init(ICoreAPI api, Entity entity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Common.ICoreAPI.html">ICoreAPI</a></dt>
+    <dd><p>The Core API.</p>
+</dd>
+    <dt><code>entity</code> <a class="xref" href="Vintagestory.API.Common.Entities.Entity.html">Entity</a></dt>
+    <dd><p>The entity this manager is attached to.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_IsAnimationActive_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsAnimationActive*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_IsAnimationActive_System_String___" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsAnimationActive(System.String[])">
+  IsAnimationActive(params string[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool IsAnimationActive(params string[] anims)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>anims</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_IsAnimationActiveOrRunning_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsAnimationActiveOrRunning*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_IsAnimationActiveOrRunning_System_String_System_Single_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsAnimationActiveOrRunning(System.String,System.Single)">
+  IsAnimationActiveOrRunning(string, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsAnimationActiveOrRunning(string anim, float untilProgress = 0.95)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>anim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>untilProgress</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_IsAnimationMostlyRunning_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsAnimationMostlyRunning*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_IsAnimationMostlyRunning_System_String_System_Single_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsAnimationMostlyRunning(System.String,System.Single)">
+  IsAnimationMostlyRunning(string, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool IsAnimationMostlyRunning(string anim, float untilProgress = 0.95)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>anim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>untilProgress</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_IsAuthoritative_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsAuthoritative*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_IsAuthoritative_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsAuthoritative(System.String)">
+  IsAuthoritative(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsAuthoritative(string anim)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>anim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_IsHeldHitActive_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsHeldHitActive*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_IsHeldHitActive_System_Single_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsHeldHitActive(System.Single)">
+  IsHeldHitActive(float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsHeldHitActive(float untilProgress = 0.95)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>untilProgress</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_IsHeldHitAuthoritative_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsHeldHitAuthoritative*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_IsHeldHitAuthoritative" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsHeldHitAuthoritative">
+  IsHeldHitAuthoritative()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsHeldHitAuthoritative()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_IsHeldUseActive_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsHeldUseActive*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_IsHeldUseActive" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsHeldUseActive">
+  IsHeldUseActive()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsHeldUseActive()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_IsLeftHeldActive_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsLeftHeldActive*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_IsLeftHeldActive" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsLeftHeldActive">
+  IsLeftHeldActive()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsLeftHeldActive()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_IsRightHeldActive_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsRightHeldActive*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_IsRightHeldActive" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsRightHeldActive">
+  IsRightHeldActive()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsRightHeldActive()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_IsRightHeldReadyActive_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsRightHeldReadyActive*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_IsRightHeldReadyActive" data-uid="Vintagestory.API.Common.PlayerAnimationManager.IsRightHeldReadyActive">
+  IsRightHeldReadyActive()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsRightHeldReadyActive()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_LeftHeldIdleChanged_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.LeftHeldIdleChanged*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_LeftHeldIdleChanged_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.LeftHeldIdleChanged(System.String)">
+  LeftHeldIdleChanged(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool LeftHeldIdleChanged(string nowHeldLeftIdleAnim)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nowHeldLeftIdleAnim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_OnActiveSlotChanged_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.OnActiveSlotChanged*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_OnActiveSlotChanged_Vintagestory_API_Common_ItemSlot_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.OnActiveSlotChanged(Vintagestory.API.Common.ItemSlot)">
+  OnActiveSlotChanged(ItemSlot)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void OnActiveSlotChanged(ItemSlot slot)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_OnClientFrame_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.OnClientFrame*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_OnClientFrame_System_Single_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.OnClientFrame(System.Single)">
+  OnClientFrame(float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The event fired each time the client ticks.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnClientFrame(float dt)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dt</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_OnIfpModeChanged_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.OnIfpModeChanged*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_OnIfpModeChanged_System_Boolean_System_Boolean_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.OnIfpModeChanged(System.Boolean,System.Boolean)">
+  OnIfpModeChanged(bool, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void OnIfpModeChanged(bool prev, bool now)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>prev</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>now</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_OnReceivedServerAnimations_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.OnReceivedServerAnimations*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_OnReceivedServerAnimations_System_Int32___System_Int32_System_Single___" data-uid="Vintagestory.API.Common.PlayerAnimationManager.OnReceivedServerAnimations(System.Int32[],System.Int32,System.Single[])">
+  OnReceivedServerAnimations(int[], int, float[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The event fired when the manager recieves the server animations.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnReceivedServerAnimations(int[] activeAnimations, int activeAnimationsCount, float[] activeAnimationSpeeds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>activeAnimations</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>[]</dt>
+    <dd></dd>
+    <dt><code>activeAnimationsCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>activeAnimationSpeeds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_RegisterFrameCallback_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.RegisterFrameCallback*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_RegisterFrameCallback_Vintagestory_API_Common_AnimFrameCallback_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.RegisterFrameCallback(Vintagestory.API.Common.AnimFrameCallback)">
+  RegisterFrameCallback(AnimFrameCallback)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void RegisterFrameCallback(AnimFrameCallback trigger)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>trigger</code> <a class="xref" href="Vintagestory.API.Common.AnimFrameCallback.html">AnimFrameCallback</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_ResetAnimation_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.ResetAnimation*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_ResetAnimation_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.ResetAnimation(System.String)">
+  ResetAnimation(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If given animation is running, will set its progress to the first animation frame</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void ResetAnimation(string animCode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>animCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_RightHeldIdleChanged_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.RightHeldIdleChanged*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_RightHeldIdleChanged_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.RightHeldIdleChanged(System.String)">
+  RightHeldIdleChanged(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RightHeldIdleChanged(string nowHeldRightIdleAnim)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nowHeldRightIdleAnim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StartAnimation_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartAnimation*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StartAnimation_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartAnimation(System.String)">
+  StartAnimation(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Start a new animation defined in the entity config file. If it's not defined, it won't play.
+Use StartAnimation(AnimationMetaData animdata) to circumvent the entity config anim data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool StartAnimation(string configCode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>configCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Anim config code, not the animation code!</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StartAnimation_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartAnimation*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StartAnimation_Vintagestory_API_Common_AnimationMetaData_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartAnimation(Vintagestory.API.Common.AnimationMetaData)">
+  StartAnimation(AnimationMetaData)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Client: Starts given animation
+Server: Sends all active anims to all connected clients then purges the ActiveAnimationsByAnimCode list</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool StartAnimation(AnimationMetaData animdata)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>animdata</code> <a class="xref" href="Vintagestory.API.Common.AnimationMetaData.html">AnimationMetaData</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StartAnimationBase_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartAnimationBase*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StartAnimationBase_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartAnimationBase(System.String)">
+  StartAnimationBase(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool StartAnimationBase(string configCode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>configCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StartAnimationBase_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartAnimationBase*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StartAnimationBase_Vintagestory_API_Common_AnimationMetaData_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartAnimationBase(Vintagestory.API.Common.AnimationMetaData)">
+  StartAnimationBase(AnimationMetaData)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool StartAnimationBase(AnimationMetaData animdata)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>animdata</code> <a class="xref" href="Vintagestory.API.Common.AnimationMetaData.html">AnimationMetaData</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StartHeldHitAnim_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartHeldHitAnim*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StartHeldHitAnim_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartHeldHitAnim(System.String)">
+  StartHeldHitAnim(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StartHeldHitAnim(string animCode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>animCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StartHeldReadyAnim_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartHeldReadyAnim*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StartHeldReadyAnim_System_String_System_Boolean_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartHeldReadyAnim(System.String,System.Boolean)">
+  StartHeldReadyAnim(string, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StartHeldReadyAnim(string heldReadyAnim, bool force = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>heldReadyAnim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>force</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StartHeldUseAnim_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartHeldUseAnim*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StartHeldUseAnim_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartHeldUseAnim(System.String)">
+  StartHeldUseAnim(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StartHeldUseAnim(string animCode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>animCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StartLeftHeldIdleAnim_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartLeftHeldIdleAnim*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StartLeftHeldIdleAnim_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartLeftHeldIdleAnim(System.String)">
+  StartLeftHeldIdleAnim(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StartLeftHeldIdleAnim(string animCode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>animCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StartRightHeldIdleAnim_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartRightHeldIdleAnim*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StartRightHeldIdleAnim_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StartRightHeldIdleAnim(System.String)">
+  StartRightHeldIdleAnim(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StartRightHeldIdleAnim(string animCode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>animCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StopAnimation_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopAnimation*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StopAnimation_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopAnimation(System.String)">
+  StopAnimation(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Stops given animation</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void StopAnimation(string code)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StopHeldAttackAnim_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopHeldAttackAnim*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StopHeldAttackAnim" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopHeldAttackAnim">
+  StopHeldAttackAnim()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StopHeldAttackAnim()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StopHeldReadyAnim_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopHeldReadyAnim*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StopHeldReadyAnim" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopHeldReadyAnim">
+  StopHeldReadyAnim()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StopHeldReadyAnim()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StopHeldUseAnim_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopHeldUseAnim*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StopHeldUseAnim" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopHeldUseAnim">
+  StopHeldUseAnim()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StopHeldUseAnim()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StopLeftHeldIdleAnim_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopLeftHeldIdleAnim*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StopLeftHeldIdleAnim" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopLeftHeldIdleAnim">
+  StopLeftHeldIdleAnim()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StopLeftHeldIdleAnim()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StopRightHeldIdleAnim_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopRightHeldIdleAnim*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StopRightHeldIdleAnim" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopRightHeldIdleAnim">
+  StopRightHeldIdleAnim()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StopRightHeldIdleAnim()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_StopSelfAnimation_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopSelfAnimation*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_StopSelfAnimation_System_String_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.StopSelfAnimation(System.String)">
+  StopSelfAnimation(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StopSelfAnimation(string code)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_ToAttributeBytes_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.ToAttributeBytes*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_ToAttributeBytes_System_IO_BinaryWriter_System_Boolean_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.ToAttributeBytes(System.IO.BinaryWriter,System.Boolean)">
+  ToAttributeBytes(BinaryWriter, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>For performance, serializes the animations to be stored directly to the provided stream</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void ToAttributeBytes(BinaryWriter writer, bool forClient)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>writer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.binarywriter">BinaryWriter</a></dt>
+    <dd></dd>
+    <dt><code>forClient</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_ToAttributes_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.ToAttributes*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_ToAttributes_Vintagestory_API_Datastructures_ITreeAttribute_System_Boolean_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.ToAttributes(Vintagestory.API.Datastructures.ITreeAttribute,System.Boolean)">
+  ToAttributes(ITreeAttribute, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Serializes the animations to be stored in the SaveGame</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void ToAttributes(ITreeAttribute tree, bool forClient)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tree</code> <a class="xref" href="Vintagestory.API.Datastructures.ITreeAttribute.html">ITreeAttribute</a></dt>
+    <dd></dd>
+    <dt><code>forClient</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_PlayerAnimationManager_onReceivedServerAnimation_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.onReceivedServerAnimation*"></a>
+
+  <h3 id="Vintagestory_API_Common_PlayerAnimationManager_onReceivedServerAnimation_Vintagestory_API_Common_AnimationMetaData_" data-uid="Vintagestory.API.Common.PlayerAnimationManager.onReceivedServerAnimation(Vintagestory.API.Common.AnimationMetaData)">
+  onReceivedServerAnimation(AnimationMetaData)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void onReceivedServerAnimation(AnimationMetaData animmetadata)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>animmetadata</code> <a class="xref" href="Vintagestory.API.Common.AnimationMetaData.html">AnimationMetaData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

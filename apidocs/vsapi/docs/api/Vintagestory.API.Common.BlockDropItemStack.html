@@ -1,0 +1,752 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class BlockDropItemStack | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class BlockDropItemStack | VintageStory API ">
+      
+      <meta name="description" content="Represents an itemstack that is dropped when breaking a block, with a potentially random quantity. Open in GitHub">
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.Common.BlockDropItemStack">
+
+
+
+  <h1 id="Vintagestory_API_Common_BlockDropItemStack" data-uid="Vintagestory.API.Common.BlockDropItemStack" class="text-break">
+Class BlockDropItemStack  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.Common.html">Common</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents an itemstack that is dropped when breaking a block, with a potentially random quantity. <a href="https://github.com/anegostudios/vsapi/blob/master///Common/Collectible/Block/BlockDropItemStack.cs">Open in GitHub</a></p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DocumentAsJson]
+public class BlockDropItemStack</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">BlockDropItemStack</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  </dd></dl>
+
+
+  <h2 id="Vintagestory_API_Common_BlockDropItemStack_examples">Examples</h2>
+  <pre><code class="lang-json">"drops": [
+	{
+		"type": "item",
+		"code": "bone",
+		"quantity": {
+			"avg": 4,
+			"var": 2
+		}
+	}
+]</code></pre>
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Vintagestory_API_Common_BlockDropItemStack__ctor_" data-uid="Vintagestory.API.Common.BlockDropItemStack.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack__ctor" data-uid="Vintagestory.API.Common.BlockDropItemStack.#ctor">
+  BlockDropItemStack()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockDropItemStack()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_BlockDropItemStack__ctor_" data-uid="Vintagestory.API.Common.BlockDropItemStack.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack__ctor_Vintagestory_API_Common_ItemStack_System_Single_" data-uid="Vintagestory.API.Common.BlockDropItemStack.#ctor(Vintagestory.API.Common.ItemStack,System.Single)">
+  BlockDropItemStack(ItemStack, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockDropItemStack(ItemStack stack, float chance = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stack</code> <a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd></dd>
+    <dt><code>chance</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_Attributes" data-uid="Vintagestory.API.Common.BlockDropItemStack.Attributes">
+  Attributes
+  
+  </h3>
+
+  <div class="markdown level1 summary"><!--<jsonoptional>Optional</jsonoptional><jsondefault>None</jsondefault>-->
+<p>Tree Attributes that should be attached to the resulting itemstack</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty]
+[JsonConverter(typeof(JsonAttributesConverter))]
+public JsonObject Attributes</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Datastructures.JsonObject.html">JsonObject</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_Code" data-uid="Vintagestory.API.Common.BlockDropItemStack.Code">
+  Code
+  
+  </h3>
+
+  <div class="markdown level1 summary"><!--<jsonoptional>Required</jsonoptional>-->
+<p>Code of the block or item</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DocumentAsJson]
+public AssetLocation Code</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.AssetLocation.html">AssetLocation</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_DropModbyStat" data-uid="Vintagestory.API.Common.BlockDropItemStack.DropModbyStat">
+  DropModbyStat
+  
+  </h3>
+
+  <div class="markdown level1 summary"><!--<jsonoptional>Optional</jsonoptional><jsondefault>None</jsondefault>-->
+<p>If set, the drop quantity will be modified by the collecting entity stat code - entity.Stats.GetBlended(code).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DocumentAsJson]
+public string DropModbyStat</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_LastDrop" data-uid="Vintagestory.API.Common.BlockDropItemStack.LastDrop">
+  LastDrop
+  
+  </h3>
+
+  <div class="markdown level1 summary"><!--<jsonoptional>Optional</jsonoptional><jsondefault>false</jsondefault>-->
+<p>If true, and this drop occurs, no further drops will happen.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DocumentAsJson]
+public bool LastDrop</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_Quantity" data-uid="Vintagestory.API.Common.BlockDropItemStack.Quantity">
+  Quantity
+  
+  </h3>
+
+  <div class="markdown level1 summary"><!--<jsonoptional>Optional</jsonoptional><jsondefault>1</jsondefault>-->
+<p>Quantity to be dropped</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DocumentAsJson]
+public NatFloat Quantity</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.NatFloat.html">NatFloat</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_ResolvedItemstack" data-uid="Vintagestory.API.Common.BlockDropItemStack.ResolvedItemstack">
+  ResolvedItemstack
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The resulting ItemStack for this block being broken by a tool.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ItemStack ResolvedItemstack</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_Tool" data-uid="Vintagestory.API.Common.BlockDropItemStack.Tool">
+  Tool
+  
+  </h3>
+
+  <div class="markdown level1 summary"><!--<jsonoptional>Optional</jsonoptional><jsondefault>None</jsondefault>-->
+<p>If set, then the given tool is required to make this block drop anything.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DocumentAsJson]
+public EnumTool? Tool</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.EnumTool.html">EnumTool</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_Type" data-uid="Vintagestory.API.Common.BlockDropItemStack.Type">
+  Type
+  
+  </h3>
+
+  <div class="markdown level1 summary"><!--<jsonoptional>Recommended</jsonoptional><jsondefault>Block</jsondefault>-->
+<p>Block or Item?</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DocumentAsJson]
+public EnumItemClass Type</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.EnumItemClass.html">EnumItemClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vintagestory_API_Common_BlockDropItemStack_Clone_" data-uid="Vintagestory.API.Common.BlockDropItemStack.Clone*"></a>
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_Clone" data-uid="Vintagestory.API.Common.BlockDropItemStack.Clone">
+  Clone()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a deep copy of this object</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockDropItemStack Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.BlockDropItemStack.html">BlockDropItemStack</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_BlockDropItemStack_FromBytes_" data-uid="Vintagestory.API.Common.BlockDropItemStack.FromBytes*"></a>
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_FromBytes_System_IO_BinaryReader_Vintagestory_API_Common_IClassRegistryAPI_" data-uid="Vintagestory.API.Common.BlockDropItemStack.FromBytes(System.IO.BinaryReader,Vintagestory.API.Common.IClassRegistryAPI)">
+  FromBytes(BinaryReader, IClassRegistryAPI)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads the contents of the block bytes and converts it into a block.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void FromBytes(BinaryReader reader, IClassRegistryAPI instancer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reader</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.binaryreader">BinaryReader</a></dt>
+    <dd><p>The reader of the block</p>
+</dd>
+    <dt><code>instancer</code> <a class="xref" href="Vintagestory.API.Common.IClassRegistryAPI.html">IClassRegistryAPI</a></dt>
+    <dd><p>The block registry</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_BlockDropItemStack_GetNextItemStack_" data-uid="Vintagestory.API.Common.BlockDropItemStack.GetNextItemStack*"></a>
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_GetNextItemStack_System_Single_" data-uid="Vintagestory.API.Common.BlockDropItemStack.GetNextItemStack(System.Single)">
+  GetNextItemStack(float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns an itemstack with random quantity as configured via the Quantity field</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ItemStack GetNextItemStack(float dropQuantityMultiplier = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dropQuantityMultiplier</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_BlockDropItemStack_Resolve_" data-uid="Vintagestory.API.Common.BlockDropItemStack.Resolve*"></a>
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_Resolve_Vintagestory_API_Common_IWorldAccessor_System_String_Vintagestory_API_Common_AssetLocation_" data-uid="Vintagestory.API.Common.BlockDropItemStack.Resolve(Vintagestory.API.Common.IWorldAccessor,System.String,Vintagestory.API.Common.AssetLocation)">
+  Resolve(IWorldAccessor, string, AssetLocation)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets itemstack.block or itemstack.item</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Resolve(IWorldAccessor resolver, string sourceForErrorLogging, AssetLocation assetLoc)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>resolver</code> <a class="xref" href="Vintagestory.API.Common.IWorldAccessor.html">IWorldAccessor</a></dt>
+    <dd></dd>
+    <dt><code>sourceForErrorLogging</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>assetLoc</code> <a class="xref" href="Vintagestory.API.Common.AssetLocation.html">AssetLocation</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_BlockDropItemStack_ToBytes_" data-uid="Vintagestory.API.Common.BlockDropItemStack.ToBytes*"></a>
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_ToBytes_System_IO_BinaryWriter_" data-uid="Vintagestory.API.Common.BlockDropItemStack.ToBytes(System.IO.BinaryWriter)">
+  ToBytes(BinaryWriter)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The save data writer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void ToBytes(BinaryWriter writer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>writer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.binarywriter">BinaryWriter</a></dt>
+    <dd><p>The writer to write blocks to.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_BlockDropItemStack_ToRandomItemstackForPlayer_" data-uid="Vintagestory.API.Common.BlockDropItemStack.ToRandomItemstackForPlayer*"></a>
+
+  <h3 id="Vintagestory_API_Common_BlockDropItemStack_ToRandomItemstackForPlayer_Vintagestory_API_Common_IPlayer_Vintagestory_API_Common_IWorldAccessor_System_Single_" data-uid="Vintagestory.API.Common.BlockDropItemStack.ToRandomItemstackForPlayer(Vintagestory.API.Common.IPlayer,Vintagestory.API.Common.IWorldAccessor,System.Single)">
+  ToRandomItemstackForPlayer(IPlayer, IWorldAccessor, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ItemStack ToRandomItemstackForPlayer(IPlayer byPlayer, IWorldAccessor world, float dropQuantityMultiplier)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>byPlayer</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd></dd>
+    <dt><code>world</code> <a class="xref" href="Vintagestory.API.Common.IWorldAccessor.html">IWorldAccessor</a></dt>
+    <dd></dd>
+    <dt><code>dropQuantityMultiplier</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

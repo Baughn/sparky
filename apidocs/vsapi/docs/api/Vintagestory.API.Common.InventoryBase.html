@@ -1,0 +1,2729 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class InventoryBase | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class InventoryBase | VintageStory API ">
+      
+      <meta name="description" content="Basic class representing an item inventory Open in GitHub">
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.Common.InventoryBase">
+
+
+
+  <h1 id="Vintagestory_API_Common_InventoryBase" data-uid="Vintagestory.API.Common.InventoryBase" class="text-break">
+Class InventoryBase  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.Common.html">Common</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Basic class representing an item inventory <a href="https://github.com/anegostudios/vsapi/blob/master///Common/Inventory/InventoryBase.cs">Open in GitHub</a></p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class InventoryBase : IInventory, IReadOnlyCollection&lt;ItemSlot&gt;, IEnumerable&lt;ItemSlot&gt;, IEnumerable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">InventoryBase</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Vintagestory.API.Common.IInventory.html">IInventory</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Vintagestory.API.Common.DummyInventory.html">DummyInventory</a></div>
+      <div><a class="xref" href="Vintagestory.API.Common.InventoryBasePlayer.html">InventoryBasePlayer</a></div>
+      <div><a class="xref" href="Vintagestory.API.Common.InventoryGeneric.html">InventoryGeneric</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.EnumerableExtensions.html#Vintagestory_API_Util_EnumerableExtensions_Foreach__1_System_Collections_Generic_IEnumerable___0__System_Action___0__">EnumerableExtensions.Foreach&lt;T&gt;(IEnumerable&lt;T&gt;, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.EnumerableExtensions.html#Vintagestory_API_Util_EnumerableExtensions_IndexOf__1_System_Collections_Generic_IEnumerable___0__Vintagestory_API_Common_ActionBoolReturn___0__">EnumerableExtensions.IndexOf&lt;T&gt;(IEnumerable&lt;T&gt;, ActionBoolReturn&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.EnumerableExtensions.html#Vintagestory_API_Util_EnumerableExtensions_NearestDistance__1_System_Collections_Generic_IEnumerable___0__System_Func___0_System_Double__">EnumerableExtensions.NearestDistance&lt;T&gt;(IEnumerable&lt;T&gt;, Func&lt;T, double&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.EnumerableExtensions.html#Vintagestory_API_Util_EnumerableExtensions_Nearest__1_System_Collections_Generic_IEnumerable___0__System_Func___0_System_Double__">EnumerableExtensions.Nearest&lt;T&gt;(IEnumerable&lt;T&gt;, Func&lt;T, double&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Vintagestory_API_Common_InventoryBase__ctor_" data-uid="Vintagestory.API.Common.InventoryBase.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase__ctor_System_String_System_String_Vintagestory_API_Common_ICoreAPI_" data-uid="Vintagestory.API.Common.InventoryBase.#ctor(System.String,System.String,Vintagestory.API.Common.ICoreAPI)">
+  InventoryBase(string, string, ICoreAPI)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Create a new instance of an inventory. You may choose any value for className and instanceID, but if more than one of these inventories can be opened at the same time, make sure for both of them to have a different id</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public InventoryBase(string className, string instanceID, ICoreAPI api)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>className</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>instanceID</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Common.ICoreAPI.html">ICoreAPI</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase__ctor_" data-uid="Vintagestory.API.Common.InventoryBase.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase__ctor_System_String_Vintagestory_API_Common_ICoreAPI_" data-uid="Vintagestory.API.Common.InventoryBase.#ctor(System.String,Vintagestory.API.Common.ICoreAPI)">
+  InventoryBase(string, ICoreAPI)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Create a new instance of an inventory. InvetoryID must have the format [className]-[instanceId]. You may choose any value for className and instanceID, but if more than one of these inventories can be opened at the same time, make sure for both of them to have a different id</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public InventoryBase(string inventoryID, ICoreAPI api)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>inventoryID</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Common.ICoreAPI.html">ICoreAPI</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_Api" data-uid="Vintagestory.API.Common.InventoryBase.Api">
+  Api
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The world in which the inventory is operating in. Gives inventories access to block types, item types and the ability to drop items on the ground.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ICoreAPI Api</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ICoreAPI.html">ICoreAPI</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_InvNetworkUtil" data-uid="Vintagestory.API.Common.InventoryBase.InvNetworkUtil">
+  InvNetworkUtil
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The network utility for the inventory</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IInventoryNetworkUtil InvNetworkUtil</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IInventoryNetworkUtil.html">IInventoryNetworkUtil</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_Pos" data-uid="Vintagestory.API.Common.InventoryBase.Pos">
+  Pos
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Optional field that can be used to define in-world position of the inventory. Is set by most container block entities. Might be null!</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Pos</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_baseWeight" data-uid="Vintagestory.API.Common.InventoryBase.baseWeight">
+  baseWeight
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Is this inventory generally better suited to hold items? (e.g. set to 3 for armor in armor inventory, 2 for any item in hotbar inventory, 1 for any item in normal inventory)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected float baseWeight</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_className" data-uid="Vintagestory.API.Common.InventoryBase.className">
+  className
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The name of the class for the invnentory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected string className</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_dirtySlots" data-uid="Vintagestory.API.Common.InventoryBase.dirtySlots">
+  dirtySlots
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Slots that have been recently modified. This list is used on the server to update the clients (then cleared) and on the client to redraw itemstacks in guis (then cleared)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HashSet&lt;int&gt; dirtySlots</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1">HashSet</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_instanceID" data-uid="Vintagestory.API.Common.InventoryBase.instanceID">
+  instanceID
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>the ID of the instance for the inventory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected string instanceID</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_lastChangedSinceServerStart" data-uid="Vintagestory.API.Common.InventoryBase.lastChangedSinceServerStart">
+  lastChangedSinceServerStart
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>(Not implemented!) The time it was last changed since the server was started.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long lastChangedSinceServerStart</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_openedByPlayerGUIds" data-uid="Vintagestory.API.Common.InventoryBase.openedByPlayerGUIds">
+  openedByPlayerGUIds
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The players that had opened the inventory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HashSet&lt;string&gt; openedByPlayerGUIds</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1">HashSet</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_AuditLogAccess_" data-uid="Vintagestory.API.Common.InventoryBase.AuditLogAccess*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_AuditLogAccess" data-uid="Vintagestory.API.Common.InventoryBase.AuditLogAccess">
+  AuditLogAccess
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If opening or closing should produce a log line in the audit log.
+Since when items are moved the source and destination is logged already</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool AuditLogAccess { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_ClassName_" data-uid="Vintagestory.API.Common.InventoryBase.ClassName*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_ClassName" data-uid="Vintagestory.API.Common.InventoryBase.ClassName">
+  ClassName
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The class name of the inventory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ClassName { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_Count_" data-uid="Vintagestory.API.Common.InventoryBase.Count*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_Count" data-uid="Vintagestory.API.Common.InventoryBase.Count">
+  Count
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the number of slots in this inventory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract int Count { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_CountForNetworkPacket_" data-uid="Vintagestory.API.Common.InventoryBase.CountForNetworkPacket*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_CountForNetworkPacket" data-uid="Vintagestory.API.Common.InventoryBase.CountForNetworkPacket">
+  CountForNetworkPacket
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual int CountForNetworkPacket { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_DirtySlots_" data-uid="Vintagestory.API.Common.InventoryBase.DirtySlots*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_DirtySlots" data-uid="Vintagestory.API.Common.InventoryBase.DirtySlots">
+  DirtySlots
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The slots that have been modified server side and need to be resent to the client or need to be redrawn on the client</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public HashSet&lt;int&gt; DirtySlots { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1">HashSet</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_Empty_" data-uid="Vintagestory.API.Common.InventoryBase.Empty*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_Empty" data-uid="Vintagestory.API.Common.InventoryBase.Empty">
+  Empty
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Convenience method to check if this inventory contains anything</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool Empty { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_FirstNonEmptySlot_" data-uid="Vintagestory.API.Common.InventoryBase.FirstNonEmptySlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_FirstNonEmptySlot" data-uid="Vintagestory.API.Common.InventoryBase.FirstNonEmptySlot">
+  FirstNonEmptySlot
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the first slot that is not empty or null</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ItemSlot FirstNonEmptySlot { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_InventoryID_" data-uid="Vintagestory.API.Common.InventoryBase.InventoryID*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_InventoryID" data-uid="Vintagestory.API.Common.InventoryBase.InventoryID">
+  InventoryID
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The internal name of the inventory instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string InventoryID { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_IsDirty_" data-uid="Vintagestory.API.Common.InventoryBase.IsDirty*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_IsDirty" data-uid="Vintagestory.API.Common.InventoryBase.IsDirty">
+  IsDirty
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>True if this inventory has to be resent to the client or when the client has to redraw them</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool IsDirty { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_Item_" data-uid="Vintagestory.API.Common.InventoryBase.Item*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_Item_System_Int32_" data-uid="Vintagestory.API.Common.InventoryBase.Item(System.Int32)">
+  this[int]
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the slot at the given slot number.
+Returns null for invalid slot number (below 0 or above Count-1).
+The setter allows for replacing slots with custom ones, though caution is advised.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract ItemSlot this[int slotId] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slotId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_LastChanged_" data-uid="Vintagestory.API.Common.InventoryBase.LastChanged*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_LastChanged" data-uid="Vintagestory.API.Common.InventoryBase.LastChanged">
+  LastChanged
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Milliseconds since server startup when the inventory was last changed</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long LastChanged { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_MaxContentDimensions_" data-uid="Vintagestory.API.Common.InventoryBase.MaxContentDimensions*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_MaxContentDimensions" data-uid="Vintagestory.API.Common.InventoryBase.MaxContentDimensions">
+  MaxContentDimensions
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Optional field, if set, will check against the collectible dimensions and deny placecment if too large</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Size3f MaxContentDimensions { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Size3f.html">Size3f</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_PutLocked_" data-uid="Vintagestory.API.Common.InventoryBase.PutLocked*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_PutLocked" data-uid="Vintagestory.API.Common.InventoryBase.PutLocked">
+  PutLocked
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called by item slot, if true, player cannot put items into this inventory</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool PutLocked { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_RemoveOnClose_" data-uid="Vintagestory.API.Common.InventoryBase.RemoveOnClose*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_RemoveOnClose" data-uid="Vintagestory.API.Common.InventoryBase.RemoveOnClose">
+  RemoveOnClose
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If true, the inventory will be removed from the list of available inventories once closed (i.e. is not a personal inventory that the player carries with him)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool RemoveOnClose { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_TakeLocked_" data-uid="Vintagestory.API.Common.InventoryBase.TakeLocked*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_TakeLocked" data-uid="Vintagestory.API.Common.InventoryBase.TakeLocked">
+  TakeLocked
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called by item slot, if true, player cannot take items from this inventory</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool TakeLocked { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_ActivateSlot_" data-uid="Vintagestory.API.Common.InventoryBase.ActivateSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_ActivateSlot_System_Int32_Vintagestory_API_Common_ItemSlot_Vintagestory_API_Common_ItemStackMoveOperation__" data-uid="Vintagestory.API.Common.InventoryBase.ActivateSlot(System.Int32,Vintagestory.API.Common.ItemSlot,Vintagestory.API.Common.ItemStackMoveOperation@)">
+  ActivateSlot(int, ItemSlot, ref ItemStackMoveOperation)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Call when a player has clicked on this slot. The source slot is the mouse cursor slot. This handles the logic of either taking, putting or exchanging items.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual object ActivateSlot(int slotId, ItemSlot sourceSlot, ref ItemStackMoveOperation op)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slotId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>sourceSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>op</code> <a class="xref" href="Vintagestory.API.Common.ItemStackMoveOperation.html">ItemStackMoveOperation</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The appropriate packet needed to reflect the changes on the opposing side</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_AfterBlocksLoaded_" data-uid="Vintagestory.API.Common.InventoryBase.AfterBlocksLoaded*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_AfterBlocksLoaded_Vintagestory_API_Common_IWorldAccessor_" data-uid="Vintagestory.API.Common.InventoryBase.AfterBlocksLoaded(Vintagestory.API.Common.IWorldAccessor)">
+  AfterBlocksLoaded(IWorldAccessor)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The event fired after all the blocks have loaded.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void AfterBlocksLoaded(IWorldAccessor world)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <a class="xref" href="Vintagestory.API.Common.IWorldAccessor.html">IWorldAccessor</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_CanContain_" data-uid="Vintagestory.API.Common.InventoryBase.CanContain*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_CanContain_Vintagestory_API_Common_ItemSlot_Vintagestory_API_Common_ItemSlot_" data-uid="Vintagestory.API.Common.InventoryBase.CanContain(Vintagestory.API.Common.ItemSlot,Vintagestory.API.Common.ItemSlot)">
+  CanContain(ItemSlot, ItemSlot)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool CanContain(ItemSlot sinkSlot, ItemSlot sourceSlot)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sinkSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>sourceSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_CanPlayerAccess_" data-uid="Vintagestory.API.Common.InventoryBase.CanPlayerAccess*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_CanPlayerAccess_Vintagestory_API_Common_IPlayer_Vintagestory_API_Common_Entities_EntityPos_" data-uid="Vintagestory.API.Common.InventoryBase.CanPlayerAccess(Vintagestory.API.Common.IPlayer,Vintagestory.API.Common.Entities.EntityPos)">
+  CanPlayerAccess(IPlayer, EntityPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether or not the player can access the invnetory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool CanPlayerAccess(IPlayer player, EntityPos position)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd><p>The player attempting access.</p>
+</dd>
+    <dt><code>position</code> <a class="xref" href="Vintagestory.API.Common.Entities.EntityPos.html">EntityPos</a></dt>
+    <dd><p>The postion of the entity.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_CanPlayerModify_" data-uid="Vintagestory.API.Common.InventoryBase.CanPlayerModify*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_CanPlayerModify_Vintagestory_API_Common_IPlayer_Vintagestory_API_Common_Entities_EntityPos_" data-uid="Vintagestory.API.Common.InventoryBase.CanPlayerModify(Vintagestory.API.Common.IPlayer,Vintagestory.API.Common.Entities.EntityPos)">
+  CanPlayerModify(IPlayer, EntityPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether or not the player can modify the invnetory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool CanPlayerModify(IPlayer player, EntityPos position)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd><p>The player attempting access.</p>
+</dd>
+    <dt><code>position</code> <a class="xref" href="Vintagestory.API.Common.Entities.EntityPos.html">EntityPos</a></dt>
+    <dd><p>The postion of the entity.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_Clear_" data-uid="Vintagestory.API.Common.InventoryBase.Clear*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_Clear" data-uid="Vintagestory.API.Common.InventoryBase.Clear">
+  Clear()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Deletes the contents of all the slots</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Clear()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_Close_" data-uid="Vintagestory.API.Common.InventoryBase.Close*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_Close_Vintagestory_API_Common_IPlayer_" data-uid="Vintagestory.API.Common.InventoryBase.Close(Vintagestory.API.Common.IPlayer)">
+  Close(IPlayer)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes ability to interact with this inventory for this player. Returns a close inventory packet that can be sent to the server for synchronization.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual object Close(IPlayer player)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_DidModifyItemSlot_" data-uid="Vintagestory.API.Common.InventoryBase.DidModifyItemSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_DidModifyItemSlot_Vintagestory_API_Common_ItemSlot_Vintagestory_API_Common_ItemStack_" data-uid="Vintagestory.API.Common.InventoryBase.DidModifyItemSlot(Vintagestory.API.Common.ItemSlot,Vintagestory.API.Common.ItemStack)">
+  DidModifyItemSlot(ItemSlot, ItemStack)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when one of the containing slots has been modified</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void DidModifyItemSlot(ItemSlot slot, ItemStack extractedStack = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>extractedStack</code> <a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd><p>If non null the itemstack that was taken out</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_DiscardAll_" data-uid="Vintagestory.API.Common.InventoryBase.DiscardAll*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_DiscardAll" data-uid="Vintagestory.API.Common.InventoryBase.DiscardAll">
+  DiscardAll()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Discards everything in the item slots.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void DiscardAll()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_DropAll_" data-uid="Vintagestory.API.Common.InventoryBase.DropAll*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_DropAll_Vintagestory_API_MathTools_Vec3d_System_Int32_" data-uid="Vintagestory.API.Common.InventoryBase.DropAll(Vintagestory.API.MathTools.Vec3d,System.Int32)">
+  DropAll(Vec3d, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Drops the contents of all the slots into the world.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void DropAll(Vec3d pos, int maxStackSize = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd><p>Where to drop all this stuff.</p>
+</dd>
+    <dt><code>maxStackSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>If non-zero, will split up the stacks into stacks of give max stack size</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_DropSlotIfHot_" data-uid="Vintagestory.API.Common.InventoryBase.DropSlotIfHot*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_DropSlotIfHot_Vintagestory_API_Common_ItemSlot_Vintagestory_API_Common_IPlayer_" data-uid="Vintagestory.API.Common.InventoryBase.DropSlotIfHot(Vintagestory.API.Common.ItemSlot,Vintagestory.API.Common.IPlayer)">
+  DropSlotIfHot(ItemSlot, IPlayer)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void DropSlotIfHot(ItemSlot slot, IPlayer player = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_DropSlots_" data-uid="Vintagestory.API.Common.InventoryBase.DropSlots*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_DropSlots_Vintagestory_API_MathTools_Vec3d_System_Int32___" data-uid="Vintagestory.API.Common.InventoryBase.DropSlots(Vintagestory.API.MathTools.Vec3d,System.Int32[])">
+  DropSlots(Vec3d, params int[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Drops the contents of the specified slots in the world.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void DropSlots(Vec3d pos, params int[] slotsIds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd><p>The position of the inventory attached to the slots.</p>
+</dd>
+    <dt><code>slotsIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>[]</dt>
+    <dd><p>The slots to have their inventory drop.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_FromTreeAttributes_" data-uid="Vintagestory.API.Common.InventoryBase.FromTreeAttributes*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_FromTreeAttributes_Vintagestory_API_Datastructures_ITreeAttribute_" data-uid="Vintagestory.API.Common.InventoryBase.FromTreeAttributes(Vintagestory.API.Datastructures.ITreeAttribute)">
+  FromTreeAttributes(ITreeAttribute)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when the game is loaded or loaded from server</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract void FromTreeAttributes(ITreeAttribute tree)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tree</code> <a class="xref" href="Vintagestory.API.Datastructures.ITreeAttribute.html">ITreeAttribute</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_GenEmptySlots_" data-uid="Vintagestory.API.Common.InventoryBase.GenEmptySlots*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_GenEmptySlots_System_Int32_" data-uid="Vintagestory.API.Common.InventoryBase.GenEmptySlots(System.Int32)">
+  GenEmptySlots(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a specified number of empty slots.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ItemSlot[] GenEmptySlots(int quantity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>quantity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>the number of empty slots to get.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>[]</dt>
+    <dd><p>The pre-specified slots.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_GetAutoPullFromSlot_" data-uid="Vintagestory.API.Common.InventoryBase.GetAutoPullFromSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_GetAutoPullFromSlot_Vintagestory_API_MathTools_BlockFacing_" data-uid="Vintagestory.API.Common.InventoryBase.GetAutoPullFromSlot(Vintagestory.API.MathTools.BlockFacing)">
+  GetAutoPullFromSlot(BlockFacing)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Return the slot where a chute may pull items from. Return null if it is now allowed to pull any items from this inventory</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ItemSlot GetAutoPullFromSlot(BlockFacing atBlockFace)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>atBlockFace</code> <a class="xref" href="Vintagestory.API.MathTools.BlockFacing.html">BlockFacing</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_GetAutoPushIntoSlot_" data-uid="Vintagestory.API.Common.InventoryBase.GetAutoPushIntoSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_GetAutoPushIntoSlot_Vintagestory_API_MathTools_BlockFacing_Vintagestory_API_Common_ItemSlot_" data-uid="Vintagestory.API.Common.InventoryBase.GetAutoPushIntoSlot(Vintagestory.API.MathTools.BlockFacing,Vintagestory.API.Common.ItemSlot)">
+  GetAutoPushIntoSlot(BlockFacing, ItemSlot)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Return the slot where a chute may push items into. Return null if it shouldn't move items into this inventory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ItemSlot GetAutoPushIntoSlot(BlockFacing atBlockFace, ItemSlot fromSlot)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>atBlockFace</code> <a class="xref" href="Vintagestory.API.MathTools.BlockFacing.html">BlockFacing</a></dt>
+    <dd></dd>
+    <dt><code>fromSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_GetBestSuitedSlot_" data-uid="Vintagestory.API.Common.InventoryBase.GetBestSuitedSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_GetBestSuitedSlot_Vintagestory_API_Common_ItemSlot_System_Collections_Generic_List_Vintagestory_API_Common_ItemSlot__" data-uid="Vintagestory.API.Common.InventoryBase.GetBestSuitedSlot(Vintagestory.API.Common.ItemSlot,System.Collections.Generic.List{Vintagestory.API.Common.ItemSlot})">
+  GetBestSuitedSlot(ItemSlot, List&lt;ItemSlot&gt;)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use GetBestSuitedSlot(ItemSlot sourceSlot, ItemStackMoveOperation op, List&lt;ItemSlot&gt; skipSlots = null) instead&quot;)]
+public WeightedSlot GetBestSuitedSlot(ItemSlot sourceSlot, List&lt;ItemSlot&gt; skipSlots)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sourceSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>skipSlots</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.WeightedSlot.html">WeightedSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_GetBestSuitedSlot_" data-uid="Vintagestory.API.Common.InventoryBase.GetBestSuitedSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_GetBestSuitedSlot_Vintagestory_API_Common_ItemSlot_Vintagestory_API_Common_ItemStackMoveOperation_System_Collections_Generic_List_Vintagestory_API_Common_ItemSlot__" data-uid="Vintagestory.API.Common.InventoryBase.GetBestSuitedSlot(Vintagestory.API.Common.ItemSlot,Vintagestory.API.Common.ItemStackMoveOperation,System.Collections.Generic.List{Vintagestory.API.Common.ItemSlot})">
+  GetBestSuitedSlot(ItemSlot, ItemStackMoveOperation, List&lt;ItemSlot&gt;)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the best sorted slot for the given item.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual WeightedSlot GetBestSuitedSlot(ItemSlot sourceSlot, ItemStackMoveOperation op = null, List&lt;ItemSlot&gt; skipSlots = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sourceSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd><p>The source item slot.</p>
+</dd>
+    <dt><code>op</code> <a class="xref" href="Vintagestory.API.Common.ItemStackMoveOperation.html">ItemStackMoveOperation</a></dt>
+    <dd><p>Can be null. If provided allows the inventory to make a better guess at suitability</p>
+</dd>
+    <dt><code>skipSlots</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>&gt;</dt>
+    <dd><p>The slots to skip.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.WeightedSlot.html">WeightedSlot</a></dt>
+    <dd><p>A weighted slot set.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_GetDefaultTransitionSpeedMul_" data-uid="Vintagestory.API.Common.InventoryBase.GetDefaultTransitionSpeedMul*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_GetDefaultTransitionSpeedMul_Vintagestory_API_Common_EnumTransitionType_" data-uid="Vintagestory.API.Common.InventoryBase.GetDefaultTransitionSpeedMul(Vintagestory.API.Common.EnumTransitionType)">
+  GetDefaultTransitionSpeedMul(EnumTransitionType)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual float GetDefaultTransitionSpeedMul(EnumTransitionType transitionType)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>transitionType</code> <a class="xref" href="Vintagestory.API.Common.EnumTransitionType.html">EnumTransitionType</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_GetEnumerator_" data-uid="Vintagestory.API.Common.InventoryBase.GetEnumerator*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_GetEnumerator" data-uid="Vintagestory.API.Common.InventoryBase.GetEnumerator">
+  GetEnumerator()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the enumerator for the inventory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerator&lt;ItemSlot&gt; GetEnumerator()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerator-1">IEnumerator</a>&lt;<a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_GetSlotId_" data-uid="Vintagestory.API.Common.InventoryBase.GetSlotId*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_GetSlotId_Vintagestory_API_Common_ItemSlot_" data-uid="Vintagestory.API.Common.InventoryBase.GetSlotId(Vintagestory.API.Common.ItemSlot)">
+  GetSlotId(ItemSlot)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Will return -1 if the slot is not found in this inventory</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual int GetSlotId(ItemSlot slot)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_GetSlotsIfExists_" data-uid="Vintagestory.API.Common.InventoryBase.GetSlotsIfExists*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_GetSlotsIfExists_Vintagestory_API_Common_IPlayer_System_String___System_Int32___" data-uid="Vintagestory.API.Common.InventoryBase.GetSlotsIfExists(Vintagestory.API.Common.IPlayer,System.String[],System.Int32[])">
+  GetSlotsIfExists(IPlayer, string[], int[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Attempts to get specified slots if the slots exists.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ItemSlot[] GetSlotsIfExists(IPlayer player, string[] invIds, int[] slotIds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd><p>The player owning the slots</p>
+</dd>
+    <dt><code>invIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>The inventory IDs</p>
+</dd>
+    <dt><code>slotIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>[]</dt>
+    <dd><p>The slot ids</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>[]</dt>
+    <dd><p>The slots obtained.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_GetSuitability_" data-uid="Vintagestory.API.Common.InventoryBase.GetSuitability*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_GetSuitability_Vintagestory_API_Common_ItemSlot_Vintagestory_API_Common_ItemSlot_System_Boolean_" data-uid="Vintagestory.API.Common.InventoryBase.GetSuitability(Vintagestory.API.Common.ItemSlot,Vintagestory.API.Common.ItemSlot,System.Boolean)">
+  GetSuitability(ItemSlot, ItemSlot, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>How well a stack fits into this inventory. By default 1 for new itemstacks and 3 for an itemstack merge. Chests and other stationary container also add a +1 to the suitability if the source slot is from the players inventory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual float GetSuitability(ItemSlot sourceSlot, ItemSlot targetSlot, bool isMerge)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sourceSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>targetSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>isMerge</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_GetTransitionSpeedMul_" data-uid="Vintagestory.API.Common.InventoryBase.GetTransitionSpeedMul*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_GetTransitionSpeedMul_Vintagestory_API_Common_EnumTransitionType_Vintagestory_API_Common_ItemStack_" data-uid="Vintagestory.API.Common.InventoryBase.GetTransitionSpeedMul(Vintagestory.API.Common.EnumTransitionType,Vintagestory.API.Common.ItemStack)">
+  GetTransitionSpeedMul(EnumTransitionType, ItemStack)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Does this inventory speed up or slow down a transition for given itemstack? (Default: 1 for perish and 0 otherwise)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>transType</code> <a class="xref" href="Vintagestory.API.Common.EnumTransitionType.html">EnumTransitionType</a></dt>
+    <dd></dd>
+    <dt><code>stack</code> <a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_HasOpened_" data-uid="Vintagestory.API.Common.InventoryBase.HasOpened*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_HasOpened_Vintagestory_API_Common_IPlayer_" data-uid="Vintagestory.API.Common.InventoryBase.HasOpened(Vintagestory.API.Common.IPlayer)">
+  HasOpened(IPlayer)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if given player has this inventory currently opened</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool HasOpened(IPlayer player)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_InvokeTransitionSpeedDelegates_" data-uid="Vintagestory.API.Common.InventoryBase.InvokeTransitionSpeedDelegates*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_InvokeTransitionSpeedDelegates_Vintagestory_API_Common_EnumTransitionType_Vintagestory_API_Common_ItemStack_System_Single_" data-uid="Vintagestory.API.Common.InventoryBase.InvokeTransitionSpeedDelegates(Vintagestory.API.Common.EnumTransitionType,Vintagestory.API.Common.ItemStack,System.Single)">
+  InvokeTransitionSpeedDelegates(EnumTransitionType, ItemStack, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float InvokeTransitionSpeedDelegates(EnumTransitionType transType, ItemStack stack, float mul)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>transType</code> <a class="xref" href="Vintagestory.API.Common.EnumTransitionType.html">EnumTransitionType</a></dt>
+    <dd></dd>
+    <dt><code>stack</code> <a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd></dd>
+    <dt><code>mul</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_LateInitialize_" data-uid="Vintagestory.API.Common.InventoryBase.LateInitialize*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_LateInitialize_System_String_Vintagestory_API_Common_ICoreAPI_" data-uid="Vintagestory.API.Common.InventoryBase.LateInitialize(System.String,Vintagestory.API.Common.ICoreAPI)">
+  LateInitialize(string, ICoreAPI)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>You can initialize an InventoryBase with null as parameters and use LateInitialize to set these values later. This is sometimes required during chunk loading.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void LateInitialize(string inventoryID, ICoreAPI api)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>inventoryID</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Common.ICoreAPI.html">ICoreAPI</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_MarkSlotDirty_" data-uid="Vintagestory.API.Common.InventoryBase.MarkSlotDirty*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_MarkSlotDirty_System_Int32_" data-uid="Vintagestory.API.Common.InventoryBase.MarkSlotDirty(System.Int32)">
+  MarkSlotDirty(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Server Side: Will resent the slot contents to the client and mark them dirty there as well
+Client Side: Will refresh stack size, model and stuff if this stack is currently being rendered</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void MarkSlotDirty(int slotId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slotId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_NewSlot_" data-uid="Vintagestory.API.Common.InventoryBase.NewSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_NewSlot_System_Int32_" data-uid="Vintagestory.API.Common.InventoryBase.NewSlot(System.Int32)">
+  NewSlot(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>A command to build a new empty slot.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual ItemSlot NewSlot(int i)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>i</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>the index of the slot.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd><p>An empty slot bound to this inventory.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_OnItemSlotModified_" data-uid="Vintagestory.API.Common.InventoryBase.OnItemSlotModified*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_OnItemSlotModified_Vintagestory_API_Common_ItemSlot_" data-uid="Vintagestory.API.Common.InventoryBase.OnItemSlotModified(Vintagestory.API.Common.ItemSlot)">
+  OnItemSlotModified(ItemSlot)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when one of the containing slots has been modified</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnItemSlotModified(ItemSlot slot)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_OnOwningEntityDeath_" data-uid="Vintagestory.API.Common.InventoryBase.OnOwningEntityDeath*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_OnOwningEntityDeath_Vintagestory_API_MathTools_Vec3d_" data-uid="Vintagestory.API.Common.InventoryBase.OnOwningEntityDeath(Vintagestory.API.MathTools.Vec3d)">
+  OnOwningEntityDeath(Vec3d)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnOwningEntityDeath(Vec3d pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_OnSearchTerm_" data-uid="Vintagestory.API.Common.InventoryBase.OnSearchTerm*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_OnSearchTerm_System_String_" data-uid="Vintagestory.API.Common.InventoryBase.OnSearchTerm(System.String)">
+  OnSearchTerm(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The event fired when the search is applied to the item.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnSearchTerm(string text)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>text</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_Open_" data-uid="Vintagestory.API.Common.InventoryBase.Open*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_Open_Vintagestory_API_Common_IPlayer_" data-uid="Vintagestory.API.Common.InventoryBase.Open(Vintagestory.API.Common.IPlayer)">
+  Open(IPlayer)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Marks the inventory available for interaction for this player. Returns a open inventory packet that can be sent to the server for synchronization.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual object Open(IPlayer player)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_PerformNotifySlot_" data-uid="Vintagestory.API.Common.InventoryBase.PerformNotifySlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_PerformNotifySlot_System_Int32_" data-uid="Vintagestory.API.Common.InventoryBase.PerformNotifySlot(System.Int32)">
+  PerformNotifySlot(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when one of the containing slot was notified via NotifySlot</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void PerformNotifySlot(int slotId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slotId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_ResolveBlocksOrItems_" data-uid="Vintagestory.API.Common.InventoryBase.ResolveBlocksOrItems*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_ResolveBlocksOrItems" data-uid="Vintagestory.API.Common.InventoryBase.ResolveBlocksOrItems">
+  ResolveBlocksOrItems()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tells the invnetory to update blocks and items within the invnetory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void ResolveBlocksOrItems()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_SlotsFromTreeAttributes_" data-uid="Vintagestory.API.Common.InventoryBase.SlotsFromTreeAttributes*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_SlotsFromTreeAttributes_Vintagestory_API_Datastructures_ITreeAttribute_Vintagestory_API_Common_ItemSlot___System_Collections_Generic_List_Vintagestory_API_Common_ItemSlot__" data-uid="Vintagestory.API.Common.InventoryBase.SlotsFromTreeAttributes(Vintagestory.API.Datastructures.ITreeAttribute,Vintagestory.API.Common.ItemSlot[],System.Collections.Generic.List{Vintagestory.API.Common.ItemSlot})">
+  SlotsFromTreeAttributes(ITreeAttribute, ItemSlot[], List&lt;ItemSlot&gt;)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a collection of slots from a tree.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual ItemSlot[] SlotsFromTreeAttributes(ITreeAttribute tree, ItemSlot[] slots = null, List&lt;ItemSlot&gt; modifiedSlots = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tree</code> <a class="xref" href="Vintagestory.API.Datastructures.ITreeAttribute.html">ITreeAttribute</a></dt>
+    <dd><p>The tree to build slots from</p>
+</dd>
+    <dt><code>slots</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>[]</dt>
+    <dd><p>pre-existing slots. (default: null)</p>
+</dd>
+    <dt><code>modifiedSlots</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>&gt;</dt>
+    <dd><p>Pre-modified slots. (default: null)</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_SlotsToTreeAttributes_" data-uid="Vintagestory.API.Common.InventoryBase.SlotsToTreeAttributes*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_SlotsToTreeAttributes_Vintagestory_API_Common_ItemSlot___Vintagestory_API_Datastructures_ITreeAttribute_" data-uid="Vintagestory.API.Common.InventoryBase.SlotsToTreeAttributes(Vintagestory.API.Common.ItemSlot[],Vintagestory.API.Datastructures.ITreeAttribute)">
+  SlotsToTreeAttributes(ItemSlot[], ITreeAttribute)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the tree attribute using the slots.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SlotsToTreeAttributes(ItemSlot[] slots, ITreeAttribute tree)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slots</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>[]</dt>
+    <dd></dd>
+    <dt><code>tree</code> <a class="xref" href="Vintagestory.API.Datastructures.ITreeAttribute.html">ITreeAttribute</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_ToTreeAttributes_" data-uid="Vintagestory.API.Common.InventoryBase.ToTreeAttributes*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_ToTreeAttributes_Vintagestory_API_Datastructures_ITreeAttribute_" data-uid="Vintagestory.API.Common.InventoryBase.ToTreeAttributes(Vintagestory.API.Datastructures.ITreeAttribute)">
+  ToTreeAttributes(ITreeAttribute)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called when the game is saved or sent to client</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract void ToTreeAttributes(ITreeAttribute tree)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tree</code> <a class="xref" href="Vintagestory.API.Datastructures.ITreeAttribute.html">ITreeAttribute</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_TryFlipItemStack_" data-uid="Vintagestory.API.Common.InventoryBase.TryFlipItemStack*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_TryFlipItemStack_Vintagestory_API_Common_IPlayer_System_String___System_Int32___System_Int64___" data-uid="Vintagestory.API.Common.InventoryBase.TryFlipItemStack(Vintagestory.API.Common.IPlayer,System.String[],System.Int32[],System.Int64[])">
+  TryFlipItemStack(IPlayer, string[], int[], long[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Attempts to flip the inventory slots.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool TryFlipItemStack(IPlayer owningPlayer, string[] invIds, int[] slotIds, long[] lastChanged)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>owningPlayer</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd><p>The player owner of the invnetory slots.</p>
+</dd>
+    <dt><code>invIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>The IDs of the player inventory.</p>
+</dd>
+    <dt><code>slotIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>[]</dt>
+    <dd><p>The IDs of the target inventory.</p>
+</dd>
+    <dt><code>lastChanged</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>[]</dt>
+    <dd><p>The times these ids were last changed.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_TryFlipItems_" data-uid="Vintagestory.API.Common.InventoryBase.TryFlipItems*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_TryFlipItems_System_Int32_Vintagestory_API_Common_ItemSlot_" data-uid="Vintagestory.API.Common.InventoryBase.TryFlipItems(System.Int32,Vintagestory.API.Common.ItemSlot)">
+  TryFlipItems(int, ItemSlot)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Attempts to flip the contents of both slots</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object TryFlipItems(int targetSlotId, ItemSlot itemSlot)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>targetSlotId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>itemSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_InventoryBase_TryMoveItemStack_" data-uid="Vintagestory.API.Common.InventoryBase.TryMoveItemStack*"></a>
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_TryMoveItemStack_Vintagestory_API_Common_IPlayer_System_String___System_Int32___Vintagestory_API_Common_ItemStackMoveOperation__" data-uid="Vintagestory.API.Common.InventoryBase.TryMoveItemStack(Vintagestory.API.Common.IPlayer,System.String[],System.Int32[],Vintagestory.API.Common.ItemStackMoveOperation@)">
+  TryMoveItemStack(IPlayer, string[], int[], ref ItemStackMoveOperation)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Attempts to move the item stack from the inventory to another slot.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool TryMoveItemStack(IPlayer player, string[] invIds, int[] slotIds, ref ItemStackMoveOperation op)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd><p>The player moving the items</p>
+</dd>
+    <dt><code>invIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>The player inventory IDs</p>
+</dd>
+    <dt><code>slotIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>[]</dt>
+    <dd><p>The target Ids</p>
+</dd>
+    <dt><code>op</code> <a class="xref" href="Vintagestory.API.Common.ItemStackMoveOperation.html">ItemStackMoveOperation</a></dt>
+    <dd><p>The operation type.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_OnAcquireTransitionSpeed" data-uid="Vintagestory.API.Common.InventoryBase.OnAcquireTransitionSpeed">
+  OnAcquireTransitionSpeed
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If set, the value is returned when GetTransitionSpeedMul() is called instead of the default value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event CustomGetTransitionSpeedMulDelegate OnAcquireTransitionSpeed</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.CustomGetTransitionSpeedMulDelegate.html">CustomGetTransitionSpeedMulDelegate</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_OnInventoryClosed" data-uid="Vintagestory.API.Common.InventoryBase.OnInventoryClosed">
+  OnInventoryClosed
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called whenever this inventory was closed</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event OnInventoryClosedDelegate OnInventoryClosed</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.OnInventoryClosedDelegate.html">OnInventoryClosedDelegate</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_OnInventoryOpened" data-uid="Vintagestory.API.Common.InventoryBase.OnInventoryOpened">
+  OnInventoryOpened
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called whenever this inventory was opened</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event OnInventoryOpenedDelegate OnInventoryOpened</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.OnInventoryOpenedDelegate.html">OnInventoryOpenedDelegate</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_SlotModified" data-uid="Vintagestory.API.Common.InventoryBase.SlotModified">
+  SlotModified
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called whenever a slot has been modified</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Action&lt;int&gt; SlotModified</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Common_InventoryBase_SlotNotified" data-uid="Vintagestory.API.Common.InventoryBase.SlotNotified">
+  SlotNotified
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called whenever a slot notification event has been fired. Is used by the slot grid gui element to visually wiggle the slot contents</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Action&lt;int&gt; SlotNotified</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

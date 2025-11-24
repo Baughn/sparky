@@ -1,0 +1,646 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IPermissionManager | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IPermissionManager | VintageStory API ">
+      
+      
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.Server.IPermissionManager">
+
+
+
+  <h1 id="Vintagestory_API_Server_IPermissionManager" data-uid="Vintagestory.API.Server.IPermissionManager" class="text-break">
+Interface IPermissionManager  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.Server.html">Server</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IPermissionManager</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_AddPrivilegeToGroup_" data-uid="Vintagestory.API.Server.IPermissionManager.AddPrivilegeToGroup*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_AddPrivilegeToGroup_System_String_System_String_" data-uid="Vintagestory.API.Server.IPermissionManager.AddPrivilegeToGroup(System.String,System.String)">
+  AddPrivilegeToGroup(string, string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Add given privilege to given group, granting everyone in this group access to this privilege. This setting is only active for the current server session and lost during a server restart/shutdown.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool AddPrivilegeToGroup(string groupCode, string privilegeCode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>groupCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>privilegeCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_DenyPrivilege_" data-uid="Vintagestory.API.Server.IPermissionManager.DenyPrivilege*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_DenyPrivilege_System_String_System_String_" data-uid="Vintagestory.API.Server.IPermissionManager.DenyPrivilege(System.String,System.String)">
+  DenyPrivilege(string, string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Actively denies a privilege from a player, overrides privileges granted by a role. Does not however override non permanent privileges</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool DenyPrivilege(string playerUID, string code)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>playerUID</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>False if player was not found</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_DropTemporaryPrivilege_" data-uid="Vintagestory.API.Server.IPermissionManager.DropTemporaryPrivilege*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_DropTemporaryPrivilege_System_String_" data-uid="Vintagestory.API.Server.IPermissionManager.DropTemporaryPrivilege(System.String)">
+  DropTemporaryPrivilege(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Revokes a privilege that has been previously granted to all players. Does not revoke privileges granted from a group. Does nothing if this privilege hasn't been previously granted.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DropTemporaryPrivilege(string code)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_GetPlayerPermissionLevel_" data-uid="Vintagestory.API.Server.IPermissionManager.GetPlayerPermissionLevel*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_GetPlayerPermissionLevel_System_Int32_" data-uid="Vintagestory.API.Server.IPermissionManager.GetPlayerPermissionLevel(System.Int32)">
+  GetPlayerPermissionLevel(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the players permission level</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int GetPlayerPermissionLevel(int player)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_GetRole_" data-uid="Vintagestory.API.Server.IPermissionManager.GetRole*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_GetRole_System_String_" data-uid="Vintagestory.API.Server.IPermissionManager.GetRole(System.String)">
+  GetRole(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Retrieve a role by its role code</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IPlayerRole GetRole(string code)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IPlayerRole.html">IPlayerRole</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_GrantPrivilege_" data-uid="Vintagestory.API.Server.IPermissionManager.GrantPrivilege*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_GrantPrivilege_System_String_System_String_System_Boolean_" data-uid="Vintagestory.API.Server.IPermissionManager.GrantPrivilege(System.String,System.String,System.Boolean)">
+  GrantPrivilege(string, string, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Grant a privilege to an individual connected player.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool GrantPrivilege(string playerUID, string code, bool permanent = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>playerUID</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>permanent</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Wether to store this privilege permanently. Otherwise only valid for the active server session.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>False if player was not found</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_GrantTemporaryPrivilege_" data-uid="Vintagestory.API.Server.IPermissionManager.GrantTemporaryPrivilege*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_GrantTemporaryPrivilege_System_String_" data-uid="Vintagestory.API.Server.IPermissionManager.GrantTemporaryPrivilege(System.String)">
+  GrantTemporaryPrivilege(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Grants privilege to all players connected or yet to connect. This setting is only active for the current server session and lost during a server restart/shutdown.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void GrantTemporaryPrivilege(string code)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_RegisterPrivilege_" data-uid="Vintagestory.API.Server.IPermissionManager.RegisterPrivilege*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_RegisterPrivilege_System_String_System_String_System_Boolean_" data-uid="Vintagestory.API.Server.IPermissionManager.RegisterPrivilege(System.String,System.String,System.Boolean)">
+  RegisterPrivilege(string, string, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Registers a user privilege with the server. Is only active for the current server session and lost during a server restart/shutdown, so register it during server startup.
+New privileges are auto-granted to admins and the server console.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void RegisterPrivilege(string code, string shortdescription, bool adminAutoGrant = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Privilege to register</p>
+</dd>
+    <dt><code>shortdescription</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Short description</p>
+</dd>
+    <dt><code>adminAutoGrant</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>By default, super users are automatically granted all privileges. Set this value to false to change that</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_RemovePrivilegeDenial_" data-uid="Vintagestory.API.Server.IPermissionManager.RemovePrivilegeDenial*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_RemovePrivilegeDenial_System_String_System_String_" data-uid="Vintagestory.API.Server.IPermissionManager.RemovePrivilegeDenial(System.String,System.String)">
+  RemovePrivilegeDenial(string, string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Removes a previously set privilege denial, if any was set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool RemovePrivilegeDenial(string playerUID, string code)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>playerUID</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_RemovePrivilegeFromGroup_" data-uid="Vintagestory.API.Server.IPermissionManager.RemovePrivilegeFromGroup*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_RemovePrivilegeFromGroup_System_String_System_String_" data-uid="Vintagestory.API.Server.IPermissionManager.RemovePrivilegeFromGroup(System.String,System.String)">
+  RemovePrivilegeFromGroup(string, string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Revokes given privilege to given group, revoking everyones access to this privilege inside this group</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool RemovePrivilegeFromGroup(string groupCode, string privilegeCode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>groupCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>privilegeCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_RevokePrivilege_" data-uid="Vintagestory.API.Server.IPermissionManager.RevokePrivilege*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_RevokePrivilege_System_String_System_String_System_Boolean_" data-uid="Vintagestory.API.Server.IPermissionManager.RevokePrivilege(System.String,System.String,System.Boolean)">
+  RevokePrivilege(string, string, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Revokes a privilege that has been previously granted to this player. Does not revoke privileges granted from a group. Does nothing if the player does not have given privilege.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool RevokePrivilege(string playerUID, string code, bool permanent = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>playerUID</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>code</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>permanent</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>If true it removes a previously granted permanent privilege. If false it removes a previously granted temporary privilege.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>False if player was not found</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_SetRole_" data-uid="Vintagestory.API.Server.IPermissionManager.SetRole*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_SetRole_Vintagestory_API_Server_IServerPlayer_System_String_" data-uid="Vintagestory.API.Server.IPermissionManager.SetRole(Vintagestory.API.Server.IServerPlayer,System.String)">
+  SetRole(IServerPlayer, string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set given role for given player. Role must exist in the serverconfig.json. For a list of roles, read sapi.Config.Roles</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetRole(IServerPlayer player, string roleCode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Server.IServerPlayer.html">IServerPlayer</a></dt>
+    <dd></dd>
+    <dt><code>roleCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IPermissionManager_SetRole_" data-uid="Vintagestory.API.Server.IPermissionManager.SetRole*"></a>
+
+  <h3 id="Vintagestory_API_Server_IPermissionManager_SetRole_Vintagestory_API_Server_IServerPlayer_Vintagestory_API_Common_IPlayerRole_" data-uid="Vintagestory.API.Server.IPermissionManager.SetRole(Vintagestory.API.Server.IServerPlayer,Vintagestory.API.Common.IPlayerRole)">
+  SetRole(IServerPlayer, IPlayerRole)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set given role for given player. Role must exist in the serverconfig.json. For a list of roles, read sapi.Config.Roles</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetRole(IServerPlayer player, IPlayerRole role)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Server.IServerPlayer.html">IServerPlayer</a></dt>
+    <dd></dd>
+    <dt><code>role</code> <a class="xref" href="Vintagestory.API.Common.IPlayerRole.html">IPlayerRole</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

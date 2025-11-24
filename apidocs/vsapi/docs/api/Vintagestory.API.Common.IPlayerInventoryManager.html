@@ -1,0 +1,1363 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IPlayerInventoryManager | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IPlayerInventoryManager | VintageStory API ">
+      
+      <meta name="description" content="Let&#39;s you do various interesting things with the players inventory.">
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.Common.IPlayerInventoryManager">
+
+
+
+  <h1 id="Vintagestory_API_Common_IPlayerInventoryManager" data-uid="Vintagestory.API.Common.IPlayerInventoryManager" class="text-break">
+Interface IPlayerInventoryManager  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.Common.html">Common</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Let's you do various interesting things with the players inventory.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IPlayerInventoryManager</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_ActiveHotbarSlot_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.ActiveHotbarSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_ActiveHotbarSlot" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.ActiveHotbarSlot">
+  ActiveHotbarSlot
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the currently selected hotbar slot. Might return null if there is no hotbar!</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ItemSlot ActiveHotbarSlot { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_ActiveHotbarSlotNumber_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.ActiveHotbarSlotNumber*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_ActiveHotbarSlotNumber" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.ActiveHotbarSlotNumber">
+  ActiveHotbarSlotNumber
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The players currently active hot bar slot</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int ActiveHotbarSlotNumber { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_ActiveTool_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.ActiveTool*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_ActiveTool" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.ActiveTool">
+  ActiveTool
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If the player currently holds a tool in the active hand, this value will be set</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">EnumTool? ActiveTool { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.EnumTool.html">EnumTool</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_CurrentHoveredSlot_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.CurrentHoveredSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_CurrentHoveredSlot" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.CurrentHoveredSlot">
+  CurrentHoveredSlot
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The slot the player currently hovers over with his mouse cursor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ItemSlot CurrentHoveredSlot { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_Inventories_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.Inventories*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_Inventories" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.Inventories">
+  Inventories
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Dictionary of all inventories currently available to the player (some may however not be opened)
+<br>Note: for iterating through these, Inventories.Values will not be ordered.  Instead use InventoriesOrdered if you want consistent ordering on server and client e.g. for shift-click operations</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Dictionary&lt;string, IInventory&gt; Inventories { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="Vintagestory.API.Common.IInventory.html">IInventory</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_InventoriesOrdered_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.InventoriesOrdered*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_InventoriesOrdered" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.InventoriesOrdered">
+  InventoriesOrdered
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>An iterable collection of all inventories currently available to the player, arranged in the same order (by creation order) on both server and client to prevent syncing / ghosting issues</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IEnumerable&lt;InventoryBase&gt; InventoriesOrdered { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Vintagestory.API.Common.InventoryBase.html">InventoryBase</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_MouseItemSlot_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.MouseItemSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_MouseItemSlot" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.MouseItemSlot">
+  MouseItemSlot
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the slot that holds the currently dragged itemstack</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ItemSlot MouseItemSlot { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_OffhandHotbarSlot_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.OffhandHotbarSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_OffhandHotbarSlot" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.OffhandHotbarSlot">
+  OffhandHotbarSlot
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the off hand hotbar slot. Might return null if there is no hotbar!</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ItemSlot OffhandHotbarSlot { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_OffhandTool_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.OffhandTool*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_OffhandTool" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.OffhandTool">
+  OffhandTool
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If the player currently holds a tool in the off hand, this value will be set</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">EnumTool? OffhandTool { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.EnumTool.html">EnumTool</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_OpenedInventories_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.OpenedInventories*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_OpenedInventories" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.OpenedInventories">
+  OpenedInventories
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>List of inventories currently opened by the player</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">List&lt;IInventory&gt; OpenedInventories { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Vintagestory.API.Common.IInventory.html">IInventory</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_BroadcastHotbarSlot_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.BroadcastHotbarSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_BroadcastHotbarSlot" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.BroadcastHotbarSlot">
+  BroadcastHotbarSlot()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Server Side: Resends the hotbar slot contents to all other clients to make sure they render the correct held item
+Client side: No effect</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void BroadcastHotbarSlot()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_CloseInventory_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.CloseInventory*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_CloseInventory_Vintagestory_API_Common_IInventory_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.CloseInventory(Vintagestory.API.Common.IInventory)">
+  CloseInventory(IInventory)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Notifies the inventory manager that the player has closed an inventory. Should always be called on both sides (client and server). After closing interaction with given inventory becomes no longer possible until reopened</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">object CloseInventory(IInventory inventory)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>inventory</code> <a class="xref" href="Vintagestory.API.Common.IInventory.html">IInventory</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_CloseInventoryAndSync_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.CloseInventoryAndSync*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_CloseInventoryAndSync_Vintagestory_API_Common_IInventory_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.CloseInventoryAndSync(Vintagestory.API.Common.IInventory)">
+  CloseInventoryAndSync(IInventory)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Like CloseInventory() but also sends the necessary packet to the server, if called from the client side: exactly like CloseInventory() if called from the server side</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void CloseInventoryAndSync(IInventory inventory)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>inventory</code> <a class="xref" href="Vintagestory.API.Common.IInventory.html">IInventory</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_DiscardAll_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.DiscardAll*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_DiscardAll" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.DiscardAll">
+  DiscardAll()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Will discard all of the players inventory contents</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DiscardAll()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_DropAllInventoryItems_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.DropAllInventoryItems*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_DropAllInventoryItems_Vintagestory_API_Common_IInventory_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.DropAllInventoryItems(Vintagestory.API.Common.IInventory)">
+  DropAllInventoryItems(IInventory)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Drops the contents of given inventory</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DropAllInventoryItems(IInventory inv)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>inv</code> <a class="xref" href="Vintagestory.API.Common.IInventory.html">IInventory</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_DropItem_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.DropItem*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_DropItem_Vintagestory_API_Common_ItemSlot_System_Boolean_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.DropItem(Vintagestory.API.Common.ItemSlot,System.Boolean)">
+  DropItem(ItemSlot, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Drops the current contents of given slot onto the ground</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool DropItem(ItemSlot slot, bool fullStack)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>fullStack</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_DropMouseSlotItems_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.DropMouseSlotItems*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_DropMouseSlotItems_System_Boolean_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.DropMouseSlotItems(System.Boolean)">
+  DropMouseSlotItems(bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Drops the current contents of the mouse slot onto the ground</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool DropMouseSlotItems(bool dropAll)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dropAll</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>If false, will only drop 1</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_Find_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.Find*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_Find_System_Func_Vintagestory_API_Common_ItemSlot_System_Boolean__" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.Find(System.Func{Vintagestory.API.Common.ItemSlot,System.Boolean})">
+  Find(Func&lt;ItemSlot, bool&gt;)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Iterates over all inventory slots, returns true if your matcher returns true</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool Find(Func&lt;ItemSlot, bool&gt; matcher)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>matcher</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_GetBestSuitedSlot_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetBestSuitedSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_GetBestSuitedSlot_Vintagestory_API_Common_ItemSlot_System_Boolean_Vintagestory_API_Common_ItemStackMoveOperation_System_Collections_Generic_List_Vintagestory_API_Common_ItemSlot__" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetBestSuitedSlot(Vintagestory.API.Common.ItemSlot,System.Boolean,Vintagestory.API.Common.ItemStackMoveOperation,System.Collections.Generic.List{Vintagestory.API.Common.ItemSlot})">
+  GetBestSuitedSlot(ItemSlot, bool, ItemStackMoveOperation, List&lt;ItemSlot&gt;)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a slot that would best fit the contents of the source slot. This checks all inventories currently opened by the player.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ItemSlot GetBestSuitedSlot(ItemSlot sourceSlot, bool onlyPlayerInventory, ItemStackMoveOperation op = null, List&lt;ItemSlot&gt; skipSlots = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sourceSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>onlyPlayerInventory</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>op</code> <a class="xref" href="Vintagestory.API.Common.ItemStackMoveOperation.html">ItemStackMoveOperation</a></dt>
+    <dd></dd>
+    <dt><code>skipSlots</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_GetBestSuitedSlot_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetBestSuitedSlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_GetBestSuitedSlot_Vintagestory_API_Common_ItemSlot_Vintagestory_API_Common_ItemStackMoveOperation_System_Collections_Generic_List_Vintagestory_API_Common_ItemSlot__" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetBestSuitedSlot(Vintagestory.API.Common.ItemSlot,Vintagestory.API.Common.ItemStackMoveOperation,System.Collections.Generic.List{Vintagestory.API.Common.ItemSlot})">
+  GetBestSuitedSlot(ItemSlot, ItemStackMoveOperation, List&lt;ItemSlot&gt;)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use GetBestSuitedSlot(ItemSlot sourceSlot, bool onlyPlayerInventory, ItemStackMoveOperation op, List&lt;ItemSlot&gt; skipSlots = null) instead&quot;)]
+ItemSlot GetBestSuitedSlot(ItemSlot sourceSlot, ItemStackMoveOperation op, List&lt;ItemSlot&gt; skipSlots)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sourceSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>op</code> <a class="xref" href="Vintagestory.API.Common.ItemStackMoveOperation.html">ItemStackMoveOperation</a></dt>
+    <dd></dd>
+    <dt><code>skipSlots</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_GetHotbarInventory_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetHotbarInventory*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_GetHotbarInventory" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetHotbarInventory">
+  GetHotbarInventory()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the hotbar inventory object. Obvious comment is being obvious.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IInventory GetHotbarInventory()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IInventory.html">IInventory</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_GetHotbarItemstack_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetHotbarItemstack*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_GetHotbarItemstack_System_Int32_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetHotbarItemstack(System.Int32)">
+  GetHotbarItemstack(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the itemstack that in the given slot number of the players hotbar</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ItemStack GetHotbarItemstack(int slotId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slotId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_GetInventory_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetInventory*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_GetInventory_System_String_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetInventory(System.String)">
+  GetInventory(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Retrieve a players inventory. Returns null if not found.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IInventory GetInventory(string inventoryId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>inventoryId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IInventory.html">IInventory</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_GetInventory_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetInventory*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_GetInventory_System_String_Vintagestory_API_Common_InventoryBase__" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetInventory(System.String,Vintagestory.API.Common.InventoryBase@)">
+  GetInventory(string, out InventoryBase)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns true if the invID is found, and the found IInventory value is in invFound; similar to Dictionary.TryGetValue, invFound is undefined if the result is false</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool GetInventory(string invID, out InventoryBase invFound)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>invID</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>invFound</code> <a class="xref" href="Vintagestory.API.Common.InventoryBase.html">InventoryBase</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_GetInventoryName_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetInventoryName*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_GetInventoryName_System_String_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetInventoryName(System.String)">
+  GetInventoryName(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the full inventory id for given inventory class name, e.g. GlobalConstants.creativeInvClassName</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string GetInventoryName(string inventoryClassName)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>inventoryClassName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_GetOwnInventory_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetOwnInventory*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_GetOwnInventory_System_String_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.GetOwnInventory(System.String)">
+  GetOwnInventory(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Same as GetInventory() with playeruid appended to the inventoryClassName. Returns null if not found. You can use GlobalConstants.*ClassName to get the vanilla player inventories.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IInventory GetOwnInventory(string inventoryClassName)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>inventoryClassName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IInventory.html">IInventory</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_HasInventory_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.HasInventory*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_HasInventory_Vintagestory_API_Common_IInventory_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.HasInventory(Vintagestory.API.Common.IInventory)">
+  HasInventory(IInventory)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Shorthand for Inventories.ContainsValue(inventory)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool HasInventory(IInventory inventory)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>inventory</code> <a class="xref" href="Vintagestory.API.Common.IInventory.html">IInventory</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_NotifySlot_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.NotifySlot*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_NotifySlot_Vintagestory_API_Common_IPlayer_Vintagestory_API_Common_ItemSlot_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.NotifySlot(Vintagestory.API.Common.IPlayer,Vintagestory.API.Common.ItemSlot)">
+  NotifySlot(IPlayer, ItemSlot)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Produces a visual cue on given slot, if it's currently part of an inventory and visible to the player
+If called on server side, the server will send a network packet to notify the client.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void NotifySlot(IPlayer player, ItemSlot slot)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="Vintagestory.API.Common.IPlayer.html">IPlayer</a></dt>
+    <dd></dd>
+    <dt><code>slot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_OnDeath_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.OnDeath*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_OnDeath" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.OnDeath">
+  OnDeath()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Will drop all of the players inventory contents</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void OnDeath()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_OpenInventory_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.OpenInventory*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_OpenInventory_Vintagestory_API_Common_IInventory_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.OpenInventory(Vintagestory.API.Common.IInventory)">
+  OpenInventory(IInventory)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Notifies the inventory manager that the player has opened an inventory. Should always be called on both sides (client and server).
+Only then interaction with other inventories becomes possible</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">object OpenInventory(IInventory inventory)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>inventory</code> <a class="xref" href="Vintagestory.API.Common.IInventory.html">IInventory</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_TryGiveItemstack_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.TryGiveItemstack*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_TryGiveItemstack_Vintagestory_API_Common_ItemStack_System_Boolean_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.TryGiveItemstack(Vintagestory.API.Common.ItemStack,System.Boolean)">
+  TryGiveItemstack(ItemStack, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tries to add given itemstack to the players inventory</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool TryGiveItemstack(ItemStack itemstack, bool slotNotifyEffect = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemstack</code> <a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd></dd>
+    <dt><code>slotNotifyEffect</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_TryTransferAway_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.TryTransferAway*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_TryTransferAway_Vintagestory_API_Common_ItemSlot_Vintagestory_API_Common_ItemStackMoveOperation__System_Boolean_System_Boolean_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.TryTransferAway(Vintagestory.API.Common.ItemSlot,Vintagestory.API.Common.ItemStackMoveOperation@,System.Boolean,System.Boolean)">
+  TryTransferAway(ItemSlot, ref ItemStackMoveOperation, bool, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tries to move away items from the source slot into any other slot of another inventory</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">object[] TryTransferAway(ItemSlot sourceSlot, ref ItemStackMoveOperation op, bool onlyPlayerInventory, bool slotNotifyEffect = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sourceSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>op</code> <a class="xref" href="Vintagestory.API.Common.ItemStackMoveOperation.html">ItemStackMoveOperation</a></dt>
+    <dd></dd>
+    <dt><code>onlyPlayerInventory</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Forces to place the item only into the players personal inventory</p>
+</dd>
+    <dt><code>slotNotifyEffect</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd><p>One or more client packets that may be sent to the server for synchronisation</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_TryTransferAway_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.TryTransferAway*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_TryTransferAway_Vintagestory_API_Common_ItemSlot_Vintagestory_API_Common_ItemStackMoveOperation__System_Boolean_System_Text_StringBuilder_System_Boolean_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.TryTransferAway(Vintagestory.API.Common.ItemSlot,Vintagestory.API.Common.ItemStackMoveOperation@,System.Boolean,System.Text.StringBuilder,System.Boolean)">
+  TryTransferAway(ItemSlot, ref ItemStackMoveOperation, bool, StringBuilder, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">object[] TryTransferAway(ItemSlot sourceSlot, ref ItemStackMoveOperation op, bool onlyPlayerInventory, StringBuilder shiftClickDebugText, bool slotNotifyEffect = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sourceSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>op</code> <a class="xref" href="Vintagestory.API.Common.ItemStackMoveOperation.html">ItemStackMoveOperation</a></dt>
+    <dd></dd>
+    <dt><code>onlyPlayerInventory</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>shiftClickDebugText</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.stringbuilder">StringBuilder</a></dt>
+    <dd></dd>
+    <dt><code>slotNotifyEffect</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayerInventoryManager_TryTransferTo_" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.TryTransferTo*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayerInventoryManager_TryTransferTo_Vintagestory_API_Common_ItemSlot_Vintagestory_API_Common_ItemSlot_Vintagestory_API_Common_ItemStackMoveOperation__" data-uid="Vintagestory.API.Common.IPlayerInventoryManager.TryTransferTo(Vintagestory.API.Common.ItemSlot,Vintagestory.API.Common.ItemSlot,Vintagestory.API.Common.ItemStackMoveOperation@)">
+  TryTransferTo(ItemSlot, ItemSlot, ref ItemStackMoveOperation)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tries to move items from source slot to target slot (useful for client side inventory utilities)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">object TryTransferTo(ItemSlot sourceSlot, ItemSlot targetSlot, ref ItemStackMoveOperation op)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sourceSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>targetSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>op</code> <a class="xref" href="Vintagestory.API.Common.ItemStackMoveOperation.html">ItemStackMoveOperation</a></dt>
+    <dd><p>If successfull, a client packet that may be sent to the server for synchronisation</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

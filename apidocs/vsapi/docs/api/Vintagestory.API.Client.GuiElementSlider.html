@@ -1,0 +1,1156 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class GuiElementSlider | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class GuiElementSlider | VintageStory API ">
+      
+      <meta name="description" content="Open in GitHub">
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.Client.GuiElementSlider">
+
+
+
+  <h1 id="Vintagestory_API_Client_GuiElementSlider" data-uid="Vintagestory.API.Client.GuiElementSlider" class="text-break">
+Class GuiElementSlider  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.Client.html">Client</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p><a href="https://github.com/anegostudios/vsapi/blob/master///Client/UI/Elements/Impl/Interactive/Controls/GuiElementSlider.cs">Open in GitHub</a></p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class GuiElementSlider : GuiElementControl, IDisposable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Vintagestory.API.Client.GuiElement.html">GuiElement</a></div>
+      <div><a class="xref" href="Vintagestory.API.Client.GuiElementControl.html">GuiElementControl</a></div>
+      <div><span class="xref">GuiElementSlider</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElementControl.html#Vintagestory_API_Client_GuiElementControl_enabled">GuiElementControl.enabled</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_dirtTextureName">GuiElement.dirtTextureName</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_noisyMetalTextureName">GuiElement.noisyMetalTextureName</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_woodTextureName">GuiElement.woodTextureName</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_stoneTextureName">GuiElement.stoneTextureName</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_waterTextureName">GuiElement.waterTextureName</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_paperTextureName">GuiElement.paperTextureName</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_Bounds">GuiElement.Bounds</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_TabIndex">GuiElement.TabIndex</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_hasFocus">GuiElement.hasFocus</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_InsideClipBounds">GuiElement.InsideClipBounds</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_api">GuiElement.api</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_RenderAsPremultipliedAlpha">GuiElement.RenderAsPremultipliedAlpha</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_HasFocus">GuiElement.HasFocus</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_DrawOrder">GuiElement.DrawOrder</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_Scale">GuiElement.Scale</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_OnFocusGained">GuiElement.OnFocusGained()</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_OnFocusLost">GuiElement.OnFocusLost()</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_PostRenderInteractiveElements_System_Single_">GuiElement.PostRenderInteractiveElements(float)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_RenderFocusOverlay_System_Single_">GuiElement.RenderFocusOverlay(float)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_generateTexture_Cairo_ImageSurface_System_Int32__System_Boolean_">GuiElement.generateTexture(ImageSurface, ref int, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_GenerateTexture_Vintagestory_API_Client_ICoreClientAPI_Cairo_ImageSurface_System_Int32__System_Boolean_">GuiElement.GenerateTexture(ICoreClientAPI, ImageSurface, ref int, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_generateTexture_Cairo_ImageSurface_Vintagestory_API_Client_LoadedTexture__System_Boolean_">GuiElement.generateTexture(ImageSurface, ref LoadedTexture, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_scaled_System_Double_">GuiElement.scaled(double)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_scaledi_System_Double_">GuiElement.scaledi(double)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_genContext_Cairo_ImageSurface_">GuiElement.genContext(ImageSurface)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_GenContext_Cairo_ImageSurface_">GuiElement.GenContext(ImageSurface)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_getPattern_SkiaSharp_SKBitmap_">GuiElement.getPattern(SKBitmap)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_getPattern_Vintagestory_API_Common_BitmapExternal_">GuiElement.getPattern(BitmapExternal)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_getImageSurfaceFromAsset_SkiaSharp_SKBitmap_">GuiElement.getImageSurfaceFromAsset(SKBitmap)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_getImageSurfaceFromAsset_Vintagestory_API_Common_BitmapExternal_">GuiElement.getImageSurfaceFromAsset(BitmapExternal)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_getImageSurfaceFromAsset_SkiaSharp_SKBitmap_System_Int32_System_Int32_">GuiElement.getImageSurfaceFromAsset(SKBitmap, int, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_getImageSurfaceFromAsset_Vintagestory_API_Common_BitmapExternal_System_Int32_System_Int32_">GuiElement.getImageSurfaceFromAsset(BitmapExternal, int, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_BeforeCalcBounds">GuiElement.BeforeCalcBounds()</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_getPattern_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Common_AssetLocation_System_Boolean_System_Int32_System_Single_">GuiElement.getPattern(ICoreClientAPI, AssetLocation, bool, int, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_getImageSurfaceFromAsset_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Common_AssetLocation_System_Int32_">GuiElement.getImageSurfaceFromAsset(ICoreClientAPI, AssetLocation, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_fillWithPattern_Vintagestory_API_Client_ICoreClientAPI_Cairo_Context_Vintagestory_API_Common_AssetLocation_System_Boolean_System_Boolean_System_Int32_System_Single_">GuiElement.fillWithPattern(ICoreClientAPI, Context, AssetLocation, bool, bool, int, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_DiscardPattern_Vintagestory_API_Common_AssetLocation_">GuiElement.DiscardPattern(AssetLocation)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_Lamp_Cairo_Context_System_Double_System_Double_System_Single___">GuiElement.Lamp(Context, double, double, float[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_Rectangle_Cairo_Context_Vintagestory_API_Client_ElementBounds_">GuiElement.Rectangle(Context, ElementBounds)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_Rectangle_Cairo_Context_System_Double_System_Double_System_Double_System_Double_">GuiElement.Rectangle(Context, double, double, double, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_DialogRoundRectangle_Cairo_Context_Vintagestory_API_Client_ElementBounds_">GuiElement.DialogRoundRectangle(Context, ElementBounds)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_ElementRoundRectangle_Cairo_Context_Vintagestory_API_Client_ElementBounds_System_Boolean_System_Double_">GuiElement.ElementRoundRectangle(Context, ElementBounds, bool, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_RoundRectangle_Cairo_Context_System_Double_System_Double_System_Double_System_Double_System_Double_">GuiElement.RoundRectangle(Context, double, double, double, double, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_ShadePath_Cairo_Context_System_Double_">GuiElement.ShadePath(Context, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_EmbossRoundRectangleDialog_Cairo_Context_System_Double_System_Double_System_Double_System_Double_System_Boolean_">GuiElement.EmbossRoundRectangleDialog(Context, double, double, double, double, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_EmbossRoundRectangleElement_Cairo_Context_System_Double_System_Double_System_Double_System_Double_System_Boolean_System_Int32_System_Int32_">GuiElement.EmbossRoundRectangleElement(Context, double, double, double, double, bool, int, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_EmbossRoundRectangleElement_Cairo_Context_Vintagestory_API_Client_ElementBounds_System_Boolean_System_Int32_System_Int32_">GuiElement.EmbossRoundRectangleElement(Context, ElementBounds, bool, int, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_EmbossRoundRectangle_Cairo_Context_System_Double_System_Double_System_Double_System_Double_System_Double_System_Int32_System_Single_System_Single_System_Boolean_System_Single_">GuiElement.EmbossRoundRectangle(Context, double, double, double, double, double, int, float, float, bool, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_RenderBoundsDebug">GuiElement.RenderBoundsDebug()</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_OnMouseDown_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Client_MouseEvent_">GuiElement.OnMouseDown(ICoreClientAPI, MouseEvent)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_OnMouseUpOnElement_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Client_MouseEvent_">GuiElement.OnMouseUpOnElement(ICoreClientAPI, MouseEvent)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_OnMouseEnterSlot_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Common_ItemSlot_">GuiElement.OnMouseEnterSlot(ICoreClientAPI, ItemSlot)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_OnMouseLeaveSlot_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Common_ItemSlot_">GuiElement.OnMouseLeaveSlot(ICoreClientAPI, ItemSlot)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_OnKeyUp_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Client_KeyEvent_">GuiElement.OnKeyUp(ICoreClientAPI, KeyEvent)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_OnKeyPress_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Client_KeyEvent_">GuiElement.OnKeyPress(ICoreClientAPI, KeyEvent)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_IsPositionInside_System_Int32_System_Int32_">GuiElement.IsPositionInside(int, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_MouseOverCursor">GuiElement.MouseOverCursor</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_OutlineColor">GuiElement.OutlineColor()</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_Render2DTexture_System_Int32_System_Single_System_Single_System_Single_System_Single_System_Single_Vintagestory_API_MathTools_Vec4f_">GuiElement.Render2DTexture(int, float, float, float, float, float, Vec4f)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_Render2DTexture_System_Int32_System_Double_System_Double_System_Double_System_Double_System_Single_Vintagestory_API_MathTools_Vec4f_">GuiElement.Render2DTexture(int, double, double, double, double, float, Vec4f)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Client.GuiElement.html#Vintagestory_API_Client_GuiElement_Render2DTexture_System_Int32_Vintagestory_API_Client_ElementBounds_System_Single_Vintagestory_API_MathTools_Vec4f_">GuiElement.Render2DTexture(int, ElementBounds, float, Vec4f)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider__ctor_" data-uid="Vintagestory.API.Client.GuiElementSlider.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider__ctor_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Common_ActionConsumable_System_Int32__Vintagestory_API_Client_ElementBounds_" data-uid="Vintagestory.API.Client.GuiElementSlider.#ctor(Vintagestory.API.Client.ICoreClientAPI,Vintagestory.API.Common.ActionConsumable{System.Int32},Vintagestory.API.Client.ElementBounds)">
+  GuiElementSlider(ICoreClientAPI, ActionConsumable&lt;int&gt;, ElementBounds)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Builds a slider.  A horizontal customizeable slider.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GuiElementSlider(ICoreClientAPI capi, ActionConsumable&lt;int&gt; onNewSliderValue, ElementBounds bounds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>capi</code> <a class="xref" href="Vintagestory.API.Client.ICoreClientAPI.html">ICoreClientAPI</a></dt>
+    <dd><p>The Client API</p>
+</dd>
+    <dt><code>onNewSliderValue</code> <a class="xref" href="Vintagestory.API.Common.ActionConsumable-1.html">ActionConsumable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd><p>The event that's fired when the slider changed.</p>
+</dd>
+    <dt><code>bounds</code> <a class="xref" href="Vintagestory.API.Client.ElementBounds.html">ElementBounds</a></dt>
+    <dd><p>the bounds of the object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_OnSliderRestingText" data-uid="Vintagestory.API.Client.GuiElementSlider.OnSliderRestingText">
+  OnSliderRestingText
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SliderTooltipDelegate OnSliderRestingText</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Client.SliderTooltipDelegate.html">SliderTooltipDelegate</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_OnSliderTooltip" data-uid="Vintagestory.API.Client.GuiElementSlider.OnSliderTooltip">
+  OnSliderTooltip
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SliderTooltipDelegate OnSliderTooltip</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Client.SliderTooltipDelegate.html">SliderTooltipDelegate</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_Enabled_" data-uid="Vintagestory.API.Client.GuiElementSlider.Enabled*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_Enabled" data-uid="Vintagestory.API.Client.GuiElementSlider.Enabled">
+  Enabled
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Enables/disables the given element (default is enabled)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Enabled { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_Focusable_" data-uid="Vintagestory.API.Client.GuiElementSlider.Focusable*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_Focusable" data-uid="Vintagestory.API.Client.GuiElementSlider.Focusable">
+  Focusable
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Whether or not the element can be focused.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Focusable { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_ShowTextWhenResting_" data-uid="Vintagestory.API.Client.GuiElementSlider.ShowTextWhenResting*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_ShowTextWhenResting" data-uid="Vintagestory.API.Client.GuiElementSlider.ShowTextWhenResting">
+  ShowTextWhenResting
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool ShowTextWhenResting { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_TooltipExceedClipBounds_" data-uid="Vintagestory.API.Client.GuiElementSlider.TooltipExceedClipBounds*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_TooltipExceedClipBounds" data-uid="Vintagestory.API.Client.GuiElementSlider.TooltipExceedClipBounds">
+  TooltipExceedClipBounds
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TooltipExceedClipBounds { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_AddSkipValue_" data-uid="Vintagestory.API.Client.GuiElementSlider.AddSkipValue*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_AddSkipValue_System_Int32_" data-uid="Vintagestory.API.Client.GuiElementSlider.AddSkipValue(System.Int32)">
+  AddSkipValue(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddSkipValue(int skipValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>skipValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_ClearSkipValues_" data-uid="Vintagestory.API.Client.GuiElementSlider.ClearSkipValues*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_ClearSkipValues" data-uid="Vintagestory.API.Client.GuiElementSlider.ClearSkipValues">
+  ClearSkipValues()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ClearSkipValues()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_ComposeElements_" data-uid="Vintagestory.API.Client.GuiElementSlider.ComposeElements*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_ComposeElements_Cairo_Context_Cairo_ImageSurface_" data-uid="Vintagestory.API.Client.GuiElementSlider.ComposeElements(Cairo.Context,Cairo.ImageSurface)">
+  ComposeElements(Context, ImageSurface)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Composes the elements.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void ComposeElements(Context ctxStatic, ImageSurface surfaceStatic)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ctxStatic</code> <span class="xref">Context</span></dt>
+    <dd><p>The context of the components.</p>
+</dd>
+    <dt><code>surfaceStatic</code> <span class="xref">ImageSurface</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_Dispose_" data-uid="Vintagestory.API.Client.GuiElementSlider.Dispose*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_Dispose" data-uid="Vintagestory.API.Client.GuiElementSlider.Dispose">
+  Dispose()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Dispose()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_GetValue_" data-uid="Vintagestory.API.Client.GuiElementSlider.GetValue*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_GetValue" data-uid="Vintagestory.API.Client.GuiElementSlider.GetValue">
+  GetValue()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the current value of the slider.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetValue()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_OnKeyDown_" data-uid="Vintagestory.API.Client.GuiElementSlider.OnKeyDown*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_OnKeyDown_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Client_KeyEvent_" data-uid="Vintagestory.API.Client.GuiElementSlider.OnKeyDown(Vintagestory.API.Client.ICoreClientAPI,Vintagestory.API.Client.KeyEvent)">
+  OnKeyDown(ICoreClientAPI, KeyEvent)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The event fired when a key is held down.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnKeyDown(ICoreClientAPI api, KeyEvent args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Client.ICoreClientAPI.html">ICoreClientAPI</a></dt>
+    <dd><p>The client API</p>
+</dd>
+    <dt><code>args</code> <a class="xref" href="Vintagestory.API.Client.KeyEvent.html">KeyEvent</a></dt>
+    <dd><p>The key event arguments.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_OnMouseDownOnElement_" data-uid="Vintagestory.API.Client.GuiElementSlider.OnMouseDownOnElement*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_OnMouseDownOnElement_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Client_MouseEvent_" data-uid="Vintagestory.API.Client.GuiElementSlider.OnMouseDownOnElement(Vintagestory.API.Client.ICoreClientAPI,Vintagestory.API.Client.MouseEvent)">
+  OnMouseDownOnElement(ICoreClientAPI, MouseEvent)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The event fired when the mouse is pressed while on the element. Called after OnMouseDown and tells the engine that the event is handled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnMouseDownOnElement(ICoreClientAPI api, MouseEvent args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Client.ICoreClientAPI.html">ICoreClientAPI</a></dt>
+    <dd><p>The Client API</p>
+</dd>
+    <dt><code>args</code> <a class="xref" href="Vintagestory.API.Client.MouseEvent.html">MouseEvent</a></dt>
+    <dd><p>The mouse event args.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_OnMouseMove_" data-uid="Vintagestory.API.Client.GuiElementSlider.OnMouseMove*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_OnMouseMove_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Client_MouseEvent_" data-uid="Vintagestory.API.Client.GuiElementSlider.OnMouseMove(Vintagestory.API.Client.ICoreClientAPI,Vintagestory.API.Client.MouseEvent)">
+  OnMouseMove(ICoreClientAPI, MouseEvent)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The event fired when the mouse is moved.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnMouseMove(ICoreClientAPI api, MouseEvent args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Client.ICoreClientAPI.html">ICoreClientAPI</a></dt>
+    <dd><p>The Client API.</p>
+</dd>
+    <dt><code>args</code> <a class="xref" href="Vintagestory.API.Client.MouseEvent.html">MouseEvent</a></dt>
+    <dd><p>The mouse event arguments.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_OnMouseUp_" data-uid="Vintagestory.API.Client.GuiElementSlider.OnMouseUp*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_OnMouseUp_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Client_MouseEvent_" data-uid="Vintagestory.API.Client.GuiElementSlider.OnMouseUp(Vintagestory.API.Client.ICoreClientAPI,Vintagestory.API.Client.MouseEvent)">
+  OnMouseUp(ICoreClientAPI, MouseEvent)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The event fired when the mouse is released.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnMouseUp(ICoreClientAPI api, MouseEvent args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Client.ICoreClientAPI.html">ICoreClientAPI</a></dt>
+    <dd><p>The Client API.</p>
+</dd>
+    <dt><code>args</code> <a class="xref" href="Vintagestory.API.Client.MouseEvent.html">MouseEvent</a></dt>
+    <dd><p>The arguments for the mouse event.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_OnMouseWheel_" data-uid="Vintagestory.API.Client.GuiElementSlider.OnMouseWheel*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_OnMouseWheel_Vintagestory_API_Client_ICoreClientAPI_Vintagestory_API_Client_MouseWheelEventArgs_" data-uid="Vintagestory.API.Client.GuiElementSlider.OnMouseWheel(Vintagestory.API.Client.ICoreClientAPI,Vintagestory.API.Client.MouseWheelEventArgs)">
+  OnMouseWheel(ICoreClientAPI, MouseWheelEventArgs)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The event fired when the mouse wheel is scrolled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnMouseWheel(ICoreClientAPI api, MouseWheelEventArgs args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Client.ICoreClientAPI.html">ICoreClientAPI</a></dt>
+    <dd><p>The Client API</p>
+</dd>
+    <dt><code>args</code> <a class="xref" href="Vintagestory.API.Client.MouseWheelEventArgs.html">MouseWheelEventArgs</a></dt>
+    <dd><p>The mouse wheel arguments.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_RemoveSkipValue_" data-uid="Vintagestory.API.Client.GuiElementSlider.RemoveSkipValue*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_RemoveSkipValue_System_Int32_" data-uid="Vintagestory.API.Client.GuiElementSlider.RemoveSkipValue(System.Int32)">
+  RemoveSkipValue(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveSkipValue(int skipValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>skipValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_RenderInteractiveElements_" data-uid="Vintagestory.API.Client.GuiElementSlider.RenderInteractiveElements*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_RenderInteractiveElements_System_Single_" data-uid="Vintagestory.API.Client.GuiElementSlider.RenderInteractiveElements(System.Single)">
+  RenderInteractiveElements(float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Renders the element as an interactive element.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void RenderInteractiveElements(float deltaTime)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>deltaTime</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The change in time.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_SetAlarmValue_" data-uid="Vintagestory.API.Client.GuiElementSlider.SetAlarmValue*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_SetAlarmValue_System_Int32_" data-uid="Vintagestory.API.Client.GuiElementSlider.SetAlarmValue(System.Int32)">
+  SetAlarmValue(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets a value to warn the player that going over this is not a good idea.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetAlarmValue(int value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The maximum limit before things break down.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_SetSkipValues_" data-uid="Vintagestory.API.Client.GuiElementSlider.SetSkipValues*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_SetSkipValues_System_Collections_Generic_HashSet_System_Int32__" data-uid="Vintagestory.API.Client.GuiElementSlider.SetSkipValues(System.Collections.Generic.HashSet{System.Int32})">
+  SetSkipValues(HashSet&lt;int&gt;)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetSkipValues(HashSet&lt;int&gt; skipValues)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>skipValues</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1">HashSet</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_SetValue_" data-uid="Vintagestory.API.Client.GuiElementSlider.SetValue*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_SetValue_System_Int32_" data-uid="Vintagestory.API.Client.GuiElementSlider.SetValue(System.Int32)">
+  SetValue(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetValue(int currentValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>currentValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Client_GuiElementSlider_SetValues_" data-uid="Vintagestory.API.Client.GuiElementSlider.SetValues*"></a>
+
+  <h3 id="Vintagestory_API_Client_GuiElementSlider_SetValues_System_Int32_System_Int32_System_Int32_System_Int32_System_String_" data-uid="Vintagestory.API.Client.GuiElementSlider.SetValues(System.Int32,System.Int32,System.Int32,System.Int32,System.String)">
+  SetValues(int, int, int, int, string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the values of the slider.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetValues(int currentValue, int minValue, int maxValue, int step, string unit = &quot;&quot;)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>currentValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The value the slider is now.</p>
+</dd>
+    <dt><code>minValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The lowest value.</p>
+</dd>
+    <dt><code>maxValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The highest value.</p>
+</dd>
+    <dt><code>step</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Each step between values.</p>
+</dd>
+    <dt><code>unit</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The units of the value. %, chunks, ect.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

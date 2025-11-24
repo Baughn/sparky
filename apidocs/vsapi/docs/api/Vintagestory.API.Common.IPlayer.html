@@ -1,0 +1,687 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IPlayer | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IPlayer | VintageStory API ">
+      
+      <meta name="description" content="Represents a player">
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.Common.IPlayer">
+
+
+
+  <h1 id="Vintagestory_API_Common_IPlayer" data-uid="Vintagestory.API.Common.IPlayer" class="text-break">
+Interface IPlayer  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.Common.html">Common</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a player</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IPlayer</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vintagestory_API_Common_IPlayer_ClientId_" data-uid="Vintagestory.API.Common.IPlayer.ClientId*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_ClientId" data-uid="Vintagestory.API.Common.IPlayer.ClientId">
+  ClientId
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The players current client id, 0 if not connected. This is the number thats assigned by the server for any connecting player. You probably don't need this number.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int ClientId { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_CurrentBlockSelection_" data-uid="Vintagestory.API.Common.IPlayer.CurrentBlockSelection*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_CurrentBlockSelection" data-uid="Vintagestory.API.Common.IPlayer.CurrentBlockSelection">
+  CurrentBlockSelection
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The block the player is currently aiming at</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">BlockSelection CurrentBlockSelection { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.BlockSelection.html">BlockSelection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_CurrentEntitySelection_" data-uid="Vintagestory.API.Common.IPlayer.CurrentEntitySelection*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_CurrentEntitySelection" data-uid="Vintagestory.API.Common.IPlayer.CurrentEntitySelection">
+  CurrentEntitySelection
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The entity the player is currently aiming at</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">EntitySelection CurrentEntitySelection { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.EntitySelection.html">EntitySelection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_Entitlements_" data-uid="Vintagestory.API.Common.IPlayer.Entitlements*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_Entitlements" data-uid="Vintagestory.API.Common.IPlayer.Entitlements">
+  Entitlements
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>List of the users entitlements, vanilla servers will list VIV and/or VS Team member entitlements</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">List&lt;Entitlement&gt; Entitlements { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Vintagestory.API.Common.Entitlement.html">Entitlement</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_Entity_" data-uid="Vintagestory.API.Common.IPlayer.Entity*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_Entity" data-uid="Vintagestory.API.Common.IPlayer.Entity">
+  Entity
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The entity the player currently controls</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">EntityPlayer Entity { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.EntityPlayer.html">EntityPlayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_Groups_" data-uid="Vintagestory.API.Common.IPlayer.Groups*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_Groups" data-uid="Vintagestory.API.Common.IPlayer.Groups">
+  Groups
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The players player group memberships</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">PlayerGroupMembership[] Groups { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.PlayerGroupMembership.html">PlayerGroupMembership</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_ImmersiveFpMode_" data-uid="Vintagestory.API.Common.IPlayer.ImmersiveFpMode*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_ImmersiveFpMode" data-uid="Vintagestory.API.Common.IPlayer.ImmersiveFpMode">
+  ImmersiveFpMode
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool ImmersiveFpMode { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_InventoryManager_" data-uid="Vintagestory.API.Common.IPlayer.InventoryManager*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_InventoryManager" data-uid="Vintagestory.API.Common.IPlayer.InventoryManager">
+  InventoryManager
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the given players inventory manager that let's you do various interesting things with the players inventory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IPlayerInventoryManager InventoryManager { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IPlayerInventoryManager.html">IPlayerInventoryManager</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_PlayerName_" data-uid="Vintagestory.API.Common.IPlayer.PlayerName*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_PlayerName" data-uid="Vintagestory.API.Common.IPlayer.PlayerName">
+  PlayerName
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the players character name. The character name can be changed every 60 days in the account manager, so don't consider the players name as a unique identifier for a player. Use PlayerUID instead</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string PlayerName { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_PlayerUID_" data-uid="Vintagestory.API.Common.IPlayer.PlayerUID*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_PlayerUID" data-uid="Vintagestory.API.Common.IPlayer.PlayerUID">
+  PlayerUID
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the players identifier that is unique across all registered players and will never change. Use this to uniquely identify a player for all eternity. Shorthand for WorldData.PlayerUID</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string PlayerUID { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_Privileges_" data-uid="Vintagestory.API.Common.IPlayer.Privileges*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_Privileges" data-uid="Vintagestory.API.Common.IPlayer.Privileges">
+  Privileges
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The list of privileges the player currently has access to (by role or direct assignment)
+This list is available for the playing player on the client, but not for other players.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string[] Privileges { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_Role_" data-uid="Vintagestory.API.Common.IPlayer.Role*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_Role" data-uid="Vintagestory.API.Common.IPlayer.Role">
+  Role
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the players privilege role</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IPlayerRole Role { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IPlayerRole.html">IPlayerRole</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_WorldData_" data-uid="Vintagestory.API.Common.IPlayer.WorldData*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_WorldData" data-uid="Vintagestory.API.Common.IPlayer.WorldData">
+  WorldData
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Some world-specific information about the player. This object is stored with the save game.
+If you modify it server side, be sure to call player.BroadcastPlayerData() to send it to affected clients.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IWorldPlayerData WorldData { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IWorldPlayerData.html">IWorldPlayerData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vintagestory_API_Common_IPlayer_GetGroup_" data-uid="Vintagestory.API.Common.IPlayer.GetGroup*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_GetGroup_System_Int32_" data-uid="Vintagestory.API.Common.IPlayer.GetGroup(System.Int32)">
+  GetGroup(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the membership data if player is part of this group, otherwise null</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">PlayerGroupMembership GetGroup(int groupId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>groupId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.PlayerGroupMembership.html">PlayerGroupMembership</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_GetGroups_" data-uid="Vintagestory.API.Common.IPlayer.GetGroups*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_GetGroups" data-uid="Vintagestory.API.Common.IPlayer.GetGroups">
+  GetGroups()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Load the players group that he is a member of</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">PlayerGroupMembership[] GetGroups()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.PlayerGroupMembership.html">PlayerGroupMembership</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IPlayer_HasPrivilege_" data-uid="Vintagestory.API.Common.IPlayer.HasPrivilege*"></a>
+
+  <h3 id="Vintagestory_API_Common_IPlayer_HasPrivilege_System_String_" data-uid="Vintagestory.API.Common.IPlayer.HasPrivilege(System.String)">
+  HasPrivilege(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Check if a player has the given privilege</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool HasPrivilege(string privilegeCode)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>privilegeCode</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The privilege to check</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>true if the player has the given privilege, false otherwise</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,1224 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IServerAPI | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IServerAPI | VintageStory API ">
+      
+      <meta name="description" content="API for general Server features">
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.Server.IServerAPI">
+
+
+
+  <h1 id="Vintagestory_API_Server_IServerAPI" data-uid="Vintagestory.API.Server.IServerAPI" class="text-break">
+Interface IServerAPI  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.Server.html">Server</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>API for general Server features</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IServerAPI</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_Config_" data-uid="Vintagestory.API.Server.IServerAPI.Config*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_Config" data-uid="Vintagestory.API.Server.IServerAPI.Config">
+  Config
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The servers current configuration as configured in the serverconfig.json. You can set the values but you need to call MarkDirty() to have them saved</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServerConfig Config { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Server.IServerConfig.html">IServerConfig</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_CurrentRunPhase_" data-uid="Vintagestory.API.Server.IServerAPI.CurrentRunPhase*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_CurrentRunPhase" data-uid="Vintagestory.API.Server.IServerAPI.CurrentRunPhase">
+  CurrentRunPhase
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the servers current run phase</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">EnumServerRunPhase CurrentRunPhase { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Server.EnumServerRunPhase.html">EnumServerRunPhase</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_IsDedicated_" data-uid="Vintagestory.API.Server.IServerAPI.IsDedicated*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_IsDedicated" data-uid="Vintagestory.API.Server.IServerAPI.IsDedicated">
+  IsDedicated
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns whether the current server a dedicated server</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool IsDedicated { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_IsShuttingDown_" data-uid="Vintagestory.API.Server.IServerAPI.IsShuttingDown*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_IsShuttingDown" data-uid="Vintagestory.API.Server.IServerAPI.IsShuttingDown">
+  IsShuttingDown
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines if the server process has been asked to terminate.
+Use this when you need to save data in a method registered using RegisterOnSave() before server quits.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool IsShuttingDown { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><i>true</i>
+if server is about to shutdown</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_Logger_" data-uid="Vintagestory.API.Server.IServerAPI.Logger*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_Logger" data-uid="Vintagestory.API.Server.IServerAPI.Logger">
+  Logger
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a logging interface to log any log level message</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ILogger Logger { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ILogger.html">ILogger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_Players_" data-uid="Vintagestory.API.Server.IServerAPI.Players*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_Players" data-uid="Vintagestory.API.Server.IServerAPI.Players">
+  Players
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>All players known to the server (which joined at least once while the server was running)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IServerPlayer[] Players { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Server.IServerPlayer.html">IServerPlayer</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_ReducedServerThreads_" data-uid="Vintagestory.API.Server.IServerAPI.ReducedServerThreads*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_ReducedServerThreads" data-uid="Vintagestory.API.Server.IServerAPI.ReducedServerThreads">
+  ReducedServerThreads
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If true, code should generally aim to reduce the number of CPU threads used on the server, even at the cost of slight performance delays</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool ReducedServerThreads { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_ServerIp_" data-uid="Vintagestory.API.Server.IServerAPI.ServerIp*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_ServerIp" data-uid="Vintagestory.API.Server.IServerAPI.ServerIp">
+  ServerIp
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The ip adress the server is listening at</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string ServerIp { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_ServerUptimeMilliseconds_" data-uid="Vintagestory.API.Server.IServerAPI.ServerUptimeMilliseconds*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_ServerUptimeMilliseconds" data-uid="Vintagestory.API.Server.IServerAPI.ServerUptimeMilliseconds">
+  ServerUptimeMilliseconds
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Server uptime in milliseconds</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">long ServerUptimeMilliseconds { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_ServerUptimeSeconds_" data-uid="Vintagestory.API.Server.IServerAPI.ServerUptimeSeconds*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_ServerUptimeSeconds" data-uid="Vintagestory.API.Server.IServerAPI.ServerUptimeSeconds">
+  ServerUptimeSeconds
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the number of seconds the server has been running since last restart</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int ServerUptimeSeconds { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Server uptime in seconds</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_TotalReceivedBytes_" data-uid="Vintagestory.API.Server.IServerAPI.TotalReceivedBytes*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_TotalReceivedBytes" data-uid="Vintagestory.API.Server.IServerAPI.TotalReceivedBytes">
+  TotalReceivedBytes
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">long TotalReceivedBytes { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_TotalSentBytes_" data-uid="Vintagestory.API.Server.IServerAPI.TotalSentBytes*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_TotalSentBytes" data-uid="Vintagestory.API.Server.IServerAPI.TotalSentBytes">
+  TotalSentBytes
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">long TotalSentBytes { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_TotalWorldPlayTime_" data-uid="Vintagestory.API.Server.IServerAPI.TotalWorldPlayTime*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_TotalWorldPlayTime" data-uid="Vintagestory.API.Server.IServerAPI.TotalWorldPlayTime">
+  TotalWorldPlayTime
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the number of seconds the current world has been running. This is the playtime displayed on the singleplayer world list.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int TotalWorldPlayTime { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_AddPhysicsTickable_" data-uid="Vintagestory.API.Server.IServerAPI.AddPhysicsTickable*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_AddPhysicsTickable_Vintagestory_API_Common_Entities_IPhysicsTickable_" data-uid="Vintagestory.API.Server.IServerAPI.AddPhysicsTickable(Vintagestory.API.Common.Entities.IPhysicsTickable)">
+  AddPhysicsTickable(IPhysicsTickable)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Remove an entity from the physics ticking system on the server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void AddPhysicsTickable(IPhysicsTickable entityBehavior)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>entityBehavior</code> <a class="xref" href="Vintagestory.API.Common.Entities.IPhysicsTickable.html">IPhysicsTickable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_AddServerThread_" data-uid="Vintagestory.API.Server.IServerAPI.AddServerThread*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_AddServerThread_System_String_Vintagestory_API_Server_IAsyncServerSystem_" data-uid="Vintagestory.API.Server.IServerAPI.AddServerThread(System.String,Vintagestory.API.Server.IAsyncServerSystem)">
+  AddServerThread(string, IAsyncServerSystem)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Allows mods to add a ServerThread.  Useful for off-thread tasks which must be run continuously (at specified intervals) while the server is running.  Calling code simply needs to implement IAsyncServerSystem</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void AddServerThread(string threadname, IAsyncServerSystem system)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>threadname</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>system</code> <a class="xref" href="Vintagestory.API.Server.IAsyncServerSystem.html">IAsyncServerSystem</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_GetMiniDimension_" data-uid="Vintagestory.API.Server.IServerAPI.GetMiniDimension*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_GetMiniDimension_System_Int32_" data-uid="Vintagestory.API.Server.IServerAPI.GetMiniDimension(System.Int32)">
+  GetMiniDimension(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the mini-dimension at the specified subdimension index; returns null if none exists
+<br>A mini dimension is a small set of blocks up to 4096x4096x4096 used for schematic previews, vehicles etc</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMiniDimension GetMiniDimension(int subId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>subId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IMiniDimension.html">IMiniDimension</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_LoadMiniDimension_" data-uid="Vintagestory.API.Server.IServerAPI.LoadMiniDimension*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_LoadMiniDimension_Vintagestory_API_Common_IMiniDimension_" data-uid="Vintagestory.API.Server.IServerAPI.LoadMiniDimension(Vintagestory.API.Common.IMiniDimension)">
+  LoadMiniDimension(IMiniDimension)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Add the specified dimension to the LoadedMiniDimensions, and return its allocated subdimension index.
+<br>A mini dimension is a small set of blocks up to 4096x4096x4096 used for schematic previews, vehicles etc</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int LoadMiniDimension(IMiniDimension blocks)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>blocks</code> <a class="xref" href="Vintagestory.API.Common.IMiniDimension.html">IMiniDimension</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_LogBuild_" data-uid="Vintagestory.API.Server.IServerAPI.LogBuild*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_LogBuild_System_String_System_Object___" data-uid="Vintagestory.API.Server.IServerAPI.LogBuild(System.String,System.Object[])">
+  LogBuild(string, params object[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Log given message with type = EnumLogType.Build</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void LogBuild(string message, params object[] args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>message</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>args</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_LogChat_" data-uid="Vintagestory.API.Server.IServerAPI.LogChat*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_LogChat_System_String_System_Object___" data-uid="Vintagestory.API.Server.IServerAPI.LogChat(System.String,System.Object[])">
+  LogChat(string, params object[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Log given message with type = EnumLogType.Chat</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void LogChat(string message, params object[] args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>message</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>args</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_LogDebug_" data-uid="Vintagestory.API.Server.IServerAPI.LogDebug*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_LogDebug_System_String_System_Object___" data-uid="Vintagestory.API.Server.IServerAPI.LogDebug(System.String,System.Object[])">
+  LogDebug(string, params object[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Log given message with type = EnumLogType.Debug</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void LogDebug(string message, params object[] args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>message</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>args</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_LogError_" data-uid="Vintagestory.API.Server.IServerAPI.LogError*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_LogError_System_String_System_Object___" data-uid="Vintagestory.API.Server.IServerAPI.LogError(System.String,System.Object[])">
+  LogError(string, params object[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Log given message with type = EnumLogType.Error</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void LogError(string message, params object[] args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>message</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>args</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_LogEvent_" data-uid="Vintagestory.API.Server.IServerAPI.LogEvent*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_LogEvent_System_String_System_Object___" data-uid="Vintagestory.API.Server.IServerAPI.LogEvent(System.String,System.Object[])">
+  LogEvent(string, params object[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void LogEvent(string message, params object[] args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>message</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>args</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_LogFatal_" data-uid="Vintagestory.API.Server.IServerAPI.LogFatal*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_LogFatal_System_String_System_Object___" data-uid="Vintagestory.API.Server.IServerAPI.LogFatal(System.String,System.Object[])">
+  LogFatal(string, params object[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Log given message with type = EnumLogType.Fatal</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void LogFatal(string message, params object[] args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>message</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>args</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_LogNotification_" data-uid="Vintagestory.API.Server.IServerAPI.LogNotification*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_LogNotification_System_String_System_Object___" data-uid="Vintagestory.API.Server.IServerAPI.LogNotification(System.String,System.Object[])">
+  LogNotification(string, params object[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Log given message with type = EnumLogType.Notification</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void LogNotification(string message, params object[] args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>message</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>args</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_LogVerboseDebug_" data-uid="Vintagestory.API.Server.IServerAPI.LogVerboseDebug*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_LogVerboseDebug_System_String_System_Object___" data-uid="Vintagestory.API.Server.IServerAPI.LogVerboseDebug(System.String,System.Object[])">
+  LogVerboseDebug(string, params object[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Log given message with type = EnumLogType.VerboseDebug</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void LogVerboseDebug(string message, params object[] args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>message</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>args</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_LogWarning_" data-uid="Vintagestory.API.Server.IServerAPI.LogWarning*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_LogWarning_System_String_System_Object___" data-uid="Vintagestory.API.Server.IServerAPI.LogWarning(System.String,System.Object[])">
+  LogWarning(string, params object[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Log given message with type = EnumLogType.Warning</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void LogWarning(string message, params object[] args)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>message</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>args</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_MarkConfigDirty_" data-uid="Vintagestory.API.Server.IServerAPI.MarkConfigDirty*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_MarkConfigDirty" data-uid="Vintagestory.API.Server.IServerAPI.MarkConfigDirty">
+  MarkConfigDirty()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Marks the config dirty for saving</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void MarkConfigDirty()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_PauseThread_" data-uid="Vintagestory.API.Server.IServerAPI.PauseThread*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_PauseThread_System_String_System_Int32_" data-uid="Vintagestory.API.Server.IServerAPI.PauseThread(System.String,System.Int32)">
+  PauseThread(string, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Does a blocking wait until given thread is paused. Returns true if the thread was paused within given time</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool PauseThread(string threadname, int waitTimeoutMs = 5000)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>threadname</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>waitTimeoutMs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_RemovePhysicsTickable_" data-uid="Vintagestory.API.Server.IServerAPI.RemovePhysicsTickable*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_RemovePhysicsTickable_Vintagestory_API_Common_Entities_IPhysicsTickable_" data-uid="Vintagestory.API.Server.IServerAPI.RemovePhysicsTickable(Vintagestory.API.Common.Entities.IPhysicsTickable)">
+  RemovePhysicsTickable(IPhysicsTickable)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Add an entity to the physics ticking system on the server.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void RemovePhysicsTickable(IPhysicsTickable entityBehavior)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>entityBehavior</code> <a class="xref" href="Vintagestory.API.Common.Entities.IPhysicsTickable.html">IPhysicsTickable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_ResumeThread_" data-uid="Vintagestory.API.Server.IServerAPI.ResumeThread*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_ResumeThread_System_String_" data-uid="Vintagestory.API.Server.IServerAPI.ResumeThread(System.String)">
+  ResumeThread(string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Resumes a previously paused thread</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ResumeThread(string threadname)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>threadname</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_SetMiniDimension_" data-uid="Vintagestory.API.Server.IServerAPI.SetMiniDimension*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_SetMiniDimension_Vintagestory_API_Common_IMiniDimension_System_Int32_" data-uid="Vintagestory.API.Server.IServerAPI.SetMiniDimension(Vintagestory.API.Common.IMiniDimension,System.Int32)">
+  SetMiniDimension(IMiniDimension, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set the specified mini-dimension at the specified subdimension index, and return its index
+<br>A mini dimension is a small set of blocks up to 4096x4096x4096 used for schematic previews, vehicles etc</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int SetMiniDimension(IMiniDimension miniDimension, int subId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>miniDimension</code> <a class="xref" href="Vintagestory.API.Common.IMiniDimension.html">IMiniDimension</a></dt>
+    <dd></dd>
+    <dt><code>subId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Server_IServerAPI_ShutDown_" data-uid="Vintagestory.API.Server.IServerAPI.ShutDown*"></a>
+
+  <h3 id="Vintagestory_API_Server_IServerAPI_ShutDown" data-uid="Vintagestory.API.Server.IServerAPI.ShutDown">
+  ShutDown()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gracefully shuts down the server</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ShutDown()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,636 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IItemStack | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IItemStack | VintageStory API ">
+      
+      <meta name="description" content="Represents a stack of items or blocks">
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.Common.IItemStack">
+
+
+
+  <h1 id="Vintagestory_API_Common_IItemStack" data-uid="Vintagestory.API.Common.IItemStack" class="text-break">
+Interface IItemStack  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.Common.html">Common</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a stack of items or blocks</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IItemStack</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vintagestory_API_Common_IItemStack_Attributes_" data-uid="Vintagestory.API.Common.IItemStack.Attributes*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_Attributes" data-uid="Vintagestory.API.Common.IItemStack.Attributes">
+  Attributes
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Attributes assigned to this itemstack. Modifiable.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ITreeAttribute Attributes { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Datastructures.ITreeAttribute.html">ITreeAttribute</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IItemStack_Block_" data-uid="Vintagestory.API.Common.IItemStack.Block*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_Block" data-uid="Vintagestory.API.Common.IItemStack.Block">
+  Block
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The Block if ItemClass==Block, otherwise null</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Block Block { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Block.html">Block</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IItemStack_Class_" data-uid="Vintagestory.API.Common.IItemStack.Class*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_Class" data-uid="Vintagestory.API.Common.IItemStack.Class">
+  Class
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Is it a Block or Item?</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">EnumItemClass Class { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.EnumItemClass.html">EnumItemClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IItemStack_Collectible_" data-uid="Vintagestory.API.Common.IItemStack.Collectible*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_Collectible" data-uid="Vintagestory.API.Common.IItemStack.Collectible">
+  Collectible
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The base class the Item/Block inherits from</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">CollectibleObject Collectible { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.CollectibleObject.html">CollectibleObject</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IItemStack_Id_" data-uid="Vintagestory.API.Common.IItemStack.Id*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_Id" data-uid="Vintagestory.API.Common.IItemStack.Id">
+  Id
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The items or blocks unique id</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int Id { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IItemStack_Item_" data-uid="Vintagestory.API.Common.IItemStack.Item*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_Item" data-uid="Vintagestory.API.Common.IItemStack.Item">
+  Item
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The Item if ItemClass==Item, otherwise null</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Item Item { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.Item.html">Item</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IItemStack_StackSize_" data-uid="Vintagestory.API.Common.IItemStack.StackSize*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_StackSize" data-uid="Vintagestory.API.Common.IItemStack.StackSize">
+  StackSize
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Amount of items or blocks in this stack</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int StackSize { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vintagestory_API_Common_IItemStack_Clone_" data-uid="Vintagestory.API.Common.IItemStack.Clone*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_Clone" data-uid="Vintagestory.API.Common.IItemStack.Clone">
+  Clone()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a deep copy of the itemstack</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ItemStack Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IItemStack_Equals_" data-uid="Vintagestory.API.Common.IItemStack.Equals*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_Equals_Vintagestory_API_Common_IWorldAccessor_Vintagestory_API_Common_ItemStack_System_String___" data-uid="Vintagestory.API.Common.IItemStack.Equals(Vintagestory.API.Common.IWorldAccessor,Vintagestory.API.Common.ItemStack,System.String[])">
+  Equals(IWorldAccessor, ItemStack, params string[])
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if this item stack is of the same class, id and has the same stack attributes. Ignores stack size</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool Equals(IWorldAccessor worldForResolve, ItemStack sourceStack, params string[] ignoreAttributeSubTrees)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldForResolve</code> <a class="xref" href="Vintagestory.API.Common.IWorldAccessor.html">IWorldAccessor</a></dt>
+    <dd></dd>
+    <dt><code>sourceStack</code> <a class="xref" href="Vintagestory.API.Common.ItemStack.html">ItemStack</a></dt>
+    <dd></dd>
+    <dt><code>ignoreAttributeSubTrees</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IItemStack_FromBytes_" data-uid="Vintagestory.API.Common.IItemStack.FromBytes*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_FromBytes_System_IO_BinaryReader_" data-uid="Vintagestory.API.Common.IItemStack.FromBytes(System.IO.BinaryReader)">
+  FromBytes(BinaryReader)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Deserializes an itemstack from given byte stream</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void FromBytes(BinaryReader stream)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.binaryreader">BinaryReader</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IItemStack_GetDescription_" data-uid="Vintagestory.API.Common.IItemStack.GetDescription*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_GetDescription_Vintagestory_API_Common_IWorldAccessor_Vintagestory_API_Common_ItemSlot_System_Boolean_" data-uid="Vintagestory.API.Common.IItemStack.GetDescription(Vintagestory.API.Common.IWorldAccessor,Vintagestory.API.Common.ItemSlot,System.Boolean)">
+  GetDescription(IWorldAccessor, ItemSlot, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a multiline description text of the item</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string GetDescription(IWorldAccessor world, ItemSlot inSlot, bool debug = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <a class="xref" href="Vintagestory.API.Common.IWorldAccessor.html">IWorldAccessor</a></dt>
+    <dd></dd>
+    <dt><code>inSlot</code> <a class="xref" href="Vintagestory.API.Common.ItemSlot.html">ItemSlot</a></dt>
+    <dd></dd>
+    <dt><code>debug</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Whether to show additional debug info</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IItemStack_GetName_" data-uid="Vintagestory.API.Common.IItemStack.GetName*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_GetName" data-uid="Vintagestory.API.Common.IItemStack.GetName">
+  GetName()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the name displayed in the players inventory</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string GetName()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IItemStack_MatchesSearchText_" data-uid="Vintagestory.API.Common.IItemStack.MatchesSearchText*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_MatchesSearchText_Vintagestory_API_Common_IWorldAccessor_System_String_" data-uid="Vintagestory.API.Common.IItemStack.MatchesSearchText(Vintagestory.API.Common.IWorldAccessor,System.String)">
+  MatchesSearchText(IWorldAccessor, string)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the contained item or block name contains given searchtext</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool MatchesSearchText(IWorldAccessor world, string searchText)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <a class="xref" href="Vintagestory.API.Common.IWorldAccessor.html">IWorldAccessor</a></dt>
+    <dd></dd>
+    <dt><code>searchText</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IItemStack_ToBytes_" data-uid="Vintagestory.API.Common.IItemStack.ToBytes*"></a>
+
+  <h3 id="Vintagestory_API_Common_IItemStack_ToBytes_System_IO_BinaryWriter_" data-uid="Vintagestory.API.Common.IItemStack.ToBytes(System.IO.BinaryWriter)">
+  ToBytes(BinaryWriter)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Serializes this itemstack into a byte stream</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void ToBytes(BinaryWriter stream)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.binarywriter">BinaryWriter</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

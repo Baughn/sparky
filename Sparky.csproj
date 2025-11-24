@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <!-- Exclude apidocs directory from compilation -->
+  <ItemGroup>
+    <Compile Remove="apidocs/**" />
+    <None Remove="apidocs/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Reference to Vintage Story API -->
+    <!-- You'll need to set the VINTAGE_STORY environment variable to point to your VS installation -->
+    <!-- Example: export VINTAGE_STORY=/path/to/vintagestory -->
+    <Reference Include="VintagestoryAPI">
+      <HintPath>$(VINTAGE_STORY)/VintagestoryAPI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Copy resources to output folder on Release builds -->
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <None Include="resources/**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="assets/**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="modinfo.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- Package the mod as a zip file after building -->
+  <Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
+    <ZipDirectory DestinationFile="bin/$(TargetName).zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
+  </Target>
+</Project>

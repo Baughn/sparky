@@ -1,0 +1,3621 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class BlockPos | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class BlockPos | VintageStory API ">
+      
+      <meta name="description" content="A useful data structure when operating with block postions. Valuable Hint: Make use of Copy() or the XXXCopy() variants where needed. A common pitfall is writing code like: BlockPos abovePos = pos.Up(); - with this code abovePos and pos will reference to the same object! Open in GitHub">
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.MathTools.BlockPos">
+
+
+
+  <h1 id="Vintagestory_API_MathTools_BlockPos" data-uid="Vintagestory.API.MathTools.BlockPos" class="text-break">
+Class BlockPos  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.MathTools.html">MathTools</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>A useful data structure when operating with block postions.<br>
+Valuable Hint: Make use of Copy() or the XXXCopy() variants where needed. A common pitfall is writing code like: BlockPos abovePos = pos.Up(); - with this code abovePos and pos will reference to the same object! <a href="https://github.com/anegostudios/vsapi/blob/master///Math/BlockPos.cs">Open in GitHub</a></p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ProtoContract]
+[JsonObject(MemberSerialization.OptIn)]
+public class BlockPos : IEquatable&lt;BlockPos&gt;, IVec3</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">BlockPos</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a>&gt;</div>
+      <div><a class="xref" href="Vintagestory.API.MathTools.IVec3.html">IVec3</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Vintagestory.API.MathTools.FluidBlockPos.html">FluidBlockPos</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.PosUtil.html#Vintagestory_API_Util_PosUtil_SetOrCreate_Vintagestory_API_MathTools_BlockPos_Vintagestory_API_MathTools_BlockPos_">PosUtil.SetOrCreate(BlockPos, BlockPos)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos__ctor_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos__ctor" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor">
+  BlockPos()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Not dimension-aware. Use new BlockPos(dimensionId) where possible&quot;)]
+public BlockPos()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos__ctor_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos__ctor_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor(System.Int32)">
+  BlockPos(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos(int dim)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos__ctor_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos__ctor_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor(System.Int32,System.Int32,System.Int32)">
+  BlockPos(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>The new BlockPos takes its dimension from the supplied y value, if the y value is higher than the DimensionBoundary (32768 blocks).
+This constructor is therefore dimension-aware, so long as the y parameter was originally based on .InternalY, including for example a Vec3d created originally from .InternalY</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos(int x, int y, int z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos__ctor_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos__ctor_System_Int32_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor(System.Int32,System.Int32,System.Int32,System.Int32)">
+  BlockPos(int, int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos(int x, int y, int z, int dim)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>dim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos__ctor_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos__ctor_Vintagestory_API_MathTools_Vec3i_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor(Vintagestory.API.MathTools.Vec3i)">
+  BlockPos(Vec3i)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Not dimension-aware. Use overload with a dimension parameter instead&quot;)]
+public BlockPos(Vec3i vec)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vec</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3i.html">Vec3i</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos__ctor_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos__ctor_Vintagestory_API_MathTools_Vec3i_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor(Vintagestory.API.MathTools.Vec3i,System.Int32)">
+  BlockPos(Vec3i, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos(Vec3i vec, int dim)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vec</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3i.html">Vec3i</a></dt>
+    <dd></dd>
+    <dt><code>dim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos__ctor_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos__ctor_Vintagestory_API_MathTools_Vec4i_" data-uid="Vintagestory.API.MathTools.BlockPos.#ctor(Vintagestory.API.MathTools.Vec4i)">
+  BlockPos(Vec4i)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Note - for backwards compatibility, this is <em>not</em> dimension-aware; explicitly set the dimension in the resulting BlockPos if you need to</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos(Vec4i vec)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vec</code> <a class="xref" href="Vintagestory.API.MathTools.Vec4i.html">Vec4i</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_DimensionBoundary" data-uid="Vintagestory.API.MathTools.BlockPos.DimensionBoundary">
+  DimensionBoundary
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int DimensionBoundary = 32768</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_X" data-uid="Vintagestory.API.MathTools.BlockPos.X">
+  X
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ProtoMember(1)]
+[JsonProperty]
+public int X</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Y" data-uid="Vintagestory.API.MathTools.BlockPos.Y">
+  Y
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Y</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Z" data-uid="Vintagestory.API.MathTools.BlockPos.Z">
+  Z
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ProtoMember(3)]
+[JsonProperty]
+public int Z</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_dimension" data-uid="Vintagestory.API.MathTools.BlockPos.dimension">
+  dimension
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int dimension</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_AsVec3i_" data-uid="Vintagestory.API.MathTools.BlockPos.AsVec3i*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_AsVec3i" data-uid="Vintagestory.API.MathTools.BlockPos.AsVec3i">
+  AsVec3i
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonIgnore]
+public Vec3i AsVec3i { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3i.html">Vec3i</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_InternalY_" data-uid="Vintagestory.API.MathTools.BlockPos.InternalY*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_InternalY" data-uid="Vintagestory.API.MathTools.BlockPos.InternalY">
+  InternalY
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ProtoMember(2)]
+[JsonProperty]
+public int InternalY { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Item_" data-uid="Vintagestory.API.MathTools.BlockPos.Item*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Item_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.Item(System.Int32)">
+  this[int]
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>0 = x, 1 = y, 2 = z</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int this[int i] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>i</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Add_" data-uid="Vintagestory.API.MathTools.BlockPos.Add*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Add_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.Add(System.Int32,System.Int32,System.Int32)">
+  Add(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Offsets the position by given xyz</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Add(int dx, int dy, int dz)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dx</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>dy</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>dz</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Add_" data-uid="Vintagestory.API.MathTools.BlockPos.Add*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Add_System_Single_System_Single_System_Single_" data-uid="Vintagestory.API.MathTools.BlockPos.Add(System.Single,System.Single,System.Single)">
+  Add(float, float, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Offsets the position by given xyz</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Add(float dx, float dy, float dz)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dx</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>dy</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>dz</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Add_" data-uid="Vintagestory.API.MathTools.BlockPos.Add*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Add_Vintagestory_API_MathTools_BlockFacing_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.Add(Vintagestory.API.MathTools.BlockFacing,System.Int32)">
+  Add(BlockFacing, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Offsets the position into the direction of given block face</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Add(BlockFacing facing, int length = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>facing</code> <a class="xref" href="Vintagestory.API.MathTools.BlockFacing.html">BlockFacing</a></dt>
+    <dd></dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Add_" data-uid="Vintagestory.API.MathTools.BlockPos.Add*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Add_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.Add(Vintagestory.API.MathTools.BlockPos)">
+  Add(BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Offsets the position by given xyz vector</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Add(BlockPos pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Add_" data-uid="Vintagestory.API.MathTools.BlockPos.Add*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Add_Vintagestory_API_MathTools_FastVec3i_" data-uid="Vintagestory.API.MathTools.BlockPos.Add(Vintagestory.API.MathTools.FastVec3i)">
+  Add(FastVec3i)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Offsets the position by given xyz vector</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Add(FastVec3i vector)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vector</code> <a class="xref" href="Vintagestory.API.MathTools.FastVec3i.html">FastVec3i</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Add_" data-uid="Vintagestory.API.MathTools.BlockPos.Add*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Add_Vintagestory_API_MathTools_Vec3i_" data-uid="Vintagestory.API.MathTools.BlockPos.Add(Vintagestory.API.MathTools.Vec3i)">
+  Add(Vec3i)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Offsets the position by given xyz vector</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Add(Vec3i vector)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vector</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3i.html">Vec3i</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_AddCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.AddCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_AddCopy_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.AddCopy(System.Int32)">
+  AddCopy(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position and offsets it by given xyz</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos AddCopy(int xyz)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>xyz</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_AddCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.AddCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_AddCopy_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.AddCopy(System.Int32,System.Int32,System.Int32)">
+  AddCopy(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position and offsets it by given xyz</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos AddCopy(int dx, int dy, int dz)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dx</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>dy</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>dz</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_AddCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.AddCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_AddCopy_System_Single_System_Single_System_Single_" data-uid="Vintagestory.API.MathTools.BlockPos.AddCopy(System.Single,System.Single,System.Single)">
+  AddCopy(float, float, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position and offsets it by given xyz</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos AddCopy(float dx, float dy, float dz)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dx</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>dy</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>dz</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_AddCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.AddCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_AddCopy_Vintagestory_API_MathTools_BlockFacing_" data-uid="Vintagestory.API.MathTools.BlockPos.AddCopy(Vintagestory.API.MathTools.BlockFacing)">
+  AddCopy(BlockFacing)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position and offsets it in the direction of given block face</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos AddCopy(BlockFacing facing)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>facing</code> <a class="xref" href="Vintagestory.API.MathTools.BlockFacing.html">BlockFacing</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_AddCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.AddCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_AddCopy_Vintagestory_API_MathTools_BlockFacing_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.AddCopy(Vintagestory.API.MathTools.BlockFacing,System.Int32)">
+  AddCopy(BlockFacing, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position and offsets it in the direction of given block face</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos AddCopy(BlockFacing facing, int length)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>facing</code> <a class="xref" href="Vintagestory.API.MathTools.BlockFacing.html">BlockFacing</a></dt>
+    <dd></dd>
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_AddCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.AddCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_AddCopy_Vintagestory_API_MathTools_Vec3i_" data-uid="Vintagestory.API.MathTools.BlockPos.AddCopy(Vintagestory.API.MathTools.Vec3i)">
+  AddCopy(Vec3i)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position and offsets it by given xyz</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos AddCopy(Vec3i vector)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vector</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3i.html">Vec3i</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Copy_" data-uid="Vintagestory.API.MathTools.BlockPos.Copy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Copy" data-uid="Vintagestory.API.MathTools.BlockPos.Copy">
+  Copy()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual BlockPos Copy()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_CopyAndCorrectDimension_" data-uid="Vintagestory.API.MathTools.BlockPos.CopyAndCorrectDimension*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_CopyAndCorrectDimension" data-uid="Vintagestory.API.MathTools.BlockPos.CopyAndCorrectDimension">
+  CopyAndCorrectDimension()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position, obtaining the correct dimension value from the Y value</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual BlockPos CopyAndCorrectDimension()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_CreateFromBytes_" data-uid="Vintagestory.API.MathTools.BlockPos.CreateFromBytes*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_CreateFromBytes_System_IO_BinaryReader_" data-uid="Vintagestory.API.MathTools.BlockPos.CreateFromBytes(System.IO.BinaryReader)">
+  CreateFromBytes(BinaryReader)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BlockPos CreateFromBytes(BinaryReader reader)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reader</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.binaryreader">BinaryReader</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_DistanceSqTo_" data-uid="Vintagestory.API.MathTools.BlockPos.DistanceSqTo*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_DistanceSqTo_System_Double_System_Double_System_Double_" data-uid="Vintagestory.API.MathTools.BlockPos.DistanceSqTo(System.Double,System.Double,System.Double)">
+  DistanceSqTo(double, double, double)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the squared Euclidean distance to between this and given position. Dimension aware</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float DistanceSqTo(double x, double y, double z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_DistanceSqToNearerEdge_" data-uid="Vintagestory.API.MathTools.BlockPos.DistanceSqToNearerEdge*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_DistanceSqToNearerEdge_System_Double_System_Double_System_Double_" data-uid="Vintagestory.API.MathTools.BlockPos.DistanceSqToNearerEdge(System.Double,System.Double,System.Double)">
+  DistanceSqToNearerEdge(double, double, double)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the squared Euclidean distance between the nearer edge of this blockpos (assumed 1 x 0.75 x 1 cube) and given position
+The 0.75 offset is because the &quot;heat source&quot; is likely to be above the base position of this block: it's approximate
+Note this is dimension unaware</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double DistanceSqToNearerEdge(double x, double y, double z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_DistanceTo_" data-uid="Vintagestory.API.MathTools.BlockPos.DistanceTo*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_DistanceTo_System_Double_System_Double_System_Double_" data-uid="Vintagestory.API.MathTools.BlockPos.DistanceTo(System.Double,System.Double,System.Double)">
+  DistanceTo(double, double, double)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the Euclidean distance to between this and given position. Note this is dimension unaware</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float DistanceTo(double x, double y, double z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_DistanceTo_" data-uid="Vintagestory.API.MathTools.BlockPos.DistanceTo*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_DistanceTo_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.DistanceTo(Vintagestory.API.MathTools.BlockPos)">
+  DistanceTo(BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the Euclidean distance to between this and given position. Note if dimensions are different returns maximum value (i.e. infinite)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float DistanceTo(BlockPos pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_DivCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.DivCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_DivCopy_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.DivCopy(System.Int32)">
+  DivCopy(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position and divides it by given factor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos DivCopy(int factor)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>factor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Down_" data-uid="Vintagestory.API.MathTools.BlockPos.Down*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Down_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.Down(System.Int32)">
+  Down(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Move the position vertically down</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Down(int dy = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dy</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_DownCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.DownCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_DownCopy_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.DownCopy(System.Int32)">
+  DownCopy(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position with the y-position adjusted by -<code class="paramref">length</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos DownCopy(int length = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_East_" data-uid="Vintagestory.API.MathTools.BlockPos.East*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_East" data-uid="Vintagestory.API.MathTools.BlockPos.East">
+  East()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos East()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_EastCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.EastCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_EastCopy_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.EastCopy(System.Int32)">
+  EastCopy(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position with the x-position adjusted by +<code class="paramref">length</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos EastCopy(int length = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Equals_" data-uid="Vintagestory.API.MathTools.BlockPos.Equals*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Equals_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.Equals(System.Int32,System.Int32,System.Int32)">
+  Equals(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals(int x, int y, int z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Equals_" data-uid="Vintagestory.API.MathTools.BlockPos.Equals*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Equals_System_Object_" data-uid="Vintagestory.API.MathTools.BlockPos.Equals(System.Object)">
+  Equals(object)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object obj)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The object to compare with the current object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the specified object  is equal to the current object; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Equals_" data-uid="Vintagestory.API.MathTools.BlockPos.Equals*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Equals_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.Equals(Vintagestory.API.MathTools.BlockPos)">
+  Equals(BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals(BlockPos other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd><p>An object to compare with this object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_FacingFrom_" data-uid="Vintagestory.API.MathTools.BlockPos.FacingFrom*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_FacingFrom_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.FacingFrom(Vintagestory.API.MathTools.BlockPos)">
+  FacingFrom(BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the direction moved from the other blockPos, to get to this BlockPos</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockFacing FacingFrom(BlockPos other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockFacing.html">BlockFacing</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_GetHashCode_" data-uid="Vintagestory.API.MathTools.BlockPos.GetHashCode*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_GetHashCode" data-uid="Vintagestory.API.MathTools.BlockPos.GetHashCode">
+  GetHashCode()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>A hash code for the current object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_HorDistanceSqTo_" data-uid="Vintagestory.API.MathTools.BlockPos.HorDistanceSqTo*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_HorDistanceSqTo_System_Double_System_Double_" data-uid="Vintagestory.API.MathTools.BlockPos.HorDistanceSqTo(System.Double,System.Double)">
+  HorDistanceSqTo(double, double)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the squared Euclidean horizontal distance to between this and given position
+Note this is dimension unaware</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float HorDistanceSqTo(double x, double z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_HorizontalManhattenDistance_" data-uid="Vintagestory.API.MathTools.BlockPos.HorizontalManhattenDistance*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_HorizontalManhattenDistance_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.HorizontalManhattenDistance(Vintagestory.API.MathTools.BlockPos)">
+  HorizontalManhattenDistance(BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the manhatten distance to given position</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int HorizontalManhattenDistance(BlockPos pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_InRangeHorizontally_" data-uid="Vintagestory.API.MathTools.BlockPos.InRangeHorizontally*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_InRangeHorizontally_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.InRangeHorizontally(System.Int32,System.Int32,System.Int32)">
+  InRangeHorizontally(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns true if the specified x,z is within a box the specified range around this position
+Note this is dimension unaware</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool InRangeHorizontally(int x, int z, int range)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>range</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_IterateHorizontalOffsets_" data-uid="Vintagestory.API.MathTools.BlockPos.IterateHorizontalOffsets*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_IterateHorizontalOffsets_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.IterateHorizontalOffsets(System.Int32)">
+  IterateHorizontalOffsets(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Iterate through NESW offsets from the starting position.  See also BlockFacing.IterateThruFacingOffset</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void IterateHorizontalOffsets(int i)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>i</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_ManhattenDistance_" data-uid="Vintagestory.API.MathTools.BlockPos.ManhattenDistance*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_ManhattenDistance_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.ManhattenDistance(System.Int32,System.Int32,System.Int32)">
+  ManhattenDistance(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the manhatten distance to given position
+Note this is dimension unaware</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int ManhattenDistance(int x, int y, int z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_ManhattenDistance_" data-uid="Vintagestory.API.MathTools.BlockPos.ManhattenDistance*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_ManhattenDistance_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.ManhattenDistance(Vintagestory.API.MathTools.BlockPos)">
+  ManhattenDistance(BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the manhatten distance to given position</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int ManhattenDistance(BlockPos pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_North_" data-uid="Vintagestory.API.MathTools.BlockPos.North*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_North" data-uid="Vintagestory.API.MathTools.BlockPos.North">
+  North()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos North()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_NorthCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.NorthCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_NorthCopy_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.NorthCopy(System.Int32)">
+  NorthCopy(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position with the z-position adjusted by -<code class="paramref">length</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos NorthCopy(int length = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Offset_" data-uid="Vintagestory.API.MathTools.BlockPos.Offset*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Offset_Vintagestory_API_MathTools_BlockFacing_" data-uid="Vintagestory.API.MathTools.BlockPos.Offset(Vintagestory.API.MathTools.BlockFacing)">
+  Offset(BlockFacing)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Offsets the position into the direction of given block face</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Offset(BlockFacing facing)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>facing</code> <a class="xref" href="Vintagestory.API.MathTools.BlockFacing.html">BlockFacing</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Set_" data-uid="Vintagestory.API.MathTools.BlockPos.Set*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Set_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.Set(System.Int32,System.Int32,System.Int32)">
+  Set(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets XYZ to new values - not dimension aware (but existing dimension will be preserved) - use SetAndCorrectDimension() for dimension awareness</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Set(int x, int y, int z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Set_" data-uid="Vintagestory.API.MathTools.BlockPos.Set*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Set_System_Single_System_Single_System_Single_" data-uid="Vintagestory.API.MathTools.BlockPos.Set(System.Single,System.Single,System.Single)">
+  Set(float, float, float)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Set(float x, float y, float z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Set_" data-uid="Vintagestory.API.MathTools.BlockPos.Set*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Set_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.Set(Vintagestory.API.MathTools.BlockPos)">
+  Set(BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Set(BlockPos blockPos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>blockPos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Set_" data-uid="Vintagestory.API.MathTools.BlockPos.Set*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Set_Vintagestory_API_MathTools_BlockPos_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.Set(Vintagestory.API.MathTools.BlockPos,System.Int32)">
+  Set(BlockPos, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Set(BlockPos blockPos, int dim)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>blockPos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+    <dt><code>dim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Set_" data-uid="Vintagestory.API.MathTools.BlockPos.Set*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Set_Vintagestory_API_MathTools_FastVec3i_" data-uid="Vintagestory.API.MathTools.BlockPos.Set(Vintagestory.API.MathTools.FastVec3i)">
+  Set(FastVec3i)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Set(FastVec3i pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.FastVec3i.html">FastVec3i</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Set_" data-uid="Vintagestory.API.MathTools.BlockPos.Set*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Set_Vintagestory_API_MathTools_Vec3d_" data-uid="Vintagestory.API.MathTools.BlockPos.Set(Vintagestory.API.MathTools.Vec3d)">
+  Set(Vec3d)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Not dimension aware (but existing dimension in this BlockPos will be preserved) - use SetAndCorrectDimension() for dimension awareness</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Set(Vec3d origin)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>origin</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Set_" data-uid="Vintagestory.API.MathTools.BlockPos.Set*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Set_Vintagestory_API_MathTools_Vec3i_" data-uid="Vintagestory.API.MathTools.BlockPos.Set(Vintagestory.API.MathTools.Vec3i)">
+  Set(Vec3i)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Set(Vec3i pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3i.html">Vec3i</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_SetAndCorrectDimension_" data-uid="Vintagestory.API.MathTools.BlockPos.SetAndCorrectDimension*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_SetAndCorrectDimension_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.SetAndCorrectDimension(System.Int32,System.Int32,System.Int32)">
+  SetAndCorrectDimension(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Dimension aware version of Set() - use this if there is a dimension embedded in the y coordinate (e.g. y == 65536+ for dimension 2)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos SetAndCorrectDimension(int x, int y, int z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_SetAndCorrectDimension_" data-uid="Vintagestory.API.MathTools.BlockPos.SetAndCorrectDimension*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_SetAndCorrectDimension_Vintagestory_API_MathTools_Vec3d_" data-uid="Vintagestory.API.MathTools.BlockPos.SetAndCorrectDimension(Vintagestory.API.MathTools.Vec3d)">
+  SetAndCorrectDimension(Vec3d)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Dimension aware version of Set() - use this if the Vec3d has the dimension embedded in the Y coordinate (e.g. Y == 65536+ for dimension 2)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos SetAndCorrectDimension(Vec3d origin)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>origin</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_SetAndEquals_" data-uid="Vintagestory.API.MathTools.BlockPos.SetAndEquals*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_SetAndEquals_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.SetAndEquals(System.Int32,System.Int32,System.Int32)">
+  SetAndEquals(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets this BlockPos to the x,y,z values given, and returns a boolean stating if the existing values were already equal to x,y,z</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool SetAndEquals(int x, int y, int z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Returns true if the BlockPos already held these exact x, y, z values (the .Set operation has not changed anything)<br>Returns false if the .Set operation caused a change to the BlockPos</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_SetDimension_" data-uid="Vintagestory.API.MathTools.BlockPos.SetDimension*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_SetDimension_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.SetDimension(System.Int32)">
+  SetDimension(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos SetDimension(int dim)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dim</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_SetFromColumnIndex3d_" data-uid="Vintagestory.API.MathTools.BlockPos.SetFromColumnIndex3d*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_SetFromColumnIndex3d_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.SetFromColumnIndex3d(System.Int32,System.Int32,System.Int32)">
+  SetFromColumnIndex3d(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetFromColumnIndex3d(int index3d, int cx, int cz)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index3d</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>cx</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>cz</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_SetFromSchematicIndex_" data-uid="Vintagestory.API.MathTools.BlockPos.SetFromSchematicIndex*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_SetFromSchematicIndex_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.SetFromSchematicIndex(System.Int32)">
+  SetFromSchematicIndex(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetFromSchematicIndex(int index3d)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index3d</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_South_" data-uid="Vintagestory.API.MathTools.BlockPos.South*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_South" data-uid="Vintagestory.API.MathTools.BlockPos.South">
+  South()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos South()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_SouthCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.SouthCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_SouthCopy_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.SouthCopy(System.Int32)">
+  SouthCopy(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position with the z-position adjusted by +<code class="paramref">length</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos SouthCopy(int length = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Sub_" data-uid="Vintagestory.API.MathTools.BlockPos.Sub*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Sub_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.Sub(System.Int32,System.Int32,System.Int32)">
+  Sub(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Substract a position =&gt; you'll have the manhatten distance</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Sub(int x, int y, int z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Sub_" data-uid="Vintagestory.API.MathTools.BlockPos.Sub*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Sub_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.Sub(Vintagestory.API.MathTools.BlockPos)">
+  Sub(BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Substract a position =&gt; you'll have the manhatten distance</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Sub(BlockPos pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_SubCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.SubCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_SubCopy_System_Int32_System_Int32_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.SubCopy(System.Int32,System.Int32,System.Int32)">
+  SubCopy(int, int, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos SubCopy(int x, int y, int z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_SubCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.SubCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_SubCopy_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.SubCopy(Vintagestory.API.MathTools.BlockPos)">
+  SubCopy(BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Substract a position =&gt; you'll have the manhatten distance.
+<br>If used within a non-zero dimension the resulting BlockPos will be dimensionless as it's a distance or offset between two positions</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos SubCopy(BlockPos pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_ToBytes_" data-uid="Vintagestory.API.MathTools.BlockPos.ToBytes*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_ToBytes_System_IO_BinaryWriter_" data-uid="Vintagestory.API.MathTools.BlockPos.ToBytes(System.IO.BinaryWriter)">
+  ToBytes(BinaryWriter)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ToBytes(BinaryWriter writer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>writer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.binarywriter">BinaryWriter</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_ToColumnIndex3d_" data-uid="Vintagestory.API.MathTools.BlockPos.ToColumnIndex3d*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_ToColumnIndex3d" data-uid="Vintagestory.API.MathTools.BlockPos.ToColumnIndex3d">
+  ToColumnIndex3d()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Like index3d used inside chunks, but the y value can have any value from 0 to worldheight, inside a chunk column</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int ToColumnIndex3d()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_ToLocalPosition_" data-uid="Vintagestory.API.MathTools.BlockPos.ToLocalPosition*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_ToLocalPosition_Vintagestory_API_Common_ICoreAPI_" data-uid="Vintagestory.API.MathTools.BlockPos.ToLocalPosition(Vintagestory.API.Common.ICoreAPI)">
+  ToLocalPosition(ICoreAPI)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Convert a block position to coordinates relative to the world spawn position. Note this is dimension unaware</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vec3i ToLocalPosition(ICoreAPI api)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Common.ICoreAPI.html">ICoreAPI</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3i.html">Vec3i</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_ToSchematicIndex_" data-uid="Vintagestory.API.MathTools.BlockPos.ToSchematicIndex*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_ToSchematicIndex" data-uid="Vintagestory.API.MathTools.BlockPos.ToSchematicIndex">
+  ToSchematicIndex()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int ToSchematicIndex()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_ToString_" data-uid="Vintagestory.API.MathTools.BlockPos.ToString*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_ToString" data-uid="Vintagestory.API.MathTools.BlockPos.ToString">
+  ToString()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A string that represents the current object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_ToVec3d_" data-uid="Vintagestory.API.MathTools.BlockPos.ToVec3d*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_ToVec3d" data-uid="Vintagestory.API.MathTools.BlockPos.ToVec3d">
+  ToVec3d()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new instance of a Vec3d initialized with this position
+Note this is dimension unaware</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vec3d ToVec3d()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_ToVec3f_" data-uid="Vintagestory.API.MathTools.BlockPos.ToVec3f*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_ToVec3f" data-uid="Vintagestory.API.MathTools.BlockPos.ToVec3f">
+  ToVec3f()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vec3f ToVec3f()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3f.html">Vec3f</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_ToVec3i_" data-uid="Vintagestory.API.MathTools.BlockPos.ToVec3i*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_ToVec3i" data-uid="Vintagestory.API.MathTools.BlockPos.ToVec3i">
+  ToVec3i()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new instance of a Vec3i initialized with this position
+Note this is dimension unaware</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vec3i ToVec3i()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3i.html">Vec3i</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Up_" data-uid="Vintagestory.API.MathTools.BlockPos.Up*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Up_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.Up(System.Int32)">
+  Up(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Move the position vertically up</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos Up(int dy = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dy</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_UpCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.UpCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_UpCopy_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.UpCopy(System.Int32)">
+  UpCopy(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position with the y-position adjusted by +<code class="paramref">length</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos UpCopy(int length = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_Walk_" data-uid="Vintagestory.API.MathTools.BlockPos.Walk*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_Walk_Vintagestory_API_MathTools_BlockPos_Vintagestory_API_MathTools_BlockPos_Vintagestory_API_MathTools_Vec3i_System_Action_System_Int32_System_Int32_System_Int32__" data-uid="Vintagestory.API.MathTools.BlockPos.Walk(Vintagestory.API.MathTools.BlockPos,Vintagestory.API.MathTools.BlockPos,Vintagestory.API.MathTools.Vec3i,System.Action{System.Int32,System.Int32,System.Int32})">
+  Walk(BlockPos, BlockPos, Vec3i, Action&lt;int, int, int&gt;)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Walk(BlockPos startPos, BlockPos untilPos, Vec3i mapSizeForClamp, Action&lt;int, int, int&gt; onpos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>startPos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+    <dt><code>untilPos</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+    <dt><code>mapSizeForClamp</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3i.html">Vec3i</a></dt>
+    <dd></dd>
+    <dt><code>onpos</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action-3">Action</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_West_" data-uid="Vintagestory.API.MathTools.BlockPos.West*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_West" data-uid="Vintagestory.API.MathTools.BlockPos.West">
+  West()
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos West()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_WestCopy_" data-uid="Vintagestory.API.MathTools.BlockPos.WestCopy*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_WestCopy_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.WestCopy(System.Int32)">
+  WestCopy(int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a copy of this blocks position with the x-position adjusted by -<code class="paramref">length</code></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockPos WestCopy(int length = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>length</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_op_Addition_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Addition*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_op_Addition_Vintagestory_API_MathTools_BlockPos_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Addition(Vintagestory.API.MathTools.BlockPos,System.Int32)">
+  operator +(BlockPos, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BlockPos operator +(BlockPos left, int right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_op_Addition_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Addition*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_op_Addition_Vintagestory_API_MathTools_BlockPos_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Addition(Vintagestory.API.MathTools.BlockPos,Vintagestory.API.MathTools.BlockPos)">
+  operator +(BlockPos, BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BlockPos operator +(BlockPos left, BlockPos right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_op_Division_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Division*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_op_Division_Vintagestory_API_MathTools_BlockPos_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Division(Vintagestory.API.MathTools.BlockPos,System.Int32)">
+  operator /(BlockPos, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BlockPos operator /(BlockPos left, int right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_op_Equality_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Equality*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_op_Equality_Vintagestory_API_MathTools_BlockPos_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Equality(Vintagestory.API.MathTools.BlockPos,Vintagestory.API.MathTools.BlockPos)">
+  operator ==(BlockPos, BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(BlockPos left, BlockPos right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_op_Inequality_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Inequality*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_op_Inequality_Vintagestory_API_MathTools_BlockPos_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Inequality(Vintagestory.API.MathTools.BlockPos,Vintagestory.API.MathTools.BlockPos)">
+  operator !=(BlockPos, BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(BlockPos left, BlockPos right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_op_Multiply_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Multiply*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_op_Multiply_System_Int32_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Multiply(System.Int32,Vintagestory.API.MathTools.BlockPos)">
+  operator *(int, BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BlockPos operator *(int left, BlockPos right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_op_Multiply_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Multiply*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_op_Multiply_Vintagestory_API_MathTools_BlockPos_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Multiply(Vintagestory.API.MathTools.BlockPos,System.Int32)">
+  operator *(BlockPos, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BlockPos operator *(BlockPos left, int right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_op_Subtraction_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Subtraction*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_op_Subtraction_Vintagestory_API_MathTools_BlockPos_System_Int32_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Subtraction(Vintagestory.API.MathTools.BlockPos,System.Int32)">
+  operator -(BlockPos, int)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BlockPos operator -(BlockPos left, int right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_MathTools_BlockPos_op_Subtraction_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Subtraction*"></a>
+
+  <h3 id="Vintagestory_API_MathTools_BlockPos_op_Subtraction_Vintagestory_API_MathTools_BlockPos_Vintagestory_API_MathTools_BlockPos_" data-uid="Vintagestory.API.MathTools.BlockPos.op_Subtraction(Vintagestory.API.MathTools.BlockPos,Vintagestory.API.MathTools.BlockPos)">
+  operator -(BlockPos, BlockPos)
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BlockPos operator -(BlockPos left, BlockPos right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.BlockPos.html">BlockPos</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

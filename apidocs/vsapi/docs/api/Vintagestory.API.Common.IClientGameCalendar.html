@@ -1,0 +1,599 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IClientGameCalendar | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IClientGameCalendar | VintageStory API ">
+      
+      
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.Common.IClientGameCalendar">
+
+
+
+  <h1 id="Vintagestory_API_Common_IClientGameCalendar" data-uid="Vintagestory.API.Common.IClientGameCalendar" class="text-break">
+Interface IClientGameCalendar  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.Common.html">Common</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IClientGameCalendar : IGameCalendar</code></pre>
+  </div>
+
+
+
+
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_StartYear">IGameCalendar.StartYear</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_OnGetHemisphere">IGameCalendar.OnGetHemisphere</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_OnGetSolarSphericalCoords">IGameCalendar.OnGetSolarSphericalCoords</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_OnGetLatitude">IGameCalendar.OnGetLatitude</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_GetDayLightStrength_System_Double_System_Double_">IGameCalendar.GetDayLightStrength(double, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_GetDayLightStrength_Vintagestory_API_MathTools_BlockPos_">IGameCalendar.GetDayLightStrength(BlockPos)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_GetSunPosition_Vintagestory_API_MathTools_Vec3d_System_Double_">IGameCalendar.GetSunPosition(Vec3d, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_GetMoonPosition_Vintagestory_API_MathTools_Vec3d_System_Double_">IGameCalendar.GetMoonPosition(Vec3d, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_PrettyDate">IGameCalendar.PrettyDate()</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_SpeedOfTime">IGameCalendar.SpeedOfTime</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_SetTimeSpeedModifier_System_String_System_Single_">IGameCalendar.SetTimeSpeedModifier(string, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_RemoveTimeSpeedModifier_System_String_">IGameCalendar.RemoveTimeSpeedModifier(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_ElapsedSeconds">IGameCalendar.ElapsedSeconds</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_ElapsedHours">IGameCalendar.ElapsedHours</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_ElapsedDays">IGameCalendar.ElapsedDays</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_CalendarSpeedMul">IGameCalendar.CalendarSpeedMul</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_HoursPerDay">IGameCalendar.HoursPerDay</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_DaysPerYear">IGameCalendar.DaysPerYear</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_DaysPerMonth">IGameCalendar.DaysPerMonth</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_Month">IGameCalendar.Month</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_MonthName">IGameCalendar.MonthName</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_FullHourOfDay">IGameCalendar.FullHourOfDay</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_HourOfDay">IGameCalendar.HourOfDay</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_TotalHours">IGameCalendar.TotalHours</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_TotalDays">IGameCalendar.TotalDays</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_DayOfYear">IGameCalendar.DayOfYear</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_DayOfYearf">IGameCalendar.DayOfYearf</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_Year">IGameCalendar.Year</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_GetSeason_Vintagestory_API_MathTools_BlockPos_">IGameCalendar.GetSeason(BlockPos)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_GetSeasonRel_Vintagestory_API_MathTools_BlockPos_">IGameCalendar.GetSeasonRel(BlockPos)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_GetHemisphere_Vintagestory_API_MathTools_BlockPos_">IGameCalendar.GetHemisphere(BlockPos)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_YearRel">IGameCalendar.YearRel</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_Add_System_Single_">IGameCalendar.Add(float)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_MoonPhase">IGameCalendar.MoonPhase</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_MoonPhaseExact">IGameCalendar.MoonPhaseExact</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_MoonPhaseBrightness">IGameCalendar.MoonPhaseBrightness</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_MoonSize">IGameCalendar.MoonSize</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_SeasonOverride">IGameCalendar.SeasonOverride</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_SetSeasonOverride_System_Nullable_System_Single__">IGameCalendar.SetSeasonOverride(float?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Vintagestory.API.Common.IGameCalendar.html#Vintagestory_API_Common_IGameCalendar_Timelapse">IGameCalendar.Timelapse</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vintagestory_API_Common_IClientGameCalendar_DayLightStrength_" data-uid="Vintagestory.API.Common.IClientGameCalendar.DayLightStrength*"></a>
+
+  <h3 id="Vintagestory_API_Common_IClientGameCalendar_DayLightStrength" data-uid="Vintagestory.API.Common.IClientGameCalendar.DayLightStrength">
+  DayLightStrength
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a value between 0 (no sunlight) and 1 (full sunlight) at the players current location</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">float DayLightStrength { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IClientGameCalendar_Dusk_" data-uid="Vintagestory.API.Common.IClientGameCalendar.Dusk*"></a>
+
+  <h3 id="Vintagestory_API_Common_IClientGameCalendar_Dusk" data-uid="Vintagestory.API.Common.IClientGameCalendar.Dusk">
+  Dusk
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If true, its currently dusk at the players current location</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool Dusk { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IClientGameCalendar_MoonLightStrength_" data-uid="Vintagestory.API.Common.IClientGameCalendar.MoonLightStrength*"></a>
+
+  <h3 id="Vintagestory_API_Common_IClientGameCalendar_MoonLightStrength" data-uid="Vintagestory.API.Common.IClientGameCalendar.MoonLightStrength">
+  MoonLightStrength
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a value between 0 (no sunlight) and 1 (full sunlight) at the players current location</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">float MoonLightStrength { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IClientGameCalendar_MoonPosition_" data-uid="Vintagestory.API.Common.IClientGameCalendar.MoonPosition*"></a>
+
+  <h3 id="Vintagestory_API_Common_IClientGameCalendar_MoonPosition" data-uid="Vintagestory.API.Common.IClientGameCalendar.MoonPosition">
+  MoonPosition
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a vector of the moon position at the players current location</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Vec3f MoonPosition { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3f.html">Vec3f</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IClientGameCalendar_ReflectColor_" data-uid="Vintagestory.API.Common.IClientGameCalendar.ReflectColor*"></a>
+
+  <h3 id="Vintagestory_API_Common_IClientGameCalendar_ReflectColor" data-uid="Vintagestory.API.Common.IClientGameCalendar.ReflectColor">
+  ReflectColor
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Vec3f ReflectColor { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3f.html">Vec3f</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IClientGameCalendar_SunColor_" data-uid="Vintagestory.API.Common.IClientGameCalendar.SunColor*"></a>
+
+  <h3 id="Vintagestory_API_Common_IClientGameCalendar_SunColor" data-uid="Vintagestory.API.Common.IClientGameCalendar.SunColor">
+  SunColor
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a normalized color of the sun at the players current location</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Vec3f SunColor { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3f.html">Vec3f</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IClientGameCalendar_SunLightStrength_" data-uid="Vintagestory.API.Common.IClientGameCalendar.SunLightStrength*"></a>
+
+  <h3 id="Vintagestory_API_Common_IClientGameCalendar_SunLightStrength" data-uid="Vintagestory.API.Common.IClientGameCalendar.SunLightStrength">
+  SunLightStrength
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">float SunLightStrength { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IClientGameCalendar_SunPosition_" data-uid="Vintagestory.API.Common.IClientGameCalendar.SunPosition*"></a>
+
+  <h3 id="Vintagestory_API_Common_IClientGameCalendar_SunPosition" data-uid="Vintagestory.API.Common.IClientGameCalendar.SunPosition">
+  SunPosition
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a vector of the sun position at the players current location</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Vec3f SunPosition { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3f.html">Vec3f</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IClientGameCalendar_SunPositionNormalized_" data-uid="Vintagestory.API.Common.IClientGameCalendar.SunPositionNormalized*"></a>
+
+  <h3 id="Vintagestory_API_Common_IClientGameCalendar_SunPositionNormalized" data-uid="Vintagestory.API.Common.IClientGameCalendar.SunPositionNormalized">
+  SunPositionNormalized
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a normalized vector of the sun position at the players current location</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Vec3f SunPositionNormalized { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3f.html">Vec3f</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_IClientGameCalendar_SunsetMod_" data-uid="Vintagestory.API.Common.IClientGameCalendar.SunsetMod*"></a>
+
+  <h3 id="Vintagestory_API_Common_IClientGameCalendar_SunsetMod" data-uid="Vintagestory.API.Common.IClientGameCalendar.SunsetMod">
+  SunsetMod
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>A horizontal offset that is applied when reading the sky glow color at the players current location. Creates a greater variety of sunsets. Changes to a different value once per day (during midnight)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">float SunsetMod { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

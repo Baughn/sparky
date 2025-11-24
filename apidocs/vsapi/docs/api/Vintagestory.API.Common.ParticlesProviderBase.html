@@ -1,0 +1,1362 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ParticlesProviderBase | VintageStory API </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ParticlesProviderBase | VintageStory API ">
+      
+      <meta name="description" content="A base class for all particle providers. Open in GitHub">
+      <link rel="icon" href="../images/gameicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="VintageStory API">
+            VintageStory API
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Vintagestory.API.Common.ParticlesProviderBase">
+
+
+
+  <h1 id="Vintagestory_API_Common_ParticlesProviderBase" data-uid="Vintagestory.API.Common.ParticlesProviderBase" class="text-break">
+Class ParticlesProviderBase  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Vintagestory.html">Vintagestory</a>.<a class="xref" href="Vintagestory.API.html">API</a>.<a class="xref" href="Vintagestory.API.Common.html">Common</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>VintagestoryAPI.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>A base class for all particle providers. <a href="https://github.com/anegostudios/vsapi/blob/master///Common/Particle/ParticlesProviderBase.cs">Open in GitHub</a></p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class ParticlesProviderBase : IParticlePropertiesProvider</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">ParticlesProviderBase</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Vintagestory.API.Common.IParticlePropertiesProvider.html">IParticlePropertiesProvider</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Vintagestory.API.Common.FloatingSedimentParticles.html">FloatingSedimentParticles</a></div>
+      <div><a class="xref" href="Vintagestory.API.Common.WaterSplashParticles.html">WaterSplashParticles</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToGcHandle_System_Object_">ObjectHandleExtensions.ToGcHandle(object)</a>
+  </div>
+  <div>
+      <a class="xref" href="Vintagestory.API.Util.ObjectHandleExtensions.html#Vintagestory_API_Util_ObjectHandleExtensions_ToIntPtr_System_Object_">ObjectHandleExtensions.ToIntPtr(object)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_Async_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.Async*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_Async" data-uid="Vintagestory.API.Common.ParticlesProviderBase.Async">
+  Async
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If true, will be be spawned in the async particle system, which does not affect main game performance, recommended for large quantities of particles, slightly less optimal for particles that spawn very often</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Async { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_BlueEvolve_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.BlueEvolve*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_BlueEvolve" data-uid="Vintagestory.API.Common.ParticlesProviderBase.BlueEvolve">
+  BlueEvolve
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the evolving blue value of the particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual EvolvingNatFloat BlueEvolve { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.EvolvingNatFloat.html">EvolvingNatFloat</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_Bounciness_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.Bounciness*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_Bounciness" data-uid="Vintagestory.API.Common.ParticlesProviderBase.Bounciness">
+  Bounciness
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float Bounciness { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_DeathParticles_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.DeathParticles*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_DeathParticles" data-uid="Vintagestory.API.Common.ParticlesProviderBase.DeathParticles">
+  DeathParticles
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the death particle for this type of particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IParticlePropertiesProvider[] DeathParticles { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IParticlePropertiesProvider.html">IParticlePropertiesProvider</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_DieInAir_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.DieInAir*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_DieInAir" data-uid="Vintagestory.API.Common.ParticlesProviderBase.DieInAir">
+  DieInAir
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Whether or not the particle dies in air.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool DieInAir { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_DieInLiquid_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.DieInLiquid*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_DieInLiquid" data-uid="Vintagestory.API.Common.ParticlesProviderBase.DieInLiquid">
+  DieInLiquid
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether or not the particle dies in liquid</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool DieInLiquid { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_DieOnRainHeightmap_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.DieOnRainHeightmap*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_DieOnRainHeightmap" data-uid="Vintagestory.API.Common.ParticlesProviderBase.DieOnRainHeightmap">
+  DieOnRainHeightmap
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If true, particle dies if it falls below the rain height at its given location</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool DieOnRainHeightmap { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_GravityEffect_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.GravityEffect*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_GravityEffect" data-uid="Vintagestory.API.Common.ParticlesProviderBase.GravityEffect">
+  GravityEffect
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the gravity effect on the particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual float GravityEffect { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_GreenEvolve_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.GreenEvolve*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_GreenEvolve" data-uid="Vintagestory.API.Common.ParticlesProviderBase.GreenEvolve">
+  GreenEvolve
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the evolving green value of the particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual EvolvingNatFloat GreenEvolve { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.EvolvingNatFloat.html">EvolvingNatFloat</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_LifeLength_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.LifeLength*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_LifeLength" data-uid="Vintagestory.API.Common.ParticlesProviderBase.LifeLength">
+  LifeLength
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>gets the life length of the particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual float LifeLength { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_LightEmission_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.LightEmission*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_LightEmission" data-uid="Vintagestory.API.Common.ParticlesProviderBase.LightEmission">
+  LightEmission
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>If this particle emits light, this is its RGBA. Does not actually brighten the scene around it, but prevents incorrect lighting of particles when everything else around it is dark</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int LightEmission { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_OpacityEvolve_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.OpacityEvolve*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_OpacityEvolve" data-uid="Vintagestory.API.Common.ParticlesProviderBase.OpacityEvolve">
+  OpacityEvolve
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the evolving opacity value of the particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual EvolvingNatFloat OpacityEvolve { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.EvolvingNatFloat.html">EvolvingNatFloat</a></dt>
+    <dd><p>An evolving value based on opacity.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_ParentVelocity_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.ParentVelocity*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_ParentVelocity" data-uid="Vintagestory.API.Common.ParticlesProviderBase.ParentVelocity">
+  ParentVelocity
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vec3f ParentVelocity { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3f.html">Vec3f</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_ParentVelocityWeight_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.ParentVelocityWeight*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_ParentVelocityWeight" data-uid="Vintagestory.API.Common.ParticlesProviderBase.ParentVelocityWeight">
+  ParentVelocityWeight
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public float ParentVelocityWeight { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_ParticleModel_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.ParticleModel*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_ParticleModel" data-uid="Vintagestory.API.Common.ParticlesProviderBase.ParticleModel">
+  ParticleModel
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the model type of the particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual EnumParticleModel ParticleModel { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.EnumParticleModel.html">EnumParticleModel</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_Pos_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.Pos*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_Pos" data-uid="Vintagestory.API.Common.ParticlesProviderBase.Pos">
+  Pos
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the position of particles.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Vec3d Pos { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_Quantity_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.Quantity*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_Quantity" data-uid="Vintagestory.API.Common.ParticlesProviderBase.Quantity">
+  Quantity
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the quantity of particles.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual float Quantity { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_RandomVelocityChange_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.RandomVelocityChange*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_RandomVelocityChange" data-uid="Vintagestory.API.Common.ParticlesProviderBase.RandomVelocityChange">
+  RandomVelocityChange
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RandomVelocityChange { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_RedEvolve_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.RedEvolve*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_RedEvolve" data-uid="Vintagestory.API.Common.ParticlesProviderBase.RedEvolve">
+  RedEvolve
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the evolving red value of the particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual EvolvingNatFloat RedEvolve { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.EvolvingNatFloat.html">EvolvingNatFloat</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_SecondaryParticles_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.SecondaryParticles*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_SecondaryParticles" data-uid="Vintagestory.API.Common.ParticlesProviderBase.SecondaryParticles">
+  SecondaryParticles
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the secondary particle type for this particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual IParticlePropertiesProvider[] SecondaryParticles { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.Common.IParticlePropertiesProvider.html">IParticlePropertiesProvider</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_SecondarySpawnInterval_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.SecondarySpawnInterval*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_SecondarySpawnInterval" data-uid="Vintagestory.API.Common.ParticlesProviderBase.SecondarySpawnInterval">
+  SecondarySpawnInterval
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the secondary particle spawn interval.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual float SecondarySpawnInterval { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_SelfPropelled_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.SelfPropelled*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_SelfPropelled" data-uid="Vintagestory.API.Common.ParticlesProviderBase.SelfPropelled">
+  SelfPropelled
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Whether or not the particle is self-propelled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool SelfPropelled { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_Size_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.Size*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_Size" data-uid="Vintagestory.API.Common.ParticlesProviderBase.Size">
+  Size
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>gets the size of the particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual float Size { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_SizeEvolve_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.SizeEvolve*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_SizeEvolve" data-uid="Vintagestory.API.Common.ParticlesProviderBase.SizeEvolve">
+  SizeEvolve
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>gets the dynamic size of the particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual EvolvingNatFloat SizeEvolve { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.EvolvingNatFloat.html">EvolvingNatFloat</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_SwimOnLiquid_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.SwimOnLiquid*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_SwimOnLiquid" data-uid="Vintagestory.API.Common.ParticlesProviderBase.SwimOnLiquid">
+  SwimOnLiquid
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool SwimOnLiquid { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_TerrainCollision_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.TerrainCollision*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_TerrainCollision" data-uid="Vintagestory.API.Common.ParticlesProviderBase.TerrainCollision">
+  TerrainCollision
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Whether or not the particle collides with the terrain or not.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TerrainCollision { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_VelocityEvolve_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.VelocityEvolve*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_VelocityEvolve" data-uid="Vintagestory.API.Common.ParticlesProviderBase.VelocityEvolve">
+  VelocityEvolve
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the dynamic speeds of the particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual EvolvingNatFloat[] VelocityEvolve { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.EvolvingNatFloat.html">EvolvingNatFloat</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_VertexFlags_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.VertexFlags*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_VertexFlags" data-uid="Vintagestory.API.Common.ParticlesProviderBase.VertexFlags">
+  VertexFlags
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>gets the glow level of the particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual int VertexFlags { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_WindAffected_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.WindAffected*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_WindAffected" data-uid="Vintagestory.API.Common.ParticlesProviderBase.WindAffected">
+  WindAffected
+  
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool WindAffected { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_BeginParticle_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.BeginParticle*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_BeginParticle" data-uid="Vintagestory.API.Common.ParticlesProviderBase.BeginParticle">
+  BeginParticle()
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called just before a new particle is being created. You can use this to produce e.g. alternating kinds of particles</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void BeginParticle()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_FromBytes_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.FromBytes*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_FromBytes_System_IO_BinaryReader_Vintagestory_API_Common_IWorldAccessor_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.FromBytes(System.IO.BinaryReader,Vintagestory.API.Common.IWorldAccessor)">
+  FromBytes(BinaryReader, IWorldAccessor)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>How the particle is read from the save.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void FromBytes(BinaryReader reader, IWorldAccessor resolver)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reader</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.binaryreader">BinaryReader</a></dt>
+    <dd></dd>
+    <dt><code>resolver</code> <a class="xref" href="Vintagestory.API.Common.IWorldAccessor.html">IWorldAccessor</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_GetRgbaColor_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.GetRgbaColor*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_GetRgbaColor_Vintagestory_API_Client_ICoreClientAPI_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.GetRgbaColor(Vintagestory.API.Client.ICoreClientAPI)">
+  GetRgbaColor(ICoreClientAPI)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the color of the particle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual int GetRgbaColor(ICoreClientAPI capi)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>capi</code> <a class="xref" href="Vintagestory.API.Client.ICoreClientAPI.html">ICoreClientAPI</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_GetVelocity_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.GetVelocity*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_GetVelocity_Vintagestory_API_MathTools_Vec3d_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.GetVelocity(Vintagestory.API.MathTools.Vec3d)">
+  GetVelocity(Vec3d)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the velocity of the particles.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Vec3f GetVelocity(Vec3d pos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pos</code> <a class="xref" href="Vintagestory.API.MathTools.Vec3d.html">Vec3d</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Vintagestory.API.MathTools.Vec3f.html">Vec3f</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_Init_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.Init*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_Init_Vintagestory_API_Common_ICoreAPI_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.Init(Vintagestory.API.Common.ICoreAPI)">
+  Init(ICoreAPI)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called before the particle provider is used for particle creation</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Init(ICoreAPI api)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>api</code> <a class="xref" href="Vintagestory.API.Common.ICoreAPI.html">ICoreAPI</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_PrepareForSecondarySpawn_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.PrepareForSecondarySpawn*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_PrepareForSecondarySpawn_Vintagestory_API_Common_ParticleBase_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.PrepareForSecondarySpawn(Vintagestory.API.Common.ParticleBase)">
+  PrepareForSecondarySpawn(ParticleBase)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates instance related state for secondary particles based on the given parent particle instance</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void PrepareForSecondarySpawn(ParticleBase particleInstance)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>particleInstance</code> <a class="xref" href="Vintagestory.API.Common.ParticleBase.html">ParticleBase</a></dt>
+    <dd><p>The parent IParticleInstance from which this secondary particle is being spawned</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Vintagestory_API_Common_ParticlesProviderBase_ToBytes_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.ToBytes*"></a>
+
+  <h3 id="Vintagestory_API_Common_ParticlesProviderBase_ToBytes_System_IO_BinaryWriter_" data-uid="Vintagestory.API.Common.ParticlesProviderBase.ToBytes(System.IO.BinaryWriter)">
+  ToBytes(BinaryWriter)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>How the particle is written to the save. (if it is)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void ToBytes(BinaryWriter writer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>writer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.binarywriter">BinaryWriter</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
