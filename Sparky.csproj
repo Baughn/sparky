@@ -10,6 +10,8 @@
   <ItemGroup>
     <Compile Remove="apidocs/**" />
     <None Remove="apidocs/**" />
+    <Compile Remove="Sparky.Tests/**" />
+    <None Remove="Sparky.Tests/**" />
   </ItemGroup>
 
   <ItemGroup>
