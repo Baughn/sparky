@@ -147,7 +147,7 @@ namespace Sparky.Tests
         {
             // "The Off-Grid Cottage"
             // Diesel Gen (100V, 1 Ohm) -> Switch -> Main Bus
-            // Wind Turbine (120V AC) -> Diode -> Main Bus
+            // Wind Turbine (480V AC) -> Transformer (4:1) -> Diode -> Main Bus
             // Battery (10mF) -> Main Bus
             // Lights (10 Ohm) -> Switch -> Main Bus
 
@@ -159,24 +159,30 @@ namespace Sparky.Tests
             var nGen = circuit.AddNode();
             var genSrc = new VoltageSource(nGen, ground, 100.0);
             var genRes = new Resistor(nGen, nBus, 1.0); // Internal R
-            // We need a switch for the generator. Let's use a variable resistor in series.
-            // Actually, let's just use the Internal R as the switch. 
-            // OFF = 1e9, ON = 1.0.
             genRes.Resistance = 1e9; // Start OFF
-
             circuit.AddComponent(genSrc);
             circuit.AddComponent(genRes);
 
             // Battery
-            // 10mF Capacitor
             var battery = new Capacitor(nBus, ground, 0.01);
             circuit.AddComponent(battery);
 
-            // Wind Turbine
-            var nWind = circuit.AddNode();
-            var windSrc = new VoltageSource(nWind, ground, 0.0); // Start OFF
-            var windDiode = new Diode(nWind, nBus);
+            // Wind Turbine + Transformer
+            var nWindPri = circuit.AddNode(); // Primary side of transformer
+            var nWindSec = circuit.AddNode(); // Secondary side of transformer
+
+            // Source (480V) -> Primary
+            var windSrc = new VoltageSource(nWindPri, ground, 0.0); // Start OFF
             circuit.AddComponent(windSrc);
+
+            // Transformer (4:1)
+            // Primary: nWindPri -> Ground
+            // Secondary: nWindSec -> Ground
+            var transformer = new Transformer(nWindPri, ground, nWindSec, ground, 4.0);
+            circuit.AddComponent(transformer);
+
+            // Diode: Secondary -> Bus
+            var windDiode = new Diode(nWindSec, nBus);
             circuit.AddComponent(windDiode);
 
             // Lights (Load)
@@ -206,42 +212,31 @@ namespace Sparky.Tests
             Assert.That(nBus.Voltage, Is.EqualTo(90.9).Within(1.0));
 
             // 4. Turn ON Wind Turbine
-            // 120V Peak, 50Hz
+            // 480V Peak, 50Hz. Transformer 4:1 -> 120V Peak at secondary.
             double freq = 50.0;
             double maxV = 0;
             for (int i = 0; i < 500; i++) // 0.5s
             {
                 time += dt;
-                windSrc.Voltage = 120.0 * Math.Sin(2 * Math.PI * freq * time);
+                windSrc.Voltage = 480.0 * Math.Sin(2 * Math.PI * freq * time);
                 circuit.Solve(dt);
                 maxV = Math.Max(maxV, nBus.Voltage);
             }
-            // Peak should be higher than 90.9V because Wind (120V) > Gen (100V)
+            // Peak should be higher than 90.9V because Wind (120V eff peak) > Gen (100V)
             // Peak ~ 120 - 0.7 (Diode) = 119.3V
-            // But Gen is still connected, so it will clamp/absorb?
-            // Gen is 100V source + 1 Ohm.
-            // If Bus > 100V, current flows BACK into Gen.
-            // V_bus = (V_wind_eff/R_wind + V_gen/R_gen + V_bat/dt...) / Sum(G)
-            // Basically, Wind will push voltage up.
             Assert.That(maxV, Is.GreaterThan(110.0));
 
             // 5. Turn OFF Diesel Gen
             genRes.Resistance = 1e9; // Disconnect Gen
             // Now discharging battery + intermittent wind
-            double startDischargeV = nBus.Voltage;
             for (int i = 0; i < 500; i++) // 0.5s
             {
                 time += dt;
-                windSrc.Voltage = 120.0 * Math.Sin(2 * Math.PI * freq * time);
+                windSrc.Voltage = 480.0 * Math.Sin(2 * Math.PI * freq * time);
                 circuit.Solve(dt);
-                if (i % 50 == 0) { /* Debug logging removed */ }
             }
-            // Battery should be discharging (average voltage drops)
-            // But Wind is keeping it somewhat up.
-            // If Wind was OFF, it would drop fast: RC = 10 * 0.01 = 0.1s.
-            // 0.5s is 5 time constants. Would be near 0.
-            // With Wind, it should stay alive.
-            Assert.That(nBus.Voltage, Is.GreaterThan(10.0)); // Arbitrary check that it's not dead
+            // Battery should be discharging but Wind is keeping it somewhat up.
+            Assert.That(nBus.Voltage, Is.GreaterThan(10.0));
         }
     }
 }
