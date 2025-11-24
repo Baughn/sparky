@@ -75,29 +75,14 @@ namespace Sparky.MNA
             double v2 = (Node2.Id == 0) ? 0 : x[Node2.Id];
             double newVd = v1 - v2;
 
-            // TODO: Damping could be added here if needed
-            // Clamp _vd to prevent overflow in exp()
+            // Simple damping/limiting:
+            // Clamp _vd to prevent overflow in exp() and aid convergence.
             // Max safe exponent is ~700. 
             // _vd / Vt < 700 => _vd < 700 * 0.026 = 18.2V
-            // But physically, a diode at 2V passes kA. 5V is plenty.
+            // We clamp to 5.0V which is sufficient for most electronics (diode drop rarely exceeds 2-3V even at high currents).
             if (newVd > 5.0) newVd = 5.0;
 
             _vd = newVd;
-        }
-
-        // We need a way to check convergence.
-        // The solver needs to know if it should iterate again.
-        // Maybe Component should return a convergence error?
-        // Or the Circuit checks max change in non-linear components?
-
-        public double GetVoltageDelta()
-        {
-            // Return the difference between the voltage used for linearization and the calculated voltage
-            // This is not exactly right, we need to store the _vd used for stamp.
-            // But UpdateState updates _vd.
-            // So we can't easily check "change" unless we store `_lastVd`.
-            // TODO: Implement proper convergence check metric
-            return 0; // Placeholder
         }
     }
 }

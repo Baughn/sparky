@@ -75,9 +75,16 @@ namespace Sparky.MNA
             if (_dirty) BuildSystem();
 
             // Newton-Raphson Iteration for Non-Linear Components
-            int maxIterations = 10;
+            int maxIterations = 50; // Increased from 10 to handle stiff non-linearities
             double tolerance = 1e-6;
+
+            // Allocate xPrev once if needed, or reuse a buffer if we want to be super optimized.
+            // For now, just outside the loop is better than inside.
             Vector<double>? xPrev = null;
+            if (_vectorX != null)
+            {
+                xPrev = Vector<double>.Build.Dense(_vectorX.Count);
+            }
 
             for (int iter = 0; iter < maxIterations; iter++)
             {
@@ -107,7 +114,7 @@ namespace Sparky.MNA
                 if (_vectorX != null)
                 {
                     bool converged = false;
-                    if (xPrev != null)
+                    if (iter > 0) // Can't check convergence on first step (xPrev is stale or empty)
                     {
                         // Check infinity norm of (x - xPrev)
                         var diff = _vectorX - xPrev;
@@ -117,7 +124,8 @@ namespace Sparky.MNA
                         }
                     }
 
-                    xPrev = _vectorX.Clone();
+                    // Copy current X to xPrev for next iteration check
+                    if (xPrev != null) _vectorX.CopyTo(xPrev);
 
                     // Update nodes with new voltages
                     for (int i = 0; i < Nodes.Count; i++)
@@ -132,8 +140,6 @@ namespace Sparky.MNA
                     }
 
                     if (converged) break;
-
-                    // TODO: Let's allocate `x_prev` outside the loop to avoid re-allocation every step.
                 }
             }
 
