@@ -4,13 +4,21 @@ namespace Sparky.MNA
 {
     public class Resistor : Component
     {
-        public double Resistance { get; }
-        public double Conductance { get; }
+        private double _resistance;
+        public double Resistance
+        {
+            get => _resistance;
+            set
+            {
+                _resistance = value;
+                Conductance = 1.0 / _resistance;
+            }
+        }
+        public double Conductance { get; private set; }
 
         public Resistor(Node node1, Node node2, double resistance) : base(node1, node2)
         {
             Resistance = resistance;
-            Conductance = 1.0 / resistance;
         }
 
         public override void Stamp(Matrix<double> A, Vector<double> Z, double dt = 0)

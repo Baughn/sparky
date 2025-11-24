@@ -76,6 +76,12 @@ namespace Sparky.MNA
             double newVd = v1 - v2;
 
             // TODO: Damping could be added here if needed
+            // Clamp _vd to prevent overflow in exp()
+            // Max safe exponent is ~700. 
+            // _vd / Vt < 700 => _vd < 700 * 0.026 = 18.2V
+            // But physically, a diode at 2V passes kA. 5V is plenty.
+            if (newVd > 5.0) newVd = 5.0;
+
             _vd = newVd;
         }
 
