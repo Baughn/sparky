@@ -18,6 +18,7 @@ namespace Sparky.MNA
         private Vector<double>? _vectorX;
 
         private bool _dirty = true;
+        private bool _requiresIteration;
 
         private const double DefaultTolerance = 1e-6;
         private const int DefaultMaxIterations = 50;
@@ -44,12 +45,14 @@ namespace Sparky.MNA
         {
             Components.Add(component);
             _dirty = true;
+            if (component.RequiresIteration) _requiresIteration = true;
         }
 
         public void BuildSystem()
         {
             int nodeCount = Nodes.Count;
             int extraEqCount = 0;
+            _requiresIteration = false;
 
             // Assign indices for extra equations
             foreach (var component in Components)
@@ -59,6 +62,8 @@ namespace Sparky.MNA
                     component.MatrixIndex = nodeCount + extraEqCount;
                     extraEqCount++;
                 }
+
+                if (component.RequiresIteration) _requiresIteration = true;
             }
 
             int size = nodeCount + extraEqCount;
@@ -84,13 +89,13 @@ namespace Sparky.MNA
             if (_dirty) BuildSystem();
 
             // Newton-Raphson Iteration for Non-Linear Components
-            int maxIterations = MaxIterations;
+            int maxIterations = _requiresIteration ? MaxIterations : 1;
             double tolerance = ConvergenceTolerance;
 
             // Allocate xPrev once if needed, or reuse a buffer if we want to be super optimized.
             // For now, just outside the loop is better than inside.
             Vector<double>? xPrev = null;
-            if (_vectorX != null)
+            if (_vectorX != null && _requiresIteration)
             {
                 xPrev = Vector<double>.Build.Dense(_vectorX.Count);
             }
@@ -151,8 +156,11 @@ namespace Sparky.MNA
                     lastStep = stepNorm;
                     lastResidual = residualNorm;
 
-                    // Consider converged only after at least one iteration when both are small
-                    if (iter > 0 && stepNorm < scaledStepTol && residualNorm < scaledResidualTol)
+                    if (!_requiresIteration)
+                    {
+                        converged = true;
+                    }
+                    else if (iter > 0 && stepNorm < scaledStepTol && residualNorm < scaledResidualTol)
                     {
                         converged = true;
                     }

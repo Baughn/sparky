@@ -12,6 +12,8 @@ namespace Sparky.Tests
 
         public TogglingConductance(Node n1, Node n2) : base(n1, n2) { }
 
+        public override bool RequiresIteration => true;
+
         public override void Stamp(Matrix<double> A, Vector<double> Z, double dt = 0)
         {
             // Flip sign every iteration so the operating point oscillates

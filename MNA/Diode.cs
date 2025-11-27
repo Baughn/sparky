@@ -18,6 +18,9 @@ namespace Sparky.MNA
         {
         }
 
+        public override bool IsNonLinear => true;
+        public override bool RequiresIteration => true;
+
         public override void Stamp(Matrix<double> A, Vector<double> Z, double dt = 0)
         {
             // Linearize around _vd

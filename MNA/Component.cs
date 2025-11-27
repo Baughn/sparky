@@ -10,6 +10,12 @@ namespace Sparky.MNA
         // If true, this component adds an extra row/column to the matrix (e.g. Voltage Source, Inductor)
         public virtual bool HasExtraEquation => false;
 
+        // If true, this component is non-linear and participates in Newton iteration
+        public virtual bool IsNonLinear => false;
+
+        // If true, this component requires iterative solving (defaults to non-linear)
+        public virtual bool RequiresIteration => IsNonLinear;
+
         // Assigned index in the matrix (if HasExtraEquation is true)
         public int MatrixIndex { get; set; } = -1;
 
