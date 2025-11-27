@@ -24,6 +24,7 @@ namespace Sparky.Tests
 
             // Diode drop should be around 0.6-0.8V
             NUnit.Framework.Assert.That(n1.Voltage, Is.GreaterThan(0.5).And.LessThan(0.9));
+            Assert.That(circuit.LastIterations, Is.GreaterThanOrEqualTo(2));
         }
 
         [Test]
@@ -47,6 +48,7 @@ namespace Sparky.Tests
             // Actually, leakage current is very small (Is = 1e-12).
             // V_n1 should be very close to -10V.
             NUnit.Framework.Assert.That(n1.Voltage, Is.EqualTo(-10.0).Within(1e-3));
+            Assert.That(circuit.LastIterations, Is.GreaterThanOrEqualTo(2));
         }
     }
 }

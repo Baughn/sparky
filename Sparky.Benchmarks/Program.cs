@@ -64,16 +64,21 @@ namespace Sparky.Benchmarks
 
             circuit.AddComponent(new VoltageSource(top, ground, sourceVoltage));
 
-            var previous = top;
+            var pL = top;
+            var pR = top;
             for (int i = 0; i < sections; i++)
             {
-                var next = circuit.AddNode();
-                circuit.AddComponent(new Resistor(previous, next, resistance));
-                previous = next;
+                var nL = circuit.AddNode();
+                var nR = circuit.AddNode();
+                circuit.AddComponent(new Resistor(pL, nL, resistance));
+                circuit.AddComponent(new Resistor(nL, nR, resistance));
+                circuit.AddComponent(new Resistor(pR, nR, resistance));
+                pL = nL; pR = nR;
             }
 
             // Terminate ladder to ground to avoid an open circuit at the tail.
-            circuit.AddComponent(new Resistor(previous, ground, resistance));
+            circuit.AddComponent(new Resistor(pL, ground, resistance));
+            circuit.AddComponent(new Resistor(pR, ground, resistance));
 
             return circuit;
         }

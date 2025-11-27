@@ -9,6 +9,8 @@ namespace Sparky.MNA
         // State for transient analysis
         private double _currentThrough = 0;
 
+        public override bool RequiresPerStepRestamp => true;
+
         public Inductor(Node node1, Node node2, double inductance) : base(node1, node2)
         {
             Inductance = inductance;

@@ -9,6 +9,8 @@ namespace Sparky.MNA
         // State for transient analysis
         private double _voltageAcross = 0;
 
+        public override bool RequiresPerStepRestamp => true;
+
         public Capacitor(Node node1, Node node2, double capacitance) : base(node1, node2)
         {
             Capacitance = capacitance;

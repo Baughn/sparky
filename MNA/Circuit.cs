@@ -17,6 +17,15 @@ namespace Sparky.MNA
         // Vector x (unknowns)
         private Vector<double>? _vectorX;
 
+        // Track last known configuration to support reuse
+        private double _lastDt = double.NaN;
+        private int _stampVersion = 0;
+        private int _lastStampVersion = -1;
+        private bool _requiresPerStepRestamp;
+
+        // Public counters for diagnostics/benchmarks
+        public int LastIterations { get; private set; }
+
         private bool _dirty = true;
         private bool _requiresIteration;
 
@@ -46,6 +55,7 @@ namespace Sparky.MNA
             Components.Add(component);
             _dirty = true;
             if (component.RequiresIteration) _requiresIteration = true;
+            if (component.RequiresPerStepRestamp) _requiresPerStepRestamp = true;
         }
 
         public void BuildSystem()
@@ -53,6 +63,7 @@ namespace Sparky.MNA
             int nodeCount = Nodes.Count;
             int extraEqCount = 0;
             _requiresIteration = false;
+            _requiresPerStepRestamp = false;
 
             // Assign indices for extra equations
             foreach (var component in Components)
@@ -64,6 +75,7 @@ namespace Sparky.MNA
                 }
 
                 if (component.RequiresIteration) _requiresIteration = true;
+                if (component.RequiresPerStepRestamp) _requiresPerStepRestamp = true;
             }
 
             int size = nodeCount + extraEqCount;
@@ -82,11 +94,25 @@ namespace Sparky.MNA
             AnchorGround();
 
             _dirty = false;
+            _stampVersion++;
         }
 
         public void Solve(double dt)
         {
             if (_dirty) BuildSystem();
+
+            // Fast path: nothing changed and static linear circuit
+            if (!_requiresIteration && !_requiresPerStepRestamp && _matrixA != null && _vectorZ != null &&
+                _vectorX != null && _lastStampVersion == _stampVersion && dt.Equals(_lastDt))
+            {
+                // Ensure node voltages reflect latest solution
+                for (int i = 0; i < Nodes.Count; i++)
+                {
+                    Nodes[i].Voltage = _vectorX[i];
+                }
+                LastIterations = 0;
+                return;
+            }
 
             // Newton-Raphson Iteration for Non-Linear Components
             int maxIterations = _requiresIteration ? MaxIterations : 1;
@@ -105,14 +131,14 @@ namespace Sparky.MNA
             double lastResidual = double.NaN;
             double lastStep = double.NaN;
 
+            int iterCount = 0;
             for (int iter = 0; iter < maxIterations; iter++)
             {
+                iterCount = iter + 1;
                 // 1. Clear Z vector (sources need to re-stamp)
-                _vectorZ?.Clear();
+                if (_vectorZ != null) _vectorZ.Clear();
 
                 // 2. Stamp components (update A and Z)
-                // Note: For linear DC, A is constant. For transient/non-linear, A changes.
-                // TODO: Optimize this later. For now, clear and restamp.
                 _matrixA?.Clear();
 
                 // Keep the ground row/col pinned so the matrix is well-conditioned
@@ -184,6 +210,7 @@ namespace Sparky.MNA
                 }
             }
 
+            LastIterations = iterCount;
             if (!converged)
             {
                 throw new InvalidOperationException($"Circuit solve did not converge within the maximum iterations. Residual={lastResidual}, Step={lastStep}");
@@ -197,6 +224,9 @@ namespace Sparky.MNA
                     component.UpdateState(_vectorX, dt);
                 }
             }
+
+            _lastDt = dt;
+            _lastStampVersion = _stampVersion;
         }
 
         private int GetExtraEquationCount()

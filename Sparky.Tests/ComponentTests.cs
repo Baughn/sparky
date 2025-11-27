@@ -25,6 +25,7 @@ namespace Sparky.Tests
             circuit.Solve(0);
 
             Assert.That(n2.Voltage, Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(circuit.LastIterations, Is.EqualTo(1));
         }
 
         [Test]

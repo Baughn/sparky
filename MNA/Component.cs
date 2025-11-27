@@ -16,6 +16,9 @@ namespace Sparky.MNA
         // If true, this component requires iterative solving (defaults to non-linear)
         public virtual bool RequiresIteration => IsNonLinear;
 
+        // If true, this component must be re-stamped every Solve call even when dt/topology are unchanged
+        public virtual bool RequiresPerStepRestamp => false;
+
         // Assigned index in the matrix (if HasExtraEquation is true)
         public int MatrixIndex { get; set; } = -1;
 
