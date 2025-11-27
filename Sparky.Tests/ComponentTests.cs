@@ -29,6 +29,25 @@ namespace Sparky.Tests
         }
 
         [Test]
+        public void TestVoltageSourceRhsUpdatesAreNotCached()
+        {
+            var circuit = new Circuit();
+            var n1 = circuit.AddNode();
+            var ground = circuit.Ground;
+
+            var source = new VoltageSource(n1, ground, 10.0);
+            circuit.AddComponent(source);
+
+            circuit.Solve(0);
+            Assert.That(n1.Voltage, Is.EqualTo(10.0).Within(1e-6));
+
+            source.Voltage = 5.0;
+            circuit.Solve(0);
+            Assert.That(n1.Voltage, Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(circuit.LastIterations, Is.EqualTo(1));
+        }
+
+        [Test]
         public void TestResistorsInParallel()
         {
             // 10V -> Node 1 -> R1 (100) -> Ground

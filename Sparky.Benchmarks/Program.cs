@@ -1,5 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Loggers;
 using Sparky.MNA;
 
 namespace Sparky.Benchmarks
@@ -8,7 +10,10 @@ namespace Sparky.Benchmarks
     {
         public static void Main(string[] args)
         {
-            BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
+            var config = ManualConfig.Create(DefaultConfig.Instance)
+                .WithOption(ConfigOptions.JoinSummary, true);
+
+            BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args, config);
         }
     }
 
@@ -18,6 +23,7 @@ namespace Sparky.Benchmarks
         private Circuit? _dcLadder;
         private Circuit? _nonLinearDc;
         private Circuit? _rcTransient;
+        private Circuit? _dcLadderDynamic;
 
         private const double RcDt = 1e-5;
         private const int RcSteps = 200;
@@ -27,6 +33,7 @@ namespace Sparky.Benchmarks
         {
             _dcLadder = BuildResistorLadder(sections: 200, resistance: 1000.0, sourceVoltage: 10.0);
             _nonLinearDc = BuildDiodeClipper();
+            _dcLadderDynamic = BuildResistorLadder(sections: 200, resistance: 1000.0, sourceVoltage: 0.0);
         }
 
         [IterationSetup(Target = nameof(SolveRcTransientSteps))]
@@ -47,6 +54,17 @@ namespace Sparky.Benchmarks
             for (int i = 0; i < RcSteps; i++)
             {
                 _rcTransient!.Solve(RcDt);
+            }
+        }
+
+        [Benchmark(Description = "Linear DC sweep: 200-resistor ladder, varying source")]
+        public void SolveDcLadderDynamicRhs()
+        {
+            var source = (VoltageSource)_dcLadderDynamic!.Components[0];
+            for (int i = 0; i < 100; i++)
+            {
+                source.Voltage = i % 2 == 0 ? 10.0 : 5.0;
+                _dcLadderDynamic.Solve(0);
             }
         }
 
