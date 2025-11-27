@@ -49,6 +49,7 @@ namespace Sparky.Benchmarks
         }
 
         [Benchmark(Description = "Transient RC: 200 steps @ 10us")]
+        [InvocationCount(640)] // ensure iteration time stays well above 100ms for stable measurements
         public void SolveRcTransientSteps()
         {
             for (int i = 0; i < RcSteps; i++)
