@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>Sparky.Benchmarks.CircuitBenchmarks-20251127-153507</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.15.6, Linux NixOS 25.11 (Xantusia)
+AMD Ryzen 9 7950X3D 0.42GHz, 1 CPU, 32 logical and 16 physical cores
+.NET SDK 8.0.416
+  [Host]     : .NET 8.0.22 (8.0.22, 8.0.2225.52707), X64 RyuJIT x86-64-v4
+  DefaultJob : .NET 8.0.22 (8.0.22, 8.0.2225.52707), X64 RyuJIT x86-64-v4
+  Job-CNUJVU : .NET 8.0.22 (8.0.22, 8.0.2225.52707), X64 RyuJIT x86-64-v4
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method                          </th><th>Job </th><th>InvocationCount</th><th>UnrollFactor</th><th>Mean  </th><th>Error</th><th>StdDev</th><th>Median</th><th>Gen0</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>&#39;Linear DC solve: 200-resistor ladder&#39;</td><td>DefaultJob</td><td>Default</td><td>16</td><td>35,720.80 &mu;s</td><td>97.256 &mu;s</td><td>86.215 &mu;s</td><td>35,684.33 &mu;s</td><td>-</td><td>167.02 KB</td>
+</tr><tr><td>&#39;Non-linear DC: diode clipper&#39;</td><td>DefaultJob</td><td>Default</td><td>16</td><td>15.71 &mu;s</td><td>0.231 &mu;s</td><td>0.204 &mu;s</td><td>15.65 &mu;s</td><td>0.5188</td><td>26.64 KB</td>
+</tr><tr><td>&#39;Transient RC: 200 steps @ 10us&#39;</td><td>Job-CNUJVU</td><td>1</td><td>1</td><td>10,089.00 &mu;s</td><td>783.755 &mu;s</td><td>2,310.919 &mu;s</td><td>9,042.66 &mu;s</td><td>-</td><td>5514.02 KB</td>
+</tr></tbody></table>
+</body>
+</html>

@@ -12,6 +12,8 @@
     <None Remove="apidocs/**" />
     <Compile Remove="Sparky.Tests/**" />
     <None Remove="Sparky.Tests/**" />
+    <Compile Remove="Sparky.Benchmarks/**" />
+    <None Remove="Sparky.Benchmarks/**" />
   </ItemGroup>
 
   <ItemGroup>
