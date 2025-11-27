@@ -90,7 +90,7 @@ def summarize(base: Dict[str, compare_benchmarks.BenchmarkResult], new: Dict[str
         base_dur = compare_benchmarks.format_duration(base_res.mean_seconds if base_res else None)
         new_dur = compare_benchmarks.format_duration(new_res.mean_seconds if new_res else None)
         parts.append(f"{name}: {format_pct(delta)} ({base_dur} -> {new_dur})")
-    return "; ".join(parts)
+    return "\n  ".join(parts)
 
 
 def update_trailer(existing: str, key: str, value: str) -> str:

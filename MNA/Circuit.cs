@@ -15,6 +15,7 @@ namespace Sparky.MNA
         // Sparse matrix A in Ax = z
         private CoordinateStorage<double>? _matrixA;
         private CompressedColumnStorage<double>? _compressedA;
+        private SparseLU? _cachedLu;
         // Vector z in Ax = z
         private double[]? _vectorZ;
         // Vector x (unknowns)
@@ -136,12 +137,17 @@ namespace Sparky.MNA
             for (int iter = 0; iter < maxIterations; iter++)
             {
                 iterCount = iter + 1;
-                // 1. Clear Z vector (sources need to re-stamp)
-                if (_vectorZ != null) Array.Fill(_vectorZ, 0.0);
+            // 1. Clear Z vector (sources need to re-stamp)
+            if (_vectorZ != null) Array.Fill(_vectorZ, 0.0);
 
-                // 2. Stamp components (update A and Z)
-                _matrixA?.Clear();
+            // 2. Stamp components (update A and Z)
+            _matrixA?.Clear();
+            // Only invalidate cached structures when they are actually stale.
+            if (_requiresIteration || _requiresPerStepRestamp)
+            {
                 _compressedA = null;
+                _cachedLu = null;
+            }
 
                 // Keep the ground row/col pinned so the matrix is well-conditioned
                 AnchorGround();
@@ -253,12 +259,25 @@ namespace Sparky.MNA
 
         private double[] SolveLinearSystem(CoordinateStorage<double> matrixA, double[] vectorZ)
         {
-            _compressedA = ToCompressed(matrixA);
+            if (_compressedA == null)
+            {
+                _compressedA = ToCompressed(matrixA);
+            }
 
-            var lu = SparseLU.Create(_compressedA, ColumnOrdering.MinimumDegreeAtA, 1.0);
+            var lu = _cachedLu;
             if (lu == null)
             {
-                throw new InvalidOperationException("Circuit solve failed: LU factorization did not succeed.");
+                lu = SparseLU.Create(_compressedA, ColumnOrdering.Natural, 1.0);
+                if (lu == null)
+                {
+                    throw new InvalidOperationException("Circuit solve failed: LU factorization did not succeed.");
+                }
+
+                // Cache factorization only for linear static circuits (no iteration, no per-step restamp).
+                if (!_requiresIteration && !_requiresPerStepRestamp)
+                {
+                    _cachedLu = lu;
+                }
             }
 
             if (_vectorX == null || _vectorX.Length != vectorZ.Length)
