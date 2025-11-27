@@ -72,10 +72,8 @@ namespace Sparky.Tests
             circuit.AddComponent(load);
             
             double dt = 0.001;
-            double t = 0;
             
             // Test at peak
-            t = 0.005; // 1/4 cycle of 50Hz (20ms)
             src.Voltage = 120.0; // DC test at peak equivalent
             circuit.Solve(dt);
             
@@ -142,6 +140,47 @@ namespace Sparky.Tests
             circuit.Solve(0);
             
             Assert.That(nSecTop.Voltage - nSecBot.Voltage, Is.EqualTo(-10.0).Within(1e-6));
+        }
+
+        [Test]
+        public void TestPowerAndCurrentRatio()
+        {
+            // Primary: 20V source with 2 Ohm series resistor
+            // Transformer: 2:1 step up (n = 2)
+            // Secondary: 8 Ohm load
+
+            var circuit = new Circuit();
+            var ground = circuit.Ground;
+
+            var nSrc = circuit.AddNode();
+            var nPri = circuit.AddNode();
+            var nSec = circuit.AddNode();
+
+            double ratio = 2.0;
+            double vs = 20.0;
+            double rSeries = 2.0;
+            double rLoad = 8.0;
+
+            circuit.AddComponent(new VoltageSource(nSrc, ground, vs));
+            circuit.AddComponent(new Resistor(nSrc, nPri, rSeries));
+            circuit.AddComponent(new Transformer(nPri, ground, nSec, ground, ratio));
+            circuit.AddComponent(new Resistor(nSec, ground, rLoad));
+
+            circuit.Solve(0);
+
+            double vPri = nPri.Voltage;
+            double vSec = nSec.Voltage;
+
+            double iSec = vSec / rLoad;
+            double iPri = (nSrc.Voltage - vPri) / rSeries;
+
+            // Voltage scales by n, current scales by n
+            Assert.That(vSec, Is.EqualTo(vPri * ratio).Within(1e-6));
+            Assert.That(iPri, Is.EqualTo(iSec * ratio).Within(1e-6));
+
+            double pIn = vPri * iPri;
+            double pOut = vSec * iSec;
+            Assert.That(pIn, Is.EqualTo(pOut).Within(1e-6));
         }
     }
 }
