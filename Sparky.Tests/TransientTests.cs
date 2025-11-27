@@ -22,9 +22,6 @@ namespace Sparky.Tests
             double C = 1e-6;
             double V = 10.0;
 
-            circuit.AddComponent(new VoltageSource(circuit.AddNode(), ground, V)); // Source node
-            // Wait, let's simplify: Source -> R -> N1 -> C -> Ground
-            // We need a node for the source.
             var nSource = circuit.AddNode();
             circuit.AddComponent(new VoltageSource(nSource, ground, V));
             circuit.AddComponent(new Resistor(nSource, n1, R));

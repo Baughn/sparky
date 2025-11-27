@@ -29,10 +29,12 @@ namespace Sparky.MNA
             // In SPICE, there are limiting algorithms (pnjlim).
             // For now, simple clamping or just let it fly (Newton-Raphson usually converges if guess is okay).
 
-            double exp = Math.Exp(_vd / (n * Vt));
+            double vdLimited = Math.Max(-5.0, Math.Min(_vd, 0.9)); // keep within safe exponential range
+            double expArg = vdLimited / (n * Vt);
+            double exp = Math.Exp(Math.Min(expArg, 40.0)); // avoid overflow
             double gEq = (Is / (n * Vt)) * exp;
             double iDiode = Is * (exp - 1);
-            double iEq = iDiode - gEq * _vd;
+            double iEq = iDiode - gEq * vdLimited;
 
             // Diode is modeled as Resistor G_eq in parallel with Current Source I_eq
             // Current flows from Node 1 to Node 2.
@@ -80,7 +82,8 @@ namespace Sparky.MNA
             // Max safe exponent is ~700. 
             // _vd / Vt < 700 => _vd < 700 * 0.026 = 18.2V
             // We clamp to 5.0V which is sufficient for most electronics (diode drop rarely exceeds 2-3V even at high currents).
-            if (newVd > 5.0) newVd = 5.0;
+            if (newVd > 0.9) newVd = 0.9;
+            if (newVd < -5.0) newVd = -5.0;
 
             _vd = newVd;
         }

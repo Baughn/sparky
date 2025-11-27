@@ -16,9 +16,6 @@ namespace Sparky.Tests
             
             var circuit = new Circuit();
             var nSrc = circuit.AddNode();
-            var nPri = circuit.AddNode(); // Primary bottom (grounded for simplicity in this test?)
-            // Actually let's ground the bottom of both sides for simplicity, 
-            // but keep them as separate nodes to test full 4-node capability.
             
             var ground = circuit.Nodes[0];
             

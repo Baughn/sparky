@@ -15,12 +15,6 @@ namespace Sparky.Tests
             var n1 = circuit.AddNode();
             var ground = circuit.Nodes[0];
 
-            circuit.AddComponent(new VoltageSource(circuit.AddNode(), ground, 10.0));
-            // Wait, need to connect source to n1 via resistor.
-            // Let's reuse the pattern: SourceNode -> Resistor -> N1
-            var nSource = circuit.Nodes[1]; // The node created above? No, AddNode returns it.
-            // Let's be explicit.
-            
             var nSrc = circuit.AddNode();
             circuit.AddComponent(new VoltageSource(nSrc, ground, 10.0));
             circuit.AddComponent(new Resistor(nSrc, n1, 1000.0));

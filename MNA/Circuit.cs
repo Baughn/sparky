@@ -19,6 +19,12 @@ namespace Sparky.MNA
 
         private bool _dirty = true;
 
+        private const double DefaultTolerance = 1e-6;
+        private const int DefaultMaxIterations = 50;
+
+        public double ConvergenceTolerance { get; set; } = DefaultTolerance;
+        public int MaxIterations { get; set; } = DefaultMaxIterations;
+
         public Circuit()
         {
             // Ground node is always index 0
@@ -67,6 +73,9 @@ namespace Sparky.MNA
                 component.Stamp(_matrixA, _vectorZ);
             }
 
+             // Anchor ground so the matrix is non-singular and ground stays at 0V
+            AnchorGround();
+
             _dirty = false;
         }
 
@@ -75,8 +84,8 @@ namespace Sparky.MNA
             if (_dirty) BuildSystem();
 
             // Newton-Raphson Iteration for Non-Linear Components
-            int maxIterations = 50; // Increased from 10 to handle stiff non-linearities
-            double tolerance = 1e-6;
+            int maxIterations = MaxIterations;
+            double tolerance = ConvergenceTolerance;
 
             // Allocate xPrev once if needed, or reuse a buffer if we want to be super optimized.
             // For now, just outside the loop is better than inside.
@@ -85,6 +94,11 @@ namespace Sparky.MNA
             {
                 xPrev = Vector<double>.Build.Dense(_vectorX.Count);
             }
+
+            bool converged = false;
+
+            double lastResidual = double.NaN;
+            double lastStep = double.NaN;
 
             for (int iter = 0; iter < maxIterations; iter++)
             {
@@ -95,6 +109,10 @@ namespace Sparky.MNA
                 // Note: For linear DC, A is constant. For transient/non-linear, A changes.
                 // TODO: Optimize this later. For now, clear and restamp.
                 _matrixA?.Clear();
+
+                // Keep the ground row/col pinned so the matrix is well-conditioned
+                AnchorGround();
+                ApplyGmin();
 
                 if (_matrixA != null && _vectorZ != null)
                 {
@@ -113,15 +131,30 @@ namespace Sparky.MNA
                 // 4. Check convergence and Update State
                 if (_vectorX != null)
                 {
-                    bool converged = false;
-                    if (iter > 0) // Can't check convergence on first step (xPrev is stale or empty)
+                    double stepNorm = double.PositiveInfinity;
+                    if (iter > 0 && xPrev != null)
                     {
-                        // Check infinity norm of (x - xPrev)
-                        var diff = _vectorX - xPrev;
-                        if (diff.InfinityNorm() < tolerance)
-                        {
-                            converged = true;
-                        }
+                        stepNorm = (_vectorX - xPrev).InfinityNorm();
+                    }
+
+                    double residualNorm = double.PositiveInfinity;
+                    if (_matrixA != null && _vectorZ != null)
+                    {
+                        residualNorm = (_matrixA * _vectorX - _vectorZ).InfinityNorm();
+                    }
+
+                    double scaledStepTol = tolerance * (1.0 + _vectorX.InfinityNorm());
+                    double scaledResidualTol = _vectorZ != null
+                        ? tolerance * (1.0 + _vectorZ.InfinityNorm())
+                        : tolerance;
+
+                    lastStep = stepNorm;
+                    lastResidual = residualNorm;
+
+                    // Consider converged only after at least one iteration when both are small
+                    if (iter > 0 && stepNorm < scaledStepTol && residualNorm < scaledResidualTol)
+                    {
+                        converged = true;
                     }
 
                     // Copy current X to xPrev for next iteration check
@@ -143,6 +176,11 @@ namespace Sparky.MNA
                 }
             }
 
+            if (!converged)
+            {
+                throw new InvalidOperationException($"Circuit solve did not converge within the maximum iterations. Residual={lastResidual}, Step={lastStep}");
+            }
+
             // 5. Finalize Step: Update component states for next time step
             if (_vectorX != null)
             {
@@ -161,6 +199,26 @@ namespace Sparky.MNA
                 if (c.HasExtraEquation) count++;
             }
             return count;
+        }
+
+        private void AnchorGround()
+        {
+            if (_matrixA == null || _vectorZ == null) return;
+
+            _matrixA[0, 0] = 1.0;
+            _vectorZ[0] = 0.0;
+        }
+
+        private void ApplyGmin()
+        {
+            // Add a tiny shunt to ground on every non-ground node to avoid singular matrices
+            if (_matrixA == null) return;
+
+            const double gmin = 1e-12;
+            for (int i = 1; i < Nodes.Count; i++)
+            {
+                _matrixA[i, i] += gmin;
+            }
         }
     }
 }
