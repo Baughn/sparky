@@ -1,4 +1,4 @@
-using MathNet.Numerics.LinearAlgebra;
+using CSparse.Storage;
 
 namespace Sparky.MNA
 {
@@ -16,7 +16,7 @@ namespace Sparky.MNA
             Capacitance = capacitance;
         }
 
-        public override void Stamp(Matrix<double> A, Vector<double> Z, double dt)
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt)
         {
             // DC Steady State: Capacitor is an open circuit (G = 0, I = 0)
             if (dt <= 0) return;
@@ -57,8 +57,8 @@ namespace Sparky.MNA
             // Stamp Conductance
             if (n1 != 0)
             {
-                A[n1, n1] += gEq;
-                if (n2 != 0) A[n1, n2] -= gEq;
+                A.At(n1, n1, gEq);
+                if (n2 != 0) A.At(n1, n2, -gEq);
 
                 // Stamp Source (RHS)
                 Z[n1] += iEq;
@@ -66,8 +66,8 @@ namespace Sparky.MNA
 
             if (n2 != 0)
             {
-                A[n2, n2] += gEq;
-                if (n1 != 0) A[n2, n1] -= gEq;
+                A.At(n2, n2, gEq);
+                if (n1 != 0) A.At(n2, n1, -gEq);
 
                 // Stamp Source (RHS)
                 Z[n2] -= iEq;
@@ -84,7 +84,7 @@ namespace Sparky.MNA
         // We need a separate UpdateState(vectorX) method.
 
         // Update state after solve
-        public override void UpdateState(Vector<double> x, double dt)
+        public override void UpdateState(double[] x, double dt)
         {
             double v1 = (Node1.Id == 0) ? 0 : x[Node1.Id];
             double v2 = (Node2.Id == 0) ? 0 : x[Node2.Id];

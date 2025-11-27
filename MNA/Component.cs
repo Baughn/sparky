@@ -1,4 +1,4 @@
-using MathNet.Numerics.LinearAlgebra;
+using CSparse.Storage;
 
 namespace Sparky.MNA
 {
@@ -30,12 +30,12 @@ namespace Sparky.MNA
 
         // Stamp the component into the matrix A and vector Z
         // dt is the time step in seconds
-        public abstract void Stamp(Matrix<double> A, Vector<double> Z, double dt = 0);
+        public abstract void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0);
 
         // Update internal state after solve (for transient analysis)
-        public virtual void UpdateState(Vector<double> x, double dt) { }
+        public virtual void UpdateState(double[] x, double dt) { }
 
         // Update operating point during Newton-Raphson iteration (for non-linear components)
-        public virtual void UpdateOperatingPoint(Vector<double> x) { }
+        public virtual void UpdateOperatingPoint(double[] x) { }
     }
 }

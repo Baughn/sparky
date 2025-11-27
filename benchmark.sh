@@ -2,9 +2,9 @@
 set -euo pipefail
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-project="$root_dir/Sparky.Benchmarks"
+project="$root_dir/Sparky.Benchmarks/Sparky.Benchmarks.Runner.csproj"
 results_dir="$root_dir/BenchmarkDotNet.Artifacts/results"
-default_csv="$results_dir/Sparky.Benchmarks.CircuitBenchmarks-report.csv"
+default_csv="$(ls -t "$results_dir"/*-report.csv 2>/dev/null | head -n1 || true)"
 
 usage() {
   cat <<'USAGE'
@@ -22,7 +22,12 @@ command="${1:-trailer}"
 case "$command" in
   run)
     dotnet run -c Release --project "$project" --filter '*'
-    echo "Latest BenchmarkDotNet CSV: $default_csv"
+    latest_csv="$(ls -t "$results_dir"/*-report.csv 2>/dev/null | head -n1 || true)"
+    if [[ -n "$latest_csv" ]]; then
+      echo "Latest BenchmarkDotNet CSV: $latest_csv"
+    else
+      echo "No BenchmarkDotNet CSV found in $results_dir"
+    fi
     ;;
   compare)
     base_csv="${2:-}"

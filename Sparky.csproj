@@ -33,7 +33,7 @@
     <None Include="modinfo.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+    <PackageReference Include="CSparse" Version="4.3.0" />
   </ItemGroup>
 
   <!-- Package the mod as a zip file after building -->

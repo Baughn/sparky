@@ -1,4 +1,4 @@
-using MathNet.Numerics.LinearAlgebra;
+using CSparse.Storage;
 
 namespace Sparky.MNA
 {
@@ -6,12 +6,14 @@ namespace Sparky.MNA
     {
         public double Current { get; set; }
 
+        public override bool RequiresPerStepRestamp => true;
+
         public CurrentSource(Node node1, Node node2, double current) : base(node1, node2)
         {
             Current = current;
         }
 
-        public override void Stamp(Matrix<double> A, Vector<double> Z, double dt = 0)
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
         {
             int n1 = Node1.Id;
             int n2 = Node2.Id;

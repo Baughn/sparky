@@ -1,4 +1,4 @@
-using MathNet.Numerics.LinearAlgebra;
+using CSparse.Storage;
 
 namespace Sparky.MNA
 {
@@ -16,7 +16,7 @@ namespace Sparky.MNA
             Inductance = inductance;
         }
 
-        public override void Stamp(Matrix<double> A, Vector<double> Z, double dt)
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt)
         {
             int n1 = Node1.Id;
             int n2 = Node2.Id;
@@ -30,13 +30,13 @@ namespace Sparky.MNA
 
                 if (n1 != 0)
                 {
-                    A[n1, n1] += gMin;
-                    if (n2 != 0) A[n1, n2] -= gMin;
+                    A.At(n1, n1, gMin);
+                    if (n2 != 0) A.At(n1, n2, -gMin);
                 }
                 if (n2 != 0)
                 {
-                    A[n2, n2] += gMin;
-                    if (n1 != 0) A[n2, n1] -= gMin;
+                    A.At(n2, n2, gMin);
+                    if (n1 != 0) A.At(n2, n1, -gMin);
                 }
                 return;
             }
@@ -51,20 +51,20 @@ namespace Sparky.MNA
             // Stamp Conductance G_eq
             if (n1 != 0)
             {
-                A[n1, n1] += gEq;
-                if (n2 != 0) A[n1, n2] -= gEq;
+                A.At(n1, n1, gEq);
+                if (n2 != 0) A.At(n1, n2, -gEq);
                 Z[n1] -= iEq;
             }
 
             if (n2 != 0)
             {
-                A[n2, n2] += gEq;
-                if (n1 != 0) A[n2, n1] -= gEq;
+                A.At(n2, n2, gEq);
+                if (n1 != 0) A.At(n2, n1, -gEq);
                 Z[n2] += iEq;
             }
         }
 
-        public override void UpdateState(Vector<double> x, double dt)
+        public override void UpdateState(double[] x, double dt)
         {
             if (dt <= 0) return;
 

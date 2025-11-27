@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
-using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Double;
+using CSparse;
+using CSparse.Double;
+using CSparse.Double.Factorization;
+using CSparse.Storage;
 
 namespace Sparky.MNA
 {
@@ -11,11 +13,13 @@ namespace Sparky.MNA
         public List<Component> Components { get; } = new List<Component>();
 
         // Sparse matrix A in Ax = z
-        private Matrix<double>? _matrixA;
+        private CoordinateStorage<double>? _matrixA;
+        private CompressedColumnStorage<double>? _compressedA;
         // Vector z in Ax = z
-        private Vector<double>? _vectorZ;
+        private double[]? _vectorZ;
         // Vector x (unknowns)
-        private Vector<double>? _vectorX;
+        private double[]? _vectorX;
+        private double[]? _workResidual;
 
         // Track last known configuration to support reuse
         private double _lastDt = double.NaN;
@@ -80,10 +84,12 @@ namespace Sparky.MNA
 
             int size = nodeCount + extraEqCount;
 
-            // Create sparse matrix
-            _matrixA = Matrix<double>.Build.Sparse(size, size);
-            _vectorZ = Vector<double>.Build.Dense(size);
-            _vectorX = Vector<double>.Build.Dense(size);
+            // Create sparse matrix (coordinate storage accumulates duplicate stamps)
+            int estimatedNonZeros = Math.Max(size * 2, Components.Count * 6 + size);
+            _matrixA = new CoordinateStorage<double>(size, size, estimatedNonZeros);
+            _compressedA = null;
+            _vectorZ = new double[size];
+            _vectorX = new double[size];
 
             foreach (var component in Components)
             {
@@ -118,13 +124,8 @@ namespace Sparky.MNA
             int maxIterations = _requiresIteration ? MaxIterations : 1;
             double tolerance = ConvergenceTolerance;
 
-            // Allocate xPrev once if needed, or reuse a buffer if we want to be super optimized.
-            // For now, just outside the loop is better than inside.
-            Vector<double>? xPrev = null;
-            if (_vectorX != null && _requiresIteration)
-            {
-                xPrev = Vector<double>.Build.Dense(_vectorX.Count);
-            }
+            int solutionSize = _vectorZ?.Length ?? _vectorX?.Length ?? 0;
+            double[]? xPrev = _requiresIteration && solutionSize > 0 ? new double[solutionSize] : null;
 
             bool converged = false;
 
@@ -136,10 +137,11 @@ namespace Sparky.MNA
             {
                 iterCount = iter + 1;
                 // 1. Clear Z vector (sources need to re-stamp)
-                if (_vectorZ != null) _vectorZ.Clear();
+                if (_vectorZ != null) Array.Fill(_vectorZ, 0.0);
 
                 // 2. Stamp components (update A and Z)
                 _matrixA?.Clear();
+                _compressedA = null;
 
                 // Keep the ground row/col pinned so the matrix is well-conditioned
                 AnchorGround();
@@ -156,7 +158,7 @@ namespace Sparky.MNA
                 // 3. Solve Ax = z
                 if (_matrixA != null && _vectorZ != null)
                 {
-                    _vectorX = _matrixA.Solve(_vectorZ);
+                    _vectorX = SolveLinearSystem(_matrixA, _vectorZ);
                 }
 
                 // 4. Check convergence and Update State
@@ -165,18 +167,18 @@ namespace Sparky.MNA
                     double stepNorm = double.PositiveInfinity;
                     if (iter > 0 && xPrev != null)
                     {
-                        stepNorm = (_vectorX - xPrev).InfinityNorm();
+                        stepNorm = InfinityNormDifference(_vectorX, xPrev);
                     }
 
                     double residualNorm = double.PositiveInfinity;
-                    if (_matrixA != null && _vectorZ != null)
+                    if (_compressedA != null && _vectorZ != null)
                     {
-                        residualNorm = (_matrixA * _vectorX - _vectorZ).InfinityNorm();
+                        residualNorm = ComputeResidualInfinity(_compressedA, _vectorX, _vectorZ);
                     }
 
-                    double scaledStepTol = tolerance * (1.0 + _vectorX.InfinityNorm());
+                    double scaledStepTol = tolerance * (1.0 + InfinityNorm(_vectorX));
                     double scaledResidualTol = _vectorZ != null
-                        ? tolerance * (1.0 + _vectorZ.InfinityNorm())
+                        ? tolerance * (1.0 + InfinityNorm(_vectorZ))
                         : tolerance;
 
                     lastStep = stepNorm;
@@ -192,7 +194,7 @@ namespace Sparky.MNA
                     }
 
                     // Copy current X to xPrev for next iteration check
-                    if (xPrev != null) _vectorX.CopyTo(xPrev);
+                    if (xPrev != null) Array.Copy(_vectorX, xPrev, _vectorX.Length);
 
                     // Update nodes with new voltages
                     for (int i = 0; i < Nodes.Count; i++)
@@ -229,21 +231,11 @@ namespace Sparky.MNA
             _lastStampVersion = _stampVersion;
         }
 
-        private int GetExtraEquationCount()
-        {
-            int count = 0;
-            foreach (var c in Components)
-            {
-                if (c.HasExtraEquation) count++;
-            }
-            return count;
-        }
-
         private void AnchorGround()
         {
             if (_matrixA == null || _vectorZ == null) return;
 
-            _matrixA[0, 0] = 1.0;
+            _matrixA.At(0, 0, 1.0);
             _vectorZ[0] = 0.0;
         }
 
@@ -255,8 +247,88 @@ namespace Sparky.MNA
             const double gmin = 1e-12;
             for (int i = 1; i < Nodes.Count; i++)
             {
-                _matrixA[i, i] += gmin;
+                _matrixA.At(i, i, gmin);
             }
+        }
+
+        private double[] SolveLinearSystem(CoordinateStorage<double> matrixA, double[] vectorZ)
+        {
+            _compressedA = ToCompressed(matrixA);
+
+            var lu = SparseLU.Create(_compressedA, ColumnOrdering.MinimumDegreeAtA, 1.0);
+            if (lu == null)
+            {
+                throw new InvalidOperationException("Circuit solve failed: LU factorization did not succeed.");
+            }
+
+            if (_vectorX == null || _vectorX.Length != vectorZ.Length)
+            {
+                _vectorX = new double[vectorZ.Length];
+            }
+
+            lu.Solve(vectorZ, _vectorX);
+            return _vectorX;
+        }
+
+        private static CompressedColumnStorage<double> ToCompressed(CoordinateStorage<double> storage) =>
+            SparseMatrix.OfIndexed(storage, false);
+
+        private double ComputeResidualInfinity(CompressedColumnStorage<double> matrixA, double[] x, double[] z)
+        {
+            if (_workResidual == null || _workResidual.Length != z.Length)
+            {
+                _workResidual = new double[z.Length];
+            }
+
+            Multiply(matrixA, x, _workResidual);
+            for (int i = 0; i < z.Length; i++)
+            {
+                _workResidual[i] -= z[i];
+            }
+
+            return InfinityNorm(_workResidual);
+        }
+
+        private static void Multiply(CompressedColumnStorage<double> matrixA, double[] x, double[] result)
+        {
+            Array.Fill(result, 0.0);
+            for (int col = 0; col < matrixA.ColumnCount; col++)
+            {
+                double xj = x[col];
+                if (xj == 0) continue;
+
+                int start = matrixA.ColumnPointers[col];
+                int end = matrixA.ColumnPointers[col + 1];
+                for (int idx = start; idx < end; idx++)
+                {
+                    result[matrixA.RowIndices[idx]] += matrixA.Values[idx] * xj;
+                }
+            }
+        }
+
+        private static double InfinityNorm(double[] vector)
+        {
+            double max = 0.0;
+            for (int i = 0; i < vector.Length; i++)
+            {
+                double val = Math.Abs(vector[i]);
+                if (val > max) max = val;
+            }
+
+            return max;
+        }
+
+        private static double InfinityNormDifference(double[] current, double[] previous)
+        {
+            double max = 0.0;
+            int len = Math.Min(current.Length, previous.Length);
+            for (int i = 0; i < len; i++)
+            {
+                double val = Math.Abs(current[i] - previous[i]);
+                if (val > max) max = val;
+            }
+
+            return max;
         }
     }
 }

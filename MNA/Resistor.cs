@@ -1,4 +1,4 @@
-using MathNet.Numerics.LinearAlgebra;
+using CSparse.Storage;
 
 namespace Sparky.MNA
 {
@@ -21,7 +21,7 @@ namespace Sparky.MNA
             Resistance = resistance;
         }
 
-        public override void Stamp(Matrix<double> A, Vector<double> Z, double dt = 0)
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
         {
             int n1 = Node1.Id;
             int n2 = Node2.Id;
@@ -35,14 +35,14 @@ namespace Sparky.MNA
             // Skip ground (index 0)
             if (n1 != 0)
             {
-                A[n1, n1] += Conductance;
-                if (n2 != 0) A[n1, n2] -= Conductance;
+                A.At(n1, n1, Conductance);
+                if (n2 != 0) A.At(n1, n2, -Conductance);
             }
 
             if (n2 != 0)
             {
-                A[n2, n2] += Conductance;
-                if (n1 != 0) A[n2, n1] -= Conductance;
+                A.At(n2, n2, Conductance);
+                if (n1 != 0) A.At(n2, n1, -Conductance);
             }
         }
     }

@@ -1,7 +1,7 @@
 using System;
 using NUnit.Framework;
 using Sparky.MNA;
-using MathNet.Numerics.LinearAlgebra;
+using CSparse.Storage;
 
 namespace Sparky.Tests
 {
@@ -14,7 +14,7 @@ namespace Sparky.Tests
 
         public override bool RequiresIteration => true;
 
-        public override void Stamp(Matrix<double> A, Vector<double> Z, double dt = 0)
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
         {
             // Flip sign every iteration so the operating point oscillates
             _g = -_g;
@@ -24,14 +24,14 @@ namespace Sparky.Tests
 
             if (n1 != 0)
             {
-                A[n1, n1] += _g;
-                if (n2 != 0) A[n1, n2] -= _g;
+                A.At(n1, n1, _g);
+                if (n2 != 0) A.At(n1, n2, -_g);
             }
 
             if (n2 != 0)
             {
-                A[n2, n2] += _g;
-                if (n1 != 0) A[n2, n1] -= _g;
+                A.At(n2, n2, _g);
+                if (n1 != 0) A.At(n2, n1, -_g);
             }
         }
     }
