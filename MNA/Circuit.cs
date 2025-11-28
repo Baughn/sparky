@@ -21,6 +21,8 @@ namespace Sparky.MNA
         // Vector x (unknowns)
         private double[]? _vectorX;
         private double[]? _workResidual;
+        private double[]? _denseRhs;
+        private double[,]? _denseMatrix;
 
         // Track last known configuration to support reuse
         private double _lastDt = double.NaN;
@@ -36,6 +38,8 @@ namespace Sparky.MNA
 
         private const double DefaultTolerance = 1e-6;
         private const int DefaultMaxIterations = 50;
+        private const int DenseSizeThreshold = 96;
+        private const double DenseDensityThreshold = 0.18;
 
         public double ConvergenceTolerance { get; set; } = DefaultTolerance;
         public int MaxIterations { get; set; } = DefaultMaxIterations;
@@ -264,6 +268,22 @@ namespace Sparky.MNA
                 _compressedA = ToCompressed(matrixA);
             }
 
+            bool useDense = ShouldUseDense(matrixA);
+            if (useDense)
+            {
+                return SolveDense(matrixA, vectorZ);
+            }
+
+            return SolveSparse(vectorZ);
+        }
+
+        private double[] SolveSparse(double[] vectorZ)
+        {
+            if (_compressedA == null)
+            {
+                throw new InvalidOperationException("Compressed matrix not available for sparse solve.");
+            }
+
             var lu = _cachedLu;
             if (lu == null)
             {
@@ -289,8 +309,133 @@ namespace Sparky.MNA
             return _vectorX;
         }
 
+        private double[] SolveDense(CoordinateStorage<double> matrixA, double[] vectorZ)
+        {
+            int n = matrixA.RowCount;
+            double[,] dense = GetDenseBuffer(n);
+
+            // Build dense matrix from coordinate storage (accumulate duplicates).
+            Array.Clear(dense, 0, dense.Length);
+            for (int k = 0; k < matrixA.NonZerosCount; k++)
+            {
+                int row = matrixA.RowIndices[k];
+                int col = matrixA.ColumnIndices[k];
+                dense[row, col] += matrixA.Values[k];
+            }
+
+            // Prepare RHS
+            if (_vectorX == null || _vectorX.Length != vectorZ.Length)
+            {
+                _vectorX = new double[vectorZ.Length];
+            }
+            var rhs = GetDenseRhsBuffer(n);
+            Array.Copy(vectorZ, rhs, n);
+
+            // In-place LU with partial pivoting (Doolittle).
+            for (int k = 0; k < n; k++)
+            {
+                // Pivot search
+                int pivotRow = k;
+                double pivotVal = Math.Abs(dense[k, k]);
+                for (int i = k + 1; i < n; i++)
+                {
+                    double val = Math.Abs(dense[i, k]);
+                    if (val > pivotVal)
+                    {
+                        pivotVal = val;
+                        pivotRow = i;
+                    }
+                }
+
+                if (pivotVal < 1e-15)
+                {
+                    throw new InvalidOperationException("Circuit solve failed: matrix is singular in dense solve.");
+                }
+
+                if (pivotRow != k)
+                {
+                    SwapRows(dense, k, pivotRow);
+                    (rhs[k], rhs[pivotRow]) = (rhs[pivotRow], rhs[k]);
+                }
+
+                double akk = dense[k, k];
+                for (int i = k + 1; i < n; i++)
+                {
+                    double lik = dense[i, k] / akk;
+                    dense[i, k] = lik;
+                    for (int j = k + 1; j < n; j++)
+                    {
+                        dense[i, j] -= lik * dense[k, j];
+                    }
+                }
+            }
+
+            // Forward substitution Ly = b
+            for (int i = 0; i < n; i++)
+            {
+                double sum = rhs[i];
+                for (int j = 0; j < i; j++)
+                {
+                    sum -= dense[i, j] * rhs[j];
+                }
+                rhs[i] = sum;
+            }
+
+            // Back substitution Ux = y
+            for (int i = n - 1; i >= 0; i--)
+            {
+                double sum = rhs[i];
+                for (int j = i + 1; j < n; j++)
+                {
+                    sum -= dense[i, j] * _vectorX[j];
+                }
+                _vectorX[i] = sum / dense[i, i];
+            }
+
+            return _vectorX;
+        }
+
+        private static bool ShouldUseDense(CoordinateStorage<double> matrixA)
+        {
+            int n = matrixA.RowCount;
+            if (n <= DenseSizeThreshold) return true;
+
+            double density = matrixA.NonZerosCount / (double)(n * n);
+            return density >= DenseDensityThreshold;
+        }
+
         private static CompressedColumnStorage<double> ToCompressed(CoordinateStorage<double> storage) =>
             SparseMatrix.OfIndexed(storage, false);
+
+        private double[] GetDenseRhsBuffer(int size)
+        {
+            if (_denseRhs == null || _denseRhs.Length != size)
+            {
+                _denseRhs = new double[size];
+            }
+
+            return _denseRhs;
+        }
+
+        private double[,] GetDenseBuffer(int size)
+        {
+            if (_denseMatrix == null || _denseMatrix.GetLength(0) != size || _denseMatrix.GetLength(1) != size)
+            {
+                _denseMatrix = new double[size, size];
+            }
+
+            return _denseMatrix;
+        }
+
+        private static void SwapRows(double[,] matrix, int rowA, int rowB)
+        {
+            if (rowA == rowB) return;
+            int n = matrix.GetLength(1);
+            for (int j = 0; j < n; j++)
+            {
+                (matrix[rowA, j], matrix[rowB, j]) = (matrix[rowB, j], matrix[rowA, j]);
+            }
+        }
 
         private double ComputeResidualInfinity(CompressedColumnStorage<double> matrixA, double[] x, double[] z)
         {
