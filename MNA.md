@@ -90,8 +90,11 @@ Shockley Diode Equation linearized at $V_d$.
 
 ### Classes
 *   **`Circuit`**: Manages Nodes, Components, and the Solve loop.
-    *   `BuildSystem()`: Allocates matrix indices.
+    *   `BuildSystem()`: Allocates matrix indices and builds the initial sparse `CoordinateStorage` (duplicate stamps accumulate).
     *   `Solve(dt)`: Performs Newton-Raphson loop and time stepping.
+    *   Dense vs sparse: small or dense systems (<= 96 unknowns or density >= 0.18) take a dense LU path; otherwise convert to CSC and use CSparse `SparseLU`.
+    *   Caching: static linear circuits reuse the compressed matrix and LU across solves; cache is cleared when any component requests per-step restamp or iteration.
+    *   Conditioning helpers: pin ground (row/col 0 = 1) and add tiny `gmin` shunts on every node.
 *   **`Node`**: Represents a circuit node (holds Voltage).
 *   **`Component`**: Abstract base class.
     *   `Stamp(A, z, dt)`: Adds contribution to matrix.
@@ -101,9 +104,9 @@ Shockley Diode Equation linearized at $V_d$.
 ### Solve Loop
 1.  **Build System**: Assign matrix indices for Voltage Sources/Inductors.
 2.  **Newton-Raphson Loop**:
-    a.  Clear $A$ and $z$.
-    b.  **Stamp**: All components write to $A$ and $z$.
-    c.  **Solve**: $x = A^{-1}z$.
+    a.  Clear $A$ and $z$, pin ground, apply `gmin`.
+    b.  **Stamp**: All components write to $A$ and $z$ (per-step restamp for sources, transient elements).
+    c.  **Solve**: $x = A^{-1}z$ (dense or sparse path as above).
     d.  **Update Operating Point**: Non-linear components update guesses.
-    e.  Check convergence.
+    e.  Check convergence (scaled infinity norms of step and residual).
 3.  **Update State**: Components update history (Capacitor voltage, Inductor current) for next time step.
