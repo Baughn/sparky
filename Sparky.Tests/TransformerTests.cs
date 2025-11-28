@@ -182,5 +182,43 @@ namespace Sparky.Tests
             double pOut = vSec * iSec;
             Assert.That(pIn, Is.EqualTo(pOut).Within(1e-6));
         }
+
+        [Test]
+        public void TestFloatingSecondaryKeepsRatioAndPolarity()
+        {
+            const double ratio = 2.5;
+            const double vPrimary = 5.0;
+
+            var circuit = new Circuit();
+            var ground = circuit.Ground;
+            var nPri = circuit.AddNode();
+            var nSecTop = circuit.AddNode();
+            var nSecBot = circuit.AddNode();
+
+            circuit.AddComponent(new VoltageSource(nPri, ground, vPrimary));
+            circuit.AddComponent(new Transformer(nPri, ground, nSecTop, nSecBot, ratio));
+            circuit.AddComponent(new Resistor(nSecTop, nSecBot, 50.0)); // Floating load only
+
+            circuit.Solve(0);
+
+            double secDiff = nSecTop.Voltage - nSecBot.Voltage;
+            Assert.That(secDiff, Is.EqualTo(vPrimary * ratio).Within(1e-6));
+
+            // Swap secondary leads to check polarity inversion on a floating winding.
+            circuit = new Circuit();
+            ground = circuit.Ground;
+            nPri = circuit.AddNode();
+            nSecTop = circuit.AddNode();
+            nSecBot = circuit.AddNode();
+
+            circuit.AddComponent(new VoltageSource(nPri, ground, vPrimary));
+            circuit.AddComponent(new Transformer(nPri, ground, nSecBot, nSecTop, ratio));
+            circuit.AddComponent(new Resistor(nSecTop, nSecBot, 50.0));
+
+            circuit.Solve(0);
+
+            secDiff = nSecTop.Voltage - nSecBot.Voltage;
+            Assert.That(secDiff, Is.EqualTo(-vPrimary * ratio).Within(1e-6));
+        }
     }
 }

@@ -67,5 +67,22 @@ namespace Sparky.Tests
             var ex = Assert.Throws<InvalidOperationException>(() => circuit.Solve(0));
             Assert.That(ex?.Message, Does.Contain("converge"));
         }
+
+        [Test]
+        public void FloatingNetworkStillSolvesWithGminAnchoring()
+        {
+            // No explicit path to ground: only gmin should keep the matrix well-conditioned.
+            var circuit = new Circuit();
+            var n1 = circuit.AddNode();
+            var n2 = circuit.AddNode();
+
+            circuit.AddComponent(new CurrentSource(n1, n2, 1e-12));
+
+            Assert.DoesNotThrow(() => circuit.Solve(0));
+
+            Assert.That(circuit.Ground.Voltage, Is.EqualTo(0.0).Within(1e-12));
+            Assert.That(n1.Voltage, Is.EqualTo(-1.0).Within(1e-6));
+            Assert.That(n2.Voltage, Is.EqualTo(1.0).Within(1e-6));
+        }
     }
 }

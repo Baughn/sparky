@@ -98,6 +98,35 @@ namespace Sparky.Tests
         }
 
         [Test]
+        public void ChangingResistorBetweenSolvesUpdatesVoltages()
+        {
+            // Voltage divider 10V -> R1(10) -> mid -> R2(10|30) -> GND
+            // Expect 5V with 10/10, then 7.5V after switching R2 to 30.
+
+            var circuit = new Circuit();
+            var nSrc = circuit.AddNode();
+            var nMid = circuit.AddNode();
+            var ground = circuit.Ground;
+
+            var source = new VoltageSource(nSrc, ground, 10.0);
+            var r1 = new Resistor(nSrc, nMid, 10.0);
+            var r2 = new Resistor(nMid, ground, 10.0);
+
+            circuit.AddComponent(source);
+            circuit.AddComponent(r1);
+            circuit.AddComponent(r2);
+
+            circuit.Solve(0);
+            Assert.That(nMid.Voltage, Is.EqualTo(5.0).Within(1e-6));
+
+            r2.Resistance = 30.0;
+
+            circuit.Solve(0);
+            Assert.That(nMid.Voltage, Is.EqualTo(10.0 * 30.0 / (10.0 + 30.0)).Within(1e-6));
+            Assert.That(circuit.LastIterations, Is.EqualTo(1));
+        }
+
+        [Test]
         public void TestInductorDCShort()
         {
             // DC Source -> Resistor -> Inductor -> Ground

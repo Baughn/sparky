@@ -95,5 +95,72 @@ namespace Sparky.Tests
             Assert.That(expectedCurrent, Is.EqualTo(V / R).Within(1e-3));
             Assert.That(n1.Voltage, Is.EqualTo(V - expectedCurrent * R).Within(1e-3));
         }
+
+        [Test]
+        public void TestRCVariableTimeStepStillMatchesBackwardEuler()
+        {
+            var circuit = new Circuit();
+            var nSrc = circuit.AddNode();
+            var n1 = circuit.AddNode();
+            var ground = circuit.Ground;
+
+            double V = 5.0;
+            double R = 1000.0;
+            double C = 1e-6;
+
+            circuit.AddComponent(new VoltageSource(nSrc, ground, V));
+            circuit.AddComponent(new Resistor(nSrc, n1, R));
+            circuit.AddComponent(new Capacitor(n1, ground, C));
+
+            double expected = 0.0;
+
+            double dt1 = 1e-4;
+            double alpha1 = dt1 / (R * C);
+            double denom1 = 1.0 + alpha1;
+            for (int i = 0; i < 10; i++)
+            {
+                circuit.Solve(dt1);
+                expected = (expected + alpha1 * V) / denom1;
+                Assert.That(n1.Voltage, Is.EqualTo(expected).Within(1e-4));
+            }
+
+            double dt2 = 2e-4;
+            double alpha2 = dt2 / (R * C);
+            double denom2 = 1.0 + alpha2;
+            for (int i = 0; i < 10; i++)
+            {
+                circuit.Solve(dt2);
+                expected = (expected + alpha2 * V) / denom2;
+                Assert.That(n1.Voltage, Is.EqualTo(expected).Within(1e-4));
+            }
+        }
+
+        [Test]
+        public void TestCurrentSourceStepIsRestampedEachSolve()
+        {
+            // Ground -> I -> Node -> C -> Ground
+            // Expect V to integrate I*dt/C each step even when I changes.
+
+            var circuit = new Circuit();
+            var n1 = circuit.AddNode();
+            var ground = circuit.Ground;
+
+            var source = new CurrentSource(ground, n1, 0.1);
+            circuit.AddComponent(source);
+            circuit.AddComponent(new Capacitor(n1, ground, 1e-3));
+
+            double dt = 1e-3;
+            double expected = 0.0;
+
+            circuit.Solve(dt);
+            expected += 0.1 * dt / 1e-3;
+            Assert.That(n1.Voltage, Is.EqualTo(expected).Within(1e-6));
+
+            source.Current = 0.05;
+
+            circuit.Solve(dt);
+            expected += 0.05 * dt / 1e-3;
+            Assert.That(n1.Voltage, Is.EqualTo(expected).Within(1e-6));
+        }
     }
 }
