@@ -13,16 +13,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+    - name: Install Nix
+      uses: cachix/install-nix-action@v27
       with:
-        dotnet-version: 8.0.x
+        extra_nix_config: |
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: nix develop --command dotnet restore
 
     - name: Build
-      run: dotnet build --no-restore --configuration Release
+      run: nix develop --command dotnet build --no-restore --configuration Release
 
     - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity normal
+      run: nix develop --command dotnet test --no-build --configuration Release --verbosity normal
