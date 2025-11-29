@@ -1,10 +1,10 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA
+namespace Sparky.MNA.Core
 {
     public class Inductor : Component
     {
-        public double Inductance { get; }
+        public double Inductance { get; set; }
 
         // State for transient analysis
         private double _currentThrough = 0;

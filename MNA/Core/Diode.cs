@@ -1,7 +1,7 @@
 using CSparse.Storage;
 using System;
 
-namespace Sparky.MNA
+namespace Sparky.MNA.Core
 {
     public class Diode : Component
     {

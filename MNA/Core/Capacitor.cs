@@ -1,10 +1,10 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA
+namespace Sparky.MNA.Core
 {
     public class Capacitor : Component
     {
-        public double Capacitance { get; }
+        public double Capacitance { get; set; }
 
         // State for transient analysis
         private double _voltageAcross = 0;

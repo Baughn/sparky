@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using Sparky.MNA;
+using Sparky.MNA.Core;
 using System.Linq;
 using System;
 

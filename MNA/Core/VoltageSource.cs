@@ -1,10 +1,16 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA
+namespace Sparky.MNA.Core
 {
     public class VoltageSource : Component
     {
         public double Voltage { get; set; }
+
+        /// <summary>
+        /// The current flowing through the voltage source (from positive to negative terminal).
+        /// Populated by Circuit.Solve() after each solution.
+        /// </summary>
+        public double Current { get; internal set; }
 
         // Voltage sources require an extra equation (row) in the matrix
         // to solve for the current flowing through them.

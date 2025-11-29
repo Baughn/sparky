@@ -2,7 +2,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Loggers;
-using Sparky.MNA;
+using Sparky.MNA.Core;
 
 namespace Sparky.Benchmarks
 {

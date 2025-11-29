@@ -1,6 +1,6 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA
+namespace Sparky.MNA.Core
 {
     /// <summary>
     /// Ideal Transformer.
@@ -18,7 +18,19 @@ namespace Sparky.MNA
     {
         public Node Node3 { get; }
         public Node Node4 { get; }
-        public double Ratio { get; } // n = Ns / Np
+        public double Ratio { get; set; } // n = Ns / Np
+
+        /// <summary>
+        /// Primary winding current (flowing from Node1 to Node2).
+        /// Populated by Circuit.Solve() after each solution.
+        /// </summary>
+        public double PrimaryCurrent { get; internal set; }
+
+        /// <summary>
+        /// Secondary winding current (flowing from Node3 to Node4).
+        /// Populated by Circuit.Solve() after each solution.
+        /// </summary>
+        public double SecondaryCurrent { get; internal set; }
 
         public override bool HasExtraEquation => true;
 

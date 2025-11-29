@@ -1,6 +1,6 @@
 using System;
 using NUnit.Framework;
-using Sparky.MNA;
+using Sparky.MNA.Core;
 using CSparse.Storage;
 
 namespace Sparky.Tests

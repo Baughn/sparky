@@ -5,7 +5,7 @@ using CSparse.Double;
 using CSparse.Double.Factorization;
 using CSparse.Storage;
 
-namespace Sparky.MNA
+namespace Sparky.MNA.Core
 {
     public class Circuit
     {
@@ -234,6 +234,18 @@ namespace Sparky.MNA
                 foreach (var component in Components)
                 {
                     component.UpdateState(_vectorX, dt);
+
+                    // Populate Current properties from solution vector
+                    switch (component)
+                    {
+                        case VoltageSource vs when vs.MatrixIndex >= 0:
+                            vs.Current = _vectorX[vs.MatrixIndex];
+                            break;
+                        case Transformer tf when tf.MatrixIndex >= 0:
+                            tf.PrimaryCurrent = _vectorX[tf.MatrixIndex];
+                            tf.SecondaryCurrent = -tf.PrimaryCurrent / tf.Ratio;
+                            break;
+                    }
                 }
             }
 

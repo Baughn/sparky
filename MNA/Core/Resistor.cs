@@ -1,6 +1,6 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA
+namespace Sparky.MNA.Core
 {
     public class Resistor : Component
     {

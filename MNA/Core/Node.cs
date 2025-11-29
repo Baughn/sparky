@@ -1,4 +1,4 @@
-namespace Sparky.MNA
+namespace Sparky.MNA.Core
 {
     public class Node
     {
