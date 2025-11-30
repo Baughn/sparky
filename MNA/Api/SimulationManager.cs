@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Sparky.MNA.Core;
 
 namespace Sparky.MNA.Api;
@@ -709,9 +710,17 @@ public class SimulationManager : ISimulation
             Rebuild();
         }
 
-        foreach (var circuit in _partitions)
+        // Short-circuit for trivial cases; Parallel.ForEach has setup overhead
+        if (_partitions.Count <= 1)
         {
-            circuit.Solve(dt);
+            foreach (var circuit in _partitions)
+            {
+                circuit.Solve(dt);
+            }
+        }
+        else
+        {
+            Parallel.ForEach(_partitions, circuit => circuit.Solve(dt));
         }
     }
 
