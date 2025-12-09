@@ -4,46 +4,27 @@ This document outlines test coverage gaps and recommended test additions for the
 
 ## Current State
 
-- **38 tests** across 10 test files
-- **~1,400 lines** of test code covering **~3,000 lines** of production code
-- Core solver has reasonable coverage; API layer is undertested
+- **106 tests** across 14 test files
+- **~2,800 lines** of test code covering **~3,000 lines** of production code
+- Core solver and API layer have good coverage; Phase 1 & 2 complete
 
 ---
 
 ## Phase 1: Critical Coverage
 
-### 1.1 API Exception Handling
+### 1.1 API Exception Handling ✅ COMPLETED
 
 **File:** `Sparky.Tests/MNA/ApiExceptionTests.cs`
 
-These tests verify the API properly rejects invalid operations with appropriate exceptions.
-
-| Test Name | Description |
-|-----------|-------------|
-| `AddResistor_WithInvalidNode_ThrowsInvalidNodeException` | Reference non-existent node |
-| `AddResistor_WithNegativeResistance_ThrowsInvalidParameterException` | Reject R ≤ 0 |
-| `AddResistor_WithZeroResistance_ThrowsInvalidParameterException` | Reject R = 0 |
-| `AddCapacitor_WithNegativeCapacitance_ThrowsInvalidParameterException` | Reject C ≤ 0 |
-| `AddInductor_WithNegativeInductance_ThrowsInvalidParameterException` | Reject L ≤ 0 |
-| `AddTransformer_WithZeroRatio_ThrowsInvalidParameterException` | Reject ratio ≤ 0 |
-| `UpdateResistor_WithInvalidId_ThrowsInvalidComponentException` | Non-existent resistor |
-| `RemoveResistor_WithInvalidId_ThrowsInvalidComponentException` | Non-existent resistor |
-| `RemoveNode_WithConnections_ThrowsNodeInUseException` | Node still has components |
-| `RemoveNode_Ground_ThrowsInvalidOperationException` | Cannot remove ground |
-| `Step_DuringBulkUpdate_ThrowsInvalidOperationException` | Step not allowed in bulk update |
-| `GetVoltage_InvalidNode_ThrowsInvalidNodeException` | Query non-existent node |
-
-**Maximizing usefulness:**
-- Use `[TestCase]` attributes to test each component type with the same invalid parameter patterns
-- Verify exception messages contain useful debugging information (node ID, component type, etc.)
+13 tests implemented covering all exception types with property assertions.
 
 ---
 
-### 1.2 API Component Lifecycle
+### 1.2 API Component Lifecycle ✅ COMPLETED
 
 **File:** `Sparky.Tests/MNA/ApiComponentLifecycleTests.cs`
 
-Full CRUD coverage for all component types through the API.
+17 tests implemented covering full CRUD lifecycle for all component types through the API.
 
 | Test Name | Description |
 |-----------|-------------|
@@ -72,9 +53,11 @@ Full CRUD coverage for all component types through the API.
 
 ---
 
-### 1.3 Bulk Update Mechanism
+### 1.3 Bulk Update Mechanism ✅ COMPLETED
 
 **File:** `Sparky.Tests/MNA/BulkUpdateTests.cs`
+
+6 tests implemented covering deferred rebuilds, nested scopes, and dispose safety.
 
 | Test Name | Description |
 |-----------|-------------|
@@ -93,105 +76,60 @@ Full CRUD coverage for all component types through the API.
 
 ## Phase 2: Important Coverage
 
-### 2.1 Line Optimization Edge Cases
+### 2.1 Line Optimization Edge Cases ✅ COMPLETED
 
 **File:** `Sparky.Tests/MNA/LineOptimizationTests.cs`
 
-| Test Name | Description |
-|-----------|-------------|
-| `Optimization_ChainBrokenByCapacitor_PartialMerge` | Non-resistor interrupts chain |
-| `Optimization_ChainBrokenByVoltageSource_PartialMerge` | Source interrupts chain |
-| `Optimization_SingleResistor_NoMerge` | Nothing to optimize |
-| `Optimization_BranchingNetwork_OnlyMergesLines` | T-junction not merged |
-| `Optimization_Disabled_NoInterpolation` | All nodes physical |
-| `Optimization_EnabledMidSimulation_Rebuilds` | Toggle triggers rebuild |
-| `Optimization_InterpolatedVoltage_MatchesExpected` | Math correctness |
-| `Optimization_ThreeResistorChain_CorrectInterpolation` | Middle node interpolated |
-| `Optimization_IsNodeOptimized_ReturnsTrue` | Diagnostic method works |
-
-**Maximizing usefulness:**
-- Compare optimized vs non-optimized results for same circuit (should match within tolerance)
-- Measure node count reduction to verify optimization is occurring
+9 tests implemented covering chain merging, partial merges, optimization toggling, and voltage interpolation.
 
 ---
 
-### 2.2 Solver Path Selection
+### 2.2 Solver Path Selection ✅ COMPLETED
 
 **File:** `Sparky.Tests/SolverPathTests.cs`
 
-| Test Name | Description |
-|-----------|-------------|
-| `SmallCircuit_UsesDenseSolver` | < 96 nodes uses dense |
-| `LargeCircuit_UsesSparseSOlver` | > 96 nodes uses sparse |
-| `AtThreshold_UsesDenseSolver` | Exactly 96 nodes |
-| `JustAboveThreshold_UsesSparse` | 97 nodes |
-| `DenseMatrix_AboveThreshold_StillUsesDense` | High density triggers dense |
-| `BothPaths_ProduceSameResult` | Correctness check |
+6 tests implemented verifying dense/sparse solver selection thresholds and result equivalence.
 
-**Maximizing usefulness:**
-- These tests verify the threshold logic at `Circuit.cs:410-417`
-- Add a diagnostic to expose which solver path was used, or infer from timing
+Added `Circuit.LastUsedDenseSolver` diagnostic property and `InternalsVisibleTo` for test access.
 
 ---
 
-### 2.3 Current Source Tests
+### 2.3 Current Source Tests ✅ COMPLETED
 
 **File:** `Sparky.Tests/CurrentSourceTests.cs`
 
-| Test Name | Description |
-|-----------|-------------|
-| `CurrentSource_SetsNodeVoltage` | Basic operation with resistor |
-| `CurrentSource_Polarity_PositiveCurrentFlowsInToOut` | Direction convention |
-| `CurrentSource_MultipleInParallel_CurrentsAdd` | Superposition |
-| `CurrentSource_WithCapacitor_ChargesLinearly` | I = C * dV/dt |
-| `CurrentSource_ZeroCurrent_NoEffect` | Degenerate case |
-| `CurrentSource_Update_AffectsNextStep` | Mutation works |
-
-**Maximizing usefulness:**
-- Current sources are fundamental for modeling real-world sources; thorough testing prevents subtle bugs
+6 tests implemented covering polarity, superposition, capacitor charging, and updates.
 
 ---
 
-### 2.4 Diagnostics and Stats
+### 2.4 Diagnostics and Stats ✅ COMPLETED
 
 **File:** `Sparky.Tests/DiagnosticsTests.cs`
 
-| Test Name | Description |
-|-----------|-------------|
-| `GetStats_ReturnsCorrectPartitionCount` | Matches PartitionCount property |
-| `GetStats_ReturnsCorrectPhysicalNodeCount` | Non-optimized nodes |
-| `GetStats_ReturnsCorrectOptimizedNodeCount` | Interpolated nodes |
-| `GetStats_TotalIterations_SumsPartitions` | Iteration tracking |
-| `PartitionCount_TwoDisconnectedCircuits_ReturnsTwo` | Partitioning works |
-| `PartitionCount_AfterClear_ReturnsZero` | Reset state |
-| `LastIterations_LinearCircuit_ReturnsOne` | No Newton iterations needed |
-| `LastIterations_WithDiode_ReturnsMultiple` | Newton iterations occur |
-
-**Maximizing usefulness:**
-- These tests document expected diagnostic behavior for users monitoring simulation health
+8 tests implemented covering GetStats, PartitionCount, and iteration tracking.
 
 ---
 
 ## Phase 3: Completeness
 
-### 3.1 Edge Case Circuits
+### 3.1 Edge Case Circuits ✅ COMPLETED
 
 **File:** `Sparky.Tests/EdgeCaseCircuitTests.cs`
+
+8 tests implemented covering empty circuits, orphan nodes, degenerate configurations, and numerical stability.
 
 | Test Name | Description |
 |-----------|-------------|
 | `EmptyCircuit_Step_DoesNotThrow` | No components |
-| `SingleNode_NoComponents_StepSucceeds` | Orphan node |
+| `SingleNode_NoComponents_StepSucceeds` | Orphan node at ground potential |
 | `ResistorToGround_NoSource_ZeroVoltage` | No excitation |
-| `ParallelVoltageSources_SameVoltage_Works` | Valid configuration |
-| `ParallelVoltageSources_DifferentVoltage_Behavior` | Document behavior |
-| `VeryLargeCircuit_1000Nodes_Succeeds` | Stress test |
-| `VerySmallValues_PicoFarads_Succeeds` | Numerical stability |
-| `VeryLargeValues_Megohms_Succeeds` | Numerical stability |
+| `ParallelVoltageSources_SameVoltage_SingularMatrix` | Documents singular matrix behavior |
+| `ParallelVoltageSources_DifferentVoltage_Behavior` | Documents conflicting sources behavior |
+| `VeryLargeCircuit_1000Nodes_Succeeds` | Stress test with 1000-node ladder |
+| `VerySmallValues_PicoFarads_Succeeds` | Numerical stability with 1pF capacitor |
+| `VeryLargeValues_Megohms_Succeeds` | Numerical stability with 1MΩ resistors |
 
-**Maximizing usefulness:**
-- Edge cases often reveal numerical instability or assumptions in the solver
-- Document expected behavior for degenerate configurations
+**Key finding:** Parallel ideal voltage sources always create singular matrices (even with identical voltages) because the current distribution is indeterminate in MNA.
 
 ---
 
@@ -271,18 +209,18 @@ public void Component_RemoveNonExistent_Throws(ComponentType type) { ... }
 
 | Priority | Category | Tests | Effort |
 |----------|----------|-------|--------|
-| P0 | API Exceptions | 12 | Low |
-| P0 | API Component Lifecycle | 17 | Medium |
-| P0 | Bulk Update | 6 | Low |
-| P1 | Line Optimization | 9 | Medium |
-| P1 | Solver Path | 6 | Low |
-| P1 | Current Source | 6 | Low |
-| P1 | Diagnostics | 8 | Low |
-| P2 | Edge Cases | 8 | Medium |
+| P0 | API Exceptions | ✅ 13 done | Low |
+| P0 | API Component Lifecycle | ✅ 17 done | Medium |
+| P0 | Bulk Update | ✅ 6 done | Low |
+| P1 | Line Optimization | ✅ 9 done | Medium |
+| P1 | Solver Path | ✅ 6 done | Low |
+| P1 | Current Source | ✅ 6 done | Low |
+| P1 | Diagnostics | ✅ 8 done | Low |
+| P2 | Edge Cases | ✅ 8 done | Medium |
 | P2 | Advanced Scenarios | 6 | High |
 | P2 | Parallel Execution | 4 | Medium |
 
-**Total: ~82 new tests**
+**Total: ~82 new tests** (73 completed, 10 remaining in Phase 3)
 
 ---
 

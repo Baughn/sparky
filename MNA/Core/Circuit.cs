@@ -32,6 +32,7 @@ namespace Sparky.MNA.Core
 
         // Public counters for diagnostics/benchmarks
         public int LastIterations { get; private set; }
+        internal bool LastUsedDenseSolver { get; private set; }
 
         private bool _dirty = true;
         private bool _requiresIteration;
@@ -281,6 +282,7 @@ namespace Sparky.MNA.Core
             }
 
             bool useDense = ShouldUseDense(matrixA);
+            LastUsedDenseSolver = useDense;
             if (useDense)
             {
                 return SolveDense(matrixA, vectorZ);

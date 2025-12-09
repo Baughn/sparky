@@ -35,33 +35,6 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void TestLineOptimization()
-        {
-            // 10V -- R1(10) -- N1 -- R2(10) -- N2 -- R3(10) -- GND
-            // Total 30 Ohm. Current = 1/3 A.
-            // V(N1) = 20/3 = 6.666...
-            // V(N2) = 10/3 = 3.333...
-
-            _sim.EnableLineOptimization = true;
-
-            var nPos = _sim.CreateNode();
-            var n1 = _sim.CreateNode();
-            var n2 = _sim.CreateNode();
-            var nGnd = new NodeId(0);
-
-            _sim.AddVoltageSource(nPos, nGnd, 10.0);
-            _sim.AddResistor(nPos, n1, 10.0);
-            _sim.AddResistor(n1, n2, 10.0);
-            _sim.AddResistor(n2, nGnd, 10.0);
-
-            _sim.Step(0.1);
-
-            Assert.That(_sim.GetVoltage(nPos), Is.EqualTo(10.0).Within(1e-6));
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(20.0 / 3.0).Within(1e-6));
-            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(10.0 / 3.0).Within(1e-6));
-        }
-
-        [Test]
         public void TestPartitioning()
         {
             // Circuit 1: 10V -- R1(10) -- GND

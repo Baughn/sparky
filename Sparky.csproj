@@ -36,6 +36,10 @@
     <PackageReference Include="CSparse" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Sparky.Tests" />
+  </ItemGroup>
+
   <!-- Package the mod as a zip file after building -->
   <Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
     <ZipDirectory DestinationFile="bin/$(TargetName).zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
