@@ -1100,9 +1100,9 @@ public class SimulationManager : ISimulation
         var circuit = new Circuit();
         _partitions.Add(circuit);
 
-        if (nodes.Contains(new NodeId(0)))
+        if (nodes.Contains(Ground))
         {
-            _physicalNodes[new NodeId(0)] = circuit.Ground;
+            _physicalNodes[Ground] = circuit.Ground;
         }
 
         foreach (var nodeId in nodes)

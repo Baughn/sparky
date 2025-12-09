@@ -19,9 +19,7 @@ namespace Sparky.Tests.MNA
             // 10V -- R1(10) -- N1 -- R2(10) -- GND
             var n1 = _sim.CreateNode();
             var nPos = _sim.CreateNode();
-            var nGnd = new NodeId(0); // Assuming 0 is ground, or we need a way to get it. 
-                                      // SimulationManager doesn't expose Ground NodeId directly but we assumed 0.
-                                      // Let's use 0.
+            var nGnd = _sim.Ground;
 
             _sim.AddVoltageSource(nPos, nGnd, 10.0);
             _sim.AddResistor(nPos, n1, 10.0);
@@ -41,12 +39,12 @@ namespace Sparky.Tests.MNA
             // Circuit 2: 5V -- R2(5) -- GND
 
             var c1_Pos = _sim.CreateNode();
-            var c1_Gnd = new NodeId(0);
+            var c1_Gnd = _sim.Ground;
             _sim.AddVoltageSource(c1_Pos, c1_Gnd, 10.0);
             _sim.AddResistor(c1_Pos, c1_Gnd, 10.0);
 
             var c2_Pos = _sim.CreateNode();
-            var c2_Gnd = new NodeId(0);
+            var c2_Gnd = _sim.Ground;
             _sim.AddVoltageSource(c2_Pos, c2_Gnd, 5.0);
             _sim.AddResistor(c2_Pos, c2_Gnd, 5.0);
 
@@ -61,7 +59,7 @@ namespace Sparky.Tests.MNA
         {
             // 10V -- R1(10) -- GND
             var nPos = _sim.CreateNode();
-            var nGnd = new NodeId(0);
+            var nGnd = _sim.Ground;
 
             _sim.AddVoltageSource(nPos, nGnd, 10.0);
             var rId = _sim.AddResistor(nPos, nGnd, 10.0);
@@ -74,7 +72,7 @@ namespace Sparky.Tests.MNA
             _sim.Clear();
             nPos = _sim.CreateNode();
             var n1 = _sim.CreateNode();
-            nGnd = new NodeId(0);
+            nGnd = _sim.Ground;
 
             _sim.AddVoltageSource(nPos, nGnd, 10.0);
             var r1 = _sim.AddResistor(nPos, n1, 10.0);
@@ -95,7 +93,7 @@ namespace Sparky.Tests.MNA
             // 10V -- R1(10) -- N1 -- GND
             var nPos = _sim.CreateNode();
             var n1 = _sim.CreateNode();
-            var nGnd = new NodeId(0);
+            var nGnd = _sim.Ground;
 
             _sim.AddVoltageSource(nPos, nGnd, 10.0);
             _sim.AddResistor(nPos, n1, 10.0);

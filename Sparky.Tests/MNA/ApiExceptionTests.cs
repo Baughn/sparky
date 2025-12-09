@@ -192,7 +192,7 @@ namespace Sparky.Tests.MNA
         [Test]
         public void RemoveNode_Ground_ThrowsInvalidOperationException()
         {
-            var groundNode = new NodeId(0);
+            var groundNode = _sim.Ground;
 
             var ex = Assert.Throws<InvalidOperationException>(() =>
                 _sim.RemoveNode(groundNode));
