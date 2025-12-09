@@ -604,11 +604,78 @@ Sparky/
 
 ---
 
-## Implementation constraints
+## Client-Server Architecture
 
-While the initial implementation is a stand-alone game, it will eventually run on a table inside Vintage Story. To support this, the UI needs to operate on a client-server architecture similar to legacy X11. The client, which will eventually map to the Vintage Story client, renders primitives and handles I/O. The server runs the simulation loop and all game logic.
+The game will eventually run on a tablet inside Vintage Story, serving as both an educational game and player handbook. This requires a client-server architecture to handle potentially high latency (up to 300ms round-trip).
 
-To minimize apparent latency, "primitives" includes any textboxes / numeric inputs, interactive elements such as zoomable graph views, font rendering and similar; again motivated by legacy X11.
+### Design Principles
+
+- **Dumb client**: The client knows nothing about circuits. It renders cells with visual states and forwards input events. All simulation and game logic stays server-side.
+- **Smart primitives**: To minimize apparent latency, the client handles text input, numeric fields, and interactive widgets locally (X11-style). The server sends high-level commands, not pixel data.
+- **No compatibility concerns**: For standalone, both run in-process. For VS, mod version mismatch prevents connection anyway.
+
+### Vintage Story Rendering
+
+VS provides two hooks for custom GUI rendering:
+
+1. **`GuiElementCustomDraw`**: Cairo-based drawing to an `ImageSurface`, uploaded as a texture. Has `Redraw()` for dynamic updates.
+2. **`GuiElementCustomRender`**: Direct per-frame callback with `deltaTime` for animations.
+
+The client will use `GuiElementCustomDraw` for the grid/components (redraw on state change) and `GuiElementCustomRender` for animations (current flow particles).
+
+### Protocol
+
+No wire format needed for standalone (direct method calls). For VS integration, serialize over VS's network channel.
+
+```csharp
+// Server → Client: Render commands
+abstract record RenderCommand;
+record SetCell(GridPos Pos, CellType Type, int Rotation, CellVisualState State) : RenderCommand;
+record ClearCell(GridPos Pos) : RenderCommand;
+record SetGridSize(int Width, int Height) : RenderCommand;
+record SetSimulationState(bool Running, double Time) : RenderCommand;
+record ShowProbe(GridPos Pos, double Voltage, double Current, double Power) : RenderCommand;
+record SetCurrentFlow(GridPos From, GridPos To, double Magnitude) : RenderCommand;
+
+// Client → Server: Input events
+abstract record InputEvent;
+record PlaceComponent(GridPos Pos, CellType Type, int Rotation) : InputEvent;
+record RemoveComponent(GridPos Pos) : InputEvent;
+record ToggleSwitch(GridPos Pos) : InputEvent;
+record SetComponentValue(GridPos Pos, string Param, double Value) : InputEvent;
+record ProbeRequest(GridPos Pos) : InputEvent;
+record SetSimSpeed(double Multiplier) : InputEvent;
+record TogglePause() : InputEvent;
+```
+
+### Latency Handling
+
+- **Optimistic updates**: Client immediately shows placed/removed components, server confirms or corrects.
+- **Animation interpolation**: Current flow animations run client-side based on server-provided magnitude; don't wait for per-frame updates.
+- **Input batching**: Rapid edits (dragging wire) batch into single server round-trip.
+
+### Implementation Layers
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    IGameClient (interface)                  │
+│  Methods: HandleCommand(RenderCommand), GetPendingInput()   │
+├─────────────────────────────────────────────────────────────┤
+│  StandaloneClient          │  VintageStoryClient            │
+│  (renders to window)       │  (renders to GuiElement)       │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│                    IGameServer (interface)                  │
+│  Methods: HandleInput(InputEvent), Tick(dt), GetCommands()  │
+├─────────────────────────────────────────────────────────────┤
+│                      GameServer                             │
+│  (grid state, simulation orchestration, challenge logic)    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+For standalone: `StandaloneClient` and `GameServer` communicate via direct method calls.
+For VS: `VintageStoryClient` serializes to network channel; server runs on VS server.
 
 ## Implementation Phases
 
