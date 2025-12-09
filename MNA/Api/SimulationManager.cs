@@ -153,6 +153,7 @@ public class SimulationManager : ISimulation
         public DiodeId Id { get; }
         public NodeId Anode { get; }
         public NodeId Cathode { get; }
+        public double OperatingVoltage { get; set; } = 0.6;  // Preserved for Newton-Raphson convergence
         public bool IsOptimizable => false;
 
         public LogicalDiode(DiodeId id, NodeId anode, NodeId cathode)
@@ -866,6 +867,15 @@ public class SimulationManager : ISimulation
                 logical.CurrentThrough = kvp.Value.CurrentThrough;
             }
         }
+
+        // Save diode operating point from physical to logical (improves Newton-Raphson convergence)
+        foreach (var kvp in _physicalDiodes)
+        {
+            if (_diodes.TryGetValue(kvp.Key, out var logical))
+            {
+                logical.OperatingVoltage = kvp.Value.OperatingVoltage;
+            }
+        }
     }
 
     private void Rebuild()
@@ -1197,6 +1207,7 @@ public class SimulationManager : ISimulation
                 break;
             case LogicalDiode d:
                 var phyD = new Diode(GetPhysNode(d.Anode, circuit), GetPhysNode(d.Cathode, circuit));
+                phyD.OperatingVoltage = d.OperatingVoltage;  // Restore operating point for faster convergence
                 circuit.AddComponent(phyD);
                 _physicalDiodes[d.Id] = phyD;
                 break;

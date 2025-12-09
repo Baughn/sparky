@@ -12,7 +12,8 @@ namespace Sparky.MNA.Core
         private const double n = 1.0;    // Emission coefficient
 
         // Operating point (Voltage across diode from previous iteration)
-        private double _vd = 0.6; // Start with a guess (forward biased)
+        // Exposed for state preservation during rebuilds (improves Newton-Raphson convergence)
+        public double OperatingVoltage { get; set; } = 0.6; // Start with a guess (forward biased)
 
         public Diode(Node node1, Node node2) : base(node1, node2)
         {
@@ -32,7 +33,7 @@ namespace Sparky.MNA.Core
             // In SPICE, there are limiting algorithms (pnjlim).
             // For now, simple clamping or just let it fly (Newton-Raphson usually converges if guess is okay).
 
-            double vdLimited = Math.Max(-5.0, Math.Min(_vd, 0.9)); // keep within safe exponential range
+            double vdLimited = Math.Max(-5.0, Math.Min(OperatingVoltage, 0.9)); // keep within safe exponential range
             double expArg = vdLimited / (n * Vt);
             double exp = Math.Exp(Math.Min(expArg, 40.0)); // avoid overflow
             double gEq = (Is / (n * Vt)) * exp;
@@ -88,7 +89,7 @@ namespace Sparky.MNA.Core
             if (newVd > 0.9) newVd = 0.9;
             if (newVd < -5.0) newVd = -5.0;
 
-            _vd = newVd;
+            OperatingVoltage = newVd;
         }
     }
 }
