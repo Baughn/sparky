@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Critical design docs are in the root directory. Localized design docs (e.g. for the tablet game) are in subdirectories. Subsystem and cross-cutting docs are generally in context/.
+
 ## Project Overview
 
 Sparky is a Vintage Story mod that implements an electrical circuit simulator using Modified Nodal Analysis (MNA). The solver handles DC, transient (capacitors/inductors), and nonlinear (diodes) circuits with automatic graph partitioning for performance.
