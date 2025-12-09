@@ -68,6 +68,16 @@ namespace Sparky.MNA.Core
             if (component.RequiresPerStepRestamp) _requiresPerStepRestamp = true;
         }
 
+        public bool RemoveComponent(Component component)
+        {
+            bool removed = Components.Remove(component);
+            if (removed)
+            {
+                _dirty = true;
+            }
+            return removed;
+        }
+
         public void BuildSystem()
         {
             int nodeCount = Nodes.Count;

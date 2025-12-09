@@ -124,6 +124,7 @@ public class SimulationManager : ISimulation
         public NodeId NodeA { get; }
         public NodeId NodeB { get; }
         public double Capacitance { get; set; }
+        public double VoltageAcross { get; set; }  // Preserved across rebuilds
         public bool IsOptimizable => false;
 
         public LogicalCapacitor(CapacitorId id, NodeId a, NodeId b, double c)
@@ -138,6 +139,7 @@ public class SimulationManager : ISimulation
         public NodeId NodeA { get; }
         public NodeId NodeB { get; }
         public double Inductance { get; set; }
+        public double CurrentThrough { get; set; }  // Preserved across rebuilds
         public bool IsOptimizable => false;
 
         public LogicalInductor(InductorId id, NodeId a, NodeId b, double l)
@@ -845,8 +847,32 @@ public class SimulationManager : ISimulation
         }
     }
 
+    private void SaveTransientState()
+    {
+        // Save capacitor state from physical to logical
+        foreach (var kvp in _physicalCapacitors)
+        {
+            if (_capacitors.TryGetValue(kvp.Key, out var logical))
+            {
+                logical.VoltageAcross = kvp.Value.VoltageAcross;
+            }
+        }
+
+        // Save inductor state from physical to logical
+        foreach (var kvp in _physicalInductors)
+        {
+            if (_inductors.TryGetValue(kvp.Key, out var logical))
+            {
+                logical.CurrentThrough = kvp.Value.CurrentThrough;
+            }
+        }
+    }
+
     private void Rebuild()
     {
+        // Save state from physical components to logical components before clearing
+        SaveTransientState();
+
         _partitions.Clear();
         _physicalNodes.Clear();
         _interpolationMap.Clear();
@@ -1159,11 +1185,13 @@ public class SimulationManager : ISimulation
                 break;
             case LogicalCapacitor cap:
                 var phyCap = new Capacitor(GetPhysNode(cap.NodeA, circuit), GetPhysNode(cap.NodeB, circuit), cap.Capacitance);
+                phyCap.VoltageAcross = cap.VoltageAcross;  // Restore state
                 circuit.AddComponent(phyCap);
                 _physicalCapacitors[cap.Id] = phyCap;
                 break;
             case LogicalInductor ind:
                 var phyInd = new Inductor(GetPhysNode(ind.NodeA, circuit), GetPhysNode(ind.NodeB, circuit), ind.Inductance);
+                phyInd.CurrentThrough = ind.CurrentThrough;  // Restore state
                 circuit.AddComponent(phyInd);
                 _physicalInductors[ind.Id] = phyInd;
                 break;

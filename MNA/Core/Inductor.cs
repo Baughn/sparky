@@ -6,8 +6,8 @@ namespace Sparky.MNA.Core
     {
         public double Inductance { get; set; }
 
-        // State for transient analysis
-        private double _currentThrough = 0;
+        // State for transient analysis - exposed for state preservation during rebuilds
+        public double CurrentThrough { get; set; } = 0;
 
         public override bool RequiresPerStepRestamp => true;
 
@@ -46,7 +46,7 @@ namespace Sparky.MNA.Core
             }
 
             double gEq = dt / Inductance;
-            double iEq = _currentThrough;
+            double iEq = CurrentThrough;
 
             // Stamp Conductance G_eq
             if (n1 != 0)
@@ -74,7 +74,7 @@ namespace Sparky.MNA.Core
 
             // Backward Euler: I_n = (dt/L)*V_n + I_prev
             double gEq = dt / Inductance;
-            _currentThrough = gEq * v + _currentThrough;
+            CurrentThrough = gEq * v + CurrentThrough;
         }
     }
 }

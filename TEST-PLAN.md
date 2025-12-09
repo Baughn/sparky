@@ -133,9 +133,11 @@ Added `Circuit.LastUsedDenseSolver` diagnostic property and `InternalsVisibleTo`
 
 ---
 
-### 3.2 Advanced Integration Scenarios
+### 3.2 Advanced Integration Scenarios ✅ COMPLETED
 
 **File:** `Sparky.Tests/AdvancedScenarioTests.cs`
+
+6 tests implemented covering real-world circuit patterns.
 
 | Test Name | Description |
 |-----------|-------------|
@@ -146,26 +148,35 @@ Added `Circuit.LastUsedDenseSolver` diagnostic property and `InternalsVisibleTo`
 | `VoltageRegulator_ClampsOutput` | Zener-like behavior with diode |
 | `MotorWithBackEMF_CurrentLimits` | Inductor + voltage source |
 
-**Maximizing usefulness:**
-- These scenarios match real-world use cases in the game
-- Use longer simulation times to verify steady-state behavior
-
 ---
 
-### 3.3 Parallel Partition Execution
+### 3.3 Parallel Partition Execution ✅ COMPLETED
 
 **File:** `Sparky.Tests/ParallelPartitionTests.cs`
+
+4 tests implemented verifying partition independence and parallel solve correctness.
 
 | Test Name | Description |
 |-----------|-------------|
 | `TwoPartitions_BothSolveCorrectly` | Independence verified |
-| `ManyPartitions_AllSolveCorrectly` | Scale test |
+| `ManyPartitions_AllSolveCorrectly` | Scale test (10 partitions) |
 | `PartitionsWithDifferentComplexity_AllComplete` | Mixed linear/nonlinear |
 | `ConnectingPartitions_MergesIntoOne` | Topology change |
 
-**Maximizing usefulness:**
-- Run these tests multiple times to catch race conditions
-- Verify results are deterministic despite parallel execution
+---
+
+### 3.4 State Preservation (Bonus) ✅ COMPLETED
+
+**File:** `Sparky.Tests/MNA/BulkUpdateTests.cs`
+
+2 tests added to verify capacitor/inductor state is preserved across topology changes.
+
+| Test Name | Description |
+|-----------|-------------|
+| `TopologyChange_PreservesCapacitorState` | Capacitor voltage preserved |
+| `TopologyChange_PreservesInductorState` | Inductor current preserved |
+
+**Bug Fixed:** During implementation, discovered that topology changes (adding/removing components) caused capacitor voltage and inductor current to reset to zero. Fixed by preserving transient state in logical components and restoring during rebuild.
 
 ---
 
@@ -211,16 +222,16 @@ public void Component_RemoveNonExistent_Throws(ComponentType type) { ... }
 |----------|----------|-------|--------|
 | P0 | API Exceptions | ✅ 13 done | Low |
 | P0 | API Component Lifecycle | ✅ 17 done | Medium |
-| P0 | Bulk Update | ✅ 6 done | Low |
+| P0 | Bulk Update | ✅ 8 done | Low |
 | P1 | Line Optimization | ✅ 9 done | Medium |
 | P1 | Solver Path | ✅ 6 done | Low |
 | P1 | Current Source | ✅ 6 done | Low |
 | P1 | Diagnostics | ✅ 8 done | Low |
 | P2 | Edge Cases | ✅ 8 done | Medium |
-| P2 | Advanced Scenarios | 6 | High |
-| P2 | Parallel Execution | 4 | Medium |
+| P2 | Advanced Scenarios | ✅ 6 done | High |
+| P2 | Parallel Execution | ✅ 4 done | Medium |
 
-**Total: ~82 new tests** (73 completed, 10 remaining in Phase 3)
+**Total: 85 new tests** (all completed)
 
 ---
 

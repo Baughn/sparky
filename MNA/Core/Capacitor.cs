@@ -6,8 +6,8 @@ namespace Sparky.MNA.Core
     {
         public double Capacitance { get; set; }
 
-        // State for transient analysis
-        private double _voltageAcross = 0;
+        // State for transient analysis - exposed for state preservation during rebuilds
+        public double VoltageAcross { get; set; } = 0;
 
         public override bool RequiresPerStepRestamp => true;
 
@@ -49,7 +49,7 @@ namespace Sparky.MNA.Core
             // So I_eq is added to the RHS (Z) at n1, and subtracted at n2.
 
             double gEq = Capacitance / dt;
-            double iEq = gEq * _voltageAcross;
+            double iEq = gEq * VoltageAcross;
 
             int n1 = Node1.Id;
             int n2 = Node2.Id;
@@ -88,7 +88,7 @@ namespace Sparky.MNA.Core
         {
             double v1 = (Node1.Id == 0) ? 0 : x[Node1.Id];
             double v2 = (Node2.Id == 0) ? 0 : x[Node2.Id];
-            _voltageAcross = v1 - v2;
+            VoltageAcross = v1 - v2;
         }
     }
 }
