@@ -72,3 +72,17 @@ When making changes, update the relevant design docs (*.md in root and MNA/) to 
 ## Testing
 
 Tests use NUnit in `Sparky.Tests/`. Name tests as scenario + expectation (e.g., `TestVoltageDivider`). Use tolerance checks like `Within(1e-6)` for floating-point comparisons.
+
+## Version Control
+
+This project uses **Jujutsu (jj)** instead of git. Key commands:
+
+```bash
+jj status                    # Show working copy changes
+jj log                       # Show commit history
+jj diff                      # Show current changes
+jj commit -m "message"       # Set commit message for current change, *and* create a new change; like git commit.
+jj describe -m "message"     # Alter the commit message for the current change.
+jj new                       # Create a new change on top of current
+jj squash                    # Squash current change into parent
+```
