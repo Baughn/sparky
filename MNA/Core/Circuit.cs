@@ -88,10 +88,11 @@ namespace Sparky.MNA.Core
             // Assign indices for extra equations
             foreach (var component in Components)
             {
-                if (component.HasExtraEquation)
+                int eqCount = component.ExtraEquationCount;
+                if (eqCount > 0)
                 {
                     component.MatrixIndex = nodeCount + extraEqCount;
-                    extraEqCount++;
+                    extraEqCount += eqCount;
                 }
 
                 if (component.RequiresIteration) _requiresIteration = true;
@@ -255,6 +256,16 @@ namespace Sparky.MNA.Core
                         case Transformer tf when tf.MatrixIndex >= 0:
                             tf.PrimaryCurrent = _vectorX[tf.MatrixIndex];
                             tf.SecondaryCurrent = -tf.PrimaryCurrent / tf.Ratio;
+                            break;
+                        case VCVS vcvs when vcvs.MatrixIndex >= 0:
+                            vcvs.Current = _vectorX[vcvs.MatrixIndex];
+                            break;
+                        case CCCS cccs when cccs.MatrixIndex >= 0:
+                            cccs.InputCurrent = _vectorX[cccs.MatrixIndex];
+                            break;
+                        case CCVS ccvs when ccvs.MatrixIndex >= 0:
+                            ccvs.InputCurrent = _vectorX[ccvs.MatrixIndex];
+                            ccvs.OutputCurrent = _vectorX[ccvs.MatrixIndex + 1];
                             break;
                     }
                 }

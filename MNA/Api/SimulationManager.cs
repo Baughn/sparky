@@ -21,6 +21,10 @@ public class SimulationManager : ISimulation
     private int _nextDiodeId = 1;
     private int _nextTransformerId = 1;
     private int _nextSwitchId = 1;
+    private int _nextVcvsId = 1;
+    private int _nextVccsId = 1;
+    private int _nextCcvsId = 1;
+    private int _nextCccsId = 1;
 
     // Switch resistance constants
     private const double SwitchClosedResistance = 1e-9;
@@ -36,6 +40,10 @@ public class SimulationManager : ISimulation
     private readonly Dictionary<DiodeId, LogicalDiode> _diodes = new();
     private readonly Dictionary<TransformerId, LogicalTransformer> _transformers = new();
     private readonly Dictionary<SwitchId, LogicalSwitch> _switches = new();
+    private readonly Dictionary<VcvsId, LogicalVCVS> _vcvs = new();
+    private readonly Dictionary<VccsId, LogicalVCCS> _vccs = new();
+    private readonly Dictionary<CcvsId, LogicalCCVS> _ccvs = new();
+    private readonly Dictionary<CccsId, LogicalCCCS> _cccs = new();
 
     // Physical Circuits (Partitions)
     private readonly List<Circuit> _partitions = new();
@@ -52,6 +60,10 @@ public class SimulationManager : ISimulation
     private readonly Dictionary<InductorId, Inductor> _physicalInductors = new();
     private readonly Dictionary<DiodeId, Diode> _physicalDiodes = new();
     private readonly Dictionary<TransformerId, Transformer> _physicalTransformers = new();
+    private readonly Dictionary<VcvsId, VCVS> _physicalVCVS = new();
+    private readonly Dictionary<VccsId, VCCS> _physicalVCCS = new();
+    private readonly Dictionary<CcvsId, CCVS> _physicalCCVS = new();
+    private readonly Dictionary<CccsId, CCCS> _physicalCCCS = new();
 
     // Optimization tracking
     private readonly HashSet<ResistorId> _optimizedResistors = new();
@@ -196,6 +208,70 @@ public class SimulationManager : ISimulation
         public LogicalSwitch(SwitchId id, NodeId a, NodeId b, bool closed, ResistorId resistorId)
         {
             Id = id; NodeA = a; NodeB = b; IsClosed = closed; InternalResistorId = resistorId;
+        }
+    }
+
+    private class LogicalVCVS : ILogicalComponent
+    {
+        public VcvsId Id { get; }
+        public NodeId ControlPos { get; }
+        public NodeId ControlNeg { get; }
+        public NodeId OutputPos { get; }
+        public NodeId OutputNeg { get; }
+        public double Gain { get; set; }
+        public bool IsOptimizable => false;
+
+        public LogicalVCVS(VcvsId id, NodeId ctrlP, NodeId ctrlN, NodeId outP, NodeId outN, double gain)
+        {
+            Id = id; ControlPos = ctrlP; ControlNeg = ctrlN; OutputPos = outP; OutputNeg = outN; Gain = gain;
+        }
+    }
+
+    private class LogicalVCCS : ILogicalComponent
+    {
+        public VccsId Id { get; }
+        public NodeId ControlPos { get; }
+        public NodeId ControlNeg { get; }
+        public NodeId OutputPos { get; }
+        public NodeId OutputNeg { get; }
+        public double Transconductance { get; set; }
+        public bool IsOptimizable => false;
+
+        public LogicalVCCS(VccsId id, NodeId ctrlP, NodeId ctrlN, NodeId outP, NodeId outN, double gm)
+        {
+            Id = id; ControlPos = ctrlP; ControlNeg = ctrlN; OutputPos = outP; OutputNeg = outN; Transconductance = gm;
+        }
+    }
+
+    private class LogicalCCVS : ILogicalComponent
+    {
+        public CcvsId Id { get; }
+        public NodeId ControlPos { get; }
+        public NodeId ControlNeg { get; }
+        public NodeId OutputPos { get; }
+        public NodeId OutputNeg { get; }
+        public double Transresistance { get; set; }
+        public bool IsOptimizable => false;
+
+        public LogicalCCVS(CcvsId id, NodeId ctrlP, NodeId ctrlN, NodeId outP, NodeId outN, double rm)
+        {
+            Id = id; ControlPos = ctrlP; ControlNeg = ctrlN; OutputPos = outP; OutputNeg = outN; Transresistance = rm;
+        }
+    }
+
+    private class LogicalCCCS : ILogicalComponent
+    {
+        public CccsId Id { get; }
+        public NodeId ControlPos { get; }
+        public NodeId ControlNeg { get; }
+        public NodeId OutputPos { get; }
+        public NodeId OutputNeg { get; }
+        public double Gain { get; set; }
+        public bool IsOptimizable => false;
+
+        public LogicalCCCS(CccsId id, NodeId ctrlP, NodeId ctrlN, NodeId outP, NodeId outN, double gain)
+        {
+            Id = id; ControlPos = ctrlP; ControlNeg = ctrlN; OutputPos = outP; OutputNeg = outN; Gain = gain;
         }
     }
 
@@ -810,6 +886,314 @@ public class SimulationManager : ISimulation
 
     #endregion
 
+    #region Controlled Sources
+
+    // VCVS (Voltage-Controlled Voltage Source)
+
+    public VcvsId AddVCVS(NodeId ctrlPos, NodeId ctrlNeg, NodeId outPos, NodeId outNeg, double gain)
+    {
+        ValidateNodeExists(ctrlPos);
+        ValidateNodeExists(ctrlNeg);
+        ValidateNodeExists(outPos);
+        ValidateNodeExists(outNeg);
+
+        var id = new VcvsId(_nextVcvsId++);
+        var component = new LogicalVCVS(id, ctrlPos, ctrlNeg, outPos, outNeg, gain);
+        _vcvs[id] = component;
+
+        Connect(ctrlPos, component);
+        Connect(ctrlNeg, component);
+        Connect(outPos, component);
+        Connect(outNeg, component);
+
+        _isDirty = true;
+        return id;
+    }
+
+    public void UpdateVCVS(VcvsId id, double gain)
+    {
+        if (!_vcvs.TryGetValue(id, out var v))
+            throw InvalidComponentException.ForVCVS(id);
+
+        v.Gain = gain;
+
+        if (_physicalVCVS.TryGetValue(id, out var phys))
+        {
+            phys.Gain = gain;
+            return;
+        }
+
+        _isDirty = true;
+    }
+
+    public void RemoveVCVS(VcvsId id)
+    {
+        if (!_vcvs.TryGetValue(id, out var v))
+            throw InvalidComponentException.ForVCVS(id);
+
+        Disconnect(v.ControlPos, v);
+        Disconnect(v.ControlNeg, v);
+        Disconnect(v.OutputPos, v);
+        Disconnect(v.OutputNeg, v);
+        _vcvs.Remove(id);
+        _physicalVCVS.Remove(id);
+        _isDirty = true;
+    }
+
+    public bool VCVSExists(VcvsId id) => _vcvs.ContainsKey(id);
+
+    public double GetVCVSGain(VcvsId id)
+    {
+        if (!_vcvs.TryGetValue(id, out var v))
+            throw InvalidComponentException.ForVCVS(id);
+        return v.Gain;
+    }
+
+    public double GetVCVSCurrent(VcvsId id)
+    {
+        if (!_vcvs.ContainsKey(id))
+            throw InvalidComponentException.ForVCVS(id);
+        if (_physicalVCVS.TryGetValue(id, out var phys))
+            return phys.Current;
+        return 0.0;
+    }
+
+    // VCCS (Voltage-Controlled Current Source)
+
+    public VccsId AddVCCS(NodeId ctrlPos, NodeId ctrlNeg, NodeId outPos, NodeId outNeg, double transconductance)
+    {
+        ValidateNodeExists(ctrlPos);
+        ValidateNodeExists(ctrlNeg);
+        ValidateNodeExists(outPos);
+        ValidateNodeExists(outNeg);
+
+        var id = new VccsId(_nextVccsId++);
+        var component = new LogicalVCCS(id, ctrlPos, ctrlNeg, outPos, outNeg, transconductance);
+        _vccs[id] = component;
+
+        Connect(ctrlPos, component);
+        Connect(ctrlNeg, component);
+        Connect(outPos, component);
+        Connect(outNeg, component);
+
+        _isDirty = true;
+        return id;
+    }
+
+    public void UpdateVCCS(VccsId id, double transconductance)
+    {
+        if (!_vccs.TryGetValue(id, out var v))
+            throw InvalidComponentException.ForVCCS(id);
+
+        v.Transconductance = transconductance;
+
+        if (_physicalVCCS.TryGetValue(id, out var phys))
+        {
+            phys.Transconductance = transconductance;
+            return;
+        }
+
+        _isDirty = true;
+    }
+
+    public void RemoveVCCS(VccsId id)
+    {
+        if (!_vccs.TryGetValue(id, out var v))
+            throw InvalidComponentException.ForVCCS(id);
+
+        Disconnect(v.ControlPos, v);
+        Disconnect(v.ControlNeg, v);
+        Disconnect(v.OutputPos, v);
+        Disconnect(v.OutputNeg, v);
+        _vccs.Remove(id);
+        _physicalVCCS.Remove(id);
+        _isDirty = true;
+    }
+
+    public bool VCCSExists(VccsId id) => _vccs.ContainsKey(id);
+
+    public double GetVCCSTransconductance(VccsId id)
+    {
+        if (!_vccs.TryGetValue(id, out var v))
+            throw InvalidComponentException.ForVCCS(id);
+        return v.Transconductance;
+    }
+
+    public double GetVCCSCurrent(VccsId id)
+    {
+        if (!_vccs.ContainsKey(id))
+            throw InvalidComponentException.ForVCCS(id);
+        // VCCS output current = gm × V_in
+        // We need to compute from node voltages
+        if (_vccs.TryGetValue(id, out var v) && _physicalVCCS.TryGetValue(id, out _))
+        {
+            var vCtrlP = GetVoltage(v.ControlPos);
+            var vCtrlN = GetVoltage(v.ControlNeg);
+            return v.Transconductance * (vCtrlP - vCtrlN);
+        }
+        return 0.0;
+    }
+
+    // CCVS (Current-Controlled Voltage Source)
+
+    public CcvsId AddCCVS(NodeId ctrlPos, NodeId ctrlNeg, NodeId outPos, NodeId outNeg, double transresistance)
+    {
+        ValidateNodeExists(ctrlPos);
+        ValidateNodeExists(ctrlNeg);
+        ValidateNodeExists(outPos);
+        ValidateNodeExists(outNeg);
+
+        var id = new CcvsId(_nextCcvsId++);
+        var component = new LogicalCCVS(id, ctrlPos, ctrlNeg, outPos, outNeg, transresistance);
+        _ccvs[id] = component;
+
+        Connect(ctrlPos, component);
+        Connect(ctrlNeg, component);
+        Connect(outPos, component);
+        Connect(outNeg, component);
+
+        _isDirty = true;
+        return id;
+    }
+
+    public void UpdateCCVS(CcvsId id, double transresistance)
+    {
+        if (!_ccvs.TryGetValue(id, out var v))
+            throw InvalidComponentException.ForCCVS(id);
+
+        v.Transresistance = transresistance;
+
+        if (_physicalCCVS.TryGetValue(id, out var phys))
+        {
+            phys.Transresistance = transresistance;
+            return;
+        }
+
+        _isDirty = true;
+    }
+
+    public void RemoveCCVS(CcvsId id)
+    {
+        if (!_ccvs.TryGetValue(id, out var v))
+            throw InvalidComponentException.ForCCVS(id);
+
+        Disconnect(v.ControlPos, v);
+        Disconnect(v.ControlNeg, v);
+        Disconnect(v.OutputPos, v);
+        Disconnect(v.OutputNeg, v);
+        _ccvs.Remove(id);
+        _physicalCCVS.Remove(id);
+        _isDirty = true;
+    }
+
+    public bool CCVSExists(CcvsId id) => _ccvs.ContainsKey(id);
+
+    public double GetCCVSTransresistance(CcvsId id)
+    {
+        if (!_ccvs.TryGetValue(id, out var v))
+            throw InvalidComponentException.ForCCVS(id);
+        return v.Transresistance;
+    }
+
+    public double GetCCVSInputCurrent(CcvsId id)
+    {
+        if (!_ccvs.ContainsKey(id))
+            throw InvalidComponentException.ForCCVS(id);
+        if (_physicalCCVS.TryGetValue(id, out var phys))
+            return phys.InputCurrent;
+        return 0.0;
+    }
+
+    public double GetCCVSOutputCurrent(CcvsId id)
+    {
+        if (!_ccvs.ContainsKey(id))
+            throw InvalidComponentException.ForCCVS(id);
+        if (_physicalCCVS.TryGetValue(id, out var phys))
+            return phys.OutputCurrent;
+        return 0.0;
+    }
+
+    // CCCS (Current-Controlled Current Source)
+
+    public CccsId AddCCCS(NodeId ctrlPos, NodeId ctrlNeg, NodeId outPos, NodeId outNeg, double gain)
+    {
+        ValidateNodeExists(ctrlPos);
+        ValidateNodeExists(ctrlNeg);
+        ValidateNodeExists(outPos);
+        ValidateNodeExists(outNeg);
+
+        var id = new CccsId(_nextCccsId++);
+        var component = new LogicalCCCS(id, ctrlPos, ctrlNeg, outPos, outNeg, gain);
+        _cccs[id] = component;
+
+        Connect(ctrlPos, component);
+        Connect(ctrlNeg, component);
+        Connect(outPos, component);
+        Connect(outNeg, component);
+
+        _isDirty = true;
+        return id;
+    }
+
+    public void UpdateCCCS(CccsId id, double gain)
+    {
+        if (!_cccs.TryGetValue(id, out var v))
+            throw InvalidComponentException.ForCCCS(id);
+
+        v.Gain = gain;
+
+        if (_physicalCCCS.TryGetValue(id, out var phys))
+        {
+            phys.Gain = gain;
+            return;
+        }
+
+        _isDirty = true;
+    }
+
+    public void RemoveCCCS(CccsId id)
+    {
+        if (!_cccs.TryGetValue(id, out var v))
+            throw InvalidComponentException.ForCCCS(id);
+
+        Disconnect(v.ControlPos, v);
+        Disconnect(v.ControlNeg, v);
+        Disconnect(v.OutputPos, v);
+        Disconnect(v.OutputNeg, v);
+        _cccs.Remove(id);
+        _physicalCCCS.Remove(id);
+        _isDirty = true;
+    }
+
+    public bool CCCSExists(CccsId id) => _cccs.ContainsKey(id);
+
+    public double GetCCCSGain(CccsId id)
+    {
+        if (!_cccs.TryGetValue(id, out var v))
+            throw InvalidComponentException.ForCCCS(id);
+        return v.Gain;
+    }
+
+    public double GetCCCSInputCurrent(CccsId id)
+    {
+        if (!_cccs.ContainsKey(id))
+            throw InvalidComponentException.ForCCCS(id);
+        if (_physicalCCCS.TryGetValue(id, out var phys))
+            return phys.InputCurrent;
+        return 0.0;
+    }
+
+    public double GetCCCSOutputCurrent(CccsId id)
+    {
+        if (!_cccs.ContainsKey(id))
+            throw InvalidComponentException.ForCCCS(id);
+        if (_physicalCCCS.TryGetValue(id, out var phys))
+            return phys.InputCurrent * phys.Gain;
+        return 0.0;
+    }
+
+    #endregion
+
     #region Simulation Control
 
     public void Step(double dt)
@@ -847,6 +1231,10 @@ public class SimulationManager : ISimulation
         _diodes.Clear();
         _transformers.Clear();
         _switches.Clear();
+        _vcvs.Clear();
+        _vccs.Clear();
+        _ccvs.Clear();
+        _cccs.Clear();
         _partitions.Clear();
         _physicalNodes.Clear();
         _interpolationMap.Clear();
@@ -857,6 +1245,10 @@ public class SimulationManager : ISimulation
         _physicalInductors.Clear();
         _physicalDiodes.Clear();
         _physicalTransformers.Clear();
+        _physicalVCVS.Clear();
+        _physicalVCCS.Clear();
+        _physicalCCVS.Clear();
+        _physicalCCCS.Clear();
         _optimizedResistors.Clear();
 
         _nextNodeId = 1;
@@ -868,6 +1260,10 @@ public class SimulationManager : ISimulation
         _nextDiodeId = 1;
         _nextTransformerId = 1;
         _nextSwitchId = 1;
+        _nextVcvsId = 1;
+        _nextVccsId = 1;
+        _nextCcvsId = 1;
+        _nextCccsId = 1;
 
         _isDirty = false;
     }
@@ -1093,6 +1489,36 @@ public class SimulationManager : ISimulation
                     yield return t.P2;
                 }
                 break;
+            case LogicalVCVS vcvs:
+            case LogicalVCCS vccs:
+            case LogicalCCVS ccvs:
+            case LogicalCCCS cccs:
+                // All 4-terminal controlled sources connect control and output ports
+                var (cp, cn, op, on) = component switch
+                {
+                    LogicalVCVS v => (v.ControlPos, v.ControlNeg, v.OutputPos, v.OutputNeg),
+                    LogicalVCCS v => (v.ControlPos, v.ControlNeg, v.OutputPos, v.OutputNeg),
+                    LogicalCCVS v => (v.ControlPos, v.ControlNeg, v.OutputPos, v.OutputNeg),
+                    LogicalCCCS v => (v.ControlPos, v.ControlNeg, v.OutputPos, v.OutputNeg),
+                    _ => throw new InvalidOperationException()
+                };
+                // Yield neighbor on same port
+                if (cp == current) yield return cn;
+                if (cn == current) yield return cp;
+                if (op == current) yield return on;
+                if (on == current) yield return op;
+                // Cross-port connectivity: all 4 nodes are connected through the component
+                if (cp == current || cn == current)
+                {
+                    yield return op;
+                    yield return on;
+                }
+                if (op == current || on == current)
+                {
+                    yield return cp;
+                    yield return cn;
+                }
+                break;
         }
     }
 
@@ -1105,6 +1531,10 @@ public class SimulationManager : ISimulation
             .Concat(_inductors.Values)
             .Concat(_diodes.Values)
             .Concat(_transformers.Values)
+            .Concat(_vcvs.Values)
+            .Concat(_vccs.Values)
+            .Concat(_ccvs.Values)
+            .Concat(_cccs.Values)
             .ToList();
 
         if (!EnableLineOptimization)
@@ -1138,6 +1568,10 @@ public class SimulationManager : ISimulation
         foreach (var c in _inductors.Values) { optimizedComponents.Add(c); AddToAdj(c.NodeA, c); AddToAdj(c.NodeB, c); }
         foreach (var c in _diodes.Values) { optimizedComponents.Add(c); AddToAdj(c.Anode, c); AddToAdj(c.Cathode, c); }
         foreach (var c in _transformers.Values) { optimizedComponents.Add(c); AddToAdj(c.P1, c); AddToAdj(c.P2, c); AddToAdj(c.S1, c); AddToAdj(c.S2, c); }
+        foreach (var c in _vcvs.Values) { optimizedComponents.Add(c); AddToAdj(c.ControlPos, c); AddToAdj(c.ControlNeg, c); AddToAdj(c.OutputPos, c); AddToAdj(c.OutputNeg, c); }
+        foreach (var c in _vccs.Values) { optimizedComponents.Add(c); AddToAdj(c.ControlPos, c); AddToAdj(c.ControlNeg, c); AddToAdj(c.OutputPos, c); AddToAdj(c.OutputNeg, c); }
+        foreach (var c in _ccvs.Values) { optimizedComponents.Add(c); AddToAdj(c.ControlPos, c); AddToAdj(c.ControlNeg, c); AddToAdj(c.OutputPos, c); AddToAdj(c.OutputNeg, c); }
+        foreach (var c in _cccs.Values) { optimizedComponents.Add(c); AddToAdj(c.ControlPos, c); AddToAdj(c.ControlNeg, c); AddToAdj(c.OutputPos, c); AddToAdj(c.OutputNeg, c); }
 
         foreach (var r in _resistors.Values)
         {
@@ -1282,6 +1716,10 @@ public class SimulationManager : ISimulation
             LogicalInductor ind => nodes.Contains(ind.NodeA) && nodes.Contains(ind.NodeB),
             LogicalDiode d => nodes.Contains(d.Anode) && nodes.Contains(d.Cathode),
             LogicalTransformer t => nodes.Contains(t.P1) && nodes.Contains(t.P2) && nodes.Contains(t.S1) && nodes.Contains(t.S2),
+            LogicalVCVS v => nodes.Contains(v.ControlPos) && nodes.Contains(v.ControlNeg) && nodes.Contains(v.OutputPos) && nodes.Contains(v.OutputNeg),
+            LogicalVCCS v => nodes.Contains(v.ControlPos) && nodes.Contains(v.ControlNeg) && nodes.Contains(v.OutputPos) && nodes.Contains(v.OutputNeg),
+            LogicalCCVS v => nodes.Contains(v.ControlPos) && nodes.Contains(v.ControlNeg) && nodes.Contains(v.OutputPos) && nodes.Contains(v.OutputNeg),
+            LogicalCCCS v => nodes.Contains(v.ControlPos) && nodes.Contains(v.ControlNeg) && nodes.Contains(v.OutputPos) && nodes.Contains(v.OutputNeg),
             _ => false
         };
     }
@@ -1329,6 +1767,34 @@ public class SimulationManager : ISimulation
                     GetPhysNode(t.S1, circuit), GetPhysNode(t.S2, circuit), t.Ratio);
                 circuit.AddComponent(phyT);
                 _physicalTransformers[t.Id] = phyT;
+                break;
+            case LogicalVCVS vcvs:
+                var phyVCVS = new VCVS(
+                    GetPhysNode(vcvs.ControlPos, circuit), GetPhysNode(vcvs.ControlNeg, circuit),
+                    GetPhysNode(vcvs.OutputPos, circuit), GetPhysNode(vcvs.OutputNeg, circuit), vcvs.Gain);
+                circuit.AddComponent(phyVCVS);
+                _physicalVCVS[vcvs.Id] = phyVCVS;
+                break;
+            case LogicalVCCS vccs:
+                var phyVCCS = new VCCS(
+                    GetPhysNode(vccs.ControlPos, circuit), GetPhysNode(vccs.ControlNeg, circuit),
+                    GetPhysNode(vccs.OutputPos, circuit), GetPhysNode(vccs.OutputNeg, circuit), vccs.Transconductance);
+                circuit.AddComponent(phyVCCS);
+                _physicalVCCS[vccs.Id] = phyVCCS;
+                break;
+            case LogicalCCVS ccvs:
+                var phyCCVS = new CCVS(
+                    GetPhysNode(ccvs.ControlPos, circuit), GetPhysNode(ccvs.ControlNeg, circuit),
+                    GetPhysNode(ccvs.OutputPos, circuit), GetPhysNode(ccvs.OutputNeg, circuit), ccvs.Transresistance);
+                circuit.AddComponent(phyCCVS);
+                _physicalCCVS[ccvs.Id] = phyCCVS;
+                break;
+            case LogicalCCCS cccs:
+                var phyCCCS = new CCCS(
+                    GetPhysNode(cccs.ControlPos, circuit), GetPhysNode(cccs.ControlNeg, circuit),
+                    GetPhysNode(cccs.OutputPos, circuit), GetPhysNode(cccs.OutputNeg, circuit), cccs.Gain);
+                circuit.AddComponent(phyCCCS);
+                _physicalCCCS[cccs.Id] = phyCCCS;
                 break;
         }
     }

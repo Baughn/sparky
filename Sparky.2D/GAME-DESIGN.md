@@ -284,26 +284,30 @@ public record ComponentLimits(
 );
 ```
 
-### Gap 3: Controlled Sources
+### ~~Gap 3: Controlled Sources~~ ✓ IMPLEMENTED
 
-**Problem**: Can't model components where V or I depends on another circuit quantity.
+**Status**: Implemented in `MNA/Core/` and `MNA/Api/`.
 
 **Use case**: Op-amps, transistors (simplified), motor back-EMF.
 
-**Proposed API**:
+**API**:
 ```csharp
 // Voltage-Controlled Voltage Source: Vout = gain * Vin
-VcvsId AddVCVS(NodeId inP, NodeId inN, NodeId outP, NodeId outN, double gain);
+VcvsId AddVCVS(NodeId ctrlP, NodeId ctrlN, NodeId outP, NodeId outN, double gain);
 
 // Voltage-Controlled Current Source: Iout = transconductance * Vin
-VccsId AddVCCS(NodeId inP, NodeId inN, NodeId outP, NodeId outN, double gm);
+VccsId AddVCCS(NodeId ctrlP, NodeId ctrlN, NodeId outP, NodeId outN, double gm);
 
 // Current-Controlled Voltage Source: Vout = transresistance * Iin
-CcvsId AddCCVS(NodeId inP, NodeId inN, NodeId outP, NodeId outN, double rm);
+// Input terminals are shorted (zero voltage) to sense current
+CcvsId AddCCVS(NodeId ctrlP, NodeId ctrlN, NodeId outP, NodeId outN, double rm);
 
 // Current-Controlled Current Source: Iout = gain * Iin
-CccsId AddCCCS(NodeId inP, NodeId inN, NodeId outP, NodeId outN, double beta);
+// Input terminals are shorted (zero voltage) to sense current
+CccsId AddCCCS(NodeId ctrlP, NodeId ctrlN, NodeId outP, NodeId outN, double gain);
 ```
+
+All four types support Update/Remove/Exists/Get operations. See `MNA.md` for MNA stamp details.
 
 ### ~~Gap 4: Variable/Nonlinear Resistors~~ ✓ IMPLEMENTED
 

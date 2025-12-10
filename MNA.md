@@ -86,6 +86,45 @@ Shockley Diode Equation linearized at $V_d$.
     *   $A[n1, k] += 1$, $A[n2, k] -= 1$ (Primary Current)
     *   $A[n3, k] -= 1/n$, $A[n4, k] += 1/n$ (Secondary Current)
 
+### VCVS (Voltage-Controlled Voltage Source)
+*   **Gain**: $k$ (dimensionless)
+*   **Equation**: $V_{out} = k \cdot V_{in}$
+*   **Matrix Stamp** (Auxiliary Row $k$ for output current):
+    *   $A[k, outP] += 1$, $A[k, outN] -= 1$ (Output voltage)
+    *   $A[k, ctrlP] -= k$, $A[k, ctrlN] += k$ (Control voltage scaled)
+    *   $A[outP, k] += 1$, $A[outN, k] -= 1$ (Output current KCL)
+    *   $z[k] = 0$
+
+### VCCS (Voltage-Controlled Current Source)
+*   **Transconductance**: $g_m$ (A/V)
+*   **Equation**: $I_{out} = g_m \cdot V_{in}$
+*   **Matrix Stamp** (No auxiliary row, cross-conductance):
+    *   $A[outP, ctrlP] -= g_m$, $A[outP, ctrlN] += g_m$
+    *   $A[outN, ctrlP] += g_m$, $A[outN, ctrlN] -= g_m$
+
+### CCCS (Current-Controlled Current Source)
+*   **Gain**: $\beta$ (dimensionless)
+*   **Equation**: $I_{out} = \beta \cdot I_{in}$ (input is short-circuited)
+*   **Matrix Stamp** (Auxiliary Row $k$ for sensed current):
+    *   $A[k, ctrlP] += 1$, $A[k, ctrlN] -= 1$ (Zero-voltage constraint)
+    *   $A[ctrlP, k] += 1$, $A[ctrlN, k] -= 1$ (Input current KCL)
+    *   $A[outP, k] -= \beta$, $A[outN, k] += \beta$ (Output current)
+    *   $z[k] = 0$
+
+### CCVS (Current-Controlled Voltage Source)
+*   **Transresistance**: $r_m$ (V/A)
+*   **Equation**: $V_{out} = r_m \cdot I_{in}$ (input is short-circuited)
+*   **Matrix Stamp** (Two Auxiliary Rows $k_1$, $k_2$):
+    *   Row $k_1$ (current sensing):
+        *   $A[k_1, ctrlP] += 1$, $A[k_1, ctrlN] -= 1$
+        *   $A[ctrlP, k_1] += 1$, $A[ctrlN, k_1] -= 1$
+        *   $z[k_1] = 0$
+    *   Row $k_2$ (output voltage constraint):
+        *   $A[k_2, outP] += 1$, $A[k_2, outN] -= 1$
+        *   $A[k_2, k_1] -= r_m$
+        *   $A[outP, k_2] += 1$, $A[outN, k_2] -= 1$
+        *   $z[k_2] = 0$
+
 ## Architecture
 
 ### Classes

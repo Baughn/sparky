@@ -10,6 +10,10 @@ namespace Sparky.MNA.Core
         // If true, this component adds an extra row/column to the matrix (e.g. Voltage Source, Inductor)
         public virtual bool HasExtraEquation => false;
 
+        // Number of extra equations this component adds (usually 1 if HasExtraEquation, 0 otherwise)
+        // Override for components like CCVS that need multiple auxiliary rows.
+        public virtual int ExtraEquationCount => HasExtraEquation ? 1 : 0;
+
         // If true, this component is non-linear and participates in Newton iteration
         public virtual bool IsNonLinear => false;
 

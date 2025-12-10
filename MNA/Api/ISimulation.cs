@@ -194,6 +194,90 @@ public interface ISimulation
     /// <summary>Gets the current flowing through the switch (from nodeA to nodeB).</summary>
     double GetSwitchCurrent(SwitchId id);
 
+    // Controlled Sources
+
+    // VCVS (Voltage-Controlled Voltage Source)
+    /// <summary>Adds a VCVS. Output voltage = gain × input voltage.</summary>
+    VcvsId AddVCVS(NodeId ctrlPos, NodeId ctrlNeg, NodeId outPos, NodeId outNeg, double gain);
+
+    /// <summary>Updates the VCVS voltage gain.</summary>
+    void UpdateVCVS(VcvsId id, double gain);
+
+    /// <summary>Removes a VCVS.</summary>
+    void RemoveVCVS(VcvsId id);
+
+    /// <summary>Returns true if the VCVS exists.</summary>
+    bool VCVSExists(VcvsId id);
+
+    /// <summary>Gets the VCVS voltage gain.</summary>
+    double GetVCVSGain(VcvsId id);
+
+    /// <summary>Gets the output current flowing through the VCVS.</summary>
+    double GetVCVSCurrent(VcvsId id);
+
+    // VCCS (Voltage-Controlled Current Source)
+    /// <summary>Adds a VCCS. Output current = transconductance × input voltage.</summary>
+    VccsId AddVCCS(NodeId ctrlPos, NodeId ctrlNeg, NodeId outPos, NodeId outNeg, double transconductance);
+
+    /// <summary>Updates the VCCS transconductance.</summary>
+    void UpdateVCCS(VccsId id, double transconductance);
+
+    /// <summary>Removes a VCCS.</summary>
+    void RemoveVCCS(VccsId id);
+
+    /// <summary>Returns true if the VCCS exists.</summary>
+    bool VCCSExists(VccsId id);
+
+    /// <summary>Gets the VCCS transconductance.</summary>
+    double GetVCCSTransconductance(VccsId id);
+
+    /// <summary>Gets the output current of the VCCS (= transconductance × input voltage).</summary>
+    double GetVCCSCurrent(VccsId id);
+
+    // CCVS (Current-Controlled Voltage Source)
+    /// <summary>Adds a CCVS. Output voltage = transresistance × input current. Input is short-circuited.</summary>
+    CcvsId AddCCVS(NodeId ctrlPos, NodeId ctrlNeg, NodeId outPos, NodeId outNeg, double transresistance);
+
+    /// <summary>Updates the CCVS transresistance.</summary>
+    void UpdateCCVS(CcvsId id, double transresistance);
+
+    /// <summary>Removes a CCVS.</summary>
+    void RemoveCCVS(CcvsId id);
+
+    /// <summary>Returns true if the CCVS exists.</summary>
+    bool CCVSExists(CcvsId id);
+
+    /// <summary>Gets the CCVS transresistance.</summary>
+    double GetCCVSTransresistance(CcvsId id);
+
+    /// <summary>Gets the sensed input current of the CCVS.</summary>
+    double GetCCVSInputCurrent(CcvsId id);
+
+    /// <summary>Gets the output current of the CCVS.</summary>
+    double GetCCVSOutputCurrent(CcvsId id);
+
+    // CCCS (Current-Controlled Current Source)
+    /// <summary>Adds a CCCS. Output current = gain × input current. Input is short-circuited.</summary>
+    CccsId AddCCCS(NodeId ctrlPos, NodeId ctrlNeg, NodeId outPos, NodeId outNeg, double gain);
+
+    /// <summary>Updates the CCCS current gain.</summary>
+    void UpdateCCCS(CccsId id, double gain);
+
+    /// <summary>Removes a CCCS.</summary>
+    void RemoveCCCS(CccsId id);
+
+    /// <summary>Returns true if the CCCS exists.</summary>
+    bool CCCSExists(CccsId id);
+
+    /// <summary>Gets the CCCS current gain.</summary>
+    double GetCCCSGain(CccsId id);
+
+    /// <summary>Gets the sensed input current of the CCCS.</summary>
+    double GetCCCSInputCurrent(CccsId id);
+
+    /// <summary>Gets the output current of the CCCS (= gain × input current).</summary>
+    double GetCCCSOutputCurrent(CccsId id);
+
     // Simulation Control
     /// <summary>Advances the simulation by dt seconds.</summary>
     void Step(double dt);

@@ -53,3 +53,27 @@ public readonly record struct SwitchId(int Value)
 {
     public override string ToString() => $"Switch({Value})";
 }
+
+/// <summary>Strongly-typed identifier for a Voltage-Controlled Voltage Source.</summary>
+public readonly record struct VcvsId(int Value)
+{
+    public override string ToString() => $"VCVS({Value})";
+}
+
+/// <summary>Strongly-typed identifier for a Voltage-Controlled Current Source.</summary>
+public readonly record struct VccsId(int Value)
+{
+    public override string ToString() => $"VCCS({Value})";
+}
+
+/// <summary>Strongly-typed identifier for a Current-Controlled Voltage Source.</summary>
+public readonly record struct CcvsId(int Value)
+{
+    public override string ToString() => $"CCVS({Value})";
+}
+
+/// <summary>Strongly-typed identifier for a Current-Controlled Current Source.</summary>
+public readonly record struct CccsId(int Value)
+{
+    public override string ToString() => $"CCCS({Value})";
+}
