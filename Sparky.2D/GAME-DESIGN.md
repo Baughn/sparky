@@ -353,20 +353,22 @@ double GetResistorEnergy(ResistorId id);            // Joules dissipated
 void ResetEnergyCounters();
 ```
 
-### Gap 7: Switch Component
+### ~~Gap 7: Switch Component~~ ✓ IMPLEMENTED
 
-**Problem**: Switches require add/remove resistor which triggers rebuild.
+**Status**: Implemented in `MNA/Api/`.
 
-**Use case**: Fundamental for interactive circuits.
-
-**Proposed API**:
+**API**:
 ```csharp
-SwitchId AddSwitch(NodeId a, NodeId b, bool closed = false);
+SwitchId AddSwitch(NodeId a, NodeId b, bool initiallyClosed = false);
 void SetSwitchState(SwitchId id, bool closed);
+void ToggleSwitch(SwitchId id);
+void RemoveSwitch(SwitchId id);
+bool SwitchExists(SwitchId id);
 bool GetSwitchState(SwitchId id);
-// Internally: closed = tiny resistance, open = huge resistance
-// Fast-path update without rebuild
+double GetSwitchCurrent(SwitchId id);
 ```
+
+**Implementation**: Switch wraps an internal resistor (1e-9 Ω closed, 1e9 Ω open). State changes use the resistor fast-path update when possible, avoiding topology rebuild. Future optimization: switches left open can be removed from topology to enable graph partitioning.
 
 ---
 

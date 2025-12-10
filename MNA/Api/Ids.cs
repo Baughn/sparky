@@ -47,3 +47,9 @@ public readonly record struct TransformerId(int Value)
 {
     public override string ToString() => $"Transformer({Value})";
 }
+
+/// <summary>Strongly-typed identifier for a switch component.</summary>
+public readonly record struct SwitchId(int Value)
+{
+    public override string ToString() => $"Switch({Value})";
+}

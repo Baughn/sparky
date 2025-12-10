@@ -20,6 +20,11 @@ public class SimulationManager : ISimulation
     private int _nextInductorId = 1;
     private int _nextDiodeId = 1;
     private int _nextTransformerId = 1;
+    private int _nextSwitchId = 1;
+
+    // Switch resistance constants
+    private const double SwitchClosedResistance = 1e-9;
+    private const double SwitchOpenResistance = 1e9;
 
     // Logical Graph
     private readonly Dictionary<NodeId, LogicalNode> _logicalNodes = new();
@@ -30,6 +35,7 @@ public class SimulationManager : ISimulation
     private readonly Dictionary<InductorId, LogicalInductor> _inductors = new();
     private readonly Dictionary<DiodeId, LogicalDiode> _diodes = new();
     private readonly Dictionary<TransformerId, LogicalTransformer> _transformers = new();
+    private readonly Dictionary<SwitchId, LogicalSwitch> _switches = new();
 
     // Physical Circuits (Partitions)
     private readonly List<Circuit> _partitions = new();
@@ -175,6 +181,20 @@ public class SimulationManager : ISimulation
         public LogicalTransformer(TransformerId id, NodeId p1, NodeId p2, NodeId s1, NodeId s2, double ratio)
         {
             Id = id; P1 = p1; P2 = p2; S1 = s1; S2 = s2; Ratio = ratio;
+        }
+    }
+
+    private class LogicalSwitch
+    {
+        public SwitchId Id { get; }
+        public NodeId NodeA { get; }
+        public NodeId NodeB { get; }
+        public bool IsClosed { get; set; }
+        public ResistorId InternalResistorId { get; }
+
+        public LogicalSwitch(SwitchId id, NodeId a, NodeId b, bool closed, ResistorId resistorId)
+        {
+            Id = id; NodeA = a; NodeB = b; IsClosed = closed; InternalResistorId = resistorId;
         }
     }
 
@@ -701,6 +721,72 @@ public class SimulationManager : ISimulation
 
     #endregion
 
+    #region Switches
+
+    public SwitchId AddSwitch(NodeId nodeA, NodeId nodeB, bool initiallyClosed = false)
+    {
+        ValidateNodeExists(nodeA);
+        ValidateNodeExists(nodeB);
+
+        var id = new SwitchId(_nextSwitchId++);
+        double resistance = initiallyClosed ? SwitchClosedResistance : SwitchOpenResistance;
+        var resistorId = AddResistor(nodeA, nodeB, resistance);
+
+        var component = new LogicalSwitch(id, nodeA, nodeB, initiallyClosed, resistorId);
+        _switches[id] = component;
+
+        return id;
+    }
+
+    public void SetSwitchState(SwitchId id, bool closed)
+    {
+        if (!_switches.TryGetValue(id, out var sw))
+            throw InvalidComponentException.ForSwitch(id);
+
+        if (sw.IsClosed == closed)
+            return;
+
+        sw.IsClosed = closed;
+        double resistance = closed ? SwitchClosedResistance : SwitchOpenResistance;
+        UpdateResistor(sw.InternalResistorId, resistance);
+    }
+
+    public void ToggleSwitch(SwitchId id)
+    {
+        if (!_switches.TryGetValue(id, out var sw))
+            throw InvalidComponentException.ForSwitch(id);
+
+        SetSwitchState(id, !sw.IsClosed);
+    }
+
+    public void RemoveSwitch(SwitchId id)
+    {
+        if (!_switches.TryGetValue(id, out var sw))
+            throw InvalidComponentException.ForSwitch(id);
+
+        RemoveResistor(sw.InternalResistorId);
+        _switches.Remove(id);
+    }
+
+    public bool SwitchExists(SwitchId id) => _switches.ContainsKey(id);
+
+    public bool GetSwitchState(SwitchId id)
+    {
+        if (!_switches.TryGetValue(id, out var sw))
+            throw InvalidComponentException.ForSwitch(id);
+        return sw.IsClosed;
+    }
+
+    public double GetSwitchCurrent(SwitchId id)
+    {
+        if (!_switches.TryGetValue(id, out var sw))
+            throw InvalidComponentException.ForSwitch(id);
+
+        return GetResistorCurrent(sw.InternalResistorId);
+    }
+
+    #endregion
+
     #region Simulation Control
 
     public void Step(double dt)
@@ -737,6 +823,7 @@ public class SimulationManager : ISimulation
         _inductors.Clear();
         _diodes.Clear();
         _transformers.Clear();
+        _switches.Clear();
         _partitions.Clear();
         _physicalNodes.Clear();
         _interpolationMap.Clear();
@@ -757,6 +844,7 @@ public class SimulationManager : ISimulation
         _nextInductorId = 1;
         _nextDiodeId = 1;
         _nextTransformerId = 1;
+        _nextSwitchId = 1;
 
         _isDirty = false;
     }

@@ -166,6 +166,28 @@ public interface ISimulation
     /// <summary>Gets the primary and secondary currents.</summary>
     (double Primary, double Secondary) GetTransformerCurrents(TransformerId id);
 
+    // Switches
+    /// <summary>Adds a switch between two nodes. Initial state defaults to open.</summary>
+    SwitchId AddSwitch(NodeId nodeA, NodeId nodeB, bool initiallyClosed = false);
+
+    /// <summary>Sets the switch state (true = closed/conducting, false = open).</summary>
+    void SetSwitchState(SwitchId id, bool closed);
+
+    /// <summary>Toggles the switch state (open becomes closed, closed becomes open).</summary>
+    void ToggleSwitch(SwitchId id);
+
+    /// <summary>Removes a switch.</summary>
+    void RemoveSwitch(SwitchId id);
+
+    /// <summary>Returns true if the switch exists.</summary>
+    bool SwitchExists(SwitchId id);
+
+    /// <summary>Gets the current switch state (true = closed/conducting).</summary>
+    bool GetSwitchState(SwitchId id);
+
+    /// <summary>Gets the current flowing through the switch (from nodeA to nodeB).</summary>
+    double GetSwitchCurrent(SwitchId id);
+
     // Simulation Control
     /// <summary>Advances the simulation by dt seconds.</summary>
     void Step(double dt);

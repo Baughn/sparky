@@ -54,6 +54,9 @@ public class InvalidComponentException : SimulationException
 
     public static InvalidComponentException ForTransformer(TransformerId id) =>
         new("Transformer", id.Value);
+
+    public static InvalidComponentException ForSwitch(SwitchId id) =>
+        new("Switch", id.Value);
 }
 
 /// <summary>Thrown when a component parameter value is invalid (e.g., negative resistance).</summary>
