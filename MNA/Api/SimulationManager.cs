@@ -285,28 +285,53 @@ public class SimulationManager : ISimulation
             throw new InvalidNodeException(id);
     }
 
-    private void ValidateResistance(double r)
+    private static void ValidateFinite(double value, string parameterName)
     {
+        if (double.IsNaN(value) || double.IsInfinity(value))
+            throw new InvalidParameterException(parameterName, value, "must be a finite number");
+    }
+
+    private static void ValidateResistance(double r)
+    {
+        ValidateFinite(r, "resistance");
         if (r <= 0)
             throw new InvalidParameterException("resistance", r, "must be positive");
     }
 
-    private void ValidateCapacitance(double c)
+    private static void ValidateCapacitance(double c)
     {
+        ValidateFinite(c, "capacitance");
         if (c <= 0)
             throw new InvalidParameterException("capacitance", c, "must be positive");
     }
 
-    private void ValidateInductance(double l)
+    private static void ValidateInductance(double l)
     {
+        ValidateFinite(l, "inductance");
         if (l <= 0)
             throw new InvalidParameterException("inductance", l, "must be positive");
     }
 
-    private void ValidateRatio(double r)
+    private static void ValidateRatio(double r)
     {
+        ValidateFinite(r, "ratio");
         if (r <= 0)
             throw new InvalidParameterException("ratio", r, "must be positive");
+    }
+
+    private static void ValidateVoltage(double v)
+    {
+        ValidateFinite(v, "voltage");
+    }
+
+    private static void ValidateCurrent(double i)
+    {
+        ValidateFinite(i, "current");
+    }
+
+    private static void ValidateGain(double g, string parameterName)
+    {
+        ValidateFinite(g, parameterName);
     }
 
     #endregion
@@ -418,6 +443,7 @@ public class SimulationManager : ISimulation
     {
         ValidateNodeExists(nodePos);
         ValidateNodeExists(nodeNeg);
+        ValidateVoltage(voltage);
 
         var id = new VoltageSourceId(_nextVoltageSourceId++);
         var component = new LogicalVoltageSource(id, nodePos, nodeNeg, voltage);
@@ -432,6 +458,7 @@ public class SimulationManager : ISimulation
     {
         if (!_voltageSources.TryGetValue(id, out var v))
             throw InvalidComponentException.ForVoltageSource(id);
+        ValidateVoltage(voltage);
 
         v.Voltage = voltage;
 
@@ -485,6 +512,7 @@ public class SimulationManager : ISimulation
     {
         ValidateNodeExists(nodeIn);
         ValidateNodeExists(nodeOut);
+        ValidateCurrent(current);
 
         var id = new CurrentSourceId(_nextCurrentSourceId++);
         var component = new LogicalCurrentSource(id, nodeIn, nodeOut, current);
@@ -611,6 +639,7 @@ public class SimulationManager : ISimulation
     {
         if (!_capacitors.TryGetValue(id, out var c))
             throw InvalidComponentException.ForCapacitor(id);
+        ValidateVoltage(voltage);
 
         c.VoltageAcross = voltage;
 
@@ -688,6 +717,7 @@ public class SimulationManager : ISimulation
     {
         if (!_inductors.TryGetValue(id, out var l))
             throw InvalidComponentException.ForInductor(id);
+        ValidateCurrent(current);
 
         l.CurrentThrough = current;
 
@@ -896,6 +926,7 @@ public class SimulationManager : ISimulation
         ValidateNodeExists(ctrlNeg);
         ValidateNodeExists(outPos);
         ValidateNodeExists(outNeg);
+        ValidateGain(gain, "gain");
 
         var id = new VcvsId(_nextVcvsId++);
         var component = new LogicalVCVS(id, ctrlPos, ctrlNeg, outPos, outNeg, gain);
@@ -966,6 +997,7 @@ public class SimulationManager : ISimulation
         ValidateNodeExists(ctrlNeg);
         ValidateNodeExists(outPos);
         ValidateNodeExists(outNeg);
+        ValidateGain(transconductance, "transconductance");
 
         var id = new VccsId(_nextVccsId++);
         var component = new LogicalVCCS(id, ctrlPos, ctrlNeg, outPos, outNeg, transconductance);
@@ -1042,6 +1074,7 @@ public class SimulationManager : ISimulation
         ValidateNodeExists(ctrlNeg);
         ValidateNodeExists(outPos);
         ValidateNodeExists(outNeg);
+        ValidateGain(transresistance, "transresistance");
 
         var id = new CcvsId(_nextCcvsId++);
         var component = new LogicalCCVS(id, ctrlPos, ctrlNeg, outPos, outNeg, transresistance);
@@ -1121,6 +1154,7 @@ public class SimulationManager : ISimulation
         ValidateNodeExists(ctrlNeg);
         ValidateNodeExists(outPos);
         ValidateNodeExists(outNeg);
+        ValidateGain(gain, "gain");
 
         var id = new CccsId(_nextCccsId++);
         var component = new LogicalCCCS(id, ctrlPos, ctrlNeg, outPos, outNeg, gain);
@@ -1198,6 +1232,9 @@ public class SimulationManager : ISimulation
 
     public void Step(double dt)
     {
+        if (double.IsNaN(dt) || double.IsInfinity(dt) || dt < 0)
+            throw new ArgumentException("Time step must be a non-negative finite number", nameof(dt));
+
         if (_bulkUpdateDepth > 0)
             throw new InvalidOperationException("Cannot call Step during bulk update");
 
