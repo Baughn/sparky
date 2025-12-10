@@ -255,34 +255,35 @@ void SetInductorCurrent(InductorId id, double current);
 
 Sets the internal state of capacitors/inductors for initial conditions. Updates both logical and physical components, and state persists across topology rebuilds.
 
-### Gap 2: Component Events / Callbacks
+### ~~Gap 2: Component Events / Callbacks~~ ✓ IMPLEMENTED
 
-**Problem**: No way to know when component exceeds limits.
+**Status**: Implemented in `MNA/Api/`.
 
-**Use case**: Fuse blowing, LED burning out, overcurrent detection.
-
-**Proposed API**:
+**API**:
 ```csharp
-event Action<ComponentEvent> OnComponentEvent;
+// Register for limit events
+IDisposable OnLimitEvent(LimitEventHandler handler);
 
-public enum ComponentEventType
-{
-    OverCurrent,    // I > I_max
-    OverVoltage,    // V > V_max
-    OverPower,      // P > P_max
-    ThermalLimit,   // T > T_max (requires thermal coupling)
-    Breakdown       // Reverse voltage exceeded (diode)
-}
+// Set limits per component (available for all component types)
+void SetResistorLimit(ResistorId id, LimitKind kind, LimitConfig config);
+void ClearResistorLimit(ResistorId id, LimitKind kind);
+LimitConfig? GetResistorLimit(ResistorId id, LimitKind kind);
+// ... similar for VoltageSource, CurrentSource, Capacitor, Inductor, Diode, etc.
 
-// Per-component limits
-void SetResistorLimits(ResistorId id, ComponentLimits limits);
+public enum LimitKind { Current, Voltage, Power }
 
-public record ComponentLimits(
-    double? MaxCurrent = null,
-    double? MaxVoltage = null,
-    double? MaxPower = null
+public record LimitConfig(double Threshold, bool TriggerOnce = false);
+
+public record struct LimitEvent(
+    ComponentRef Component,
+    LimitKind Kind,
+    double Value,
+    double Threshold,
+    double SimulationTime
 );
 ```
+
+Limits are checked after each `Step()`. Events fire when thresholds are exceeded. Use `TriggerOnce` to fire only on first violation.
 
 ### ~~Gap 3: Controlled Sources~~ ✓ IMPLEMENTED
 
@@ -320,39 +321,59 @@ ResistorId AddResistor(NodeId a, NodeId b, double resistance, bool isVariable = 
 
 Variable resistors (`isVariable: true`) have `IsOptimizable => false`, so they are excluded from line optimization. This ensures `UpdateResistor` always uses the fast-path without triggering topology rebuild. Use for thermistors, photoresistors, potentiometers, and any resistance that changes during simulation.
 
-### Gap 5: Time-Varying Sources
+### ~~Gap 5: Time-Varying Sources~~ ✓ IMPLEMENTED (via utilities)
 
-**Problem**: No built-in AC sources, PWM, or waveform generators.
+**Status**: Implemented as utility library in `MNA/Utilities/`. Core API additions: `SimulationTime` property and `ResetTime()` method.
 
-**Use case**: AC circuits, switching power supplies, signal sources.
+**Design decision**: Rather than building AC/PWM into the solver, time-varying sources are implemented as wrapper classes that call `UpdateVoltageSource()`/`UpdateCurrentSource()` each tick. This matches how motor/generator cells will work (computing back-EMF from kinetic state).
 
-**Proposed API**:
+**API** (utilities):
 ```csharp
-// AC voltage source: V(t) = amplitude * sin(2π * frequency * t + phase)
-AcSourceId AddAcVoltageSource(NodeId pos, NodeId neg,
-    double amplitude, double frequency, double phase = 0);
+// AC voltage: V(t) = Offset + Amplitude × sin(2πft + Phase)
+var ac = new AcVoltageSource(sim, nodePos, nodeNeg,
+    amplitude: 120.0, frequency: 60.0, phase: 0, offset: 0);
 
-// PWM source: V = V_high when (t % period) < duty * period, else V_low
-PwmSourceId AddPwmVoltageSource(NodeId pos, NodeId neg,
-    double vHigh, double vLow, double frequency, double duty);
+// PWM voltage: V = VHigh during duty cycle, VLow otherwise
+var pwm = new PwmVoltageSource(sim, nodePos, nodeNeg,
+    vHigh: 5.0, vLow: 0.0, frequency: 1000.0, dutyCycle: 0.5);
 
-// Simulation needs internal time tracking:
-double SimulationTime { get; }
-void ResetTime();
+// Also: AcCurrentSource, SourceUpdater (batch helper)
+
+// Usage pattern:
+for (int i = 0; i < steps; i++)
+{
+    ac.Update();   // Sets voltage based on sim.SimulationTime
+    sim.Step(dt);  // Advances time
+}
 ```
 
-### Gap 6: Energy Accounting
-
-**Problem**: Can't easily track total energy delivered/consumed.
-
-**Use case**: Battery capacity, energy efficiency calculations.
-
-**Proposed API**:
+**API** (core):
 ```csharp
-double GetVoltageSourceEnergy(VoltageSourceId id);  // Joules delivered
-double GetResistorEnergy(ResistorId id);            // Joules dissipated
-void ResetEnergyCounters();
+double SimulationTime { get; }  // Cumulative time from Step() calls
+void ResetTime();               // Reset to zero without clearing circuit
 ```
+
+### ~~Gap 6: Energy Accounting~~ ✓ IMPLEMENTED
+
+**Status**: Implemented in `MNA/Api/`.
+
+**API**:
+```csharp
+// Query cumulative energy (Joules)
+double GetVoltageSourceEnergy(VoltageSourceId id);  // +ve = delivering power
+double GetCurrentSourceEnergy(CurrentSourceId id);  // +ve = delivering power
+double GetResistorEnergy(ResistorId id);            // Always positive (dissipated)
+double GetDiodeEnergy(DiodeId id);                  // Always positive (dissipated)
+double GetCapacitorEnergy(CapacitorId id);          // +ve = charging, -ve = discharging
+double GetInductorEnergy(InductorId id);            // +ve = storing, -ve = releasing
+
+// Reset
+void ResetEnergyCounters();              // Reset all to zero
+void ResetEnergyCounter(ResistorId id);  // Reset specific component
+// ... similar for each component type
+```
+
+Energy is accumulated per-component during `Step()`. Line-optimized resistor chains distribute energy by resistance ratio.
 
 ### ~~Gap 7: Switch Component~~ ✓ IMPLEMENTED
 
