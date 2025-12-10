@@ -9,6 +9,12 @@ namespace Sparky.MNA.Core
         // State for transient analysis - exposed for state preservation during rebuilds
         public double VoltageAcross { get; set; } = 0;
 
+        /// <summary>
+        /// The current flowing through the capacitor (I = C * dV/dt).
+        /// Populated by UpdateState() after each solve.
+        /// </summary>
+        public double Current { get; private set; } = 0;
+
         public override bool RequiresPerStepRestamp => true;
 
         public Capacitor(Node node1, Node node2, double capacitance) : base(node1, node2)
@@ -88,7 +94,20 @@ namespace Sparky.MNA.Core
         {
             double v1 = (Node1.Id == 0) ? 0 : x[Node1.Id];
             double v2 = (Node2.Id == 0) ? 0 : x[Node2.Id];
-            VoltageAcross = v1 - v2;
+            double newVoltage = v1 - v2;
+
+            // Compute current: I = C * dV/dt
+            // For DC (dt <= 0), capacitor is open circuit, so current is 0
+            if (dt > 0)
+            {
+                Current = Capacitance * (newVoltage - VoltageAcross) / dt;
+            }
+            else
+            {
+                Current = 0;
+            }
+
+            VoltageAcross = newVoltage;
         }
     }
 }

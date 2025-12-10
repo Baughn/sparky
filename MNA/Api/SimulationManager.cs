@@ -628,10 +628,12 @@ public class SimulationManager : ISimulation
 
     public double GetCapacitorCurrent(CapacitorId id)
     {
-        // Capacitor current is C * dV/dt, but we don't track dt here
-        // Return 0 for now - proper implementation would track state
         if (!_capacitors.ContainsKey(id))
             throw InvalidComponentException.ForCapacitor(id);
+
+        if (_physicalCapacitors.TryGetValue(id, out var phys))
+            return phys.Current;
+
         return 0.0;
     }
 
