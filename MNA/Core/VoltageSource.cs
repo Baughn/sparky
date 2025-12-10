@@ -54,5 +54,15 @@ namespace Sparky.MNA.Core
 
             Z[index] = Voltage;
         }
+
+        public override void AccumulateEnergy(double[] x, double dt)
+        {
+            // P = V × I (positive = delivering power to circuit)
+            // Current flows from positive to negative terminal (Node1 to Node2)
+            // Convention: positive Current means current leaving Node1
+            // Power delivered = V × I (when current flows in reference direction)
+            double power = Voltage * (-Current); // Negative because Current is defined into positive terminal
+            EnergyDelta = power * dt;
+        }
     }
 }

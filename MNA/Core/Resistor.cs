@@ -45,5 +45,15 @@ namespace Sparky.MNA.Core
                 if (n1 != 0) A.At(n2, n1, -Conductance);
             }
         }
+
+        public override void AccumulateEnergy(double[] x, double dt)
+        {
+            // P = I²R = V²/R (always positive - dissipated as heat)
+            double v1 = (Node1.Id == 0) ? 0 : x[Node1.Id];
+            double v2 = (Node2.Id == 0) ? 0 : x[Node2.Id];
+            double v = v1 - v2;
+            double power = v * v * Conductance; // V²/R = V² × G
+            EnergyDelta = power * dt;
+        }
     }
 }

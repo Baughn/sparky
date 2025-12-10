@@ -62,4 +62,10 @@ public static class Tolerances
     /// Tolerance for inductance comparisons (1e-9 = 1nH).
     /// </summary>
     public const double Inductance = 1e-9;
+
+    /// <summary>
+    /// Tolerance for energy comparisons (1e-9 = 1nJ).
+    /// Use for cumulative energy tracking where numerical errors accumulate.
+    /// </summary>
+    public const double Energy = 1e-9;
 }

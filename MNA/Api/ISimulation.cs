@@ -421,4 +421,45 @@ public interface ISimulation
     void ClearCCCSLimit(CccsId id, LimitKind kind);
     /// <summary>Gets a limit config from a CCCS, or null if not set.</summary>
     LimitConfig? GetCCCSLimit(CccsId id, LimitKind kind);
+
+    // === Energy Accounting ===
+
+    /// <summary>Gets cumulative energy delivered by a voltage source (Joules). Positive = delivering power.</summary>
+    double GetVoltageSourceEnergy(VoltageSourceId id);
+
+    /// <summary>Gets cumulative energy delivered by a current source (Joules). Positive = delivering power.</summary>
+    double GetCurrentSourceEnergy(CurrentSourceId id);
+
+    /// <summary>Gets cumulative energy dissipated by a resistor (Joules). Always positive.</summary>
+    double GetResistorEnergy(ResistorId id);
+
+    /// <summary>Gets cumulative energy dissipated by a diode (Joules). Always positive.</summary>
+    double GetDiodeEnergy(DiodeId id);
+
+    /// <summary>Gets cumulative net energy absorbed by a capacitor (Joules). Positive = charging, negative = discharging.</summary>
+    double GetCapacitorEnergy(CapacitorId id);
+
+    /// <summary>Gets cumulative net energy absorbed by an inductor (Joules). Positive = storing, negative = releasing.</summary>
+    double GetInductorEnergy(InductorId id);
+
+    /// <summary>Resets all energy counters to zero.</summary>
+    void ResetEnergyCounters();
+
+    /// <summary>Resets the energy counter for a specific resistor.</summary>
+    void ResetEnergyCounter(ResistorId id);
+
+    /// <summary>Resets the energy counter for a specific voltage source.</summary>
+    void ResetEnergyCounter(VoltageSourceId id);
+
+    /// <summary>Resets the energy counter for a specific current source.</summary>
+    void ResetEnergyCounter(CurrentSourceId id);
+
+    /// <summary>Resets the energy counter for a specific capacitor.</summary>
+    void ResetEnergyCounter(CapacitorId id);
+
+    /// <summary>Resets the energy counter for a specific inductor.</summary>
+    void ResetEnergyCounter(InductorId id);
+
+    /// <summary>Resets the energy counter for a specific diode.</summary>
+    void ResetEnergyCounter(DiodeId id);
 }

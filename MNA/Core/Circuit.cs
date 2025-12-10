@@ -269,6 +269,12 @@ namespace Sparky.MNA.Core
                             break;
                     }
                 }
+
+                // 6. Accumulate energy for all components (after state update so currents are available)
+                foreach (var component in Components)
+                {
+                    component.AccumulateEnergy(_vectorX, dt);
+                }
             }
 
             _lastDt = dt;

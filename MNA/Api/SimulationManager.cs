@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Sparky.MNA.Api.Energy;
 using Sparky.MNA.Api.Limits;
 using Sparky.MNA.Core;
 
@@ -68,8 +69,13 @@ public class SimulationManager : ISimulation
 
     // Optimization tracking
     private readonly HashSet<ResistorId> _optimizedResistors = new();
+    // Maps optimized resistor IDs to their chain info for energy distribution
+    private readonly Dictionary<ResistorId, ResistorChainInfo> _resistorChainMap = new();
+    // Temporary list of chain members built during optimization, keyed by merged LogicalResistor
+    private readonly Dictionary<LogicalResistor, List<ResistorId>> _pendingChainMembers = new();
 
     private readonly record struct InterpolationInfo(NodeId NodeA, NodeId NodeB, double Ratio);
+    private record struct ResistorChainInfo(Resistor EquivalentResistor, double TotalResistance);
 
     // Optimization
     public bool EnableLineOptimization { get; set; } = true;
@@ -109,6 +115,7 @@ public class SimulationManager : ISimulation
         public double Resistance { get; set; }
         public bool IsVariable { get; }
         public bool IsOptimizable => !IsVariable;
+        public EnergyCounter Energy;
 
         public LogicalResistor(ResistorId id, NodeId a, NodeId b, double r, bool isVariable = false)
         {
@@ -123,6 +130,7 @@ public class SimulationManager : ISimulation
         public NodeId NodeNeg { get; }
         public double Voltage { get; set; }
         public bool IsOptimizable => false;
+        public EnergyCounter Energy;
 
         public LogicalVoltageSource(VoltageSourceId id, NodeId pos, NodeId neg, double v)
         {
@@ -137,6 +145,7 @@ public class SimulationManager : ISimulation
         public NodeId NodeOut { get; }
         public double Current { get; set; }
         public bool IsOptimizable => false;
+        public EnergyCounter Energy;
 
         public LogicalCurrentSource(CurrentSourceId id, NodeId @in, NodeId @out, double i)
         {
@@ -152,6 +161,7 @@ public class SimulationManager : ISimulation
         public double Capacitance { get; set; }
         public double VoltageAcross { get; set; }  // Preserved across rebuilds
         public bool IsOptimizable => false;
+        public EnergyCounter Energy;
 
         public LogicalCapacitor(CapacitorId id, NodeId a, NodeId b, double c)
         {
@@ -167,6 +177,7 @@ public class SimulationManager : ISimulation
         public double Inductance { get; set; }
         public double CurrentThrough { get; set; }  // Preserved across rebuilds
         public bool IsOptimizable => false;
+        public EnergyCounter Energy;
 
         public LogicalInductor(InductorId id, NodeId a, NodeId b, double l)
         {
@@ -181,6 +192,7 @@ public class SimulationManager : ISimulation
         public NodeId Cathode { get; }
         public double OperatingVoltage { get; set; } = 0.6;  // Preserved for Newton-Raphson convergence
         public bool IsOptimizable => false;
+        public EnergyCounter Energy;
 
         public LogicalDiode(DiodeId id, NodeId anode, NodeId cathode)
         {
@@ -1279,6 +1291,9 @@ public class SimulationManager : ISimulation
             Parallel.ForEach(_partitions, circuit => circuit.Solve(dt));
         }
 
+        // Merge energy deltas from physical components into logical components
+        MergeEnergyDeltas();
+
         // Update simulation time and check limits
         _simulationTime += dt;
         CheckLimits();
@@ -1314,6 +1329,8 @@ public class SimulationManager : ISimulation
         _physicalCCVS.Clear();
         _physicalCCCS.Clear();
         _optimizedResistors.Clear();
+        _resistorChainMap.Clear();
+        _pendingChainMembers.Clear();
 
         // Clear limit state
         _limits.Clear();
@@ -1470,6 +1487,8 @@ public class SimulationManager : ISimulation
         _physicalDiodes.Clear();
         _physicalTransformers.Clear();
         _optimizedResistors.Clear();
+        _resistorChainMap.Clear();
+        _pendingChainMembers.Clear();
 
         // 1. Optimization Phase
         var (optimizedComponents, optimizedAdjacency) = Optimize();
@@ -1702,11 +1721,14 @@ public class SimulationManager : ISimulation
                 AddToAdj(startNode, mergedR);
                 AddToAdj(endNode, mergedR);
 
-                // Mark original resistors as optimized
+                // Mark original resistors as optimized and store chain membership
+                var chainMemberIds = new List<ResistorId>();
                 foreach (var cr in chainResistors)
                 {
                     _optimizedResistors.Add(cr.Id);
+                    chainMemberIds.Add(cr.Id);
                 }
+                _pendingChainMembers[mergedR] = chainMemberIds;
 
                 // Interpolation Map
                 double currentR = 0;
@@ -1800,7 +1822,19 @@ public class SimulationManager : ISimulation
             case LogicalResistor r:
                 var phyR = new Resistor(GetPhysNode(r.NodeA, circuit), GetPhysNode(r.NodeB, circuit), r.Resistance);
                 circuit.AddComponent(phyR);
-                if (r.Id.Value >= 0) _physicalResistors[r.Id] = phyR;
+                if (r.Id.Value >= 0)
+                {
+                    _physicalResistors[r.Id] = phyR;
+                }
+                else if (_pendingChainMembers.TryGetValue(r, out var chainMembers))
+                {
+                    // This is a merged chain resistor - populate the chain map
+                    var chainInfo = new ResistorChainInfo(phyR, r.Resistance);
+                    foreach (var memberId in chainMembers)
+                    {
+                        _resistorChainMap[memberId] = chainInfo;
+                    }
+                }
                 break;
             case LogicalVoltageSource v:
                 var phyV = new VoltageSource(GetPhysNode(v.NodePos, circuit), GetPhysNode(v.NodeNeg, circuit), v.Voltage);
@@ -2267,6 +2301,182 @@ public class SimulationManager : ISimulation
             _limits.Remove(key);
             _exceededLimits.Remove(key);
         }
+    }
+
+    #endregion
+
+    #region Energy Accounting
+
+    /// <summary>
+    /// Merges energy deltas from physical components into logical components.
+    /// Called after all partitions solve in Step().
+    /// </summary>
+    private void MergeEnergyDeltas()
+    {
+        // Resistors (handle line-optimized chains)
+        foreach (var (id, logical) in _resistors)
+        {
+            if (_resistorChainMap.TryGetValue(id, out var chainInfo))
+            {
+                // Optimized resistor - distribute chain energy by resistance ratio
+                var chainEnergy = chainInfo.EquivalentResistor.EnergyDelta;
+                var ratio = logical.Resistance / chainInfo.TotalResistance;
+                logical.Energy.Accumulate(chainEnergy * ratio);
+            }
+            else if (_physicalResistors.TryGetValue(id, out var physical))
+            {
+                logical.Energy.Accumulate(physical.EnergyDelta);
+            }
+        }
+
+        // Voltage sources
+        foreach (var (id, logical) in _voltageSources)
+        {
+            if (_physicalVoltageSources.TryGetValue(id, out var physical))
+            {
+                logical.Energy.Accumulate(physical.EnergyDelta);
+            }
+        }
+
+        // Current sources
+        foreach (var (id, logical) in _currentSources)
+        {
+            if (_physicalCurrentSources.TryGetValue(id, out var physical))
+            {
+                logical.Energy.Accumulate(physical.EnergyDelta);
+            }
+        }
+
+        // Capacitors
+        foreach (var (id, logical) in _capacitors)
+        {
+            if (_physicalCapacitors.TryGetValue(id, out var physical))
+            {
+                logical.Energy.Accumulate(physical.EnergyDelta);
+            }
+        }
+
+        // Inductors
+        foreach (var (id, logical) in _inductors)
+        {
+            if (_physicalInductors.TryGetValue(id, out var physical))
+            {
+                logical.Energy.Accumulate(physical.EnergyDelta);
+            }
+        }
+
+        // Diodes
+        foreach (var (id, logical) in _diodes)
+        {
+            if (_physicalDiodes.TryGetValue(id, out var physical))
+            {
+                logical.Energy.Accumulate(physical.EnergyDelta);
+            }
+        }
+    }
+
+    // Energy query methods
+
+    public double GetVoltageSourceEnergy(VoltageSourceId id)
+    {
+        if (!_voltageSources.TryGetValue(id, out var logical))
+            throw InvalidComponentException.ForVoltageSource(id);
+        return logical.Energy.Joules;
+    }
+
+    public double GetCurrentSourceEnergy(CurrentSourceId id)
+    {
+        if (!_currentSources.TryGetValue(id, out var logical))
+            throw InvalidComponentException.ForCurrentSource(id);
+        return logical.Energy.Joules;
+    }
+
+    public double GetResistorEnergy(ResistorId id)
+    {
+        if (!_resistors.TryGetValue(id, out var logical))
+            throw InvalidComponentException.ForResistor(id);
+        return logical.Energy.Joules;
+    }
+
+    public double GetDiodeEnergy(DiodeId id)
+    {
+        if (!_diodes.TryGetValue(id, out var logical))
+            throw InvalidComponentException.ForDiode(id);
+        return logical.Energy.Joules;
+    }
+
+    public double GetCapacitorEnergy(CapacitorId id)
+    {
+        if (!_capacitors.TryGetValue(id, out var logical))
+            throw InvalidComponentException.ForCapacitor(id);
+        return logical.Energy.Joules;
+    }
+
+    public double GetInductorEnergy(InductorId id)
+    {
+        if (!_inductors.TryGetValue(id, out var logical))
+            throw InvalidComponentException.ForInductor(id);
+        return logical.Energy.Joules;
+    }
+
+    // Energy reset methods
+
+    public void ResetEnergyCounters()
+    {
+        foreach (var logical in _resistors.Values)
+            logical.Energy.Reset();
+        foreach (var logical in _voltageSources.Values)
+            logical.Energy.Reset();
+        foreach (var logical in _currentSources.Values)
+            logical.Energy.Reset();
+        foreach (var logical in _capacitors.Values)
+            logical.Energy.Reset();
+        foreach (var logical in _inductors.Values)
+            logical.Energy.Reset();
+        foreach (var logical in _diodes.Values)
+            logical.Energy.Reset();
+    }
+
+    public void ResetEnergyCounter(ResistorId id)
+    {
+        if (!_resistors.TryGetValue(id, out var logical))
+            throw InvalidComponentException.ForResistor(id);
+        logical.Energy.Reset();
+    }
+
+    public void ResetEnergyCounter(VoltageSourceId id)
+    {
+        if (!_voltageSources.TryGetValue(id, out var logical))
+            throw InvalidComponentException.ForVoltageSource(id);
+        logical.Energy.Reset();
+    }
+
+    public void ResetEnergyCounter(CurrentSourceId id)
+    {
+        if (!_currentSources.TryGetValue(id, out var logical))
+            throw InvalidComponentException.ForCurrentSource(id);
+        logical.Energy.Reset();
+    }
+
+    public void ResetEnergyCounter(CapacitorId id)
+    {
+        if (!_capacitors.TryGetValue(id, out var logical))
+            throw InvalidComponentException.ForCapacitor(id);
+        logical.Energy.Reset();
+    }
+
+    public void ResetEnergyCounter(InductorId id)
+    {
+        if (!_inductors.TryGetValue(id, out var logical))
+            throw InvalidComponentException.ForInductor(id);
+        logical.Energy.Reset();
+    }
+
+    public void ResetEnergyCounter(DiodeId id)
+    {
+        if (!_diodes.TryGetValue(id, out var logical))
+            throw InvalidComponentException.ForDiode(id);
+        logical.Energy.Reset();
     }
 
     #endregion

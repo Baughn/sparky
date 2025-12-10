@@ -91,5 +91,17 @@ namespace Sparky.MNA.Core
 
             OperatingVoltage = newVd;
         }
+
+        public override void AccumulateEnergy(double[] x, double dt)
+        {
+            // P = V × I (always positive - dissipated as heat in forward bias)
+            // Compute current from Shockley equation at operating point
+            double vdLimited = Math.Max(-5.0, Math.Min(OperatingVoltage, 0.9));
+            double expArg = vdLimited / (n * Vt);
+            double exp = Math.Exp(Math.Min(expArg, 40.0));
+            double current = Is * (exp - 1);
+            double power = OperatingVoltage * current;
+            EnergyDelta = power * dt;
+        }
     }
 }

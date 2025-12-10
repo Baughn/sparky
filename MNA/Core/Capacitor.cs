@@ -109,5 +109,13 @@ namespace Sparky.MNA.Core
 
             VoltageAcross = newVoltage;
         }
+
+        public override void AccumulateEnergy(double[] x, double dt)
+        {
+            // P = V × I (positive = absorbing/charging, negative = discharging)
+            // Current is computed in UpdateState(), which runs before AccumulateEnergy
+            double power = VoltageAcross * Current;
+            EnergyDelta = power * dt;
+        }
     }
 }

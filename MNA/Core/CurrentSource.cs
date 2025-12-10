@@ -32,5 +32,17 @@ namespace Sparky.MNA.Core
             if (n1 != 0) Z[n1] -= Current;
             if (n2 != 0) Z[n2] += Current;
         }
+
+        public override void AccumulateEnergy(double[] x, double dt)
+        {
+            // P = V × I (positive = delivering power to circuit)
+            // Current flows from Node1 to Node2
+            // Voltage across source = V1 - V2
+            double v1 = (Node1.Id == 0) ? 0 : x[Node1.Id];
+            double v2 = (Node2.Id == 0) ? 0 : x[Node2.Id];
+            double voltage = v1 - v2;
+            double power = voltage * Current; // Power delivered by source
+            EnergyDelta = power * dt;
+        }
     }
 }

@@ -41,5 +41,24 @@ namespace Sparky.MNA.Core
 
         // Update operating point during Newton-Raphson iteration (for non-linear components)
         public virtual void UpdateOperatingPoint(double[] x) { }
+
+        /// <summary>
+        /// Energy transferred through this component during the last time step (Joules).
+        /// Positive = energy delivered (sources) or dissipated (resistors/diodes).
+        /// Computed by AccumulateEnergy() after solve convergence.
+        /// </summary>
+        public double EnergyDelta { get; protected set; }
+
+        /// <summary>
+        /// Compute the energy transferred through this component for a time step.
+        /// Called after solve convergence. Sets EnergyDelta = P × dt.
+        /// </summary>
+        /// <param name="x">Solution vector containing node voltages and branch currents</param>
+        /// <param name="dt">Time step in seconds</param>
+        public virtual void AccumulateEnergy(double[] x, double dt)
+        {
+            // Default: no energy tracking (e.g., wires, VCVS, etc.)
+            EnergyDelta = 0;
+        }
     }
 }

@@ -83,5 +83,15 @@ namespace Sparky.MNA.Core
             double gEq = dt / Inductance;
             CurrentThrough = gEq * v + CurrentThrough;
         }
+
+        public override void AccumulateEnergy(double[] x, double dt)
+        {
+            // P = V × I (positive = absorbing/storing, negative = releasing)
+            double v1 = (Node1.Id == 0) ? 0 : x[Node1.Id];
+            double v2 = (Node2.Id == 0) ? 0 : x[Node2.Id];
+            double voltage = v1 - v2;
+            double power = voltage * CurrentThrough;
+            EnergyDelta = power * dt;
+        }
     }
 }
