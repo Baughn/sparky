@@ -34,8 +34,8 @@ public interface ISimulation
     bool NodeExists(NodeId id);
 
     // Resistors
-    /// <summary>Adds a resistor between two nodes.</summary>
-    ResistorId AddResistor(NodeId nodeA, NodeId nodeB, double resistance);
+    /// <summary>Adds a resistor between two nodes. Variable resistors skip line optimization.</summary>
+    ResistorId AddResistor(NodeId nodeA, NodeId nodeB, double resistance, bool isVariable = false);
 
     /// <summary>Updates the resistance value. May be done in-place if not optimized.</summary>
     void UpdateResistor(ResistorId id, double resistance);
@@ -112,6 +112,9 @@ public interface ISimulation
     /// <summary>Gets the current through the capacitor.</summary>
     double GetCapacitorCurrent(CapacitorId id);
 
+    /// <summary>Sets the voltage across the capacitor (nodeA - nodeB). Use for initial conditions.</summary>
+    void SetCapacitorVoltage(CapacitorId id, double voltage);
+
     // Inductors
     /// <summary>Adds an inductor between two nodes.</summary>
     InductorId AddInductor(NodeId nodeA, NodeId nodeB, double inductance);
@@ -130,6 +133,9 @@ public interface ISimulation
 
     /// <summary>Gets the current through the inductor.</summary>
     double GetInductorCurrent(InductorId id);
+
+    /// <summary>Sets the current through the inductor (from nodeA to nodeB). Use for initial conditions.</summary>
+    void SetInductorCurrent(InductorId id, double current);
 
     // Diodes
     /// <summary>Adds a diode (current flows from anode to cathode when forward biased).</summary>

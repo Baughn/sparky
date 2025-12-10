@@ -243,17 +243,17 @@ Coupling: τ = k_t * I, V_bemf = k_e * ω
 
 ## MNA API Gaps & Proposed Extensions
 
-### Gap 1: Initial Conditions
+### ~~Gap 1: Initial Conditions~~ ✓ IMPLEMENTED
 
-**Problem**: Can't set initial capacitor voltage or inductor current.
+**Status**: Implemented in `MNA/Api/`.
 
-**Current workaround**: Run simulation until steady state.
-
-**Proposed API**:
+**API**:
 ```csharp
 void SetCapacitorVoltage(CapacitorId id, double voltage);
 void SetInductorCurrent(InductorId id, double current);
 ```
+
+Sets the internal state of capacitors/inductors for initial conditions. Updates both logical and physical components, and state persists across topology rebuilds.
 
 ### Gap 2: Component Events / Callbacks
 
@@ -305,19 +305,16 @@ CcvsId AddCCVS(NodeId inP, NodeId inN, NodeId outP, NodeId outN, double rm);
 CccsId AddCCCS(NodeId inP, NodeId inN, NodeId outP, NodeId outN, double beta);
 ```
 
-### Gap 4: Variable/Nonlinear Resistors
+### ~~Gap 4: Variable/Nonlinear Resistors~~ ✓ IMPLEMENTED
 
-**Problem**: Resistance changes based on external factors (temperature, light).
+**Status**: Implemented in `MNA/Api/`.
 
-**Use case**: Thermistors, photoresistors, motorized potentiometers.
-
-**Current workaround**: Call UpdateResistor each tick (triggers rebuild if optimized).
-
-**Proposed optimization**: Allow marking resistors as "variable" to skip line optimization:
+**API**:
 ```csharp
 ResistorId AddResistor(NodeId a, NodeId b, double resistance, bool isVariable = false);
-// Variable resistors always update in-place, never merged in line optimization
 ```
+
+Variable resistors (`isVariable: true`) have `IsOptimizable => false`, so they are excluded from line optimization. This ensures `UpdateResistor` always uses the fast-path without triggering topology rebuild. Use for thermistors, photoresistors, potentiometers, and any resistance that changes during simulation.
 
 ### Gap 5: Time-Varying Sources
 

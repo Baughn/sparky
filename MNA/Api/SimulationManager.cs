@@ -88,11 +88,12 @@ public class SimulationManager : ISimulation
         public NodeId NodeA { get; }
         public NodeId NodeB { get; }
         public double Resistance { get; set; }
-        public bool IsOptimizable => true;
+        public bool IsVariable { get; }
+        public bool IsOptimizable => !IsVariable;
 
-        public LogicalResistor(ResistorId id, NodeId a, NodeId b, double r)
+        public LogicalResistor(ResistorId id, NodeId a, NodeId b, double r, bool isVariable = false)
         {
-            Id = id; NodeA = a; NodeB = b; Resistance = r;
+            Id = id; NodeA = a; NodeB = b; Resistance = r; IsVariable = isVariable;
         }
     }
 
@@ -261,14 +262,14 @@ public class SimulationManager : ISimulation
 
     #region Resistors
 
-    public ResistorId AddResistor(NodeId nodeA, NodeId nodeB, double resistance)
+    public ResistorId AddResistor(NodeId nodeA, NodeId nodeB, double resistance, bool isVariable = false)
     {
         ValidateNodeExists(nodeA);
         ValidateNodeExists(nodeB);
         ValidateResistance(resistance);
 
         var id = new ResistorId(_nextResistorId++);
-        var component = new LogicalResistor(id, nodeA, nodeB, resistance);
+        var component = new LogicalResistor(id, nodeA, nodeB, resistance, isVariable);
         _resistors[id] = component;
         Connect(nodeA, component);
         Connect(nodeB, component);
@@ -530,6 +531,17 @@ public class SimulationManager : ISimulation
         return 0.0;
     }
 
+    public void SetCapacitorVoltage(CapacitorId id, double voltage)
+    {
+        if (!_capacitors.TryGetValue(id, out var c))
+            throw InvalidComponentException.ForCapacitor(id);
+
+        c.VoltageAcross = voltage;
+
+        if (_physicalCapacitors.TryGetValue(id, out var phys))
+            phys.VoltageAcross = voltage;
+    }
+
     #endregion
 
     #region Inductors
@@ -594,6 +606,17 @@ public class SimulationManager : ISimulation
         if (!_inductors.ContainsKey(id))
             throw InvalidComponentException.ForInductor(id);
         return 0.0;
+    }
+
+    public void SetInductorCurrent(InductorId id, double current)
+    {
+        if (!_inductors.TryGetValue(id, out var l))
+            throw InvalidComponentException.ForInductor(id);
+
+        l.CurrentThrough = current;
+
+        if (_physicalInductors.TryGetValue(id, out var phys))
+            phys.CurrentThrough = current;
     }
 
     #endregion
@@ -1216,7 +1239,8 @@ public class SimulationManager : ISimulation
     private bool IsLineNode(LogicalNode node)
     {
         if (node.Connections.Count != 2) return false;
-        return node.Connections.All(c => c is LogicalResistor);
+        // All connections must be optimizable resistors (not variable)
+        return node.Connections.All(c => c is LogicalResistor r && r.IsOptimizable);
     }
 
     private void BuildPartition(HashSet<NodeId> nodes, List<ILogicalComponent> allComponents)
