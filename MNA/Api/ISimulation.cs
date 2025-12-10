@@ -326,6 +326,9 @@ public interface ISimulation
     /// <summary>Gets the cumulative simulation time (sum of all dt values passed to Step).</summary>
     double SimulationTime { get; }
 
+    /// <summary>Resets the simulation time to zero without clearing the circuit.</summary>
+    void ResetTime();
+
     // Resistor Limits
     /// <summary>Sets a limit on a resistor.</summary>
     void SetResistorLimit(ResistorId id, LimitKind kind, LimitConfig config);

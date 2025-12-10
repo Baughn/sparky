@@ -1914,6 +1914,8 @@ public class SimulationManager : ISimulation
 
     public double SimulationTime => _simulationTime;
 
+    public void ResetTime() => _simulationTime = 0;
+
     public IDisposable OnLimitEvent(LimitEventHandler handler)
     {
         _limitHandlers.Add(handler);
