@@ -26,6 +26,7 @@ A real-time electrical circuit simulator using Modified Nodal Analysis (MNA). De
 - **Nonlinear Solving**: Newton-Raphson iteration for diodes
 - **Graph Partitioning**: Disconnected sub-circuits solve in parallel
 - **Sparse/Dense Selection**: Automatic algorithm selection based on matrix structure
+- **Component Limits**: Per-component thresholds with event callbacks (overcurrent, overvoltage, overpower)
 
 ## Test Helper: CircuitBuilder
 
@@ -78,7 +79,7 @@ c.Step();
 | Metric | Value |
 |--------|-------|
 | Components | 12 types |
-| Test coverage | 276 tests |
+| Test coverage | 300 tests |
 | Lines of solver code | ~2,500 |
 | Lines of test code | ~4,000 |
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Sparky.MNA.Api.Limits;
 using Sparky.MNA.Core;
 
 namespace Sparky.MNA.Api;
@@ -76,6 +77,12 @@ public class SimulationManager : ISimulation
 
     // Bulk update
     private int _bulkUpdateDepth = 0;
+
+    // Limit management
+    private readonly Dictionary<(ComponentRef, LimitKind), LimitConfig> _limits = new();
+    private readonly HashSet<(ComponentRef, LimitKind)> _exceededLimits = new();
+    private readonly List<LimitEventHandler> _limitHandlers = new();
+    private double _simulationTime;
 
     // Ground node
     public NodeId Ground => new NodeId(0);
@@ -406,6 +413,7 @@ public class SimulationManager : ISimulation
         _resistors.Remove(id);
         _physicalResistors.Remove(id);
         _optimizedResistors.Remove(id);
+        ClearLimitsForComponent(ComponentRef.From(id));
         _isDirty = true;
     }
 
@@ -481,6 +489,7 @@ public class SimulationManager : ISimulation
         Disconnect(v.NodeNeg, v);
         _voltageSources.Remove(id);
         _physicalVoltageSources.Remove(id);
+        ClearLimitsForComponent(ComponentRef.From(id));
         _isDirty = true;
     }
 
@@ -549,6 +558,7 @@ public class SimulationManager : ISimulation
         Disconnect(c.NodeOut, c);
         _currentSources.Remove(id);
         _physicalCurrentSources.Remove(id);
+        ClearLimitsForComponent(ComponentRef.From(id));
         _isDirty = true;
     }
 
@@ -606,6 +616,7 @@ public class SimulationManager : ISimulation
         Disconnect(c.NodeB, c);
         _capacitors.Remove(id);
         _physicalCapacitors.Remove(id);
+        ClearLimitsForComponent(ComponentRef.From(id));
         _isDirty = true;
     }
 
@@ -694,6 +705,7 @@ public class SimulationManager : ISimulation
         Disconnect(l.NodeB, l);
         _inductors.Remove(id);
         _physicalInductors.Remove(id);
+        ClearLimitsForComponent(ComponentRef.From(id));
         _isDirty = true;
     }
 
@@ -756,6 +768,7 @@ public class SimulationManager : ISimulation
         Disconnect(d.Cathode, d);
         _diodes.Remove(id);
         _physicalDiodes.Remove(id);
+        ClearLimitsForComponent(ComponentRef.From(id));
         _isDirty = true;
     }
 
@@ -829,6 +842,7 @@ public class SimulationManager : ISimulation
         Disconnect(t.S2, t);
         _transformers.Remove(id);
         _physicalTransformers.Remove(id);
+        ClearLimitsForComponent(ComponentRef.From(id));
         _isDirty = true;
     }
 
@@ -899,6 +913,7 @@ public class SimulationManager : ISimulation
 
         RemoveResistor(sw.InternalResistorId);
         _switches.Remove(id);
+        ClearLimitsForComponent(ComponentRef.From(id));
     }
 
     public bool SwitchExists(SwitchId id) => _switches.ContainsKey(id);
@@ -972,6 +987,7 @@ public class SimulationManager : ISimulation
         Disconnect(v.OutputNeg, v);
         _vcvs.Remove(id);
         _physicalVCVS.Remove(id);
+        ClearLimitsForComponent(ComponentRef.From(id));
         _isDirty = true;
     }
 
@@ -1043,6 +1059,7 @@ public class SimulationManager : ISimulation
         Disconnect(v.OutputNeg, v);
         _vccs.Remove(id);
         _physicalVCCS.Remove(id);
+        ClearLimitsForComponent(ComponentRef.From(id));
         _isDirty = true;
     }
 
@@ -1120,6 +1137,7 @@ public class SimulationManager : ISimulation
         Disconnect(v.OutputNeg, v);
         _ccvs.Remove(id);
         _physicalCCVS.Remove(id);
+        ClearLimitsForComponent(ComponentRef.From(id));
         _isDirty = true;
     }
 
@@ -1200,6 +1218,7 @@ public class SimulationManager : ISimulation
         Disconnect(v.OutputNeg, v);
         _cccs.Remove(id);
         _physicalCCCS.Remove(id);
+        ClearLimitsForComponent(ComponentRef.From(id));
         _isDirty = true;
     }
 
@@ -1259,6 +1278,10 @@ public class SimulationManager : ISimulation
         {
             Parallel.ForEach(_partitions, circuit => circuit.Solve(dt));
         }
+
+        // Update simulation time and check limits
+        _simulationTime += dt;
+        CheckLimits();
     }
 
     public void Clear()
@@ -1291,6 +1314,11 @@ public class SimulationManager : ISimulation
         _physicalCCVS.Clear();
         _physicalCCCS.Clear();
         _optimizedResistors.Clear();
+
+        // Clear limit state
+        _limits.Clear();
+        _exceededLimits.Clear();
+        _simulationTime = 0;
 
         _nextNodeId = 1;
         _nextResistorId = 1;
@@ -1844,6 +1872,401 @@ public class SimulationManager : ISimulation
     {
         if (id.Value == 0) return circuit.Ground;
         return _physicalNodes[id];
+    }
+
+    #endregion
+
+    #region Limit Management
+
+    public double SimulationTime => _simulationTime;
+
+    public IDisposable OnLimitEvent(LimitEventHandler handler)
+    {
+        _limitHandlers.Add(handler);
+        return new LimitEventSubscription(this, handler);
+    }
+
+    private class LimitEventSubscription : IDisposable
+    {
+        private readonly SimulationManager _manager;
+        private readonly LimitEventHandler _handler;
+        private bool _disposed;
+
+        public LimitEventSubscription(SimulationManager m, LimitEventHandler h)
+        {
+            _manager = m;
+            _handler = h;
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _disposed = true;
+            _manager._limitHandlers.Remove(_handler);
+        }
+    }
+
+    // Resistor Limits
+    public void SetResistorLimit(ResistorId id, LimitKind kind, LimitConfig config)
+    {
+        if (!_resistors.ContainsKey(id))
+            throw InvalidComponentException.ForResistor(id);
+        _limits[(ComponentRef.From(id), kind)] = config;
+    }
+
+    public void ClearResistorLimit(ResistorId id, LimitKind kind)
+    {
+        var key = (ComponentRef.From(id), kind);
+        _limits.Remove(key);
+        _exceededLimits.Remove(key);
+    }
+
+    public LimitConfig? GetResistorLimit(ResistorId id, LimitKind kind)
+    {
+        return _limits.TryGetValue((ComponentRef.From(id), kind), out var config) ? config : null;
+    }
+
+    // Voltage Source Limits
+    public void SetVoltageSourceLimit(VoltageSourceId id, LimitKind kind, LimitConfig config)
+    {
+        if (!_voltageSources.ContainsKey(id))
+            throw InvalidComponentException.ForVoltageSource(id);
+        _limits[(ComponentRef.From(id), kind)] = config;
+    }
+
+    public void ClearVoltageSourceLimit(VoltageSourceId id, LimitKind kind)
+    {
+        var key = (ComponentRef.From(id), kind);
+        _limits.Remove(key);
+        _exceededLimits.Remove(key);
+    }
+
+    public LimitConfig? GetVoltageSourceLimit(VoltageSourceId id, LimitKind kind)
+    {
+        return _limits.TryGetValue((ComponentRef.From(id), kind), out var config) ? config : null;
+    }
+
+    // Current Source Limits
+    public void SetCurrentSourceLimit(CurrentSourceId id, LimitKind kind, LimitConfig config)
+    {
+        if (!_currentSources.ContainsKey(id))
+            throw InvalidComponentException.ForCurrentSource(id);
+        _limits[(ComponentRef.From(id), kind)] = config;
+    }
+
+    public void ClearCurrentSourceLimit(CurrentSourceId id, LimitKind kind)
+    {
+        var key = (ComponentRef.From(id), kind);
+        _limits.Remove(key);
+        _exceededLimits.Remove(key);
+    }
+
+    public LimitConfig? GetCurrentSourceLimit(CurrentSourceId id, LimitKind kind)
+    {
+        return _limits.TryGetValue((ComponentRef.From(id), kind), out var config) ? config : null;
+    }
+
+    // Capacitor Limits
+    public void SetCapacitorLimit(CapacitorId id, LimitKind kind, LimitConfig config)
+    {
+        if (!_capacitors.ContainsKey(id))
+            throw InvalidComponentException.ForCapacitor(id);
+        _limits[(ComponentRef.From(id), kind)] = config;
+    }
+
+    public void ClearCapacitorLimit(CapacitorId id, LimitKind kind)
+    {
+        var key = (ComponentRef.From(id), kind);
+        _limits.Remove(key);
+        _exceededLimits.Remove(key);
+    }
+
+    public LimitConfig? GetCapacitorLimit(CapacitorId id, LimitKind kind)
+    {
+        return _limits.TryGetValue((ComponentRef.From(id), kind), out var config) ? config : null;
+    }
+
+    // Inductor Limits
+    public void SetInductorLimit(InductorId id, LimitKind kind, LimitConfig config)
+    {
+        if (!_inductors.ContainsKey(id))
+            throw InvalidComponentException.ForInductor(id);
+        _limits[(ComponentRef.From(id), kind)] = config;
+    }
+
+    public void ClearInductorLimit(InductorId id, LimitKind kind)
+    {
+        var key = (ComponentRef.From(id), kind);
+        _limits.Remove(key);
+        _exceededLimits.Remove(key);
+    }
+
+    public LimitConfig? GetInductorLimit(InductorId id, LimitKind kind)
+    {
+        return _limits.TryGetValue((ComponentRef.From(id), kind), out var config) ? config : null;
+    }
+
+    // Diode Limits
+    public void SetDiodeLimit(DiodeId id, LimitKind kind, LimitConfig config)
+    {
+        if (!_diodes.ContainsKey(id))
+            throw InvalidComponentException.ForDiode(id);
+        _limits[(ComponentRef.From(id), kind)] = config;
+    }
+
+    public void ClearDiodeLimit(DiodeId id, LimitKind kind)
+    {
+        var key = (ComponentRef.From(id), kind);
+        _limits.Remove(key);
+        _exceededLimits.Remove(key);
+    }
+
+    public LimitConfig? GetDiodeLimit(DiodeId id, LimitKind kind)
+    {
+        return _limits.TryGetValue((ComponentRef.From(id), kind), out var config) ? config : null;
+    }
+
+    // Transformer Limits
+    public void SetTransformerLimit(TransformerId id, LimitKind kind, LimitConfig config)
+    {
+        if (!_transformers.ContainsKey(id))
+            throw InvalidComponentException.ForTransformer(id);
+        _limits[(ComponentRef.From(id), kind)] = config;
+    }
+
+    public void ClearTransformerLimit(TransformerId id, LimitKind kind)
+    {
+        var key = (ComponentRef.From(id), kind);
+        _limits.Remove(key);
+        _exceededLimits.Remove(key);
+    }
+
+    public LimitConfig? GetTransformerLimit(TransformerId id, LimitKind kind)
+    {
+        return _limits.TryGetValue((ComponentRef.From(id), kind), out var config) ? config : null;
+    }
+
+    // Switch Limits
+    public void SetSwitchLimit(SwitchId id, LimitKind kind, LimitConfig config)
+    {
+        if (!_switches.ContainsKey(id))
+            throw InvalidComponentException.ForSwitch(id);
+        _limits[(ComponentRef.From(id), kind)] = config;
+    }
+
+    public void ClearSwitchLimit(SwitchId id, LimitKind kind)
+    {
+        var key = (ComponentRef.From(id), kind);
+        _limits.Remove(key);
+        _exceededLimits.Remove(key);
+    }
+
+    public LimitConfig? GetSwitchLimit(SwitchId id, LimitKind kind)
+    {
+        return _limits.TryGetValue((ComponentRef.From(id), kind), out var config) ? config : null;
+    }
+
+    // VCVS Limits
+    public void SetVCVSLimit(VcvsId id, LimitKind kind, LimitConfig config)
+    {
+        if (!_vcvs.ContainsKey(id))
+            throw InvalidComponentException.ForVCVS(id);
+        _limits[(ComponentRef.From(id), kind)] = config;
+    }
+
+    public void ClearVCVSLimit(VcvsId id, LimitKind kind)
+    {
+        var key = (ComponentRef.From(id), kind);
+        _limits.Remove(key);
+        _exceededLimits.Remove(key);
+    }
+
+    public LimitConfig? GetVCVSLimit(VcvsId id, LimitKind kind)
+    {
+        return _limits.TryGetValue((ComponentRef.From(id), kind), out var config) ? config : null;
+    }
+
+    // VCCS Limits
+    public void SetVCCSLimit(VccsId id, LimitKind kind, LimitConfig config)
+    {
+        if (!_vccs.ContainsKey(id))
+            throw InvalidComponentException.ForVCCS(id);
+        _limits[(ComponentRef.From(id), kind)] = config;
+    }
+
+    public void ClearVCCSLimit(VccsId id, LimitKind kind)
+    {
+        var key = (ComponentRef.From(id), kind);
+        _limits.Remove(key);
+        _exceededLimits.Remove(key);
+    }
+
+    public LimitConfig? GetVCCSLimit(VccsId id, LimitKind kind)
+    {
+        return _limits.TryGetValue((ComponentRef.From(id), kind), out var config) ? config : null;
+    }
+
+    // CCVS Limits
+    public void SetCCVSLimit(CcvsId id, LimitKind kind, LimitConfig config)
+    {
+        if (!_ccvs.ContainsKey(id))
+            throw InvalidComponentException.ForCCVS(id);
+        _limits[(ComponentRef.From(id), kind)] = config;
+    }
+
+    public void ClearCCVSLimit(CcvsId id, LimitKind kind)
+    {
+        var key = (ComponentRef.From(id), kind);
+        _limits.Remove(key);
+        _exceededLimits.Remove(key);
+    }
+
+    public LimitConfig? GetCCVSLimit(CcvsId id, LimitKind kind)
+    {
+        return _limits.TryGetValue((ComponentRef.From(id), kind), out var config) ? config : null;
+    }
+
+    // CCCS Limits
+    public void SetCCCSLimit(CccsId id, LimitKind kind, LimitConfig config)
+    {
+        if (!_cccs.ContainsKey(id))
+            throw InvalidComponentException.ForCCCS(id);
+        _limits[(ComponentRef.From(id), kind)] = config;
+    }
+
+    public void ClearCCCSLimit(CccsId id, LimitKind kind)
+    {
+        var key = (ComponentRef.From(id), kind);
+        _limits.Remove(key);
+        _exceededLimits.Remove(key);
+    }
+
+    public LimitConfig? GetCCCSLimit(CccsId id, LimitKind kind)
+    {
+        return _limits.TryGetValue((ComponentRef.From(id), kind), out var config) ? config : null;
+    }
+
+    // Limit Checking
+
+    private void CheckLimits()
+    {
+        if (_limits.Count == 0 || _limitHandlers.Count == 0) return;
+
+        foreach (var (key, config) in _limits)
+        {
+            double value = GetValueForLimit(key.Item1, key.Item2);
+            bool wasExceeded = _exceededLimits.Contains(key);
+            bool isExceeded = value > config.Threshold;
+            bool cleared = wasExceeded && value < (config.Threshold - config.Hysteresis);
+
+            if (isExceeded && !wasExceeded)
+            {
+                // Rising edge: just exceeded
+                _exceededLimits.Add(key);
+                FireLimitEvent(key.Item1, key.Item2, config.Threshold, value, isExceeded: true);
+            }
+            else if (cleared)
+            {
+                // Falling edge: just cleared
+                _exceededLimits.Remove(key);
+                FireLimitEvent(key.Item1, key.Item2, config.Threshold, value, isExceeded: false);
+            }
+            else if (isExceeded && wasExceeded && config.FireEveryStep)
+            {
+                // Still exceeded and configured to fire every step
+                FireLimitEvent(key.Item1, key.Item2, config.Threshold, value, isExceeded: true);
+            }
+        }
+    }
+
+    private double GetValueForLimit(ComponentRef component, LimitKind kind)
+    {
+        return (component.ComponentType, kind) switch
+        {
+            // Resistor
+            ("Resistor", LimitKind.OverCurrent) => GetResistorCurrent(new ResistorId(component.Id)),
+            ("Resistor", LimitKind.OverPower) => GetResistorPower(new ResistorId(component.Id)),
+            ("Resistor", LimitKind.OverVoltage) => GetVoltage(_resistors[new ResistorId(component.Id)].NodeA)
+                                                  - GetVoltage(_resistors[new ResistorId(component.Id)].NodeB),
+
+            // Voltage Source
+            ("VoltageSource", LimitKind.OverCurrent) => GetVoltageSourceCurrent(new VoltageSourceId(component.Id)),
+            ("VoltageSource", LimitKind.OverPower) => GetVoltageSourceCurrent(new VoltageSourceId(component.Id))
+                                                    * GetVoltageSourceValue(new VoltageSourceId(component.Id)),
+
+            // Current Source (current is fixed, but can check terminal voltage)
+            ("CurrentSource", LimitKind.OverVoltage) => GetVoltage(_currentSources[new CurrentSourceId(component.Id)].NodeIn)
+                                                       - GetVoltage(_currentSources[new CurrentSourceId(component.Id)].NodeOut),
+
+            // Capacitor
+            ("Capacitor", LimitKind.OverVoltage) => GetCapacitorVoltage(new CapacitorId(component.Id)),
+            ("Capacitor", LimitKind.OverCurrent) => GetCapacitorCurrent(new CapacitorId(component.Id)),
+
+            // Inductor
+            ("Inductor", LimitKind.OverCurrent) => GetInductorCurrent(new InductorId(component.Id)),
+            ("Inductor", LimitKind.OverVoltage) => GetVoltage(_inductors[new InductorId(component.Id)].NodeA)
+                                                  - GetVoltage(_inductors[new InductorId(component.Id)].NodeB),
+
+            // Diode
+            ("Diode", LimitKind.OverCurrent) => GetDiodeCurrent(new DiodeId(component.Id)),
+            ("Diode", LimitKind.OverVoltage) => GetDiodeVoltage(new DiodeId(component.Id)),
+
+            // Transformer (check primary or secondary current)
+            ("Transformer", LimitKind.OverCurrent) => GetTransformerCurrents(new TransformerId(component.Id)).Primary,
+
+            // Switch
+            ("Switch", LimitKind.OverCurrent) => GetSwitchCurrent(new SwitchId(component.Id)),
+
+            // VCVS
+            ("VCVS", LimitKind.OverCurrent) => GetVCVSCurrent(new VcvsId(component.Id)),
+
+            // VCCS
+            ("VCCS", LimitKind.OverCurrent) => GetVCCSCurrent(new VccsId(component.Id)),
+
+            // CCVS
+            ("CCVS", LimitKind.OverCurrent) => GetCCVSOutputCurrent(new CcvsId(component.Id)),
+
+            // CCCS
+            ("CCCS", LimitKind.OverCurrent) => GetCCCSOutputCurrent(new CccsId(component.Id)),
+
+            // Default: return 0 for unsupported combinations
+            _ => 0.0
+        };
+    }
+
+    private void FireLimitEvent(ComponentRef component, LimitKind kind, double threshold, double actualValue, bool isExceeded)
+    {
+        var evt = new LimitEvent
+        {
+            Component = component,
+            Kind = kind,
+            Threshold = threshold,
+            ActualValue = actualValue,
+            IsExceeded = isExceeded,
+            SimulationTime = _simulationTime
+        };
+
+        foreach (var handler in _limitHandlers)
+        {
+            try
+            {
+                handler(evt);
+            }
+            catch
+            {
+                // Swallow handler exceptions to prevent breaking simulation
+            }
+        }
+    }
+
+    private void ClearLimitsForComponent(ComponentRef component)
+    {
+        var keysToRemove = _limits.Keys.Where(k => k.Item1 == component).ToList();
+        foreach (var key in keysToRemove)
+        {
+            _limits.Remove(key);
+            _exceededLimits.Remove(key);
+        }
     }
 
     #endregion
