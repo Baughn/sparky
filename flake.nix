@@ -1,5 +1,5 @@
 {
-  description = "Underfall - A Vintage Story code mod";
+  description = "Sparky - Electrical Age for VS";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
