@@ -708,10 +708,12 @@ public class SimulationManager : ISimulation
 
     public double GetInductorCurrent(InductorId id)
     {
-        // Inductor current state is tracked internally by the Core component
-        // Return 0 for now - proper implementation would expose internal state
         if (!_inductors.ContainsKey(id))
             throw InvalidComponentException.ForInductor(id);
+
+        if (_physicalInductors.TryGetValue(id, out var phys))
+            return phys.CurrentThrough;
+
         return 0.0;
     }
 

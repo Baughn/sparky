@@ -300,6 +300,82 @@ public class ComponentMeasurementTests
 
     #endregion
 
+    #region Inductor Current Tests
+
+    [Test]
+    public void GetInductorCurrent_Charging_PositiveCurrent()
+    {
+        // RL charging circuit: current should build up over time
+        // 10V -- R(100) -- n1 -- L(0.1H) -- GND
+        var nPos = _sim.CreateNode();
+        var n1 = _sim.CreateNode();
+
+        _sim.AddVoltageSource(nPos, _sim.Ground, 10.0);
+        _sim.AddResistor(nPos, n1, 100.0);
+        var lId = _sim.AddInductor(n1, _sim.Ground, 0.1); // 100mH
+
+        // tau = L/R = 0.1/100 = 1ms
+        // After one time step, current should be building up
+        _sim.Step(0.0001); // 0.1ms
+
+        double current = _sim.GetInductorCurrent(lId);
+        Assert.That(current, Is.GreaterThan(0));
+    }
+
+    [Test]
+    public void GetInductorCurrent_SteadyState_MaxCurrent()
+    {
+        // After many time constants, inductor current reaches V/R
+        var nPos = _sim.CreateNode();
+        var n1 = _sim.CreateNode();
+
+        _sim.AddVoltageSource(nPos, _sim.Ground, 10.0);
+        _sim.AddResistor(nPos, n1, 100.0);
+        var lId = _sim.AddInductor(n1, _sim.Ground, 0.1);
+
+        // tau = L/R = 0.1/100 = 1ms
+        // After 5*tau (5ms), inductor is essentially fully energized
+        for (int i = 0; i < 50; i++)
+        {
+            _sim.Step(0.0001); // 0.1ms per step, 50 steps = 5ms
+        }
+
+        // Steady state: I = V/R = 10/100 = 0.1A
+        double current = _sim.GetInductorCurrent(lId);
+        Assert.That(current, Is.EqualTo(0.1).Within(Tolerances.Loose));
+    }
+
+    [Test]
+    public void GetInductorCurrent_DCOnly_ShortCircuit()
+    {
+        // With dt=0 (DC analysis), inductor is a short circuit
+        // Current = V/R_tiny (very large)
+        var n1 = _sim.CreateNode();
+
+        _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
+        _sim.AddResistor(n1, _sim.Ground, 100.0); // Load resistor
+        var lId = _sim.AddInductor(n1, _sim.Ground, 0.1);
+
+        _sim.Step(0); // DC analysis
+
+        // In DC, inductor acts as short circuit - but current depends on circuit
+        // With 10V and 100Ω in parallel with short, current through inductor is limited
+        // The short pulls node to 0V, so voltage source current flows through inductor
+        double current = _sim.GetInductorCurrent(lId);
+        // Should be non-zero (short circuit behavior)
+        Assert.That(Math.Abs(current), Is.GreaterThan(0.01));
+    }
+
+    [Test]
+    public void GetInductorCurrent_InvalidId_ThrowsInvalidComponentException()
+    {
+        var invalidId = new InductorId(999);
+
+        Assert.Throws<InvalidComponentException>(() => _sim.GetInductorCurrent(invalidId));
+    }
+
+    #endregion
+
     #region Invalid Component ID Tests
 
     [Test]

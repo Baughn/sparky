@@ -66,11 +66,18 @@ namespace Sparky.MNA.Core
 
         public override void UpdateState(double[] x, double dt)
         {
-            if (dt <= 0) return;
-
             double v1 = (Node1.Id == 0) ? 0 : x[Node1.Id];
             double v2 = (Node2.Id == 0) ? 0 : x[Node2.Id];
             double v = v1 - v2;
+
+            if (dt <= 0)
+            {
+                // DC Analysis: Inductor is modeled as tiny resistor (rMin = 1e-9)
+                // Current = V / rMin
+                const double rMin = 1e-9;
+                CurrentThrough = v / rMin;
+                return;
+            }
 
             // Backward Euler: I_n = (dt/L)*V_n + I_prev
             double gEq = dt / Inductance;
