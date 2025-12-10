@@ -7,10 +7,12 @@ namespace Sparky.Tests.MNA
     [TestFixture]
     public class ApiTests
     {
-        private SimulationManager _sim;
+        private SimulationManager _sim = null!;
 
-        public ApiTests() {
-          _sim = new SimulationManager();
+        [SetUp]
+        public void SetUp()
+        {
+            _sim = new SimulationManager();
         }
 
         [Test]
