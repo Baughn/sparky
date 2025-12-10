@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Api;
+using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests.MNA;
 
@@ -41,8 +42,8 @@ public class ApiVariableResistorTests
         // Total R = 30, I = 10/30 = 1/3 A
         // V(n1) = 10 - 10*(1/3) = 20/3 ≈ 6.67
         // V(n2) = 10/3 ≈ 3.33
-        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(20.0 / 3.0).Within(1e-6));
-        Assert.That(_sim.GetVoltage(n2), Is.EqualTo(10.0 / 3.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(20.0 / 3.0).Within(Tolerances.Voltage));
+        Assert.That(_sim.GetVoltage(n2), Is.EqualTo(10.0 / 3.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -57,14 +58,14 @@ public class ApiVariableResistorTests
         _sim.AddResistor(n1, _sim.Ground, 100.0);
 
         _sim.Step(0.001);
-        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(5.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(5.0).Within(Tolerances.Voltage));
 
         // Update variable resistor - should use fast path (no rebuild)
         _sim.UpdateResistor(rVar, 300.0);
 
         _sim.Step(0.001);
         // New voltage: 10 * 100/(300+100) = 2.5V
-        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(2.5).Within(1e-6));
+        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(2.5).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -88,8 +89,8 @@ public class ApiVariableResistorTests
         Assert.That(_sim.IsNodeOptimized(n2), Is.True);
 
         // Values should still be correct via interpolation
-        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(20.0 / 3.0).Within(1e-6));
-        Assert.That(_sim.GetVoltage(n2), Is.EqualTo(10.0 / 3.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(20.0 / 3.0).Within(Tolerances.Voltage));
+        Assert.That(_sim.GetVoltage(n2), Is.EqualTo(10.0 / 3.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -121,8 +122,8 @@ public class ApiVariableResistorTests
 
         // Total R = 50, V should drop evenly
         // Each resistor drops 2V
-        Assert.That(_sim.GetVoltage(n2), Is.EqualTo(6.0).Within(1e-6));
-        Assert.That(_sim.GetVoltage(n3), Is.EqualTo(4.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(n2), Is.EqualTo(6.0).Within(Tolerances.Voltage));
+        Assert.That(_sim.GetVoltage(n3), Is.EqualTo(4.0).Within(Tolerances.Voltage));
     }
 
     #endregion
@@ -181,18 +182,18 @@ public class ApiVariableResistorTests
         _sim.AddResistor(n1, _sim.Ground, 100.0);
 
         _sim.Step(0.001);
-        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(5.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(5.0).Within(Tolerances.Voltage));
 
         // Simulate potentiometer sweep
         _sim.UpdateResistor(rVar, 50.0);
         _sim.Step(0.001);
         // V = 10 * 100/(50+100) = 6.67
-        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0 * 100.0 / 150.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0 * 100.0 / 150.0).Within(Tolerances.Voltage));
 
         _sim.UpdateResistor(rVar, 200.0);
         _sim.Step(0.001);
         // V = 10 * 100/(200+100) = 3.33
-        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0 * 100.0 / 300.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0 * 100.0 / 300.0).Within(Tolerances.Voltage));
     }
 
     #endregion

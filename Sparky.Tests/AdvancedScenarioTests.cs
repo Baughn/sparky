@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Api;
+using Sparky.Tests.TestHelpers;
 using System;
 
 namespace Sparky.Tests
@@ -259,11 +260,11 @@ namespace Sparky.Tests
             _sim.Step(0);  // DC solve
 
             double expectedOutput = V * ratio1 * ratio2;
-            Assert.That(_sim.GetVoltage(nT2Sec), Is.EqualTo(expectedOutput).Within(1e-6),
+            Assert.That(_sim.GetVoltage(nT2Sec), Is.EqualTo(expectedOutput).Within(Tolerances.Voltage),
                 "Cascaded transformers should multiply ratios");
 
             // Intermediate voltage should be V * ratio1
-            Assert.That(_sim.GetVoltage(nT1Sec), Is.EqualTo(V * ratio1).Within(1e-6),
+            Assert.That(_sim.GetVoltage(nT1Sec), Is.EqualTo(V * ratio1).Within(Tolerances.Voltage),
                 "First transformer output should be 20V");
         }
 

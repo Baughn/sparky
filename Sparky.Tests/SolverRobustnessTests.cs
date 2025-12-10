@@ -1,6 +1,7 @@
 using System;
 using NUnit.Framework;
 using Sparky.MNA.Core;
+using Sparky.Tests.TestHelpers;
 using CSparse.Storage;
 
 namespace Sparky.Tests
@@ -50,8 +51,8 @@ namespace Sparky.Tests
             circuit.AddComponent(new CurrentSource(n1, ground, 1.0));
 
             Assert.DoesNotThrow(() => circuit.Solve(0));
-            Assert.That(n1.Voltage, Is.EqualTo(-100.0).Within(1e-6));
-            Assert.That(ground.Voltage, Is.EqualTo(0.0).Within(1e-9));
+            Assert.That(n1.Voltage, Is.EqualTo(-100.0).Within(Tolerances.Voltage));
+            Assert.That(ground.Voltage, Is.EqualTo(0.0).Within(Tolerances.Current));
         }
 
         [Test]
@@ -80,9 +81,9 @@ namespace Sparky.Tests
 
             Assert.DoesNotThrow(() => circuit.Solve(0));
 
-            Assert.That(circuit.Ground.Voltage, Is.EqualTo(0.0).Within(1e-12));
-            Assert.That(n1.Voltage, Is.EqualTo(-1.0).Within(1e-6));
-            Assert.That(n2.Voltage, Is.EqualTo(1.0).Within(1e-6));
+            Assert.That(circuit.Ground.Voltage, Is.EqualTo(0.0).Within(Tolerances.Parameter));
+            Assert.That(n1.Voltage, Is.EqualTo(-1.0).Within(Tolerances.Voltage));
+            Assert.That(n2.Voltage, Is.EqualTo(1.0).Within(Tolerances.Voltage));
         }
     }
 }

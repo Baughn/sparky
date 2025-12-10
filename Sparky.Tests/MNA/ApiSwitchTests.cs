@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Api;
+using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests.MNA;
 
@@ -147,10 +148,10 @@ public class ApiSwitchTests
         // With closed switch (1e-9 ohms) in series with 100 ohms:
         // Current ~ 10V / 100 ohms = 0.1 A
         var current = _sim.GetSwitchCurrent(swId);
-        Assert.That(current, Is.EqualTo(0.1).Within(1e-6));
+        Assert.That(current, Is.EqualTo(0.1).Within(Tolerances.Voltage));
 
         // Voltage at n1 should be near 10V
-        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(1e-3));
+        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(Tolerances.Loose));
     }
 
     [Test]
@@ -171,7 +172,7 @@ public class ApiSwitchTests
         // Close switch
         _sim.SetSwitchState(swId, true);
         _sim.Step(0.001);
-        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(1e-3));
+        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(Tolerances.Loose));
 
         // Open switch again
         _sim.SetSwitchState(swId, false);

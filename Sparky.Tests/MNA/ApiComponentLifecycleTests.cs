@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Api;
+using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests.MNA
 {
@@ -28,7 +29,7 @@ namespace Sparky.Tests.MNA
 
             // Update
             _sim.UpdateCurrentSource(csId, 2.0);
-            Assert.That(_sim.GetCurrentSourceValue(csId), Is.EqualTo(2.0).Within(1e-6));
+            Assert.That(_sim.GetCurrentSourceValue(csId), Is.EqualTo(2.0).Within(Tolerances.Voltage));
 
             // Remove
             _sim.RemoveCurrentSource(csId);
@@ -42,7 +43,7 @@ namespace Sparky.Tests.MNA
             var n2 = _sim.CreateNode();
 
             var csId = _sim.AddCurrentSource(n1, n2, 0.5);
-            Assert.That(_sim.GetCurrentSourceValue(csId), Is.EqualTo(0.5).Within(1e-6));
+            Assert.That(_sim.GetCurrentSourceValue(csId), Is.EqualTo(0.5).Within(Tolerances.Voltage));
         }
 
         #endregion
@@ -61,7 +62,7 @@ namespace Sparky.Tests.MNA
 
             // Update
             _sim.UpdateCapacitor(capId, 2e-6);
-            Assert.That(_sim.GetCapacitance(capId), Is.EqualTo(2e-6).Within(1e-12));
+            Assert.That(_sim.GetCapacitance(capId), Is.EqualTo(2e-6).Within(Tolerances.Capacitance));
 
             // Remove
             _sim.RemoveCapacitor(capId);
@@ -75,7 +76,7 @@ namespace Sparky.Tests.MNA
             var n2 = _sim.CreateNode();
 
             var capId = _sim.AddCapacitor(n1, n2, 4.7e-6);
-            Assert.That(_sim.GetCapacitance(capId), Is.EqualTo(4.7e-6).Within(1e-12));
+            Assert.That(_sim.GetCapacitance(capId), Is.EqualTo(4.7e-6).Within(Tolerances.Capacitance));
         }
 
         [Test]
@@ -96,7 +97,7 @@ namespace Sparky.Tests.MNA
                 _sim.Step(0.001); // 1ms steps, total 100ms >> 5*RC
             }
 
-            Assert.That(_sim.GetCapacitorVoltage(capId), Is.EqualTo(10.0).Within(1e-3));
+            Assert.That(_sim.GetCapacitorVoltage(capId), Is.EqualTo(10.0).Within(Tolerances.Loose));
         }
 
         #endregion
@@ -115,7 +116,7 @@ namespace Sparky.Tests.MNA
 
             // Update
             _sim.UpdateInductor(indId, 2e-3);
-            Assert.That(_sim.GetInductance(indId), Is.EqualTo(2e-3).Within(1e-9));
+            Assert.That(_sim.GetInductance(indId), Is.EqualTo(2e-3).Within(Tolerances.Inductance));
 
             // Remove
             _sim.RemoveInductor(indId);
@@ -129,7 +130,7 @@ namespace Sparky.Tests.MNA
             var n2 = _sim.CreateNode();
 
             var indId = _sim.AddInductor(n1, n2, 10e-3);
-            Assert.That(_sim.GetInductance(indId), Is.EqualTo(10e-3).Within(1e-9));
+            Assert.That(_sim.GetInductance(indId), Is.EqualTo(10e-3).Within(Tolerances.Inductance));
         }
 
         #endregion
@@ -190,7 +191,7 @@ namespace Sparky.Tests.MNA
 
             // Update
             _sim.UpdateTransformer(xfmrId, 3.0);
-            Assert.That(_sim.GetTransformerRatio(xfmrId), Is.EqualTo(3.0).Within(1e-6));
+            Assert.That(_sim.GetTransformerRatio(xfmrId), Is.EqualTo(3.0).Within(Tolerances.Voltage));
 
             // Remove
             _sim.RemoveTransformer(xfmrId);
@@ -206,7 +207,7 @@ namespace Sparky.Tests.MNA
             var s2 = _sim.CreateNode();
 
             var xfmrId = _sim.AddTransformer(p1, p2, s1, s2, 0.5);
-            Assert.That(_sim.GetTransformerRatio(xfmrId), Is.EqualTo(0.5).Within(1e-6));
+            Assert.That(_sim.GetTransformerRatio(xfmrId), Is.EqualTo(0.5).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -230,8 +231,8 @@ namespace Sparky.Tests.MNA
 
             // Secondary voltage = 10V * 2 = 20V, current = 20V/100ohm = 0.2A
             // Primary current = 0.2A * 2 = 0.4A (power conservation)
-            Assert.That(Math.Abs(iSecondary), Is.EqualTo(0.2).Within(1e-3));
-            Assert.That(Math.Abs(iPrimary), Is.EqualTo(0.4).Within(1e-3));
+            Assert.That(Math.Abs(iSecondary), Is.EqualTo(0.2).Within(Tolerances.Loose));
+            Assert.That(Math.Abs(iPrimary), Is.EqualTo(0.4).Within(Tolerances.Loose));
         }
 
         #endregion

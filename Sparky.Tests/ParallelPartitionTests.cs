@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Api;
+using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests
 {
@@ -41,16 +42,16 @@ namespace Sparky.Tests
                 "Two disconnected circuits should create two partitions");
 
             // Verify Circuit 1 solved correctly: 10V / 2 = 5V at mid point
-            Assert.That(_sim.GetVoltage(n1Mid), Is.EqualTo(5.0).Within(1e-6),
+            Assert.That(_sim.GetVoltage(n1Mid), Is.EqualTo(5.0).Within(Tolerances.Voltage),
                 "Circuit 1 voltage divider should give 5V");
 
             // Verify Circuit 2 solved correctly: 5V * 300/(100+300) = 3.75V at mid point
-            Assert.That(_sim.GetVoltage(n2Mid), Is.EqualTo(3.75).Within(1e-6),
+            Assert.That(_sim.GetVoltage(n2Mid), Is.EqualTo(3.75).Within(Tolerances.Voltage),
                 "Circuit 2 voltage divider should give 3.75V");
 
             // Verify source voltages are independent
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(1e-6));
-            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(Tolerances.Voltage));
+            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(5.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -90,7 +91,7 @@ namespace Sparky.Tests
             // Verify all partitions solved correctly
             for (int i = 0; i < partitionCount; i++)
             {
-                Assert.That(_sim.GetVoltage(midNodes[i]), Is.EqualTo(expectedVoltages[i]).Within(1e-6),
+                Assert.That(_sim.GetVoltage(midNodes[i]), Is.EqualTo(expectedVoltages[i]).Within(Tolerances.Voltage),
                     $"Partition {i + 1} should solve correctly");
             }
         }
@@ -123,7 +124,7 @@ namespace Sparky.Tests
                 "Should have two partitions");
 
             // Verify linear partition solved correctly
-            Assert.That(_sim.GetVoltage(nLinearMid), Is.EqualTo(5.0).Within(1e-6),
+            Assert.That(_sim.GetVoltage(nLinearMid), Is.EqualTo(5.0).Within(Tolerances.Voltage),
                 "Linear circuit should solve correctly");
 
             // Verify nonlinear partition solved correctly (diode forward voltage ~0.6-0.8V)
@@ -161,8 +162,8 @@ namespace Sparky.Tests
 
             double v1Before = _sim.GetVoltage(n1);
             double v2Before = _sim.GetVoltage(n2);
-            Assert.That(v1Before, Is.EqualTo(10.0).Within(1e-6));
-            Assert.That(v2Before, Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(v1Before, Is.EqualTo(10.0).Within(Tolerances.Voltage));
+            Assert.That(v2Before, Is.EqualTo(5.0).Within(Tolerances.Voltage));
 
             // Connect the two partitions with a resistor
             _sim.AddResistor(n1, n2, 100.0);
@@ -175,9 +176,9 @@ namespace Sparky.Tests
 
             // Both nodes should still be at their respective source voltages
             // (since they're connected to voltage sources)
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(1e-6),
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(Tolerances.Voltage),
                 "Node 1 should stay at 10V (voltage source)");
-            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(5.0).Within(1e-6),
+            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(5.0).Within(Tolerances.Voltage),
                 "Node 2 should stay at 5V (voltage source)");
         }
     }

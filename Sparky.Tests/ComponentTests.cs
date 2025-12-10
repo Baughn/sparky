@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Core;
+using Sparky.Tests.TestHelpers;
 using System.Collections.Generic;
 
 namespace Sparky.Tests
@@ -24,7 +25,7 @@ namespace Sparky.Tests
 
             circuit.Solve(0);
 
-            Assert.That(n2.Voltage, Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(n2.Voltage, Is.EqualTo(5.0).Within(Tolerances.Voltage));
             Assert.That(circuit.LastIterations, Is.EqualTo(1));
         }
 
@@ -39,11 +40,11 @@ namespace Sparky.Tests
             circuit.AddComponent(source);
 
             circuit.Solve(0);
-            Assert.That(n1.Voltage, Is.EqualTo(10.0).Within(1e-6));
+            Assert.That(n1.Voltage, Is.EqualTo(10.0).Within(Tolerances.Voltage));
 
             source.Voltage = 5.0;
             circuit.Solve(0);
-            Assert.That(n1.Voltage, Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(n1.Voltage, Is.EqualTo(5.0).Within(Tolerances.Voltage));
             Assert.That(circuit.LastIterations, Is.EqualTo(1));
         }
 
@@ -71,7 +72,7 @@ namespace Sparky.Tests
 
             circuit.Solve(0);
 
-            Assert.That(n1.Voltage, Is.EqualTo(10.0 * 50.0 / 150.0).Within(1e-6));
+            Assert.That(n1.Voltage, Is.EqualTo(10.0 * 50.0 / 150.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -94,7 +95,7 @@ namespace Sparky.Tests
             double dt = 0.01;
             for(int i=0; i<100; i++) circuit.Solve(dt);
 
-            Assert.That(n1.Voltage, Is.EqualTo(10.0).Within(1e-3));
+            Assert.That(n1.Voltage, Is.EqualTo(10.0).Within(Tolerances.Loose));
         }
 
         [Test]
@@ -117,12 +118,12 @@ namespace Sparky.Tests
             circuit.AddComponent(r2);
 
             circuit.Solve(0);
-            Assert.That(nMid.Voltage, Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(nMid.Voltage, Is.EqualTo(5.0).Within(Tolerances.Voltage));
 
             r2.Resistance = 30.0;
 
             circuit.Solve(0);
-            Assert.That(nMid.Voltage, Is.EqualTo(10.0 * 30.0 / (10.0 + 30.0)).Within(1e-6));
+            Assert.That(nMid.Voltage, Is.EqualTo(10.0 * 30.0 / (10.0 + 30.0)).Within(Tolerances.Voltage));
             Assert.That(circuit.LastIterations, Is.EqualTo(1));
         }
 
@@ -146,7 +147,7 @@ namespace Sparky.Tests
             double dt = 0.01;
             for(int i=0; i<100; i++) circuit.Solve(dt);
 
-            Assert.That(n1.Voltage, Is.EqualTo(0.0).Within(1e-3));
+            Assert.That(n1.Voltage, Is.EqualTo(0.0).Within(Tolerances.Loose));
         }
 
         [Test]
@@ -243,7 +244,7 @@ namespace Sparky.Tests
             // In MNA convention, the auxiliary current is defined as current flowing
             // through the source from + to - terminal. For a source delivering power,
             // current enters + terminal from external circuit, so internal current is negative.
-            Assert.That(source.Current, Is.EqualTo(-0.1).Within(1e-6));
+            Assert.That(source.Current, Is.EqualTo(-0.1).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -278,7 +279,7 @@ namespace Sparky.Tests
 
             // Verify transformer currents are populated
             // Secondary current should be -PrimaryCurrent / ratio
-            Assert.That(transformer.SecondaryCurrent, Is.EqualTo(-transformer.PrimaryCurrent / 0.5).Within(1e-6));
+            Assert.That(transformer.SecondaryCurrent, Is.EqualTo(-transformer.PrimaryCurrent / 0.5).Within(Tolerances.Voltage));
         }
 
         [Test]

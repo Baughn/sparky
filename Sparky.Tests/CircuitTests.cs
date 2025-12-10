@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Core;
+using Sparky.Tests.TestHelpers;
 using System.Collections.Generic;
 
 namespace Sparky.Tests
@@ -40,8 +41,8 @@ namespace Sparky.Tests
 
             circuit.Solve(0);
 
-            NUnit.Framework.Assert.That(n1.Voltage, Is.EqualTo(10.0).Within(1e-6));
-            NUnit.Framework.Assert.That(n2.Voltage, Is.EqualTo(5.0).Within(1e-6));
+            NUnit.Framework.Assert.That(n1.Voltage, Is.EqualTo(10.0).Within(Tolerances.Voltage));
+            NUnit.Framework.Assert.That(n2.Voltage, Is.EqualTo(5.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -79,7 +80,7 @@ namespace Sparky.Tests
             {
                 var node = ladderNodes[i];
                 expected -= current * r;
-                Assert.That(node.Voltage, Is.EqualTo(expected).Within(1e-6));
+                Assert.That(node.Voltage, Is.EqualTo(expected).Within(Tolerances.Voltage));
             }
         }
 
@@ -117,7 +118,7 @@ namespace Sparky.Tests
             {
                 int nodeIndex = (int)step + 1; // ground=0, source=1
                 double expected = 12.0 - current * r * step;
-                Assert.That(circuit.Nodes[nodeIndex].Voltage, Is.EqualTo(expected).Within(1e-6));
+                Assert.That(circuit.Nodes[nodeIndex].Voltage, Is.EqualTo(expected).Within(Tolerances.Voltage));
             }
         }
     }

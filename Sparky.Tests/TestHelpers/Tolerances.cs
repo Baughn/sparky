@@ -31,6 +31,12 @@ public static class Tolerances
     public const double Parameter = 1e-12;
 
     /// <summary>
+    /// Moderate tolerance for transient simulations (1e-4).
+    /// Use when some numerical error accumulation is expected.
+    /// </summary>
+    public const double Moderate = 1e-4;
+
+    /// <summary>
     /// Loose tolerance for transient and nonlinear simulations (1e-3).
     /// Use when numerical errors accumulate over multiple timesteps.
     /// </summary>

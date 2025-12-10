@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Core;
+using Sparky.Tests.TestHelpers;
 using System.Linq;
 using System;
 
@@ -41,7 +42,7 @@ namespace Sparky.Tests
             double i_out1 = (v_n1 - 0) / R2;
             double i_out2 = (v_n1 - 0) / R3;
 
-            Assert.That(i_in, Is.EqualTo(i_out1 + i_out2).Within(1e-6));
+            Assert.That(i_in, Is.EqualTo(i_out1 + i_out2).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -68,7 +69,7 @@ namespace Sparky.Tests
             double v_r2 = n1.Voltage - n2.Voltage;
             double v_r3 = n2.Voltage - 0;
 
-            Assert.That(12.0, Is.EqualTo(v_r1 + v_r2 + v_r3).Within(1e-6));
+            Assert.That(12.0, Is.EqualTo(v_r1 + v_r2 + v_r3).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -98,7 +99,7 @@ namespace Sparky.Tests
             double p_consumed = i * i * R;
             double p_gen = V * i;
 
-            Assert.That(p_gen, Is.EqualTo(p_consumed).Within(1e-6));
+            Assert.That(p_gen, Is.EqualTo(p_consumed).Within(Tolerances.Voltage));
         }
     }
 }

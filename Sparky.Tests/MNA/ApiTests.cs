@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Api;
+using Sparky.Tests.TestHelpers;
 using System;
 
 namespace Sparky.Tests.MNA
@@ -29,9 +30,9 @@ namespace Sparky.Tests.MNA
 
             _sim.Step(0.1);
 
-            Assert.That(_sim.GetVoltage(nPos), Is.EqualTo(10.0).Within(1e-6));
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(5.0).Within(1e-6));
-            Assert.That(_sim.GetVoltage(nGnd), Is.EqualTo(0.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(nPos), Is.EqualTo(10.0).Within(Tolerances.Voltage));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(5.0).Within(Tolerances.Voltage));
+            Assert.That(_sim.GetVoltage(nGnd), Is.EqualTo(0.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -52,8 +53,8 @@ namespace Sparky.Tests.MNA
 
             _sim.Step(0.1);
 
-            Assert.That(_sim.GetVoltage(c1_Pos), Is.EqualTo(10.0).Within(1e-6));
-            Assert.That(_sim.GetVoltage(c2_Pos), Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(c1_Pos), Is.EqualTo(10.0).Within(Tolerances.Voltage));
+            Assert.That(_sim.GetVoltage(c2_Pos), Is.EqualTo(5.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -67,7 +68,7 @@ namespace Sparky.Tests.MNA
             var rId = _sim.AddResistor(nPos, nGnd, 10.0);
 
             _sim.Step(0.1);
-            Assert.That(_sim.GetVoltage(nPos), Is.EqualTo(10.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(nPos), Is.EqualTo(10.0).Within(Tolerances.Voltage));
 
             // Change R to 5 (doesn't change voltage of ideal source, but let's add a divider)
             // 10V -- R1 -- N1 -- R2 -- GND
@@ -81,12 +82,12 @@ namespace Sparky.Tests.MNA
             var r2 = _sim.AddResistor(n1, nGnd, 10.0);
 
             _sim.Step(0.1);
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(5.0).Within(Tolerances.Voltage));
 
             // Change R1 to 30. Total 40. V(N1) = 10 * 10/40 = 2.5
             _sim.UpdateResistor(r1, 30.0);
             _sim.Step(0.1);
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(2.5).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(2.5).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -102,7 +103,7 @@ namespace Sparky.Tests.MNA
             var r2 = _sim.AddResistor(n1, nGnd, 10.0);
 
             _sim.Step(0.1);
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(5.0).Within(Tolerances.Voltage));
 
             // Remove R2. N1 is now floating (connected to 10V via R1).
             // MNA might have issues with floating nodes if no path to ground?
@@ -111,7 +112,7 @@ namespace Sparky.Tests.MNA
 
             _sim.RemoveResistor(r2);
             _sim.Step(0.1);
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(Tolerances.Voltage));
         }
     }
 }

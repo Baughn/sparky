@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Api;
+using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests
 {
@@ -30,7 +31,7 @@ namespace Sparky.Tests
             Assert.DoesNotThrow(() => _sim.Step(0.001));
 
             // Orphan node should be at ground potential (0V)
-            Assert.That(_sim.GetVoltage(orphan), Is.EqualTo(0.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(orphan), Is.EqualTo(0.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -48,8 +49,8 @@ namespace Sparky.Tests
             _sim.Step(0.001);
 
             // No sources means all voltages should be 0
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(0.0).Within(1e-6));
-            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(0.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(0.0).Within(Tolerances.Voltage));
+            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(0.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -119,7 +120,7 @@ namespace Sparky.Tests
             Assert.DoesNotThrow(() => _sim.Step(0.001));
 
             // Source node should be at 10V
-            Assert.That(_sim.GetVoltage(nSource), Is.EqualTo(10.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(nSource), Is.EqualTo(10.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -168,8 +169,8 @@ namespace Sparky.Tests
             _sim.Step(0.001);
 
             // Standard voltage divider: V_mid = 10 * (1M / 2M) = 5V
-            Assert.That(_sim.GetVoltage(nMid), Is.EqualTo(5.0).Within(1e-6));
-            Assert.That(_sim.GetVoltage(nPos), Is.EqualTo(10.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(nMid), Is.EqualTo(5.0).Within(Tolerances.Voltage));
+            Assert.That(_sim.GetVoltage(nPos), Is.EqualTo(10.0).Within(Tolerances.Voltage));
         }
     }
 }

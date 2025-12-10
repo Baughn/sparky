@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Core;
+using Sparky.Tests.TestHelpers;
 using System;
 using System.Collections.Generic;
 
@@ -47,7 +48,7 @@ namespace Sparky.Tests
 
                 // Backward Euler discrete expectation: v_n = (v_{n-1} + alpha * V) / (1 + alpha)
                 expected = (expected + alpha * V) / denom;
-                Assert.That(n1.Voltage, Is.EqualTo(expected).Within(1e-3));
+                Assert.That(n1.Voltage, Is.EqualTo(expected).Within(Tolerances.Loose));
             }
 
             // Should be within 1% of final value after 5 tau
@@ -89,11 +90,11 @@ namespace Sparky.Tests
                 expectedCurrent = (expectedCurrent + (dt * V / L)) / denom;
 
                 double actualCurrent = (V - n1.Voltage) / R;
-                Assert.That(actualCurrent, Is.EqualTo(expectedCurrent).Within(1e-4));
+                Assert.That(actualCurrent, Is.EqualTo(expectedCurrent).Within(Tolerances.Moderate));
             }
 
-            Assert.That(expectedCurrent, Is.EqualTo(V / R).Within(1e-3));
-            Assert.That(n1.Voltage, Is.EqualTo(V - expectedCurrent * R).Within(1e-3));
+            Assert.That(expectedCurrent, Is.EqualTo(V / R).Within(Tolerances.Loose));
+            Assert.That(n1.Voltage, Is.EqualTo(V - expectedCurrent * R).Within(Tolerances.Loose));
         }
 
         [Test]
@@ -121,7 +122,7 @@ namespace Sparky.Tests
             {
                 circuit.Solve(dt1);
                 expected = (expected + alpha1 * V) / denom1;
-                Assert.That(n1.Voltage, Is.EqualTo(expected).Within(1e-4));
+                Assert.That(n1.Voltage, Is.EqualTo(expected).Within(Tolerances.Moderate));
             }
 
             double dt2 = 2e-4;
@@ -131,7 +132,7 @@ namespace Sparky.Tests
             {
                 circuit.Solve(dt2);
                 expected = (expected + alpha2 * V) / denom2;
-                Assert.That(n1.Voltage, Is.EqualTo(expected).Within(1e-4));
+                Assert.That(n1.Voltage, Is.EqualTo(expected).Within(Tolerances.Moderate));
             }
         }
 
@@ -154,13 +155,13 @@ namespace Sparky.Tests
 
             circuit.Solve(dt);
             expected += 0.1 * dt / 1e-3;
-            Assert.That(n1.Voltage, Is.EqualTo(expected).Within(1e-6));
+            Assert.That(n1.Voltage, Is.EqualTo(expected).Within(Tolerances.Voltage));
 
             source.Current = 0.05;
 
             circuit.Solve(dt);
             expected += 0.05 * dt / 1e-3;
-            Assert.That(n1.Voltage, Is.EqualTo(expected).Within(1e-6));
+            Assert.That(n1.Voltage, Is.EqualTo(expected).Within(Tolerances.Voltage));
         }
     }
 }

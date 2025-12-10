@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Core;
+using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests
 {
@@ -47,7 +48,7 @@ namespace Sparky.Tests
             // Diode is open, so no current flows. V_n1 should be equal to V_src (-10V)
             // Actually, leakage current is very small (Is = 1e-12).
             // V_n1 should be very close to -10V.
-            NUnit.Framework.Assert.That(n1.Voltage, Is.EqualTo(-10.0).Within(1e-3));
+            NUnit.Framework.Assert.That(n1.Voltage, Is.EqualTo(-10.0).Within(Tolerances.Loose));
             Assert.That(circuit.LastIterations, Is.GreaterThanOrEqualTo(2));
         }
     }

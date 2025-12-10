@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Core;
+using Sparky.Tests.TestHelpers;
 using System;
 
 namespace Sparky.Tests
@@ -41,7 +42,7 @@ namespace Sparky.Tests
             circuit.Solve(0);
             
             // Expect: V_sec = V_pri * Ratio = 10 * 2 = 20V
-            Assert.That(nSecTop.Voltage, Is.EqualTo(20.0).Within(1e-6));
+            Assert.That(nSecTop.Voltage, Is.EqualTo(20.0).Within(Tolerances.Voltage));
             
             // Power Check
             // P_out = V^2 / R = 400 / 100 = 4W
@@ -77,7 +78,7 @@ namespace Sparky.Tests
             src.Voltage = 120.0; // DC test at peak equivalent
             circuit.Solve(dt);
             
-            Assert.That(nSec.Voltage, Is.EqualTo(12.0).Within(1e-6));
+            Assert.That(nSec.Voltage, Is.EqualTo(12.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -114,7 +115,7 @@ namespace Sparky.Tests
             
             // V_sec = V_pri = 10V
             // V_nSecTop - V_nSecBot = 10V
-            Assert.That(nSecTop.Voltage - nSecBot.Voltage, Is.EqualTo(10.0).Within(1e-6));
+            Assert.That(nSecTop.Voltage - nSecBot.Voltage, Is.EqualTo(10.0).Within(Tolerances.Voltage));
             
             // Case 2: Inverted Polarity
             // Swap secondary connections in a new circuit or just re-verify logic.
@@ -139,7 +140,7 @@ namespace Sparky.Tests
             
             circuit.Solve(0);
             
-            Assert.That(nSecTop.Voltage - nSecBot.Voltage, Is.EqualTo(-10.0).Within(1e-6));
+            Assert.That(nSecTop.Voltage - nSecBot.Voltage, Is.EqualTo(-10.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -175,12 +176,12 @@ namespace Sparky.Tests
             double iPri = (nSrc.Voltage - vPri) / rSeries;
 
             // Voltage scales by n, current scales by n
-            Assert.That(vSec, Is.EqualTo(vPri * ratio).Within(1e-6));
-            Assert.That(iPri, Is.EqualTo(iSec * ratio).Within(1e-6));
+            Assert.That(vSec, Is.EqualTo(vPri * ratio).Within(Tolerances.Voltage));
+            Assert.That(iPri, Is.EqualTo(iSec * ratio).Within(Tolerances.Voltage));
 
             double pIn = vPri * iPri;
             double pOut = vSec * iSec;
-            Assert.That(pIn, Is.EqualTo(pOut).Within(1e-6));
+            Assert.That(pIn, Is.EqualTo(pOut).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -202,7 +203,7 @@ namespace Sparky.Tests
             circuit.Solve(0);
 
             double secDiff = nSecTop.Voltage - nSecBot.Voltage;
-            Assert.That(secDiff, Is.EqualTo(vPrimary * ratio).Within(1e-6));
+            Assert.That(secDiff, Is.EqualTo(vPrimary * ratio).Within(Tolerances.Voltage));
 
             // Swap secondary leads to check polarity inversion on a floating winding.
             circuit = new Circuit();
@@ -218,7 +219,7 @@ namespace Sparky.Tests
             circuit.Solve(0);
 
             secDiff = nSecTop.Voltage - nSecBot.Voltage;
-            Assert.That(secDiff, Is.EqualTo(-vPrimary * ratio).Within(1e-6));
+            Assert.That(secDiff, Is.EqualTo(-vPrimary * ratio).Within(Tolerances.Voltage));
         }
     }
 }

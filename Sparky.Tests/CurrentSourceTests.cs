@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Api;
+using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests
 {
@@ -26,7 +27,7 @@ namespace Sparky.Tests
 
             _sim.Step(0.001);
 
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -59,7 +60,7 @@ namespace Sparky.Tests
 
             _sim.Step(0.001);
 
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(20.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(20.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -81,7 +82,7 @@ namespace Sparky.Tests
 
             // Voltage should increase by approximately I*dt/C = 0.1V per step
             double expectedIncrease = 1.0 * dt / 1.0;
-            Assert.That(v2 - v1, Is.EqualTo(expectedIncrease).Within(1e-3));
+            Assert.That(v2 - v1, Is.EqualTo(expectedIncrease).Within(Tolerances.Loose));
         }
 
         [Test]
@@ -95,7 +96,7 @@ namespace Sparky.Tests
 
             _sim.Step(0.001);
 
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(0.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(0.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -108,11 +109,11 @@ namespace Sparky.Tests
             _sim.AddResistor(n1, _sim.Ground, 10.0);
 
             _sim.Step(0.001);
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(Tolerances.Voltage));
 
             _sim.UpdateCurrentSource(csId, 2.0);
             _sim.Step(0.001);
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(20.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(20.0).Within(Tolerances.Voltage));
         }
     }
 }

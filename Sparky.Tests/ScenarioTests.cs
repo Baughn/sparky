@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Core;
+using Sparky.Tests.TestHelpers;
 using System;
 
 namespace Sparky.Tests
@@ -31,12 +32,12 @@ namespace Sparky.Tests
             // Case 1: Open Circuit (Infinite Load) -> V_load = V_gen
             // (No resistor added)
             circuit.Solve(0);
-            Assert.That(nLoad.Voltage, Is.EqualTo(V_gen).Within(1e-6));
+            Assert.That(nLoad.Voltage, Is.EqualTo(V_gen).Within(Tolerances.Voltage));
 
             // Case 2: Heavy Load (e.g. 5 Ohms) -> V_load = V_gen * 5 / (5+5) = 50V
             circuit.AddComponent(new Resistor(nLoad, ground, 5.0));
             circuit.Solve(0);
-            Assert.That(nLoad.Voltage, Is.EqualTo(50.0).Within(1e-6));
+            Assert.That(nLoad.Voltage, Is.EqualTo(50.0).Within(Tolerances.Voltage));
         }
 
         [Test]

@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Core;
+using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests
 {
@@ -203,8 +204,8 @@ namespace Sparky.Tests
             Assert.That(largeCircuit.LastUsedDenseSolver, Is.False);
 
             // Both should produce the same result for the voltage divider
-            Assert.That(largeVoltage, Is.EqualTo(smallVoltage).Within(1e-6));
-            Assert.That(largeVoltage, Is.EqualTo(5.0).Within(1e-6)); // 10V / 2 = 5V
+            Assert.That(largeVoltage, Is.EqualTo(smallVoltage).Within(Tolerances.Voltage));
+            Assert.That(largeVoltage, Is.EqualTo(5.0).Within(Tolerances.Voltage)); // 10V / 2 = 5V
         }
     }
 }

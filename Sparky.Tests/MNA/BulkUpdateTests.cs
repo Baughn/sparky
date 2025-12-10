@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Api;
+using Sparky.Tests.TestHelpers;
 using System;
 
 namespace Sparky.Tests.MNA
@@ -63,8 +64,8 @@ namespace Sparky.Tests.MNA
             _sim.Step(0.001);
 
             // Voltage divider: V(n2) = 10 * 100/200 = 5V
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(1e-6));
-            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(Tolerances.Voltage));
+            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(5.0).Within(Tolerances.Voltage));
         }
 
         #endregion
@@ -97,7 +98,7 @@ namespace Sparky.Tests.MNA
 
             // Now step should work
             Assert.DoesNotThrow(() => _sim.Step(0.001));
-            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(5.0).Within(Tolerances.Voltage));
         }
 
         #endregion
@@ -157,10 +158,10 @@ namespace Sparky.Tests.MNA
 
             // Multiple steps after bulk update should all work
             _sim.Step(0.001);
-            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(5.0).Within(Tolerances.Voltage));
 
             _sim.Step(0.001);
-            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(5.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(5.0).Within(Tolerances.Voltage));
 
             // Should be able to modify and step again
             var r3 = _sim.AddResistor(n2, _sim.Ground, 100.0);
@@ -168,7 +169,7 @@ namespace Sparky.Tests.MNA
 
             // Now n2 has two 100ohm resistors in parallel (50ohm equiv)
             // V(n2) = 10 * 50/150 = 3.333V
-            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(10.0 / 3.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(10.0 / 3.0).Within(Tolerances.Voltage));
         }
 
         #endregion

@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Api;
+using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests.MNA
 {
@@ -35,9 +36,9 @@ namespace Sparky.Tests.MNA
 
             _sim.Step(0.1);
 
-            Assert.That(_sim.GetVoltage(nPos), Is.EqualTo(10.0).Within(1e-6));
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(20.0 / 3.0).Within(1e-6));
-            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(10.0 / 3.0).Within(1e-6));
+            Assert.That(_sim.GetVoltage(nPos), Is.EqualTo(10.0).Within(Tolerances.Voltage));
+            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(20.0 / 3.0).Within(Tolerances.Voltage));
+            Assert.That(_sim.GetVoltage(n2), Is.EqualTo(10.0 / 3.0).Within(Tolerances.Voltage));
         }
 
         [Test]
@@ -226,8 +227,8 @@ namespace Sparky.Tests.MNA
             double v2_opt = _sim.GetVoltage(n2);
 
             // Results should match within tolerance
-            Assert.That(v1_opt, Is.EqualTo(v1_noOpt).Within(1e-6));
-            Assert.That(v2_opt, Is.EqualTo(v2_noOpt).Within(1e-6));
+            Assert.That(v1_opt, Is.EqualTo(v1_noOpt).Within(Tolerances.Voltage));
+            Assert.That(v2_opt, Is.EqualTo(v2_noOpt).Within(Tolerances.Voltage));
         }
 
         [Test]

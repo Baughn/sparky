@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using Sparky.MNA.Api;
+using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests.MNA;
 
@@ -29,7 +30,7 @@ public class ControlledSourceTests
 
         _sim.Step(0.001);
 
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -45,7 +46,7 @@ public class ControlledSourceTests
 
         _sim.Step(0.001);
 
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -61,7 +62,7 @@ public class ControlledSourceTests
 
         _sim.Step(0.001);
 
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(5.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(5.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -77,7 +78,7 @@ public class ControlledSourceTests
 
         _sim.Step(0.001);
 
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(-10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(-10.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -96,7 +97,7 @@ public class ControlledSourceTests
         // 10V across 100Ω = 0.1A delivered to load
         // Current convention: positive = from outPos to outNeg internally
         // When delivering to external load, current is negative (exiting through load)
-        Assert.That(_sim.GetVCVSCurrent(vcvsId), Is.EqualTo(-0.1).Within(1e-6));
+        Assert.That(_sim.GetVCVSCurrent(vcvsId), Is.EqualTo(-0.1).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -118,8 +119,8 @@ public class ControlledSourceTests
 
         _sim.Step(0.001);
 
-        Assert.That(_sim.GetVoltage(nCtrlP), Is.EqualTo(5.0).Within(1e-6));
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nCtrlP), Is.EqualTo(5.0).Within(Tolerances.Voltage));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -133,11 +134,11 @@ public class ControlledSourceTests
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
 
         _sim.Step(0.001);
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
 
         _sim.UpdateVCVS(vcvsId, 2.0);
         _sim.Step(0.001);
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(20.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(20.0).Within(Tolerances.Voltage));
     }
 
     #endregion
@@ -160,7 +161,7 @@ public class ControlledSourceTests
 
         // I = gm * Vin = 0.01 * 1 = 0.01A
         // V = I * R = 0.01 * 100 = 1V
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(1.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(1.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -177,7 +178,7 @@ public class ControlledSourceTests
         _sim.Step(0.001);
 
         // I = 0.1 * 10 = 1A, V = 1 * 10 = 10V
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -193,7 +194,7 @@ public class ControlledSourceTests
         _sim.Step(0.001);
 
         // I = 0.02 * 5 = 0.1A
-        Assert.That(_sim.GetVCCSCurrent(vccsId), Is.EqualTo(0.1).Within(1e-6));
+        Assert.That(_sim.GetVCCSCurrent(vccsId), Is.EqualTo(0.1).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -207,12 +208,12 @@ public class ControlledSourceTests
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
 
         _sim.Step(0.001);
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
 
         _sim.UpdateVCCS(vccsId, 0.02);
         _sim.Step(0.001);
         // I = 0.02 * 10 = 0.2A, V = 0.2 * 100 = 20V
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(20.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(20.0).Within(Tolerances.Voltage));
     }
 
     #endregion
@@ -244,11 +245,11 @@ public class ControlledSourceTests
         _sim.Step(0.001);
 
         // Input current = 10V / 100Ω = 0.1A (CCCS input is a short)
-        Assert.That(_sim.GetCCCSInputCurrent(cccsId), Is.EqualTo(0.1).Within(1e-6));
+        Assert.That(_sim.GetCCCSInputCurrent(cccsId), Is.EqualTo(0.1).Within(Tolerances.Voltage));
         // Output current = gain * input = 1 * 0.1 = 0.1A
-        Assert.That(_sim.GetCCCSOutputCurrent(cccsId), Is.EqualTo(0.1).Within(1e-6));
+        Assert.That(_sim.GetCCCSOutputCurrent(cccsId), Is.EqualTo(0.1).Within(Tolerances.Voltage));
         // Output voltage = 0.1A * 100Ω = 10V
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -267,9 +268,9 @@ public class ControlledSourceTests
         _sim.Step(0.001);
 
         // Input current = 0.01A, gain = 10, output current = 0.1A
-        Assert.That(_sim.GetCCCSInputCurrent(cccsId), Is.EqualTo(0.01).Within(1e-6));
+        Assert.That(_sim.GetCCCSInputCurrent(cccsId), Is.EqualTo(0.01).Within(Tolerances.Voltage));
         // Output voltage = 0.1A * 100Ω = 10V
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -289,7 +290,7 @@ public class ControlledSourceTests
         _sim.Step(0.001);
 
         // nCtrl should be at ~0V (shorted to ground through CCCS input)
-        Assert.That(_sim.GetVoltage(nCtrl), Is.EqualTo(0.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nCtrl), Is.EqualTo(0.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -306,12 +307,12 @@ public class ControlledSourceTests
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
 
         _sim.Step(0.001);
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
 
         _sim.UpdateCCCS(cccsId, 2.0);
         _sim.Step(0.001);
         // Output current doubles => voltage doubles
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(20.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(20.0).Within(Tolerances.Voltage));
     }
 
     #endregion
@@ -335,8 +336,8 @@ public class ControlledSourceTests
         _sim.Step(0.001);
 
         // Input current = 0.1A, rm = 100 V/A, Vout = 0.1 * 100 = 10V
-        Assert.That(_sim.GetCCVSInputCurrent(ccvsId), Is.EqualTo(0.1).Within(1e-6));
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetCCVSInputCurrent(ccvsId), Is.EqualTo(0.1).Within(Tolerances.Voltage));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -355,7 +356,7 @@ public class ControlledSourceTests
         _sim.Step(0.001);
 
         // nCtrl should be at ~0V (shorted to ground through CCVS input)
-        Assert.That(_sim.GetVoltage(nCtrl), Is.EqualTo(0.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nCtrl), Is.EqualTo(0.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -375,7 +376,7 @@ public class ControlledSourceTests
 
         // Vout = 10V, through 100Ω => I = 0.1A delivered to load
         // Current convention: negative when delivering to external load
-        Assert.That(_sim.GetCCVSOutputCurrent(ccvsId), Is.EqualTo(-0.1).Within(1e-6));
+        Assert.That(_sim.GetCCVSOutputCurrent(ccvsId), Is.EqualTo(-0.1).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -392,12 +393,12 @@ public class ControlledSourceTests
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
 
         _sim.Step(0.001);
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
 
         _sim.UpdateCCVS(ccvsId, 200.0);
         _sim.Step(0.001);
         // Vout = 0.1A * 200 = 20V
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(20.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(20.0).Within(Tolerances.Voltage));
     }
 
     #endregion
@@ -415,7 +416,7 @@ public class ControlledSourceTests
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
 
         _sim.Step(0.001);
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
 
         _sim.RemoveVCVS(vcvsId);
         Assert.That(_sim.VCVSExists(vcvsId), Is.False);
@@ -423,7 +424,7 @@ public class ControlledSourceTests
         // nOut should now be floating or 0 (only connected to resistor)
         _sim.Step(0.001);
         // With just a resistor to ground and no source, voltage is 0
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(0.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(0.0).Within(Tolerances.Voltage));
     }
 
     [Test]
@@ -437,7 +438,7 @@ public class ControlledSourceTests
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
 
         _sim.Step(0.001);
-        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(nOut), Is.EqualTo(10.0).Within(Tolerances.Voltage));
 
         _sim.RemoveVCCS(vccsId);
         Assert.That(_sim.VCCSExists(vccsId), Is.False);
@@ -541,9 +542,9 @@ public class ControlledSourceTests
 
         _sim.Step(0.001);
 
-        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(Tolerances.Voltage));
         // n2 = 0.1A * 100Ω = 10V
-        Assert.That(_sim.GetVoltage(n2), Is.EqualTo(10.0).Within(1e-6));
+        Assert.That(_sim.GetVoltage(n2), Is.EqualTo(10.0).Within(Tolerances.Voltage));
     }
 
     #endregion
