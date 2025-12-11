@@ -254,4 +254,120 @@ public class GridBuilderTests
     }
 
     #endregion
+
+    #region Cell Removal Tests
+
+    [Test]
+    public void RemoveResistor_CircuitBecomesOpen()
+    {
+        // Build a complete circuit: GND - Battery - Resistor - GND
+        var builder = new GridBuilder()
+            .Ground(0, 0, rotation: 90)
+            .Battery(1, 0, voltage: 10.0)
+            .Resistor(2, 0, resistance: 100)
+            .Ground(3, 0, rotation: 270)
+            .Tick();
+
+        var battery = builder.GetCell<BatteryCell>(1, 0)!;
+        var initialCurrent = builder.Sim.Electrical.GetVoltageSourceCurrent(battery.VoltageSourceId!.Value);
+
+        // Verify circuit has current initially
+        Assert.That(Math.Abs(initialCurrent), Is.GreaterThan(0.05), "Circuit should have current initially");
+
+        // Remove the resistor
+        var resistorPos = new CellPos(BlockPos.Zero, BlockFacing.Up, new SubPos(2, 0));
+        builder.Grid.RemoveCell(resistorPos);
+
+        // Tick again to rebuild topology
+        builder.Tick();
+
+        // Circuit should now be open (battery floating on one side)
+        var finalCurrent = builder.Sim.Electrical.GetVoltageSourceCurrent(battery.VoltageSourceId!.Value);
+        Assert.That(Math.Abs(finalCurrent), Is.LessThan(1e-9), "Circuit should have no current after resistor removal");
+    }
+
+    [Test]
+    public void RemoveBattery_NoCurrentFlows()
+    {
+        // Build a complete circuit
+        var builder = new GridBuilder()
+            .Ground(0, 0, rotation: 90)
+            .Battery(1, 0, voltage: 10.0)
+            .Resistor(2, 0, resistance: 100)
+            .Ground(3, 0, rotation: 270)
+            .Tick();
+
+        // Remove the battery
+        var batteryPos = new CellPos(BlockPos.Zero, BlockFacing.Up, new SubPos(1, 0));
+        builder.Grid.RemoveCell(batteryPos);
+
+        // Tick again to rebuild topology
+        builder.Tick();
+
+        // Resistor should have no current (no voltage source)
+        var resistor = builder.GetCell<ResistorCell>(2, 0)!;
+        if (resistor.ResistorId.HasValue)
+        {
+            var current = builder.Sim.Electrical.GetResistorCurrent(resistor.ResistorId.Value);
+            Assert.That(Math.Abs(current), Is.LessThan(1e-9), "Resistor should have no current after battery removal");
+        }
+    }
+
+    [Test]
+    public void RemoveAndReplace_CircuitWorksAgain()
+    {
+        // Build a complete circuit
+        var builder = new GridBuilder()
+            .Ground(0, 0, rotation: 90)
+            .Battery(1, 0, voltage: 10.0)
+            .Resistor(2, 0, resistance: 100)
+            .Ground(3, 0, rotation: 270)
+            .Tick();
+
+        var battery = builder.GetCell<BatteryCell>(1, 0)!;
+        var initialCurrent = builder.Sim.Electrical.GetVoltageSourceCurrent(battery.VoltageSourceId!.Value);
+
+        // Remove the resistor
+        var resistorPos = new CellPos(BlockPos.Zero, BlockFacing.Up, new SubPos(2, 0));
+        builder.Grid.RemoveCell(resistorPos);
+        builder.Tick();
+
+        // Add a new resistor with different value
+        var newResistor = new ResistorCell { Resistance = 50.0 };
+        builder.Grid.PlaceCell(newResistor, resistorPos);
+        builder.Tick();
+
+        // Circuit should work again with new current: 10V / 50Ω = 0.2A
+        var finalCurrent = builder.Sim.Electrical.GetVoltageSourceCurrent(battery.VoltageSourceId!.Value);
+        Assert.That(Math.Abs(finalCurrent), Is.EqualTo(0.2).Within(0.01), "New resistor should conduct 0.2A");
+    }
+
+    [Test]
+    public void RemoveWire_BreaksCircuit()
+    {
+        // Build circuit with wire in the middle
+        var builder = new GridBuilder()
+            .Ground(0, 0, rotation: 90)
+            .Battery(1, 0, voltage: 10.0)
+            .Wire(2, 0)
+            .Resistor(3, 0, resistance: 100)
+            .Ground(4, 0, rotation: 270)
+            .Tick();
+
+        var battery = builder.GetCell<BatteryCell>(1, 0)!;
+        var initialCurrent = builder.Sim.Electrical.GetVoltageSourceCurrent(battery.VoltageSourceId!.Value);
+
+        Assert.That(Math.Abs(initialCurrent), Is.GreaterThan(0.05), "Circuit should have current initially");
+
+        // Remove the wire
+        var wirePos = new CellPos(BlockPos.Zero, BlockFacing.Up, new SubPos(2, 0));
+        builder.Grid.RemoveCell(wirePos);
+        builder.Tick();
+
+        // Circuit should be broken
+        var finalCurrent = builder.Sim.Electrical.GetVoltageSourceCurrent(battery.VoltageSourceId!.Value);
+        Assert.That(Math.Abs(finalCurrent), Is.LessThan(1e-9), "Circuit should be broken after wire removal");
+    }
+
+    #endregion
 }
