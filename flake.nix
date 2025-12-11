@@ -20,6 +20,7 @@
 
           # Development tools
           omnisharp-roslyn  # LSP for C#
+          csharpier         # Code formatter
         ];
 
         nativeBuildInputs = with pkgs; [
@@ -41,8 +42,9 @@
             echo ""
             echo "Available commands:"
             echo "  dotnet build           - Build the mod"
-            echo "  dotnet new --list      - List available templates"
-            echo "  dotnet new install ... - Install mod templates"
+            echo "  dotnet test            - Run tests"
+            echo "  ./format.sh            - Format all C# files"
+            echo "  ./format.sh --check    - Check formatting without changes"
             echo ""
 
             export VINTAGE_STORY="${pkgs.vintagestory}/share/vintagestory/"

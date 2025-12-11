@@ -110,7 +110,7 @@ public class ControlledSourceTests
         var nOut = _sim.CreateNode();
 
         _sim.AddVoltageSource(nSrc, _sim.Ground, 10.0);
-        _sim.AddResistor(nSrc, nCtrlP, 100.0);  // Divider: 10V -> 5V
+        _sim.AddResistor(nSrc, nCtrlP, 100.0); // Divider: 10V -> 5V
         _sim.AddResistor(nCtrlP, _sim.Ground, 100.0);
 
         // VCVS senses V(nCtrlP) - V(ground) = 5V, gain 2 => 10V output
@@ -237,7 +237,7 @@ public class ControlledSourceTests
 
         // Actually: 10V source to nIn, then resistor from nIn to CCCS control input
         var nCtrl = _sim.CreateNode();
-        _sim.AddResistor(nIn, nCtrl, 100.0);  // Creates 0.1A current
+        _sim.AddResistor(nIn, nCtrl, 100.0); // Creates 0.1A current
 
         var cccsId = _sim.AddCCCS(nCtrl, _sim.Ground, nOut, _sim.Ground, 1.0);
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
@@ -260,7 +260,7 @@ public class ControlledSourceTests
         var nOut = _sim.CreateNode();
 
         _sim.AddVoltageSource(nSrc, _sim.Ground, 1.0);
-        _sim.AddResistor(nSrc, nCtrl, 100.0);  // 1V/100Ω = 0.01A
+        _sim.AddResistor(nSrc, nCtrl, 100.0); // 1V/100Ω = 0.01A
 
         var cccsId = _sim.AddCCCS(nCtrl, _sim.Ground, nOut, _sim.Ground, 10.0);
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
@@ -328,7 +328,7 @@ public class ControlledSourceTests
         var nOut = _sim.CreateNode();
 
         _sim.AddVoltageSource(nSrc, _sim.Ground, 10.0);
-        _sim.AddResistor(nSrc, nCtrl, 100.0);  // 10V/100Ω = 0.1A
+        _sim.AddResistor(nSrc, nCtrl, 100.0); // 10V/100Ω = 0.1A
 
         var ccvsId = _sim.AddCCVS(nCtrl, _sim.Ground, nOut, _sim.Ground, 100.0);
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
@@ -367,7 +367,7 @@ public class ControlledSourceTests
         var nOut = _sim.CreateNode();
 
         _sim.AddVoltageSource(nSrc, _sim.Ground, 10.0);
-        _sim.AddResistor(nSrc, nCtrl, 100.0);  // 0.1A
+        _sim.AddResistor(nSrc, nCtrl, 100.0); // 0.1A
 
         var ccvsId = _sim.AddCCVS(nCtrl, _sim.Ground, nOut, _sim.Ground, 100.0);
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
@@ -387,7 +387,7 @@ public class ControlledSourceTests
         var nOut = _sim.CreateNode();
 
         _sim.AddVoltageSource(nSrc, _sim.Ground, 10.0);
-        _sim.AddResistor(nSrc, nCtrl, 100.0);  // 0.1A
+        _sim.AddResistor(nSrc, nCtrl, 100.0); // 0.1A
 
         var ccvsId = _sim.AddCCVS(nCtrl, _sim.Ground, nOut, _sim.Ground, 100.0);
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
@@ -482,8 +482,12 @@ public class ControlledSourceTests
     public void InvalidId_Throws()
     {
         Assert.Throws<InvalidComponentException>(() => _sim.GetVCVSGain(new VcvsId(999)));
-        Assert.Throws<InvalidComponentException>(() => _sim.GetVCCSTransconductance(new VccsId(999)));
-        Assert.Throws<InvalidComponentException>(() => _sim.GetCCVSTransresistance(new CcvsId(999)));
+        Assert.Throws<InvalidComponentException>(() =>
+            _sim.GetVCCSTransconductance(new VccsId(999))
+        );
+        Assert.Throws<InvalidComponentException>(() =>
+            _sim.GetCCVSTransresistance(new CcvsId(999))
+        );
         Assert.Throws<InvalidComponentException>(() => _sim.GetCCCSGain(new CccsId(999)));
     }
 
@@ -498,17 +502,17 @@ public class ControlledSourceTests
         // Inverting amplifier: Vout = -Rf/Rin * Vin
         // With Rin = 10k, Rf = 100k, Vin = 1V => Vout = -10V
         var nVin = _sim.CreateNode();
-        var nInv = _sim.CreateNode();  // Inverting input
+        var nInv = _sim.CreateNode(); // Inverting input
         var nOut = _sim.CreateNode();
 
-        _sim.AddVoltageSource(nVin, _sim.Ground, 1.0);  // 1V input
-        _sim.AddResistor(nVin, nInv, 10000.0);  // Rin = 10k
+        _sim.AddVoltageSource(nVin, _sim.Ground, 1.0); // 1V input
+        _sim.AddResistor(nVin, nInv, 10000.0); // Rin = 10k
 
         // Op-amp: Vout = A * (V+ - V-) where V+ = 0 (ground), V- = nInv
         // High gain VCVS sensing (Ground - nInv) = -nInv
-        _sim.AddVCVS(_sim.Ground, nInv, nOut, _sim.Ground, 100000.0);  // A = 100k
+        _sim.AddVCVS(_sim.Ground, nInv, nOut, _sim.Ground, 100000.0); // A = 100k
 
-        _sim.AddResistor(nInv, nOut, 100000.0);  // Rf = 100k
+        _sim.AddResistor(nInv, nOut, 100000.0); // Rf = 100k
 
         // Output load
         _sim.AddResistor(nOut, _sim.Ground, 10000.0);
@@ -534,11 +538,11 @@ public class ControlledSourceTests
 
         // VCVS: 5V * 2 = 10V at n1
         _sim.AddVCVS(nSrc, _sim.Ground, n1, _sim.Ground, 2.0);
-        _sim.AddResistor(n1, _sim.Ground, 1000.0);  // Load for VCVS
+        _sim.AddResistor(n1, _sim.Ground, 1000.0); // Load for VCVS
 
         // VCCS: 10V * 0.01 = 0.1A into n2
         _sim.AddVCCS(n1, _sim.Ground, n2, _sim.Ground, 0.01);
-        _sim.AddResistor(n2, _sim.Ground, 100.0);  // Load for VCCS
+        _sim.AddResistor(n2, _sim.Ground, 100.0); // Load for VCCS
 
         _sim.Step(0.001);
 
@@ -593,7 +597,7 @@ public class ControlledSourceTests
         var nOut = _sim.CreateNode();
 
         _sim.AddVoltageSource(nSrc, _sim.Ground, 10.0);
-        _sim.AddResistor(nSrc, nCtrl, 100.0);  // Creates 0.1A input current
+        _sim.AddResistor(nSrc, nCtrl, 100.0); // Creates 0.1A input current
         var cccsId = _sim.AddCCCS(nCtrl, _sim.Ground, nOut, _sim.Ground, 0.0);
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
 
@@ -615,7 +619,7 @@ public class ControlledSourceTests
         var nOut = _sim.CreateNode();
 
         _sim.AddVoltageSource(nSrc, _sim.Ground, 10.0);
-        _sim.AddResistor(nSrc, nCtrl, 100.0);  // Creates 0.1A input current
+        _sim.AddResistor(nSrc, nCtrl, 100.0); // Creates 0.1A input current
         var ccvsId = _sim.AddCCVS(nCtrl, _sim.Ground, nOut, _sim.Ground, 0.0);
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
 
@@ -638,8 +642,8 @@ public class ControlledSourceTests
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
 
-        _sim.AddVoltageSource(nCtrl, _sim.Ground, 1e-6);  // 1μV input
-        _sim.AddVCVS(nCtrl, _sim.Ground, nOut, _sim.Ground, 1e6);  // Gain = 1M
+        _sim.AddVoltageSource(nCtrl, _sim.Ground, 1e-6); // 1μV input
+        _sim.AddVCVS(nCtrl, _sim.Ground, nOut, _sim.Ground, 1e6); // Gain = 1M
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
 
         _sim.Step(0.001);
@@ -655,9 +659,9 @@ public class ControlledSourceTests
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
 
-        _sim.AddVoltageSource(nCtrl, _sim.Ground, 1e-3);  // 1mV input
-        _sim.AddVCCS(nCtrl, _sim.Ground, nOut, _sim.Ground, 1000.0);  // gm = 1000 S
-        _sim.AddResistor(nOut, _sim.Ground, 1.0);  // 1Ω load
+        _sim.AddVoltageSource(nCtrl, _sim.Ground, 1e-3); // 1mV input
+        _sim.AddVCCS(nCtrl, _sim.Ground, nOut, _sim.Ground, 1000.0); // gm = 1000 S
+        _sim.AddResistor(nOut, _sim.Ground, 1.0); // 1Ω load
 
         _sim.Step(0.001);
 
@@ -673,9 +677,9 @@ public class ControlledSourceTests
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
 
-        _sim.AddVoltageSource(nSrc, _sim.Ground, 0.001);  // 1mV
-        _sim.AddResistor(nSrc, nCtrl, 1.0);  // Creates 1mA = 0.001A
-        _sim.AddCCCS(nCtrl, _sim.Ground, nOut, _sim.Ground, 1000.0);  // Gain = 1000
+        _sim.AddVoltageSource(nSrc, _sim.Ground, 0.001); // 1mV
+        _sim.AddResistor(nSrc, nCtrl, 1.0); // Creates 1mA = 0.001A
+        _sim.AddCCCS(nCtrl, _sim.Ground, nOut, _sim.Ground, 1000.0); // Gain = 1000
         _sim.AddResistor(nOut, _sim.Ground, 1.0);
 
         _sim.Step(0.001);
@@ -692,9 +696,9 @@ public class ControlledSourceTests
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
 
-        _sim.AddVoltageSource(nSrc, _sim.Ground, 0.001);  // 1mV
-        _sim.AddResistor(nSrc, nCtrl, 1.0);  // Creates 1mA = 0.001A
-        _sim.AddCCVS(nCtrl, _sim.Ground, nOut, _sim.Ground, 1000.0);  // rm = 1000 V/A
+        _sim.AddVoltageSource(nSrc, _sim.Ground, 0.001); // 1mV
+        _sim.AddResistor(nSrc, nCtrl, 1.0); // Creates 1mA = 0.001A
+        _sim.AddCCVS(nCtrl, _sim.Ground, nOut, _sim.Ground, 1000.0); // rm = 1000 V/A
         _sim.AddResistor(nOut, _sim.Ground, 100.0);
 
         _sim.Step(0.001);
@@ -749,15 +753,15 @@ public class ControlledSourceTests
         var n2 = _sim.CreateNode();
 
         _sim.AddVoltageSource(nSrc, _sim.Ground, 1.0);
-        _sim.AddResistor(nSrc, nCtrl1, 100.0);  // Creates 0.01A
+        _sim.AddResistor(nSrc, nCtrl1, 100.0); // Creates 0.01A
 
         // Stage 1: current gain 10 -> 0.1A
         _sim.AddCCCS(nCtrl1, _sim.Ground, n1, _sim.Ground, 10.0);
-        _sim.AddResistor(n1, nCtrl2, 10.0);  // 0.1A through this resistor into stage 2
+        _sim.AddResistor(n1, nCtrl2, 10.0); // 0.1A through this resistor into stage 2
 
         // Stage 2: current gain 10 -> 1A
         _sim.AddCCCS(nCtrl2, _sim.Ground, n2, _sim.Ground, 10.0);
-        _sim.AddResistor(n2, _sim.Ground, 1.0);  // 1A * 1Ω = 1V
+        _sim.AddResistor(n2, _sim.Ground, 1.0); // 1A * 1Ω = 1V
 
         _sim.Step(0.001);
 
@@ -804,15 +808,15 @@ public class ControlledSourceTests
         var nFb = _sim.CreateNode();
         var nOut = _sim.CreateNode();
 
-        _sim.AddVoltageSource(nVin, _sim.Ground, 1.0);  // 1V input
+        _sim.AddVoltageSource(nVin, _sim.Ground, 1.0); // 1V input
 
         // High-gain VCVS sensing (Vin - Vfb)
         // Non-inverting: Vout = A * (V+ - V-) where V+ = Vin, V- = Vfb
-        _sim.AddVCVS(nVin, nFb, nOut, _sim.Ground, 10000.0);  // A = 10k
+        _sim.AddVCVS(nVin, nFb, nOut, _sim.Ground, 10000.0); // A = 10k
 
         // Feedback divider: nOut -- Rf(9k) -- nFb -- R1(1k) -- GND
-        _sim.AddResistor(nOut, nFb, 9000.0);   // Rf
-        _sim.AddResistor(nFb, _sim.Ground, 1000.0);  // R1
+        _sim.AddResistor(nOut, nFb, 9000.0); // Rf
+        _sim.AddResistor(nFb, _sim.Ground, 1000.0); // R1
 
         // Output load
         _sim.AddResistor(nOut, _sim.Ground, 10000.0);

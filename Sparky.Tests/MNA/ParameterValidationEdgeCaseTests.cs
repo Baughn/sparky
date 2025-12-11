@@ -27,7 +27,8 @@ public class ParameterValidationEdgeCaseTests
         var n2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddResistor(n1, n2, double.NaN));
+            _sim.AddResistor(n1, n2, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("resistance"));
     }
@@ -39,7 +40,8 @@ public class ParameterValidationEdgeCaseTests
         var n2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddResistor(n1, n2, double.PositiveInfinity));
+            _sim.AddResistor(n1, n2, double.PositiveInfinity)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("resistance"));
     }
@@ -51,7 +53,8 @@ public class ParameterValidationEdgeCaseTests
         var n2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddResistor(n1, n2, double.NegativeInfinity));
+            _sim.AddResistor(n1, n2, double.NegativeInfinity)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("resistance"));
     }
@@ -64,7 +67,8 @@ public class ParameterValidationEdgeCaseTests
         var rId = _sim.AddResistor(n1, n2, 100.0);
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.UpdateResistor(rId, double.NaN));
+            _sim.UpdateResistor(rId, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("resistance"));
     }
@@ -80,7 +84,8 @@ public class ParameterValidationEdgeCaseTests
         var n2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddCapacitor(n1, n2, double.NaN));
+            _sim.AddCapacitor(n1, n2, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("capacitance"));
     }
@@ -92,7 +97,8 @@ public class ParameterValidationEdgeCaseTests
         var n2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddCapacitor(n1, n2, double.PositiveInfinity));
+            _sim.AddCapacitor(n1, n2, double.PositiveInfinity)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("capacitance"));
     }
@@ -103,8 +109,7 @@ public class ParameterValidationEdgeCaseTests
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
-        var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddCapacitor(n1, n2, 0.0));
+        var ex = Assert.Throws<InvalidParameterException>(() => _sim.AddCapacitor(n1, n2, 0.0));
 
         Assert.That(ex!.ParameterName, Is.EqualTo("capacitance"));
     }
@@ -120,7 +125,8 @@ public class ParameterValidationEdgeCaseTests
         var n2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddInductor(n1, n2, double.NaN));
+            _sim.AddInductor(n1, n2, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("inductance"));
     }
@@ -132,7 +138,8 @@ public class ParameterValidationEdgeCaseTests
         var n2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddInductor(n1, n2, double.PositiveInfinity));
+            _sim.AddInductor(n1, n2, double.PositiveInfinity)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("inductance"));
     }
@@ -143,8 +150,7 @@ public class ParameterValidationEdgeCaseTests
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
-        var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddInductor(n1, n2, 0.0));
+        var ex = Assert.Throws<InvalidParameterException>(() => _sim.AddInductor(n1, n2, 0.0));
 
         Assert.That(ex!.ParameterName, Is.EqualTo("inductance"));
     }
@@ -159,7 +165,8 @@ public class ParameterValidationEdgeCaseTests
         var n1 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddVoltageSource(n1, _sim.Ground, double.NaN));
+            _sim.AddVoltageSource(n1, _sim.Ground, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("voltage"));
     }
@@ -170,7 +177,8 @@ public class ParameterValidationEdgeCaseTests
         var n1 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddVoltageSource(n1, _sim.Ground, double.PositiveInfinity));
+            _sim.AddVoltageSource(n1, _sim.Ground, double.PositiveInfinity)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("voltage"));
     }
@@ -183,7 +191,8 @@ public class ParameterValidationEdgeCaseTests
         _sim.AddResistor(n1, _sim.Ground, 100.0);
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.UpdateVoltageSource(vsId, double.NaN));
+            _sim.UpdateVoltageSource(vsId, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("voltage"));
     }
@@ -198,7 +207,8 @@ public class ParameterValidationEdgeCaseTests
         var n1 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddCurrentSource(_sim.Ground, n1, double.NaN));
+            _sim.AddCurrentSource(_sim.Ground, n1, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("current"));
     }
@@ -209,7 +219,8 @@ public class ParameterValidationEdgeCaseTests
         var n1 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddCurrentSource(_sim.Ground, n1, double.PositiveInfinity));
+            _sim.AddCurrentSource(_sim.Ground, n1, double.PositiveInfinity)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("current"));
     }
@@ -227,7 +238,8 @@ public class ParameterValidationEdgeCaseTests
         var s2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddTransformer(p1, p2, s1, s2, double.NaN));
+            _sim.AddTransformer(p1, p2, s1, s2, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("ratio"));
     }
@@ -241,7 +253,8 @@ public class ParameterValidationEdgeCaseTests
         var s2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddTransformer(p1, p2, s1, s2, double.PositiveInfinity));
+            _sim.AddTransformer(p1, p2, s1, s2, double.PositiveInfinity)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("ratio"));
     }
@@ -257,7 +270,8 @@ public class ParameterValidationEdgeCaseTests
         var n2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddVCVS(n1, _sim.Ground, n2, _sim.Ground, double.NaN));
+            _sim.AddVCVS(n1, _sim.Ground, n2, _sim.Ground, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("gain"));
     }
@@ -269,7 +283,8 @@ public class ParameterValidationEdgeCaseTests
         var n2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddVCCS(n1, _sim.Ground, n2, _sim.Ground, double.NaN));
+            _sim.AddVCCS(n1, _sim.Ground, n2, _sim.Ground, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("transconductance"));
     }
@@ -281,7 +296,8 @@ public class ParameterValidationEdgeCaseTests
         var n2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddCCVS(n1, _sim.Ground, n2, _sim.Ground, double.NaN));
+            _sim.AddCCVS(n1, _sim.Ground, n2, _sim.Ground, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("transresistance"));
     }
@@ -293,7 +309,8 @@ public class ParameterValidationEdgeCaseTests
         var n2 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.AddCCCS(n1, _sim.Ground, n2, _sim.Ground, double.NaN));
+            _sim.AddCCCS(n1, _sim.Ground, n2, _sim.Ground, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("gain"));
     }
@@ -343,7 +360,8 @@ public class ParameterValidationEdgeCaseTests
         var cId = _sim.AddCapacitor(n1, _sim.Ground, 1e-6);
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.SetCapacitorVoltage(cId, double.NaN));
+            _sim.SetCapacitorVoltage(cId, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("voltage"));
     }
@@ -355,7 +373,8 @@ public class ParameterValidationEdgeCaseTests
         var lId = _sim.AddInductor(n1, _sim.Ground, 1e-3);
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
-            _sim.SetInductorCurrent(lId, double.NaN));
+            _sim.SetInductorCurrent(lId, double.NaN)
+        );
 
         Assert.That(ex!.ParameterName, Is.EqualTo("current"));
     }

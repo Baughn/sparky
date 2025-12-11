@@ -39,7 +39,9 @@ public class PwmVoltageSource : TimeVaryingSource
         double vHigh,
         double vLow,
         double frequency,
-        double dutyCycle) : base(sim)
+        double dutyCycle
+    )
+        : base(sim)
     {
         VHigh = vHigh;
         VLow = vLow;

@@ -62,15 +62,17 @@ public class GameSimulation
     /// Creates a GameSimulation with default solvers.
     /// </summary>
     public GameSimulation(Grid grid)
-        : this(grid, new SimulationManager(), new ThermalSolverStub(), new KineticSolverStub())
-    {
-    }
+        : this(grid, new SimulationManager(), new ThermalSolverStub(), new KineticSolverStub()) { }
 
     /// <summary>
     /// Creates a GameSimulation with custom solvers (for testing).
     /// </summary>
-    public GameSimulation(Grid grid, ISimulation electrical,
-        IThermalSolver thermal, IKineticSolver kinetic)
+    public GameSimulation(
+        Grid grid,
+        ISimulation electrical,
+        IThermalSolver thermal,
+        IKineticSolver kinetic
+    )
     {
         _grid = grid;
         _electrical = electrical;

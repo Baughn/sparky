@@ -47,9 +47,8 @@ public class GridBuilder
     /// <summary>
     /// Creates a GridBuilder with default settings (Y=0, Face=Up).
     /// </summary>
-    public GridBuilder() : this(BlockFacing.Up, 0)
-    {
-    }
+    public GridBuilder()
+        : this(BlockFacing.Up, 0) { }
 
     /// <summary>
     /// Creates a GridBuilder with custom face and Y position.
@@ -162,7 +161,8 @@ public class GridBuilder
     /// <summary>
     /// Gets a typed cell at the given 2D position.
     /// </summary>
-    public T? GetCell<T>(int x, int z) where T : Cell
+    public T? GetCell<T>(int x, int z)
+        where T : Cell
     {
         return GetCell(x, z) as T;
     }
@@ -171,10 +171,7 @@ public class GridBuilder
     {
         // For 2D tablet mode, x and z map to SubPos.U and SubPos.V within a single block
         // This allows simple linear circuits to work with adjacency within one block face
-        var pos = new CellPos(
-            new BlockPos(0, _defaultY, 0),
-            _defaultFace,
-            new SubPos(x, z));
+        var pos = new CellPos(new BlockPos(0, _defaultY, 0), _defaultFace, new SubPos(x, z));
         _grid.PlaceCell(cell, pos, rotation);
         _cellsByPosition[(x, z)] = cell;
     }

@@ -28,9 +28,9 @@ public class ApiVariableResistorTests
         var n2 = _sim.CreateNode();
 
         _sim.AddVoltageSource(nPos, _sim.Ground, 10.0);
-        _sim.AddResistor(nPos, n1, 10.0);  // Regular
-        _sim.AddResistor(n1, n2, 10.0, isVariable: true);  // Variable
-        _sim.AddResistor(n2, _sim.Ground, 10.0);  // Regular
+        _sim.AddResistor(nPos, n1, 10.0); // Regular
+        _sim.AddResistor(n1, n2, 10.0, isVariable: true); // Variable
+        _sim.AddResistor(n2, _sim.Ground, 10.0); // Regular
 
         _sim.Step(0.001);
 
@@ -108,11 +108,11 @@ public class ApiVariableResistorTests
         var n4 = _sim.CreateNode();
 
         _sim.AddVoltageSource(nPos, _sim.Ground, 10.0);
-        _sim.AddResistor(nPos, n1, 10.0);  // R1
-        _sim.AddResistor(n1, n2, 10.0);    // R2
-        _sim.AddResistor(n2, n3, 10.0, isVariable: true);  // R3_var
-        _sim.AddResistor(n3, n4, 10.0);    // R4
-        _sim.AddResistor(n4, _sim.Ground, 10.0);  // R5
+        _sim.AddResistor(nPos, n1, 10.0); // R1
+        _sim.AddResistor(n1, n2, 10.0); // R2
+        _sim.AddResistor(n2, n3, 10.0, isVariable: true); // R3_var
+        _sim.AddResistor(n3, n4, 10.0); // R4
+        _sim.AddResistor(n4, _sim.Ground, 10.0); // R5
 
         _sim.Step(0.001);
 
@@ -139,9 +139,9 @@ public class ApiVariableResistorTests
         var n2 = _sim.CreateNode();
 
         _sim.AddVoltageSource(nPos, _sim.Ground, 10.0);
-        _sim.AddResistor(nPos, n1, 10.0);  // Default
-        _sim.AddResistor(n1, n2, 10.0);    // Default
-        _sim.AddResistor(n2, _sim.Ground, 10.0);  // Default
+        _sim.AddResistor(nPos, n1, 10.0); // Default
+        _sim.AddResistor(n1, n2, 10.0); // Default
+        _sim.AddResistor(n2, _sim.Ground, 10.0); // Default
 
         _sim.Step(0.001);
 
@@ -188,12 +188,18 @@ public class ApiVariableResistorTests
         _sim.UpdateResistor(rVar, 50.0);
         _sim.Step(0.001);
         // V = 10 * 100/(50+100) = 6.67
-        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0 * 100.0 / 150.0).Within(Tolerances.Voltage));
+        Assert.That(
+            _sim.GetVoltage(n1),
+            Is.EqualTo(10.0 * 100.0 / 150.0).Within(Tolerances.Voltage)
+        );
 
         _sim.UpdateResistor(rVar, 200.0);
         _sim.Step(0.001);
         // V = 10 * 100/(200+100) = 3.33
-        Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0 * 100.0 / 300.0).Within(Tolerances.Voltage));
+        Assert.That(
+            _sim.GetVoltage(n1),
+            Is.EqualTo(10.0 * 100.0 / 300.0).Within(Tolerances.Voltage)
+        );
     }
 
     #endregion

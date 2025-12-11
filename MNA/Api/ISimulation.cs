@@ -218,7 +218,13 @@ public interface ISimulation
 
     // VCCS (Voltage-Controlled Current Source)
     /// <summary>Adds a VCCS. Output current = transconductance × input voltage.</summary>
-    VccsId AddVCCS(NodeId ctrlPos, NodeId ctrlNeg, NodeId outPos, NodeId outNeg, double transconductance);
+    VccsId AddVCCS(
+        NodeId ctrlPos,
+        NodeId ctrlNeg,
+        NodeId outPos,
+        NodeId outNeg,
+        double transconductance
+    );
 
     /// <summary>Updates the VCCS transconductance.</summary>
     void UpdateVCCS(VccsId id, double transconductance);
@@ -237,7 +243,13 @@ public interface ISimulation
 
     // CCVS (Current-Controlled Voltage Source)
     /// <summary>Adds a CCVS. Output voltage = transresistance × input current. Input is short-circuited.</summary>
-    CcvsId AddCCVS(NodeId ctrlPos, NodeId ctrlNeg, NodeId outPos, NodeId outNeg, double transresistance);
+    CcvsId AddCCVS(
+        NodeId ctrlPos,
+        NodeId ctrlNeg,
+        NodeId outPos,
+        NodeId outNeg,
+        double transresistance
+    );
 
     /// <summary>Updates the CCVS transresistance.</summary>
     void UpdateCCVS(CcvsId id, double transresistance);
@@ -332,96 +344,120 @@ public interface ISimulation
     // Resistor Limits
     /// <summary>Sets a limit on a resistor.</summary>
     void SetResistorLimit(ResistorId id, LimitKind kind, LimitConfig config);
+
     /// <summary>Clears a limit from a resistor.</summary>
     void ClearResistorLimit(ResistorId id, LimitKind kind);
+
     /// <summary>Gets a limit config from a resistor, or null if not set.</summary>
     LimitConfig? GetResistorLimit(ResistorId id, LimitKind kind);
 
     // Voltage Source Limits
     /// <summary>Sets a limit on a voltage source.</summary>
     void SetVoltageSourceLimit(VoltageSourceId id, LimitKind kind, LimitConfig config);
+
     /// <summary>Clears a limit from a voltage source.</summary>
     void ClearVoltageSourceLimit(VoltageSourceId id, LimitKind kind);
+
     /// <summary>Gets a limit config from a voltage source, or null if not set.</summary>
     LimitConfig? GetVoltageSourceLimit(VoltageSourceId id, LimitKind kind);
 
     // Current Source Limits
     /// <summary>Sets a limit on a current source.</summary>
     void SetCurrentSourceLimit(CurrentSourceId id, LimitKind kind, LimitConfig config);
+
     /// <summary>Clears a limit from a current source.</summary>
     void ClearCurrentSourceLimit(CurrentSourceId id, LimitKind kind);
+
     /// <summary>Gets a limit config from a current source, or null if not set.</summary>
     LimitConfig? GetCurrentSourceLimit(CurrentSourceId id, LimitKind kind);
 
     // Capacitor Limits
     /// <summary>Sets a limit on a capacitor.</summary>
     void SetCapacitorLimit(CapacitorId id, LimitKind kind, LimitConfig config);
+
     /// <summary>Clears a limit from a capacitor.</summary>
     void ClearCapacitorLimit(CapacitorId id, LimitKind kind);
+
     /// <summary>Gets a limit config from a capacitor, or null if not set.</summary>
     LimitConfig? GetCapacitorLimit(CapacitorId id, LimitKind kind);
 
     // Inductor Limits
     /// <summary>Sets a limit on an inductor.</summary>
     void SetInductorLimit(InductorId id, LimitKind kind, LimitConfig config);
+
     /// <summary>Clears a limit from an inductor.</summary>
     void ClearInductorLimit(InductorId id, LimitKind kind);
+
     /// <summary>Gets a limit config from an inductor, or null if not set.</summary>
     LimitConfig? GetInductorLimit(InductorId id, LimitKind kind);
 
     // Diode Limits
     /// <summary>Sets a limit on a diode.</summary>
     void SetDiodeLimit(DiodeId id, LimitKind kind, LimitConfig config);
+
     /// <summary>Clears a limit from a diode.</summary>
     void ClearDiodeLimit(DiodeId id, LimitKind kind);
+
     /// <summary>Gets a limit config from a diode, or null if not set.</summary>
     LimitConfig? GetDiodeLimit(DiodeId id, LimitKind kind);
 
     // Transformer Limits
     /// <summary>Sets a limit on a transformer.</summary>
     void SetTransformerLimit(TransformerId id, LimitKind kind, LimitConfig config);
+
     /// <summary>Clears a limit from a transformer.</summary>
     void ClearTransformerLimit(TransformerId id, LimitKind kind);
+
     /// <summary>Gets a limit config from a transformer, or null if not set.</summary>
     LimitConfig? GetTransformerLimit(TransformerId id, LimitKind kind);
 
     // Switch Limits
     /// <summary>Sets a limit on a switch.</summary>
     void SetSwitchLimit(SwitchId id, LimitKind kind, LimitConfig config);
+
     /// <summary>Clears a limit from a switch.</summary>
     void ClearSwitchLimit(SwitchId id, LimitKind kind);
+
     /// <summary>Gets a limit config from a switch, or null if not set.</summary>
     LimitConfig? GetSwitchLimit(SwitchId id, LimitKind kind);
 
     // VCVS Limits
     /// <summary>Sets a limit on a VCVS.</summary>
     void SetVCVSLimit(VcvsId id, LimitKind kind, LimitConfig config);
+
     /// <summary>Clears a limit from a VCVS.</summary>
     void ClearVCVSLimit(VcvsId id, LimitKind kind);
+
     /// <summary>Gets a limit config from a VCVS, or null if not set.</summary>
     LimitConfig? GetVCVSLimit(VcvsId id, LimitKind kind);
 
     // VCCS Limits
     /// <summary>Sets a limit on a VCCS.</summary>
     void SetVCCSLimit(VccsId id, LimitKind kind, LimitConfig config);
+
     /// <summary>Clears a limit from a VCCS.</summary>
     void ClearVCCSLimit(VccsId id, LimitKind kind);
+
     /// <summary>Gets a limit config from a VCCS, or null if not set.</summary>
     LimitConfig? GetVCCSLimit(VccsId id, LimitKind kind);
 
     // CCVS Limits
     /// <summary>Sets a limit on a CCVS.</summary>
     void SetCCVSLimit(CcvsId id, LimitKind kind, LimitConfig config);
+
     /// <summary>Clears a limit from a CCVS.</summary>
     void ClearCCVSLimit(CcvsId id, LimitKind kind);
+
     /// <summary>Gets a limit config from a CCVS, or null if not set.</summary>
     LimitConfig? GetCCVSLimit(CcvsId id, LimitKind kind);
 
     // CCCS Limits
     /// <summary>Sets a limit on a CCCS.</summary>
     void SetCCCSLimit(CccsId id, LimitKind kind, LimitConfig config);
+
     /// <summary>Clears a limit from a CCCS.</summary>
     void ClearCCCSLimit(CccsId id, LimitKind kind);
+
     /// <summary>Gets a limit config from a CCCS, or null if not set.</summary>
     LimitConfig? GetCCCSLimit(CccsId id, LimitKind kind);
 

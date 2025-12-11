@@ -24,7 +24,7 @@ public class ResistorCell : Cell, IElectricalCell
     private static readonly FaceDirection[] PortDirections =
     {
         FaceDirection.Right,
-        FaceDirection.Left
+        FaceDirection.Left,
     };
 
     private ResistorId? _resistorId;
@@ -39,8 +39,7 @@ public class ResistorCell : Cell, IElectricalCell
         var worldRight = LocalToWorld(FaceDirection.Right);
         var worldLeft = LocalToWorld(FaceDirection.Left);
 
-        if (!ports.TryGetValue(worldRight, out _nodeA) ||
-            !ports.TryGetValue(worldLeft, out _nodeB))
+        if (!ports.TryGetValue(worldRight, out _nodeA) || !ports.TryGetValue(worldLeft, out _nodeB))
         {
             _hasComponents = false;
             return;

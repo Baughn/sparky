@@ -1,7 +1,7 @@
+using System;
 using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
-using System;
 
 namespace Sparky.Tests
 {
@@ -25,8 +25,8 @@ namespace Sparky.Tests
             circuit.AddComponent(new VoltageSource(nSrc, ground, V_gen));
             circuit.AddComponent(new Resistor(nSrc, nLoad, R_int));
 
-            // We need to simulate varying load. 
-            // Since we can't easily change topology, we'll create two separate circuits or 
+            // We need to simulate varying load.
+            // Since we can't easily change topology, we'll create two separate circuits or
             // just verify one point on the curve vs open circuit.
 
             // Case 1: Open Circuit (Infinite Load) -> V_load = V_gen
@@ -78,7 +78,7 @@ namespace Sparky.Tests
             // 2. Discharge
             // To simulate disconnect, we can set R to a very high value (Open switch)
             // But to simulate discharge, we connect a load.
-            // Let's modify the circuit by changing the source voltage to 0 (short to ground) 
+            // Let's modify the circuit by changing the source voltage to 0 (short to ground)
             // effectively discharging through the same resistor.
             src.Voltage = 0.0;
             // Note: This requires VoltageSource to have a public setter for Voltage.
@@ -132,7 +132,9 @@ namespace Sparky.Tests
                 }
             }
 
-            Console.WriteLine($"Rectifier: Max={maxVoltage}, Min={minVoltage}, Ripple={maxVoltage - minVoltage}");
+            Console.WriteLine(
+                $"Rectifier: Max={maxVoltage}, Min={minVoltage}, Ripple={maxVoltage - minVoltage}"
+            );
 
             // Peak should be close to Amplitude - DiodeDrop (~0.7V)
             Assert.That(maxVoltage, Is.EqualTo(amplitude - 0.7).Within(0.5));
@@ -197,18 +199,21 @@ namespace Sparky.Tests
             double time = 0;
 
             // 1. Start (Everything OFF)
-            for (int i = 0; i < 100; i++) circuit.Solve(dt); // 0.1s
+            for (int i = 0; i < 100; i++)
+                circuit.Solve(dt); // 0.1s
             Assert.That(nBus.Voltage, Is.LessThan(0.1));
 
             // 2. Turn ON Diesel Gen
             genRes.Resistance = 1.0; // Connect Gen
-            for (int i = 0; i < 400; i++) circuit.Solve(dt); // 0.4s
+            for (int i = 0; i < 400; i++)
+                circuit.Solve(dt); // 0.4s
             // Should charge to ~100V
             Assert.That(nBus.Voltage, Is.EqualTo(100.0).Within(1.0));
 
             // 3. Turn ON Lights
             loadSwitch.Resistance = 0.01; // Connect Load
-            for (int i = 0; i < 500; i++) circuit.Solve(dt); // 0.5s
+            for (int i = 0; i < 500; i++)
+                circuit.Solve(dt); // 0.5s
             // Voltage Sag: 100V * (10 / (10+1)) = 90.9V
             Assert.That(nBus.Voltage, Is.EqualTo(90.9).Within(1.0));
 

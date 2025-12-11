@@ -70,8 +70,11 @@ public class BlockPosTests
         foreach (var facing in BlockFacingExtensions.All)
         {
             var neighborThenBack = pos.Neighbor(facing).Neighbor(facing.Opposite());
-            Assert.That(neighborThenBack, Is.EqualTo(pos),
-                $"Going {facing} then {facing.Opposite()} should return to original");
+            Assert.That(
+                neighborThenBack,
+                Is.EqualTo(pos),
+                $"Going {facing} then {facing.Opposite()} should return to original"
+            );
         }
     }
 

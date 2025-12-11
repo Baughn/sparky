@@ -108,8 +108,7 @@ public class KineticSolverStub : IKineticSolver
 
     public bool ShaftExists(ShaftId id) => _shafts.Contains(id.Value);
 
-    public GearLinkId AddGearLink(ShaftId a, ShaftId b, double ratio)
-        => new GearLinkId(0); // Stub: doesn't track links
+    public GearLinkId AddGearLink(ShaftId a, ShaftId b, double ratio) => new GearLinkId(0); // Stub: doesn't track links
 
     public void RemoveGearLink(GearLinkId id) { }
 
@@ -131,10 +130,6 @@ public class KineticSolverStub : IKineticSolver
         _nextShaftId = 1;
     }
 
-    public DomainStats GetStats() => new(
-        NodeCount: _shafts.Count,
-        ComponentCount: 0,
-        Iterations: 0,
-        LastStepTimeMs: 0
-    );
+    public DomainStats GetStats() =>
+        new(NodeCount: _shafts.Count, ComponentCount: 0, Iterations: 0, LastStepTimeMs: 0);
 }

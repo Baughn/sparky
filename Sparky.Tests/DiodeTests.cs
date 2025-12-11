@@ -11,7 +11,7 @@ namespace Sparky.Tests
         {
             // 10V Source -> Resistor (1k) -> Node 1 -> Diode -> Ground
             // Expected: Node 1 approx 0.6V - 0.8V (Diode drop)
-            
+
             var circuit = new Circuit();
             var n1 = circuit.AddNode();
             var ground = circuit.Nodes[0];
@@ -33,7 +33,7 @@ namespace Sparky.Tests
         {
             // -10V Source -> Resistor (1k) -> Node 1 -> Diode -> Ground
             // Expected: Node 1 approx -10V (Diode is open circuit)
-            
+
             var circuit = new Circuit();
             var n1 = circuit.AddNode();
             var ground = circuit.Nodes[0];

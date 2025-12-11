@@ -23,8 +23,8 @@ public class BatteryCell : Cell, IElectricalCell
     // Positive on Right, Negative on Left (in local coordinates)
     private static readonly FaceDirection[] PortDirections =
     {
-        FaceDirection.Right,  // Positive terminal
-        FaceDirection.Left    // Negative terminal
+        FaceDirection.Right, // Positive terminal
+        FaceDirection.Left, // Negative terminal
     };
 
     private VoltageSourceId? _vsId;
@@ -40,8 +40,9 @@ public class BatteryCell : Cell, IElectricalCell
         var posWorld = LocalToWorld(FaceDirection.Right);
         var negWorld = LocalToWorld(FaceDirection.Left);
 
-        if (!ports.TryGetValue(posWorld, out _posNode) ||
-            !ports.TryGetValue(negWorld, out _negNode))
+        if (
+            !ports.TryGetValue(posWorld, out _posNode) || !ports.TryGetValue(negWorld, out _negNode)
+        )
         {
             _hasComponents = false;
             return;
@@ -91,7 +92,7 @@ public class BatteryCell : Cell, IElectricalCell
             CurrentMagnitude: (float)Math.Abs(current),
             CurrentFlowDirection: flowDir,
             PowerDissipation: 0, // Ideal source, no dissipation
-            ChargeLevel: 1.0f,   // "Full charge" for visualization
+            ChargeLevel: 1.0f, // "Full charge" for visualization
             IsActive: true
         );
     }

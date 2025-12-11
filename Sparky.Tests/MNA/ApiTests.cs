@@ -1,7 +1,7 @@
+using System;
 using NUnit.Framework;
 using Sparky.MNA.Api;
 using Sparky.Tests.TestHelpers;
-using System;
 
 namespace Sparky.Tests.MNA
 {

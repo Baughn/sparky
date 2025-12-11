@@ -1,8 +1,8 @@
+using System;
+using System.Linq;
 using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
-using System.Linq;
-using System;
 
 namespace Sparky.Tests
 {
@@ -16,7 +16,7 @@ namespace Sparky.Tests
             // Source -> R1 -> Node 1 -> R2 -> Ground
             //                        -> R3 -> Ground
             // Current in = Current out 1 + Current out 2
-            
+
             var circuit = new Circuit();
             var nSrc = circuit.AddNode();
             var n1 = circuit.AddNode();
@@ -51,7 +51,7 @@ namespace Sparky.Tests
             // Verify KVL around a loop.
             // Source -> R1 -> R2 -> R3 -> Ground
             // V_source = V_R1 + V_R2 + V_R3
-            
+
             var circuit = new Circuit();
             var nSrc = circuit.AddNode();
             var n1 = circuit.AddNode();
@@ -79,10 +79,10 @@ namespace Sparky.Tests
             // Source (10V) -> R (100) -> Ground
             // Power Gen = V * I = 10 * (10/100) = 1W
             // Power Consumed = I^2 * R = (0.1)^2 * 100 = 1W
-            
+
             // Note: We don't have a direct "GetPower()" method on components yet,
             // so we calculate it manually for this test.
-            
+
             var circuit = new Circuit();
             var nSrc = circuit.AddNode();
             var ground = circuit.Nodes[0];

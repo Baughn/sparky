@@ -53,8 +53,7 @@ public class ApiSwitchTests
     [Test]
     public void Switch_RemoveNonExistent_ThrowsInvalidComponentException()
     {
-        Assert.Throws<InvalidComponentException>(() =>
-            _sim.RemoveSwitch(new SwitchId(999)));
+        Assert.Throws<InvalidComponentException>(() => _sim.RemoveSwitch(new SwitchId(999)));
     }
 
     #endregion
@@ -308,36 +307,33 @@ public class ApiSwitchTests
         var n1 = _sim.CreateNode();
         var invalidNode = new NodeId(999);
 
-        Assert.Throws<InvalidNodeException>(() =>
-            _sim.AddSwitch(n1, invalidNode));
+        Assert.Throws<InvalidNodeException>(() => _sim.AddSwitch(n1, invalidNode));
     }
 
     [Test]
     public void Switch_GetStateNonExistent_ThrowsInvalidComponentException()
     {
-        Assert.Throws<InvalidComponentException>(() =>
-            _sim.GetSwitchState(new SwitchId(999)));
+        Assert.Throws<InvalidComponentException>(() => _sim.GetSwitchState(new SwitchId(999)));
     }
 
     [Test]
     public void Switch_SetStateNonExistent_ThrowsInvalidComponentException()
     {
         Assert.Throws<InvalidComponentException>(() =>
-            _sim.SetSwitchState(new SwitchId(999), true));
+            _sim.SetSwitchState(new SwitchId(999), true)
+        );
     }
 
     [Test]
     public void Switch_ToggleNonExistent_ThrowsInvalidComponentException()
     {
-        Assert.Throws<InvalidComponentException>(() =>
-            _sim.ToggleSwitch(new SwitchId(999)));
+        Assert.Throws<InvalidComponentException>(() => _sim.ToggleSwitch(new SwitchId(999)));
     }
 
     [Test]
     public void Switch_GetCurrentNonExistent_ThrowsInvalidComponentException()
     {
-        Assert.Throws<InvalidComponentException>(() =>
-            _sim.GetSwitchCurrent(new SwitchId(999)));
+        Assert.Throws<InvalidComponentException>(() => _sim.GetSwitchCurrent(new SwitchId(999)));
     }
 
     #endregion

@@ -88,8 +88,11 @@ namespace Sparky.Tests
                 // If it doesn't throw, the voltage will be some arbitrary value
                 // Just verify it's finite
                 var voltage = _sim.GetVoltage(nPos);
-                Assert.That(double.IsFinite(voltage), Is.True,
-                    "Conflicting voltage sources produced non-finite voltage");
+                Assert.That(
+                    double.IsFinite(voltage),
+                    Is.True,
+                    "Conflicting voltage sources produced non-finite voltage"
+                );
             }
             catch (System.InvalidOperationException)
             {
@@ -132,7 +135,7 @@ namespace Sparky.Tests
             var nCap = _sim.CreateNode();
 
             _sim.AddVoltageSource(nPos, _sim.Ground, 5.0);
-            _sim.AddResistor(nPos, nCap, 1e6);        // 1 MOhm
+            _sim.AddResistor(nPos, nCap, 1e6); // 1 MOhm
             _sim.AddCapacitor(nCap, _sim.Ground, 1e-12); // 1 pF
 
             // Time constant tau = RC = 1e6 * 1e-12 = 1e-6 s = 1 us
@@ -163,7 +166,7 @@ namespace Sparky.Tests
             var nMid = _sim.CreateNode();
 
             _sim.AddVoltageSource(nPos, _sim.Ground, 10.0);
-            _sim.AddResistor(nPos, nMid, 1e6);       // 1 MOhm
+            _sim.AddResistor(nPos, nMid, 1e6); // 1 MOhm
             _sim.AddResistor(nMid, _sim.Ground, 1e6); // 1 MOhm
 
             _sim.Step(0.001);

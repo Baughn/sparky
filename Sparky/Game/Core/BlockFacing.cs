@@ -24,7 +24,7 @@ public enum BlockFacing
     Up = 4,
 
     /// <summary>Negative Y direction (down).</summary>
-    Down = 5
+    Down = 5,
 }
 
 /// <summary>
@@ -34,12 +34,12 @@ public static class BlockFacingExtensions
 {
     private static readonly BlockFacing[] Opposites =
     {
-        BlockFacing.South,  // North -> South
-        BlockFacing.West,   // East -> West
-        BlockFacing.North,  // South -> North
-        BlockFacing.East,   // West -> East
-        BlockFacing.Down,   // Up -> Down
-        BlockFacing.Up      // Down -> Up
+        BlockFacing.South, // North -> South
+        BlockFacing.West, // East -> West
+        BlockFacing.North, // South -> North
+        BlockFacing.East, // West -> East
+        BlockFacing.Down, // Up -> Down
+        BlockFacing.Up, // Down -> Up
     };
 
     /// <summary>
@@ -60,16 +60,17 @@ public static class BlockFacingExtensions
     /// <summary>
     /// Returns the normal vector as (dx, dy, dz) integers.
     /// </summary>
-    public static (int dx, int dy, int dz) Normal(this BlockFacing facing) => facing switch
-    {
-        BlockFacing.North => (0, 0, -1),
-        BlockFacing.East => (1, 0, 0),
-        BlockFacing.South => (0, 0, 1),
-        BlockFacing.West => (-1, 0, 0),
-        BlockFacing.Up => (0, 1, 0),
-        BlockFacing.Down => (0, -1, 0),
-        _ => throw new ArgumentOutOfRangeException(nameof(facing))
-    };
+    public static (int dx, int dy, int dz) Normal(this BlockFacing facing) =>
+        facing switch
+        {
+            BlockFacing.North => (0, 0, -1),
+            BlockFacing.East => (1, 0, 0),
+            BlockFacing.South => (0, 0, 1),
+            BlockFacing.West => (-1, 0, 0),
+            BlockFacing.Up => (0, 1, 0),
+            BlockFacing.Down => (0, -1, 0),
+            _ => throw new ArgumentOutOfRangeException(nameof(facing)),
+        };
 
     /// <summary>
     /// All six facings in order: North, East, South, West, Up, Down.
@@ -81,7 +82,7 @@ public static class BlockFacingExtensions
         BlockFacing.South,
         BlockFacing.West,
         BlockFacing.Up,
-        BlockFacing.Down
+        BlockFacing.Down,
     };
 
     /// <summary>
@@ -92,6 +93,6 @@ public static class BlockFacingExtensions
         BlockFacing.North,
         BlockFacing.East,
         BlockFacing.South,
-        BlockFacing.West
+        BlockFacing.West,
     };
 }

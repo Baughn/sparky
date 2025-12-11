@@ -26,8 +26,15 @@ public class TimeVaryingSourceTests
     public void AcVoltageSource_AtTimeZero_ReturnsOffsetPlusSineOfPhase()
     {
         var n1 = _sim.CreateNode();
-        var ac = new AcVoltageSource(_sim, n1, _sim.Ground,
-            amplitude: 10.0, frequency: 1.0, phase: 0, offset: 0);
+        var ac = new AcVoltageSource(
+            _sim,
+            n1,
+            _sim.Ground,
+            amplitude: 10.0,
+            frequency: 1.0,
+            phase: 0,
+            offset: 0
+        );
 
         // At t=0 with phase=0: sin(0) = 0
         Assert.That(ac.GetValue(0), Is.EqualTo(0.0).Within(Tolerances.Voltage));
@@ -37,8 +44,7 @@ public class TimeVaryingSourceTests
     public void AcVoltageSource_AtQuarterPeriod_ReturnsPeakAmplitude()
     {
         var n1 = _sim.CreateNode();
-        var ac = new AcVoltageSource(_sim, n1, _sim.Ground,
-            amplitude: 10.0, frequency: 1.0);
+        var ac = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
 
         // At t=0.25 (quarter period of 1Hz): sin(π/2) = 1
         Assert.That(ac.GetValue(0.25), Is.EqualTo(10.0).Within(Tolerances.Voltage));
@@ -48,8 +54,14 @@ public class TimeVaryingSourceTests
     public void AcVoltageSource_WithOffset_AddsOffsetToWaveform()
     {
         var n1 = _sim.CreateNode();
-        var ac = new AcVoltageSource(_sim, n1, _sim.Ground,
-            amplitude: 10.0, frequency: 1.0, offset: 5.0);
+        var ac = new AcVoltageSource(
+            _sim,
+            n1,
+            _sim.Ground,
+            amplitude: 10.0,
+            frequency: 1.0,
+            offset: 5.0
+        );
 
         // At t=0.25: 5 + 10*sin(π/2) = 5 + 10 = 15
         Assert.That(ac.GetValue(0.25), Is.EqualTo(15.0).Within(Tolerances.Voltage));
@@ -60,8 +72,14 @@ public class TimeVaryingSourceTests
     {
         var n1 = _sim.CreateNode();
         // Phase = π/2 shifts the waveform by quarter period
-        var ac = new AcVoltageSource(_sim, n1, _sim.Ground,
-            amplitude: 10.0, frequency: 1.0, phase: Math.PI / 2);
+        var ac = new AcVoltageSource(
+            _sim,
+            n1,
+            _sim.Ground,
+            amplitude: 10.0,
+            frequency: 1.0,
+            phase: Math.PI / 2
+        );
 
         // At t=0 with phase=π/2: sin(π/2) = 1
         Assert.That(ac.GetValue(0), Is.EqualTo(10.0).Within(Tolerances.Voltage));
@@ -71,8 +89,7 @@ public class TimeVaryingSourceTests
     public void AcVoltageSource_Update_SetsVoltageToCurrentTime()
     {
         var n1 = _sim.CreateNode();
-        var ac = new AcVoltageSource(_sim, n1, _sim.Ground,
-            amplitude: 10.0, frequency: 1.0);
+        var ac = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
 
         // Add a load so the circuit is complete
         _sim.AddResistor(n1, _sim.Ground, 100.0);
@@ -93,8 +110,7 @@ public class TimeVaryingSourceTests
     public void AcVoltageSource_ParameterChange_AffectsNextUpdate()
     {
         var n1 = _sim.CreateNode();
-        var ac = new AcVoltageSource(_sim, n1, _sim.Ground,
-            amplitude: 10.0, frequency: 1.0);
+        var ac = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
 
         // Change amplitude mid-simulation
         ac.Amplitude = 20.0;
@@ -107,8 +123,7 @@ public class TimeVaryingSourceTests
     public void AcVoltageSource_Remove_RemovesFromSimulation()
     {
         var n1 = _sim.CreateNode();
-        var ac = new AcVoltageSource(_sim, n1, _sim.Ground,
-            amplitude: 10.0, frequency: 1.0);
+        var ac = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
 
         Assert.That(ac.Exists, Is.True);
 
@@ -126,8 +141,7 @@ public class TimeVaryingSourceTests
     public void AcCurrentSource_AtQuarterPeriod_ReturnsPeakAmplitude()
     {
         var n1 = _sim.CreateNode();
-        var ac = new AcCurrentSource(_sim, _sim.Ground, n1,
-            amplitude: 0.1, frequency: 1.0);
+        var ac = new AcCurrentSource(_sim, _sim.Ground, n1, amplitude: 0.1, frequency: 1.0);
 
         // At t=0.25 (quarter period of 1Hz): sin(π/2) = 1
         Assert.That(ac.GetValue(0.25), Is.EqualTo(0.1).Within(Tolerances.Current));
@@ -137,8 +151,7 @@ public class TimeVaryingSourceTests
     public void AcCurrentSource_Update_SetsCurrentToCurrentTime()
     {
         var n1 = _sim.CreateNode();
-        var ac = new AcCurrentSource(_sim, _sim.Ground, n1,
-            amplitude: 0.1, frequency: 1.0);
+        var ac = new AcCurrentSource(_sim, _sim.Ground, n1, amplitude: 0.1, frequency: 1.0);
 
         // Add a load so we can measure voltage
         _sim.AddResistor(n1, _sim.Ground, 100.0);
@@ -163,8 +176,15 @@ public class TimeVaryingSourceTests
     public void PwmVoltageSource_DuringOnPhase_ReturnsVHigh()
     {
         var n1 = _sim.CreateNode();
-        var pwm = new PwmVoltageSource(_sim, n1, _sim.Ground,
-            vHigh: 5.0, vLow: 0.0, frequency: 10.0, dutyCycle: 0.5);
+        var pwm = new PwmVoltageSource(
+            _sim,
+            n1,
+            _sim.Ground,
+            vHigh: 5.0,
+            vLow: 0.0,
+            frequency: 10.0,
+            dutyCycle: 0.5
+        );
 
         // Period = 0.1s, duty = 50%, so on for 0.05s
         // At t=0.02 (within first on phase)
@@ -175,8 +195,15 @@ public class TimeVaryingSourceTests
     public void PwmVoltageSource_DuringOffPhase_ReturnsVLow()
     {
         var n1 = _sim.CreateNode();
-        var pwm = new PwmVoltageSource(_sim, n1, _sim.Ground,
-            vHigh: 5.0, vLow: 0.0, frequency: 10.0, dutyCycle: 0.5);
+        var pwm = new PwmVoltageSource(
+            _sim,
+            n1,
+            _sim.Ground,
+            vHigh: 5.0,
+            vLow: 0.0,
+            frequency: 10.0,
+            dutyCycle: 0.5
+        );
 
         // Period = 0.1s, duty = 50%, so off after 0.05s
         // At t=0.07 (within off phase)
@@ -187,32 +214,53 @@ public class TimeVaryingSourceTests
     public void PwmVoltageSource_DutyCycle25Percent_OnForQuarterPeriod()
     {
         var n1 = _sim.CreateNode();
-        var pwm = new PwmVoltageSource(_sim, n1, _sim.Ground,
-            vHigh: 5.0, vLow: 0.0, frequency: 10.0, dutyCycle: 0.25);
+        var pwm = new PwmVoltageSource(
+            _sim,
+            n1,
+            _sim.Ground,
+            vHigh: 5.0,
+            vLow: 0.0,
+            frequency: 10.0,
+            dutyCycle: 0.25
+        );
 
         // Period = 0.1s, duty = 25%, so on for 0.025s
-        Assert.That(pwm.GetValue(0.02), Is.EqualTo(5.0).Within(Tolerances.Voltage));  // Still on
-        Assert.That(pwm.GetValue(0.03), Is.EqualTo(0.0).Within(Tolerances.Voltage));  // Now off
+        Assert.That(pwm.GetValue(0.02), Is.EqualTo(5.0).Within(Tolerances.Voltage)); // Still on
+        Assert.That(pwm.GetValue(0.03), Is.EqualTo(0.0).Within(Tolerances.Voltage)); // Now off
     }
 
     [Test]
     public void PwmVoltageSource_SecondPeriod_RepeatsPattern()
     {
         var n1 = _sim.CreateNode();
-        var pwm = new PwmVoltageSource(_sim, n1, _sim.Ground,
-            vHigh: 5.0, vLow: 0.0, frequency: 10.0, dutyCycle: 0.5);
+        var pwm = new PwmVoltageSource(
+            _sim,
+            n1,
+            _sim.Ground,
+            vHigh: 5.0,
+            vLow: 0.0,
+            frequency: 10.0,
+            dutyCycle: 0.5
+        );
 
         // Second period starts at t=0.1s
-        Assert.That(pwm.GetValue(0.12), Is.EqualTo(5.0).Within(Tolerances.Voltage));  // On phase
-        Assert.That(pwm.GetValue(0.17), Is.EqualTo(0.0).Within(Tolerances.Voltage));  // Off phase
+        Assert.That(pwm.GetValue(0.12), Is.EqualTo(5.0).Within(Tolerances.Voltage)); // On phase
+        Assert.That(pwm.GetValue(0.17), Is.EqualTo(0.0).Within(Tolerances.Voltage)); // Off phase
     }
 
     [Test]
     public void PwmVoltageSource_Update_TogglesBetweenHighAndLow()
     {
         var n1 = _sim.CreateNode();
-        var pwm = new PwmVoltageSource(_sim, n1, _sim.Ground,
-            vHigh: 5.0, vLow: 0.0, frequency: 100.0, dutyCycle: 0.5);
+        var pwm = new PwmVoltageSource(
+            _sim,
+            n1,
+            _sim.Ground,
+            vHigh: 5.0,
+            vLow: 0.0,
+            frequency: 100.0,
+            dutyCycle: 0.5
+        );
 
         // Add load
         _sim.AddResistor(n1, _sim.Ground, 100.0);
@@ -227,8 +275,10 @@ public class TimeVaryingSourceTests
             _sim.Step(1e-4);
 
             double v = _sim.GetVoltage(n1);
-            if (v > 4.0) sawHigh = true;
-            if (v < 1.0) sawLow = true;
+            if (v > 4.0)
+                sawHigh = true;
+            if (v < 1.0)
+                sawLow = true;
         }
 
         Assert.That(sawHigh, Is.True, "Should see high voltage during on phase");
@@ -246,10 +296,15 @@ public class TimeVaryingSourceTests
         var n2 = _sim.CreateNode();
 
         // Use same frequency so both are at predictable points
-        var ac1 = new AcVoltageSource(_sim, n1, _sim.Ground,
-            amplitude: 10.0, frequency: 1.0);
-        var ac2 = new AcVoltageSource(_sim, n2, _sim.Ground,
-            amplitude: 5.0, frequency: 1.0, phase: Math.PI / 2); // 90° phase shift
+        var ac1 = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
+        var ac2 = new AcVoltageSource(
+            _sim,
+            n2,
+            _sim.Ground,
+            amplitude: 5.0,
+            frequency: 1.0,
+            phase: Math.PI / 2
+        ); // 90° phase shift
 
         // Add loads
         _sim.AddResistor(n1, _sim.Ground, 100.0);
@@ -280,8 +335,7 @@ public class TimeVaryingSourceTests
     public void SourceUpdater_Remove_StopsUpdatingSource()
     {
         var n1 = _sim.CreateNode();
-        var ac = new AcVoltageSource(_sim, n1, _sim.Ground,
-            amplitude: 10.0, frequency: 1.0);
+        var ac = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
         _sim.AddResistor(n1, _sim.Ground, 100.0);
 
         var updater = new SourceUpdater();
@@ -318,8 +372,7 @@ public class TimeVaryingSourceTests
     public void SourceUpdater_UpdateAll_SkipsRemovedSources()
     {
         var n1 = _sim.CreateNode();
-        var ac = new AcVoltageSource(_sim, n1, _sim.Ground,
-            amplitude: 10.0, frequency: 1.0);
+        var ac = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
         _sim.AddResistor(n1, _sim.Ground, 100.0);
 
         var updater = new SourceUpdater();
@@ -343,8 +396,7 @@ public class TimeVaryingSourceTests
         var nAc = _sim.CreateNode();
         var nOut = _sim.CreateNode();
 
-        var ac = new AcVoltageSource(_sim, nAc, _sim.Ground,
-            amplitude: 10.0, frequency: 60.0);
+        var ac = new AcVoltageSource(_sim, nAc, _sim.Ground, amplitude: 10.0, frequency: 60.0);
 
         _sim.AddDiode(nAc, nOut);
         _sim.AddResistor(nOut, _sim.Ground, 1000.0);
@@ -358,7 +410,8 @@ public class TimeVaryingSourceTests
             _sim.Step(1e-5);
 
             double vOut = _sim.GetVoltage(nOut);
-            if (vOut < maxNegative) maxNegative = vOut;
+            if (vOut < maxNegative)
+                maxNegative = vOut;
         }
 
         // Output should never go significantly negative (diode blocks)
@@ -369,8 +422,15 @@ public class TimeVaryingSourceTests
     public void PwmVoltageSource_AverageVoltage_MatchesDutyCycle()
     {
         var n1 = _sim.CreateNode();
-        var pwm = new PwmVoltageSource(_sim, n1, _sim.Ground,
-            vHigh: 10.0, vLow: 0.0, frequency: 1000.0, dutyCycle: 0.3);
+        var pwm = new PwmVoltageSource(
+            _sim,
+            n1,
+            _sim.Ground,
+            vHigh: 10.0,
+            vLow: 0.0,
+            frequency: 1000.0,
+            dutyCycle: 0.3
+        );
 
         _sim.AddResistor(n1, _sim.Ground, 100.0);
 

@@ -108,8 +108,8 @@ public class Grid
     /// <summary>
     /// Gets the bound simulation, or throws if not bound.
     /// </summary>
-    public ISimulation Simulation => _simulation
-        ?? throw new InvalidOperationException("Grid is not bound to a simulation.");
+    public ISimulation Simulation =>
+        _simulation ?? throw new InvalidOperationException("Grid is not bound to a simulation.");
 
     /// <summary>
     /// Places a cell at the given position.
@@ -118,10 +118,16 @@ public class Grid
     public CellId PlaceCell(Cell cell, CellPos position, int rotation = 0)
     {
         if (!position.IsValid)
-            throw new ArgumentException($"Position {position} has invalid sub-position.", nameof(position));
+            throw new ArgumentException(
+                $"Position {position} has invalid sub-position.",
+                nameof(position)
+            );
 
         if (_cells.ContainsKey(position))
-            throw new ArgumentException($"Position {position} is already occupied.", nameof(position));
+            throw new ArgumentException(
+                $"Position {position} is already occupied.",
+                nameof(position)
+            );
 
         cell.Id = new CellId(_nextCellId++);
         cell.Position = position;
@@ -188,7 +194,8 @@ public class Grid
     /// </summary>
     public void RebuildTopology()
     {
-        if (_simulation == null) return;
+        if (_simulation == null)
+            return;
 
         using var _ = _simulation.BeginBulkUpdate();
 
@@ -211,8 +218,10 @@ public class Grid
         // This ensures ground nodes are established before other cells try to use them
         foreach (var (pos, cell) in _cells)
         {
-            if (cell.Type != CellType.Ground) continue;
-            if (cell.AsElectrical() is not { } elec) continue;
+            if (cell.Type != CellType.Ground)
+                continue;
+            if (cell.AsElectrical() is not { } elec)
+                continue;
 
             foreach (var localDir in elec.GetLocalPortDirections())
             {
@@ -225,8 +234,10 @@ public class Grid
         // Step 3b: Process Wire cells first (they merge all edges into one node)
         foreach (var (pos, cell) in _cells)
         {
-            if (cell.Type != CellType.Wire) continue;
-            if (cell.AsElectrical() is not { } elec) continue;
+            if (cell.Type != CellType.Wire)
+                continue;
+            if (cell.AsElectrical() is not { } elec)
+                continue;
 
             // Collect all edges for this wire
             var localDirs = elec.GetLocalPortDirections();
@@ -279,8 +290,10 @@ public class Grid
         // Step 3c: Process non-Wire cells
         foreach (var (pos, cell) in _cells)
         {
-            if (cell.Type == CellType.Wire) continue;  // Already processed
-            if (cell.AsElectrical() is not { } elec) continue;
+            if (cell.Type == CellType.Wire)
+                continue; // Already processed
+            if (cell.AsElectrical() is not { } elec)
+                continue;
 
             var ports = new Dictionary<FaceDirection, NodeId>();
             var localDirs = elec.GetLocalPortDirections();
@@ -299,8 +312,11 @@ public class Grid
                 {
                     // Check if neighbor at this edge is a ground cell (redundant but safe)
                     var neighborPos = GetNeighborPos(pos, worldDir);
-                    if (neighborPos.HasValue && _cells.TryGetValue(neighborPos.Value, out var neighbor)
-                        && neighbor.Type == CellType.Ground)
+                    if (
+                        neighborPos.HasValue
+                        && _cells.TryGetValue(neighborPos.Value, out var neighbor)
+                        && neighbor.Type == CellType.Ground
+                    )
                     {
                         ports[worldDir] = _simulation.Ground;
                         _edgeNodes[edge] = _simulation.Ground;
@@ -331,12 +347,13 @@ public class Grid
     {
         var states = new Dictionary<CellId, CellVisualState>();
 
-        if (_simulation == null) return states;
+        if (_simulation == null)
+            return states;
 
         foreach (var cell in _cells.Values)
         {
-            var visualState = cell.AsElectrical()?.ComputeVisualState(_simulation)
-                              ?? CellVisualState.Default;
+            var visualState =
+                cell.AsElectrical()?.ComputeVisualState(_simulation) ?? CellVisualState.Default;
             states[cell.Id] = visualState;
         }
 

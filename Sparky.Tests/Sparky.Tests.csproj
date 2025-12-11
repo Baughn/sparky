@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -19,5 +18,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Sparky.csproj" />
   </ItemGroup>
-
 </Project>

@@ -28,5 +28,5 @@ public enum LimitKind
     OverSpeed,
 
     /// <summary>Torque exceeds threshold.</summary>
-    OverTorque
+    OverTorque,
 }

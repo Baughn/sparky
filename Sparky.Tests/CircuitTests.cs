@@ -1,7 +1,7 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
-using System.Collections.Generic;
 
 namespace Sparky.Tests
 {
@@ -32,8 +32,8 @@ namespace Sparky.Tests
             var n2 = circuit.AddNode();
 
             var v1 = new VoltageSource(ground, n1, 10.0); // V_n1 - V_gnd = 10 -> V_n1 = 10
-                                                          // Wait, VoltageSource(n1, n2, V) means V_n1 - V_n2 = V.
-                                                          // So VoltageSource(n1, ground, 10) means V_n1 - 0 = 10 -> V_n1 = 10.
+            // Wait, VoltageSource(n1, n2, V) means V_n1 - V_n2 = V.
+            // So VoltageSource(n1, ground, 10) means V_n1 - 0 = 10 -> V_n1 = 10.
 
             circuit.AddComponent(new VoltageSource(n1, ground, 10.0));
             circuit.AddComponent(new Resistor(n1, n2, 100.0));
@@ -118,7 +118,10 @@ namespace Sparky.Tests
             {
                 int nodeIndex = (int)step + 1; // ground=0, source=1
                 double expected = 12.0 - current * r * step;
-                Assert.That(circuit.Nodes[nodeIndex].Voltage, Is.EqualTo(expected).Within(Tolerances.Voltage));
+                Assert.That(
+                    circuit.Nodes[nodeIndex].Voltage,
+                    Is.EqualTo(expected).Within(Tolerances.Voltage)
+                );
             }
         }
     }

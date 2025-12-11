@@ -32,7 +32,7 @@ namespace Sparky.MNA.Core
         /// <param name="outNeg">Negative output node (current enters here)</param>
         /// <param name="transconductance">Gain in A/V</param>
         public VCCS(Node ctrlPos, Node ctrlNeg, Node outPos, Node outNeg, double transconductance)
-            : base(outPos, outNeg)  // Node1/Node2 are output nodes
+            : base(outPos, outNeg) // Node1/Node2 are output nodes
         {
             ControlPos = ctrlPos;
             ControlNeg = ctrlNeg;
@@ -43,8 +43,8 @@ namespace Sparky.MNA.Core
         {
             int ctrlP = ControlPos.Id;
             int ctrlN = ControlNeg.Id;
-            int outP = Node1.Id;  // Output positive
-            int outN = Node2.Id;  // Output negative
+            int outP = Node1.Id; // Output positive
+            int outN = Node2.Id; // Output negative
 
             double gm = Transconductance;
 
@@ -63,14 +63,18 @@ namespace Sparky.MNA.Core
 
             if (outP != 0)
             {
-                if (ctrlP != 0) A.At(outP, ctrlP, -gm);
-                if (ctrlN != 0) A.At(outP, ctrlN, gm);
+                if (ctrlP != 0)
+                    A.At(outP, ctrlP, -gm);
+                if (ctrlN != 0)
+                    A.At(outP, ctrlN, gm);
             }
 
             if (outN != 0)
             {
-                if (ctrlP != 0) A.At(outN, ctrlP, gm);
-                if (ctrlN != 0) A.At(outN, ctrlN, -gm);
+                if (ctrlP != 0)
+                    A.At(outN, ctrlP, gm);
+                if (ctrlN != 0)
+                    A.At(outN, ctrlN, -gm);
             }
         }
     }

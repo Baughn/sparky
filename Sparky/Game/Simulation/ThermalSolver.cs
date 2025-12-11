@@ -104,8 +104,11 @@ public class ThermalSolverStub : IThermalSolver
 
     public bool NodeExists(ThermalNodeId id) => _nodes.Contains(id.Value);
 
-    public ConductionPathId AddConductionPath(ThermalNodeId a, ThermalNodeId b, double conductance)
-        => new ConductionPathId(0); // Stub: doesn't track paths
+    public ConductionPathId AddConductionPath(
+        ThermalNodeId a,
+        ThermalNodeId b,
+        double conductance
+    ) => new ConductionPathId(0); // Stub: doesn't track paths
 
     public void RemoveConductionPath(ConductionPathId id) { }
 
@@ -123,10 +126,6 @@ public class ThermalSolverStub : IThermalSolver
         _nextNodeId = 1;
     }
 
-    public DomainStats GetStats() => new(
-        NodeCount: _nodes.Count,
-        ComponentCount: 0,
-        Iterations: 0,
-        LastStepTimeMs: 0
-    );
+    public DomainStats GetStats() =>
+        new(NodeCount: _nodes.Count, ComponentCount: 0, Iterations: 0, LastStepTimeMs: 0);
 }

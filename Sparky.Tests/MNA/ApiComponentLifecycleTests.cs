@@ -29,7 +29,10 @@ namespace Sparky.Tests.MNA
 
             // Update
             _sim.UpdateCurrentSource(csId, 2.0);
-            Assert.That(_sim.GetCurrentSourceValue(csId), Is.EqualTo(2.0).Within(Tolerances.Voltage));
+            Assert.That(
+                _sim.GetCurrentSourceValue(csId),
+                Is.EqualTo(2.0).Within(Tolerances.Voltage)
+            );
 
             // Remove
             _sim.RemoveCurrentSource(csId);
@@ -43,7 +46,10 @@ namespace Sparky.Tests.MNA
             var n2 = _sim.CreateNode();
 
             var csId = _sim.AddCurrentSource(n1, n2, 0.5);
-            Assert.That(_sim.GetCurrentSourceValue(csId), Is.EqualTo(0.5).Within(Tolerances.Voltage));
+            Assert.That(
+                _sim.GetCurrentSourceValue(csId),
+                Is.EqualTo(0.5).Within(Tolerances.Voltage)
+            );
         }
 
         #endregion
@@ -62,7 +68,10 @@ namespace Sparky.Tests.MNA
 
             // Update
             _sim.UpdateCapacitor(capId, 2e-6);
-            Assert.That(_sim.GetCapacitance(capId), Is.EqualTo(2e-6).Within(Tolerances.Capacitance));
+            Assert.That(
+                _sim.GetCapacitance(capId),
+                Is.EqualTo(2e-6).Within(Tolerances.Capacitance)
+            );
 
             // Remove
             _sim.RemoveCapacitor(capId);
@@ -76,7 +85,10 @@ namespace Sparky.Tests.MNA
             var n2 = _sim.CreateNode();
 
             var capId = _sim.AddCapacitor(n1, n2, 4.7e-6);
-            Assert.That(_sim.GetCapacitance(capId), Is.EqualTo(4.7e-6).Within(Tolerances.Capacitance));
+            Assert.That(
+                _sim.GetCapacitance(capId),
+                Is.EqualTo(4.7e-6).Within(Tolerances.Capacitance)
+            );
         }
 
         [Test]
@@ -191,7 +203,10 @@ namespace Sparky.Tests.MNA
 
             // Update
             _sim.UpdateTransformer(xfmrId, 3.0);
-            Assert.That(_sim.GetTransformerRatio(xfmrId), Is.EqualTo(3.0).Within(Tolerances.Voltage));
+            Assert.That(
+                _sim.GetTransformerRatio(xfmrId),
+                Is.EqualTo(3.0).Within(Tolerances.Voltage)
+            );
 
             // Remove
             _sim.RemoveTransformer(xfmrId);
@@ -207,7 +222,10 @@ namespace Sparky.Tests.MNA
             var s2 = _sim.CreateNode();
 
             var xfmrId = _sim.AddTransformer(p1, p2, s1, s2, 0.5);
-            Assert.That(_sim.GetTransformerRatio(xfmrId), Is.EqualTo(0.5).Within(Tolerances.Voltage));
+            Assert.That(
+                _sim.GetTransformerRatio(xfmrId),
+                Is.EqualTo(0.5).Within(Tolerances.Voltage)
+            );
         }
 
         [Test]

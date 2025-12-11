@@ -1,7 +1,7 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
-using System.Collections.Generic;
 
 namespace Sparky.Tests
 {
@@ -81,7 +81,7 @@ namespace Sparky.Tests
             // DC Source -> Resistor -> Capacitor -> Ground
             // Steady state: Capacitor is open circuit. No current flows.
             // V_cap = V_source.
-            
+
             var circuit = new Circuit();
             var nSrc = circuit.AddNode();
             var n1 = circuit.AddNode();
@@ -93,7 +93,8 @@ namespace Sparky.Tests
 
             // Run for enough time to charge
             double dt = 0.01;
-            for(int i=0; i<100; i++) circuit.Solve(dt);
+            for (int i = 0; i < 100; i++)
+                circuit.Solve(dt);
 
             Assert.That(n1.Voltage, Is.EqualTo(10.0).Within(Tolerances.Loose));
         }
@@ -123,7 +124,10 @@ namespace Sparky.Tests
             r2.Resistance = 30.0;
 
             circuit.Solve(0);
-            Assert.That(nMid.Voltage, Is.EqualTo(10.0 * 30.0 / (10.0 + 30.0)).Within(Tolerances.Voltage));
+            Assert.That(
+                nMid.Voltage,
+                Is.EqualTo(10.0 * 30.0 / (10.0 + 30.0)).Within(Tolerances.Voltage)
+            );
             Assert.That(circuit.LastIterations, Is.EqualTo(1));
         }
 
@@ -145,7 +149,8 @@ namespace Sparky.Tests
 
             // Run for enough time to settle
             double dt = 0.01;
-            for(int i=0; i<100; i++) circuit.Solve(dt);
+            for (int i = 0; i < 100; i++)
+                circuit.Solve(dt);
 
             Assert.That(n1.Voltage, Is.EqualTo(0.0).Within(Tolerances.Loose));
         }
@@ -168,7 +173,8 @@ namespace Sparky.Tests
 
             // Charge for 5 time constants (should be ~99% charged)
             double dt = 0.001;
-            for (int i = 0; i < 5; i++) circuit.Solve(dt);
+            for (int i = 0; i < 5; i++)
+                circuit.Solve(dt);
             double v1 = nCap.Voltage;
 
             // Now increase capacitance and reset circuit - simulate by making new circuit
@@ -183,7 +189,8 @@ namespace Sparky.Tests
             circuit2.AddComponent(cap2);
 
             // Same time steps
-            for (int i = 0; i < 5; i++) circuit2.Solve(dt);
+            for (int i = 0; i < 5; i++)
+                circuit2.Solve(dt);
             double v2 = nCap2.Voltage;
 
             // Smaller capacitance should charge faster (higher voltage)
@@ -192,7 +199,8 @@ namespace Sparky.Tests
             // Now test mutable capacitance: change cap2 to match cap1
             cap2.Capacitance = 1e-6;
             // Reset by continuing to charge
-            for (int i = 0; i < 100; i++) circuit2.Solve(dt);
+            for (int i = 0; i < 100; i++)
+                circuit2.Solve(dt);
             Assert.That(nCap2.Voltage, Is.EqualTo(10.0).Within(0.1));
         }
 
@@ -214,14 +222,16 @@ namespace Sparky.Tests
 
             // Settle to steady state
             double dt = 0.0001;
-            for (int i = 0; i < 100; i++) circuit.Solve(dt);
+            for (int i = 0; i < 100; i++)
+                circuit.Solve(dt);
 
             // In steady state, inductor is short, so nInd should be ~0V
             Assert.That(nInd.Voltage, Is.EqualTo(0.0).Within(0.1));
 
             // Change inductance - should still eventually settle to same steady state
             ind.Inductance = 10e-3; // 10mH
-            for (int i = 0; i < 1000; i++) circuit.Solve(dt);
+            for (int i = 0; i < 1000; i++)
+                circuit.Solve(dt);
             Assert.That(nInd.Voltage, Is.EqualTo(0.0).Within(0.1));
         }
 
@@ -279,7 +289,10 @@ namespace Sparky.Tests
 
             // Verify transformer currents are populated
             // Secondary current should be -PrimaryCurrent / ratio
-            Assert.That(transformer.SecondaryCurrent, Is.EqualTo(-transformer.PrimaryCurrent / 0.5).Within(Tolerances.Voltage));
+            Assert.That(
+                transformer.SecondaryCurrent,
+                Is.EqualTo(-transformer.PrimaryCurrent / 0.5).Within(Tolerances.Voltage)
+            );
         }
 
         [Test]

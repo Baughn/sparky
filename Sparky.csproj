@@ -42,6 +42,10 @@
 
   <!-- Package the mod as a zip file after building -->
   <Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
-    <ZipDirectory DestinationFile="bin/$(TargetName).zip" SourceDirectory="$(TargetDir)" Overwrite="true" />
+    <ZipDirectory
+      DestinationFile="bin/$(TargetName).zip"
+      SourceDirectory="$(TargetDir)"
+      Overwrite="true"
+    />
   </Target>
 </Project>

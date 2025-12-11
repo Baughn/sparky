@@ -35,7 +35,10 @@ public class EnergyTests
         _sim.Step(0.001); // 1ms
 
         double expectedEnergy = 1.0 * 0.001; // 1W × 1ms = 0.001J
-        Assert.That(_sim.GetResistorEnergy(r), Is.EqualTo(expectedEnergy).Within(Tolerances.Energy));
+        Assert.That(
+            _sim.GetResistorEnergy(r),
+            Is.EqualTo(expectedEnergy).Within(Tolerances.Energy)
+        );
     }
 
     [Test]
@@ -53,7 +56,10 @@ public class EnergyTests
         _sim.Step(0.001);
 
         double expectedEnergy = 1.0 * 0.001; // 1W × 1ms = 0.001J
-        Assert.That(_sim.GetVoltageSourceEnergy(vs), Is.EqualTo(expectedEnergy).Within(Tolerances.Energy));
+        Assert.That(
+            _sim.GetVoltageSourceEnergy(vs),
+            Is.EqualTo(expectedEnergy).Within(Tolerances.Energy)
+        );
     }
 
     [Test]
@@ -72,7 +78,10 @@ public class EnergyTests
         }
 
         double expectedEnergy = 1.0 * 0.01; // 1W × 10ms = 0.01J
-        Assert.That(_sim.GetResistorEnergy(r), Is.EqualTo(expectedEnergy).Within(Tolerances.Energy * 10));
+        Assert.That(
+            _sim.GetResistorEnergy(r),
+            Is.EqualTo(expectedEnergy).Within(Tolerances.Energy * 10)
+        );
     }
 
     #endregion
@@ -213,7 +222,8 @@ public class EnergyTests
 
         _sim.Step(0.001);
 
-        double totalResistorEnergy = _sim.GetResistorEnergy(r1) + _sim.GetResistorEnergy(r2) + _sim.GetResistorEnergy(r3);
+        double totalResistorEnergy =
+            _sim.GetResistorEnergy(r1) + _sim.GetResistorEnergy(r2) + _sim.GetResistorEnergy(r3);
         double sourceEnergy = _sim.GetVoltageSourceEnergy(vs);
 
         // Total resistor energy should equal source energy

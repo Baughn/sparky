@@ -20,14 +20,16 @@ namespace Sparky.MNA.Core
         // The index of the extra equation in the matrix
         // private int _matrixIndex = -1; // Unused, using MatrixIndex from base
 
-        public VoltageSource(Node node1, Node node2, double voltage) : base(node1, node2)
+        public VoltageSource(Node node1, Node node2, double voltage)
+            : base(node1, node2)
         {
             Voltage = voltage;
         }
 
         public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
         {
-            if (MatrixIndex == -1) return; // Should not happen if BuildSystem called
+            if (MatrixIndex == -1)
+                return; // Should not happen if BuildSystem called
 
             int index = MatrixIndex;
             int n1 = Node1.Id;

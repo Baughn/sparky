@@ -25,10 +25,18 @@ public class CellPosHashTests
 
         // Verify neighbor calculation works
         var neighborRight = pos0.Sub.Neighbor(FaceDirection.Right);
-        Assert.That(neighborRight, Is.EqualTo(new SubPos(1, 0)), "Sub(0,0).Neighbor(Right) should be Sub(1,0)");
+        Assert.That(
+            neighborRight,
+            Is.EqualTo(new SubPos(1, 0)),
+            "Sub(0,0).Neighbor(Right) should be Sub(1,0)"
+        );
 
         var neighborLeft = pos1.Sub.Neighbor(FaceDirection.Left);
-        Assert.That(neighborLeft, Is.EqualTo(new SubPos(0, 0)), "Sub(1,0).Neighbor(Left) should be Sub(0,0)");
+        Assert.That(
+            neighborLeft,
+            Is.EqualTo(new SubPos(0, 0)),
+            "Sub(1,0).Neighbor(Left) should be Sub(0,0)"
+        );
 
         // Log for debugging
         TestContext.WriteLine($"pos0 = {pos0}, hash = {hash0}");
@@ -50,12 +58,19 @@ public class CellPosHashTests
 
         TestContext.WriteLine($"pos0 = {pos0}, hash = {pos0.GetHashCode()}");
         TestContext.WriteLine($"pos1 = {pos1}, hash = {pos1.GetHashCode()}");
-        TestContext.WriteLine($"edgeFromPos0 = (PosA={edgeFromPos0.PosA}, Dir={edgeFromPos0.Direction})");
-        TestContext.WriteLine($"edgeFromPos1 = (PosA={edgeFromPos1.PosA}, Dir={edgeFromPos1.Direction})");
+        TestContext.WriteLine(
+            $"edgeFromPos0 = (PosA={edgeFromPos0.PosA}, Dir={edgeFromPos0.Direction})"
+        );
+        TestContext.WriteLine(
+            $"edgeFromPos1 = (PosA={edgeFromPos1.PosA}, Dir={edgeFromPos1.Direction})"
+        );
 
         // CRITICAL: Both edges should be EQUAL since they represent the same boundary
-        Assert.That(edgeFromPos0, Is.EqualTo(edgeFromPos1),
-            "Edge from pos0->Right should equal edge from pos1->Left");
+        Assert.That(
+            edgeFromPos0,
+            Is.EqualTo(edgeFromPos1),
+            "Edge from pos0->Right should equal edge from pos1->Left"
+        );
     }
 
     [Test]
@@ -140,8 +155,7 @@ public class GridTests
 
         grid.PlaceCell(new TestCell(), pos);
 
-        Assert.Throws<ArgumentException>(() =>
-            grid.PlaceCell(new TestCell(), pos));
+        Assert.Throws<ArgumentException>(() => grid.PlaceCell(new TestCell(), pos));
     }
 
     [Test]
@@ -150,8 +164,7 @@ public class GridTests
         var grid = new Grid();
         var invalidPos = new CellPos(BlockPos.Zero, BlockFacing.Up, new SubPos(20, 0));
 
-        Assert.Throws<ArgumentException>(() =>
-            grid.PlaceCell(new TestCell(), invalidPos));
+        Assert.Throws<ArgumentException>(() => grid.PlaceCell(new TestCell(), invalidPos));
     }
 
     [Test]

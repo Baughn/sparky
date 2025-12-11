@@ -22,7 +22,7 @@ public class WireCell : Cell, IElectricalCell
         FaceDirection.Top,
         FaceDirection.Right,
         FaceDirection.Bottom,
-        FaceDirection.Left
+        FaceDirection.Left,
     };
 
     // The node shared by all ports (set during CreateComponents)

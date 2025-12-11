@@ -1,8 +1,8 @@
+using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
-using System;
-using System.Collections.Generic;
 
 namespace Sparky.Tests
 {
@@ -37,7 +37,7 @@ namespace Sparky.Tests
             double expected = 0.0;
 
             // First step: t=0. Capacitor is uncharged (0V).
-            // Actually, we need to initialize. 
+            // Actually, we need to initialize.
             // If we start with 0V across C, then at t=0+, V_c should start rising.
 
             // Run for 5 tau (5ms)

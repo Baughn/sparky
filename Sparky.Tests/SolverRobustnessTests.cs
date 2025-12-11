@@ -1,8 +1,8 @@
 using System;
+using CSparse.Storage;
 using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
-using CSparse.Storage;
 
 namespace Sparky.Tests
 {
@@ -11,7 +11,8 @@ namespace Sparky.Tests
     {
         private double _g = 1.0;
 
-        public TogglingConductance(Node n1, Node n2) : base(n1, n2) { }
+        public TogglingConductance(Node n1, Node n2)
+            : base(n1, n2) { }
 
         public override bool RequiresIteration => true;
 
@@ -26,13 +27,15 @@ namespace Sparky.Tests
             if (n1 != 0)
             {
                 A.At(n1, n1, _g);
-                if (n2 != 0) A.At(n1, n2, -_g);
+                if (n2 != 0)
+                    A.At(n1, n2, -_g);
             }
 
             if (n2 != 0)
             {
                 A.At(n2, n2, _g);
-                if (n1 != 0) A.At(n2, n1, -_g);
+                if (n1 != 0)
+                    A.At(n2, n1, -_g);
             }
         }
     }

@@ -1,7 +1,7 @@
+using System;
 using NUnit.Framework;
 using Sparky.MNA.Api;
 using Sparky.Tests.TestHelpers;
-using System;
 
 namespace Sparky.Tests.MNA
 {
@@ -186,17 +186,21 @@ namespace Sparky.Tests.MNA
 
             _sim.AddVoltageSource(nSrc, _sim.Ground, 10.0);
             _sim.AddResistor(nSrc, nCap, 100.0);
-            _sim.AddCapacitor(nCap, _sim.Ground, 1e-6);  // 1uF
+            _sim.AddCapacitor(nCap, _sim.Ground, 1e-6); // 1uF
 
             // Charge for a few time constants (tau = R*C = 100 * 1e-6 = 100us)
-            double dt = 1e-5;  // 10us
-            for (int i = 0; i < 100; i++)  // 1ms total, ~10 time constants
+            double dt = 1e-5; // 10us
+            for (int i = 0; i < 100; i++) // 1ms total, ~10 time constants
             {
                 _sim.Step(dt);
             }
 
             double vCapBefore = _sim.GetVoltage(nCap);
-            Assert.That(vCapBefore, Is.GreaterThan(9.0), "Capacitor should be nearly fully charged");
+            Assert.That(
+                vCapBefore,
+                Is.GreaterThan(9.0),
+                "Capacitor should be nearly fully charged"
+            );
 
             // Add another resistor to a different node (causes topology rebuild)
             var nOther = _sim.CreateNode();
@@ -206,8 +210,11 @@ namespace Sparky.Tests.MNA
             double vCapAfter = _sim.GetVoltage(nCap);
 
             // Capacitor voltage should be preserved across the rebuild
-            Assert.That(vCapAfter, Is.EqualTo(vCapBefore).Within(0.1),
-                "Capacitor state should be preserved across topology changes");
+            Assert.That(
+                vCapAfter,
+                Is.EqualTo(vCapBefore).Within(0.1),
+                "Capacitor state should be preserved across topology changes"
+            );
         }
 
         [Test]
@@ -220,11 +227,11 @@ namespace Sparky.Tests.MNA
 
             _sim.AddVoltageSource(nSrc, _sim.Ground, 10.0);
             _sim.AddResistor(nSrc, nInd, 10.0);
-            _sim.AddInductor(nInd, _sim.Ground, 1e-3);  // 1mH
+            _sim.AddInductor(nInd, _sim.Ground, 1e-3); // 1mH
 
             // Run until current builds up (tau = L/R = 1e-3/10 = 100us)
-            double dt = 1e-5;  // 10us
-            for (int i = 0; i < 100; i++)  // 1ms total, ~10 time constants
+            double dt = 1e-5; // 10us
+            for (int i = 0; i < 100; i++) // 1ms total, ~10 time constants
             {
                 _sim.Step(dt);
             }
@@ -232,9 +239,13 @@ namespace Sparky.Tests.MNA
             // At steady state, current = V/R = 10/10 = 1A
             // Check inductor current (V across R / R)
             double vInductor = _sim.GetVoltage(nInd);
-            double currentBefore = (10.0 - vInductor) / 10.0;  // Should be ~1A
+            double currentBefore = (10.0 - vInductor) / 10.0; // Should be ~1A
 
-            Assert.That(currentBefore, Is.GreaterThan(0.9), "Inductor current should be near steady state");
+            Assert.That(
+                currentBefore,
+                Is.GreaterThan(0.9),
+                "Inductor current should be near steady state"
+            );
 
             // Add another resistor to a different node (causes topology rebuild)
             var nOther = _sim.CreateNode();
@@ -245,8 +256,11 @@ namespace Sparky.Tests.MNA
             double currentAfter = (10.0 - vInductorAfter) / 10.0;
 
             // Inductor current should be preserved across the rebuild
-            Assert.That(currentAfter, Is.EqualTo(currentBefore).Within(0.1),
-                "Inductor state should be preserved across topology changes");
+            Assert.That(
+                currentAfter,
+                Is.EqualTo(currentBefore).Within(0.1),
+                "Inductor state should be preserved across topology changes"
+            );
         }
 
         #endregion

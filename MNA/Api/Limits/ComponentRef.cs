@@ -31,8 +31,7 @@ public readonly record struct ComponentRef
     public static ComponentRef From(InductorId id) =>
         new() { ComponentType = "Inductor", Id = id.Value };
 
-    public static ComponentRef From(DiodeId id) =>
-        new() { ComponentType = "Diode", Id = id.Value };
+    public static ComponentRef From(DiodeId id) => new() { ComponentType = "Diode", Id = id.Value };
 
     public static ComponentRef From(TransformerId id) =>
         new() { ComponentType = "Transformer", Id = id.Value };
@@ -40,15 +39,11 @@ public readonly record struct ComponentRef
     public static ComponentRef From(SwitchId id) =>
         new() { ComponentType = "Switch", Id = id.Value };
 
-    public static ComponentRef From(VcvsId id) =>
-        new() { ComponentType = "VCVS", Id = id.Value };
+    public static ComponentRef From(VcvsId id) => new() { ComponentType = "VCVS", Id = id.Value };
 
-    public static ComponentRef From(VccsId id) =>
-        new() { ComponentType = "VCCS", Id = id.Value };
+    public static ComponentRef From(VccsId id) => new() { ComponentType = "VCCS", Id = id.Value };
 
-    public static ComponentRef From(CcvsId id) =>
-        new() { ComponentType = "CCVS", Id = id.Value };
+    public static ComponentRef From(CcvsId id) => new() { ComponentType = "CCVS", Id = id.Value };
 
-    public static ComponentRef From(CccsId id) =>
-        new() { ComponentType = "CCCS", Id = id.Value };
+    public static ComponentRef From(CccsId id) => new() { ComponentType = "CCCS", Id = id.Value };
 }

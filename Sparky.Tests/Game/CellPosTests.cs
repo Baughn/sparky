@@ -65,12 +65,17 @@ public class CellPosTests
             var pos = new CellPos(block, facing, sub);
             var adjacent = pos.AdjacentBlockFace();
 
-            Assert.That(adjacent.Block, Is.EqualTo(block.Neighbor(facing)),
-                $"Adjacent block for {facing} should be neighbor in that direction");
-            Assert.That(adjacent.Face, Is.EqualTo(facing.Opposite()),
-                $"Adjacent face for {facing} should be opposite");
-            Assert.That(adjacent.Sub, Is.EqualTo(sub),
-                "Sub position should be preserved");
+            Assert.That(
+                adjacent.Block,
+                Is.EqualTo(block.Neighbor(facing)),
+                $"Adjacent block for {facing} should be neighbor in that direction"
+            );
+            Assert.That(
+                adjacent.Face,
+                Is.EqualTo(facing.Opposite()),
+                $"Adjacent face for {facing} should be opposite"
+            );
+            Assert.That(adjacent.Sub, Is.EqualTo(sub), "Sub position should be preserved");
         }
     }
 

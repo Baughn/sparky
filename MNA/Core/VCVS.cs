@@ -40,7 +40,7 @@ namespace Sparky.MNA.Core
         /// <param name="outNeg">Negative output node</param>
         /// <param name="gain">Voltage gain (dimensionless)</param>
         public VCVS(Node ctrlPos, Node ctrlNeg, Node outPos, Node outNeg, double gain)
-            : base(outPos, outNeg)  // Node1/Node2 are output nodes
+            : base(outPos, outNeg) // Node1/Node2 are output nodes
         {
             ControlPos = ctrlPos;
             ControlNeg = ctrlNeg;
@@ -49,13 +49,14 @@ namespace Sparky.MNA.Core
 
         public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
         {
-            if (MatrixIndex == -1) return;
+            if (MatrixIndex == -1)
+                return;
 
             int k = MatrixIndex;
             int ctrlP = ControlPos.Id;
             int ctrlN = ControlNeg.Id;
-            int outP = Node1.Id;  // Output positive
-            int outN = Node2.Id;  // Output negative
+            int outP = Node1.Id; // Output positive
+            int outN = Node2.Id; // Output negative
 
             // VCVS constraint equation (row k):
             //   V_outP - V_outN = Gain × (V_ctrlP - V_ctrlN)
@@ -69,18 +70,24 @@ namespace Sparky.MNA.Core
             //   A[k, ctrlN] += Gain
             //   z[k] = 0
 
-            if (outP != 0) A.At(k, outP, 1);
-            if (outN != 0) A.At(k, outN, -1);
-            if (ctrlP != 0) A.At(k, ctrlP, -Gain);
-            if (ctrlN != 0) A.At(k, ctrlN, Gain);
+            if (outP != 0)
+                A.At(k, outP, 1);
+            if (outN != 0)
+                A.At(k, outN, -1);
+            if (ctrlP != 0)
+                A.At(k, ctrlP, -Gain);
+            if (ctrlN != 0)
+                A.At(k, ctrlN, Gain);
 
             // Current tracking (KCL contributions):
             // The auxiliary variable x[k] represents current flowing from outP to outN.
             //   A[outP, k] += 1   (current leaves outP)
             //   A[outN, k] -= 1   (current enters outN)
 
-            if (outP != 0) A.At(outP, k, 1);
-            if (outN != 0) A.At(outN, k, -1);
+            if (outP != 0)
+                A.At(outP, k, 1);
+            if (outN != 0)
+                A.At(outN, k, -1);
 
             // RHS is zero (constraint equation)
             Z[k] = 0;

@@ -180,7 +180,11 @@ public class GameSimulationTests
         grid.PlaceCell(battery, new CellPos(BlockPos.Zero, BlockFacing.Up, new SubPos(3, 5)));
         grid.PlaceCell(resistor1, new CellPos(BlockPos.Zero, BlockFacing.Up, new SubPos(4, 5)));
         grid.PlaceCell(resistor2, new CellPos(BlockPos.Zero, BlockFacing.Up, new SubPos(5, 5)));
-        grid.PlaceCell(ground, new CellPos(BlockPos.Zero, BlockFacing.Up, new SubPos(6, 5)), rotation: 270);
+        grid.PlaceCell(
+            ground,
+            new CellPos(BlockPos.Zero, BlockFacing.Up, new SubPos(6, 5)),
+            rotation: 270
+        );
 
         // Run simulation
         sim.Tick(0.001);

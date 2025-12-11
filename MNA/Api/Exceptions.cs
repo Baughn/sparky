@@ -5,8 +5,11 @@ namespace Sparky.MNA.Api;
 /// <summary>Base exception for simulation-related errors.</summary>
 public class SimulationException : Exception
 {
-    public SimulationException(string message) : base(message) { }
-    public SimulationException(string message, Exception innerException) : base(message, innerException) { }
+    public SimulationException(string message)
+        : base(message) { }
+
+    public SimulationException(string message, Exception innerException)
+        : base(message, innerException) { }
 }
 
 /// <summary>Thrown when an operation references a node that does not exist.</summary>
@@ -34,8 +37,7 @@ public class InvalidComponentException : SimulationException
         ComponentId = componentId;
     }
 
-    public static InvalidComponentException ForResistor(ResistorId id) =>
-        new("Resistor", id.Value);
+    public static InvalidComponentException ForResistor(ResistorId id) => new("Resistor", id.Value);
 
     public static InvalidComponentException ForVoltageSource(VoltageSourceId id) =>
         new("VoltageSource", id.Value);
@@ -46,29 +48,22 @@ public class InvalidComponentException : SimulationException
     public static InvalidComponentException ForCapacitor(CapacitorId id) =>
         new("Capacitor", id.Value);
 
-    public static InvalidComponentException ForInductor(InductorId id) =>
-        new("Inductor", id.Value);
+    public static InvalidComponentException ForInductor(InductorId id) => new("Inductor", id.Value);
 
-    public static InvalidComponentException ForDiode(DiodeId id) =>
-        new("Diode", id.Value);
+    public static InvalidComponentException ForDiode(DiodeId id) => new("Diode", id.Value);
 
     public static InvalidComponentException ForTransformer(TransformerId id) =>
         new("Transformer", id.Value);
 
-    public static InvalidComponentException ForSwitch(SwitchId id) =>
-        new("Switch", id.Value);
+    public static InvalidComponentException ForSwitch(SwitchId id) => new("Switch", id.Value);
 
-    public static InvalidComponentException ForVCVS(VcvsId id) =>
-        new("VCVS", id.Value);
+    public static InvalidComponentException ForVCVS(VcvsId id) => new("VCVS", id.Value);
 
-    public static InvalidComponentException ForVCCS(VccsId id) =>
-        new("VCCS", id.Value);
+    public static InvalidComponentException ForVCCS(VccsId id) => new("VCCS", id.Value);
 
-    public static InvalidComponentException ForCCVS(CcvsId id) =>
-        new("CCVS", id.Value);
+    public static InvalidComponentException ForCCVS(CcvsId id) => new("CCVS", id.Value);
 
-    public static InvalidComponentException ForCCCS(CccsId id) =>
-        new("CCCS", id.Value);
+    public static InvalidComponentException ForCCCS(CccsId id) => new("CCCS", id.Value);
 }
 
 /// <summary>Thrown when a component parameter value is invalid (e.g., negative resistance).</summary>

@@ -1,7 +1,7 @@
+using System;
 using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
-using System;
 
 namespace Sparky.Tests
 {
@@ -32,7 +32,11 @@ namespace Sparky.Tests
             circuit.Solve(0);
 
             // Check Voltage at nInd. Should be equal to nSrc (10V) because Inductor is a short.
-            Assert.That(nInd.Voltage, Is.EqualTo(V).Within(Tolerances.Voltage), "Inductor should be a short circuit at DC");
+            Assert.That(
+                nInd.Voltage,
+                Is.EqualTo(V).Within(Tolerances.Voltage),
+                "Inductor should be a short circuit at DC"
+            );
         }
 
         [Test]

@@ -69,12 +69,15 @@ public class SimulationManager : ISimulation
 
     // Optimization tracking
     private readonly HashSet<ResistorId> _optimizedResistors = new();
+
     // Maps optimized resistor IDs to their chain info for energy distribution
     private readonly Dictionary<ResistorId, ResistorChainInfo> _resistorChainMap = new();
+
     // Temporary list of chain members built during optimization, keyed by merged LogicalResistor
     private readonly Dictionary<LogicalResistor, List<ResistorId>> _pendingChainMembers = new();
 
     private readonly record struct InterpolationInfo(NodeId NodeA, NodeId NodeB, double Ratio);
+
     private record struct ResistorChainInfo(Resistor EquivalentResistor, double TotalResistance);
 
     // Optimization
@@ -99,6 +102,7 @@ public class SimulationManager : ISimulation
     {
         public NodeId Id { get; }
         public List<ILogicalComponent> Connections { get; } = new();
+
         public LogicalNode(NodeId id) => Id = id;
     }
 
@@ -119,7 +123,11 @@ public class SimulationManager : ISimulation
 
         public LogicalResistor(ResistorId id, NodeId a, NodeId b, double r, bool isVariable = false)
         {
-            Id = id; NodeA = a; NodeB = b; Resistance = r; IsVariable = isVariable;
+            Id = id;
+            NodeA = a;
+            NodeB = b;
+            Resistance = r;
+            IsVariable = isVariable;
         }
     }
 
@@ -134,7 +142,10 @@ public class SimulationManager : ISimulation
 
         public LogicalVoltageSource(VoltageSourceId id, NodeId pos, NodeId neg, double v)
         {
-            Id = id; NodePos = pos; NodeNeg = neg; Voltage = v;
+            Id = id;
+            NodePos = pos;
+            NodeNeg = neg;
+            Voltage = v;
         }
     }
 
@@ -149,7 +160,10 @@ public class SimulationManager : ISimulation
 
         public LogicalCurrentSource(CurrentSourceId id, NodeId @in, NodeId @out, double i)
         {
-            Id = id; NodeIn = @in; NodeOut = @out; Current = i;
+            Id = id;
+            NodeIn = @in;
+            NodeOut = @out;
+            Current = i;
         }
     }
 
@@ -159,13 +173,16 @@ public class SimulationManager : ISimulation
         public NodeId NodeA { get; }
         public NodeId NodeB { get; }
         public double Capacitance { get; set; }
-        public double VoltageAcross { get; set; }  // Preserved across rebuilds
+        public double VoltageAcross { get; set; } // Preserved across rebuilds
         public bool IsOptimizable => false;
         public EnergyCounter Energy;
 
         public LogicalCapacitor(CapacitorId id, NodeId a, NodeId b, double c)
         {
-            Id = id; NodeA = a; NodeB = b; Capacitance = c;
+            Id = id;
+            NodeA = a;
+            NodeB = b;
+            Capacitance = c;
         }
     }
 
@@ -175,13 +192,16 @@ public class SimulationManager : ISimulation
         public NodeId NodeA { get; }
         public NodeId NodeB { get; }
         public double Inductance { get; set; }
-        public double CurrentThrough { get; set; }  // Preserved across rebuilds
+        public double CurrentThrough { get; set; } // Preserved across rebuilds
         public bool IsOptimizable => false;
         public EnergyCounter Energy;
 
         public LogicalInductor(InductorId id, NodeId a, NodeId b, double l)
         {
-            Id = id; NodeA = a; NodeB = b; Inductance = l;
+            Id = id;
+            NodeA = a;
+            NodeB = b;
+            Inductance = l;
         }
     }
 
@@ -190,13 +210,15 @@ public class SimulationManager : ISimulation
         public DiodeId Id { get; }
         public NodeId Anode { get; }
         public NodeId Cathode { get; }
-        public double OperatingVoltage { get; set; } = 0.6;  // Preserved for Newton-Raphson convergence
+        public double OperatingVoltage { get; set; } = 0.6; // Preserved for Newton-Raphson convergence
         public bool IsOptimizable => false;
         public EnergyCounter Energy;
 
         public LogicalDiode(DiodeId id, NodeId anode, NodeId cathode)
         {
-            Id = id; Anode = anode; Cathode = cathode;
+            Id = id;
+            Anode = anode;
+            Cathode = cathode;
         }
     }
 
@@ -210,9 +232,21 @@ public class SimulationManager : ISimulation
         public double Ratio { get; set; }
         public bool IsOptimizable => false;
 
-        public LogicalTransformer(TransformerId id, NodeId p1, NodeId p2, NodeId s1, NodeId s2, double ratio)
+        public LogicalTransformer(
+            TransformerId id,
+            NodeId p1,
+            NodeId p2,
+            NodeId s1,
+            NodeId s2,
+            double ratio
+        )
         {
-            Id = id; P1 = p1; P2 = p2; S1 = s1; S2 = s2; Ratio = ratio;
+            Id = id;
+            P1 = p1;
+            P2 = p2;
+            S1 = s1;
+            S2 = s2;
+            Ratio = ratio;
         }
     }
 
@@ -226,7 +260,11 @@ public class SimulationManager : ISimulation
 
         public LogicalSwitch(SwitchId id, NodeId a, NodeId b, bool closed, ResistorId resistorId)
         {
-            Id = id; NodeA = a; NodeB = b; IsClosed = closed; InternalResistorId = resistorId;
+            Id = id;
+            NodeA = a;
+            NodeB = b;
+            IsClosed = closed;
+            InternalResistorId = resistorId;
         }
     }
 
@@ -240,9 +278,21 @@ public class SimulationManager : ISimulation
         public double Gain { get; set; }
         public bool IsOptimizable => false;
 
-        public LogicalVCVS(VcvsId id, NodeId ctrlP, NodeId ctrlN, NodeId outP, NodeId outN, double gain)
+        public LogicalVCVS(
+            VcvsId id,
+            NodeId ctrlP,
+            NodeId ctrlN,
+            NodeId outP,
+            NodeId outN,
+            double gain
+        )
         {
-            Id = id; ControlPos = ctrlP; ControlNeg = ctrlN; OutputPos = outP; OutputNeg = outN; Gain = gain;
+            Id = id;
+            ControlPos = ctrlP;
+            ControlNeg = ctrlN;
+            OutputPos = outP;
+            OutputNeg = outN;
+            Gain = gain;
         }
     }
 
@@ -256,9 +306,21 @@ public class SimulationManager : ISimulation
         public double Transconductance { get; set; }
         public bool IsOptimizable => false;
 
-        public LogicalVCCS(VccsId id, NodeId ctrlP, NodeId ctrlN, NodeId outP, NodeId outN, double gm)
+        public LogicalVCCS(
+            VccsId id,
+            NodeId ctrlP,
+            NodeId ctrlN,
+            NodeId outP,
+            NodeId outN,
+            double gm
+        )
         {
-            Id = id; ControlPos = ctrlP; ControlNeg = ctrlN; OutputPos = outP; OutputNeg = outN; Transconductance = gm;
+            Id = id;
+            ControlPos = ctrlP;
+            ControlNeg = ctrlN;
+            OutputPos = outP;
+            OutputNeg = outN;
+            Transconductance = gm;
         }
     }
 
@@ -272,9 +334,21 @@ public class SimulationManager : ISimulation
         public double Transresistance { get; set; }
         public bool IsOptimizable => false;
 
-        public LogicalCCVS(CcvsId id, NodeId ctrlP, NodeId ctrlN, NodeId outP, NodeId outN, double rm)
+        public LogicalCCVS(
+            CcvsId id,
+            NodeId ctrlP,
+            NodeId ctrlN,
+            NodeId outP,
+            NodeId outN,
+            double rm
+        )
         {
-            Id = id; ControlPos = ctrlP; ControlNeg = ctrlN; OutputPos = outP; OutputNeg = outN; Transresistance = rm;
+            Id = id;
+            ControlPos = ctrlP;
+            ControlNeg = ctrlN;
+            OutputPos = outP;
+            OutputNeg = outN;
+            Transresistance = rm;
         }
     }
 
@@ -288,9 +362,21 @@ public class SimulationManager : ISimulation
         public double Gain { get; set; }
         public bool IsOptimizable => false;
 
-        public LogicalCCCS(CccsId id, NodeId ctrlP, NodeId ctrlN, NodeId outP, NodeId outN, double gain)
+        public LogicalCCCS(
+            CccsId id,
+            NodeId ctrlP,
+            NodeId ctrlN,
+            NodeId outP,
+            NodeId outN,
+            double gain
+        )
         {
-            Id = id; ControlPos = ctrlP; ControlNeg = ctrlN; OutputPos = outP; OutputNeg = outN; Gain = gain;
+            Id = id;
+            ControlPos = ctrlP;
+            ControlNeg = ctrlN;
+            OutputPos = outP;
+            OutputNeg = outN;
+            Gain = gain;
         }
     }
 
@@ -375,14 +461,18 @@ public class SimulationManager : ISimulation
         _logicalNodes.Remove(id);
     }
 
-    public bool NodeExists(NodeId id) =>
-        id.Value == 0 || _logicalNodes.ContainsKey(id);
+    public bool NodeExists(NodeId id) => id.Value == 0 || _logicalNodes.ContainsKey(id);
 
     #endregion
 
     #region Resistors
 
-    public ResistorId AddResistor(NodeId nodeA, NodeId nodeB, double resistance, bool isVariable = false)
+    public ResistorId AddResistor(
+        NodeId nodeA,
+        NodeId nodeB,
+        double resistance,
+        bool isVariable = false
+    )
     {
         ValidateNodeExists(nodeA);
         ValidateNodeExists(nodeB);
@@ -1023,7 +1113,13 @@ public class SimulationManager : ISimulation
 
     // VCCS (Voltage-Controlled Current Source)
 
-    public VccsId AddVCCS(NodeId ctrlPos, NodeId ctrlNeg, NodeId outPos, NodeId outNeg, double transconductance)
+    public VccsId AddVCCS(
+        NodeId ctrlPos,
+        NodeId ctrlNeg,
+        NodeId outPos,
+        NodeId outNeg,
+        double transconductance
+    )
     {
         ValidateNodeExists(ctrlPos);
         ValidateNodeExists(ctrlNeg);
@@ -1101,7 +1197,13 @@ public class SimulationManager : ISimulation
 
     // CCVS (Current-Controlled Voltage Source)
 
-    public CcvsId AddCCVS(NodeId ctrlPos, NodeId ctrlNeg, NodeId outPos, NodeId outNeg, double transresistance)
+    public CcvsId AddCCVS(
+        NodeId ctrlPos,
+        NodeId ctrlNeg,
+        NodeId outPos,
+        NodeId outNeg,
+        double transresistance
+    )
     {
         ValidateNodeExists(ctrlPos);
         ValidateNodeExists(ctrlNeg);
@@ -1268,7 +1370,10 @@ public class SimulationManager : ISimulation
     public void Step(double dt)
     {
         if (double.IsNaN(dt) || double.IsInfinity(dt) || dt < 0)
-            throw new ArgumentException("Time step must be a non-negative finite number", nameof(dt));
+            throw new ArgumentException(
+                "Time step must be a non-negative finite number",
+                nameof(dt)
+            );
 
         if (_bulkUpdateDepth > 0)
             throw new InvalidOperationException("Cannot call Step during bulk update");
@@ -1369,7 +1474,8 @@ public class SimulationManager : ISimulation
 
         public void Dispose()
         {
-            if (_disposed) return;
+            if (_disposed)
+                return;
             _disposed = true;
             _manager._bulkUpdateDepth--;
         }
@@ -1381,7 +1487,8 @@ public class SimulationManager : ISimulation
 
     public double GetVoltage(NodeId nodeId)
     {
-        if (nodeId.Value == 0) return 0.0;
+        if (nodeId.Value == 0)
+            return 0.0;
 
         if (_physicalNodes.TryGetValue(nodeId, out var node))
         {
@@ -1425,7 +1532,8 @@ public class SimulationManager : ISimulation
 
     private void Connect(NodeId nodeId, ILogicalComponent component)
     {
-        if (nodeId.Value == 0) return; // Ground doesn't track connections
+        if (nodeId.Value == 0)
+            return; // Ground doesn't track connections
         if (_logicalNodes.TryGetValue(nodeId, out var node))
         {
             node.Connections.Add(component);
@@ -1434,7 +1542,8 @@ public class SimulationManager : ISimulation
 
     private void Disconnect(NodeId nodeId, ILogicalComponent component)
     {
-        if (nodeId.Value == 0) return;
+        if (nodeId.Value == 0)
+            return;
         if (_logicalNodes.TryGetValue(nodeId, out var node))
         {
             node.Connections.Remove(component);
@@ -1498,8 +1607,10 @@ public class SimulationManager : ISimulation
 
         foreach (var startNodeId in optimizedAdjacency.Keys)
         {
-            if (startNodeId.Value == 0) continue;
-            if (visited.Contains(startNodeId)) continue;
+            if (startNodeId.Value == 0)
+                continue;
+            if (visited.Contains(startNodeId))
+                continue;
 
             var partitionNodes = new HashSet<NodeId>();
             var queue = new Queue<NodeId>();
@@ -1562,10 +1673,14 @@ public class SimulationManager : ISimulation
                 yield return d.Anode == current ? d.Cathode : d.Anode;
                 break;
             case LogicalTransformer t:
-                if (t.P1 == current) yield return t.P2;
-                if (t.P2 == current) yield return t.P1;
-                if (t.S1 == current) yield return t.S2;
-                if (t.S2 == current) yield return t.S1;
+                if (t.P1 == current)
+                    yield return t.P2;
+                if (t.P2 == current)
+                    yield return t.P1;
+                if (t.S1 == current)
+                    yield return t.S2;
+                if (t.S2 == current)
+                    yield return t.S1;
                 if (t.P1 == current || t.P2 == current)
                 {
                     yield return t.S1;
@@ -1588,13 +1703,17 @@ public class SimulationManager : ISimulation
                     LogicalVCCS v => (v.ControlPos, v.ControlNeg, v.OutputPos, v.OutputNeg),
                     LogicalCCVS v => (v.ControlPos, v.ControlNeg, v.OutputPos, v.OutputNeg),
                     LogicalCCCS v => (v.ControlPos, v.ControlNeg, v.OutputPos, v.OutputNeg),
-                    _ => throw new InvalidOperationException()
+                    _ => throw new InvalidOperationException(),
                 };
                 // Yield neighbor on same port
-                if (cp == current) yield return cn;
-                if (cn == current) yield return cp;
-                if (op == current) yield return on;
-                if (on == current) yield return op;
+                if (cp == current)
+                    yield return cn;
+                if (cn == current)
+                    yield return cp;
+                if (op == current)
+                    yield return on;
+                if (on == current)
+                    yield return op;
                 // Cross-port connectivity: all 4 nodes are connected through the component
                 if (cp == current || cn == current)
                 {
@@ -1612,7 +1731,8 @@ public class SimulationManager : ISimulation
 
     private (List<ILogicalComponent>, Dictionary<NodeId, List<ILogicalComponent>>) Optimize()
     {
-        var allComponents = _resistors.Values.Cast<ILogicalComponent>()
+        var allComponents = _resistors
+            .Values.Cast<ILogicalComponent>()
             .Concat(_voltageSources.Values)
             .Concat(_currentSources.Values)
             .Concat(_capacitors.Values)
@@ -1650,20 +1770,81 @@ public class SimulationManager : ISimulation
         }
 
         // Add non-resistor components (they can't be optimized)
-        foreach (var c in _voltageSources.Values) { optimizedComponents.Add(c); AddToAdj(c.NodePos, c); AddToAdj(c.NodeNeg, c); }
-        foreach (var c in _currentSources.Values) { optimizedComponents.Add(c); AddToAdj(c.NodeIn, c); AddToAdj(c.NodeOut, c); }
-        foreach (var c in _capacitors.Values) { optimizedComponents.Add(c); AddToAdj(c.NodeA, c); AddToAdj(c.NodeB, c); }
-        foreach (var c in _inductors.Values) { optimizedComponents.Add(c); AddToAdj(c.NodeA, c); AddToAdj(c.NodeB, c); }
-        foreach (var c in _diodes.Values) { optimizedComponents.Add(c); AddToAdj(c.Anode, c); AddToAdj(c.Cathode, c); }
-        foreach (var c in _transformers.Values) { optimizedComponents.Add(c); AddToAdj(c.P1, c); AddToAdj(c.P2, c); AddToAdj(c.S1, c); AddToAdj(c.S2, c); }
-        foreach (var c in _vcvs.Values) { optimizedComponents.Add(c); AddToAdj(c.ControlPos, c); AddToAdj(c.ControlNeg, c); AddToAdj(c.OutputPos, c); AddToAdj(c.OutputNeg, c); }
-        foreach (var c in _vccs.Values) { optimizedComponents.Add(c); AddToAdj(c.ControlPos, c); AddToAdj(c.ControlNeg, c); AddToAdj(c.OutputPos, c); AddToAdj(c.OutputNeg, c); }
-        foreach (var c in _ccvs.Values) { optimizedComponents.Add(c); AddToAdj(c.ControlPos, c); AddToAdj(c.ControlNeg, c); AddToAdj(c.OutputPos, c); AddToAdj(c.OutputNeg, c); }
-        foreach (var c in _cccs.Values) { optimizedComponents.Add(c); AddToAdj(c.ControlPos, c); AddToAdj(c.ControlNeg, c); AddToAdj(c.OutputPos, c); AddToAdj(c.OutputNeg, c); }
+        foreach (var c in _voltageSources.Values)
+        {
+            optimizedComponents.Add(c);
+            AddToAdj(c.NodePos, c);
+            AddToAdj(c.NodeNeg, c);
+        }
+        foreach (var c in _currentSources.Values)
+        {
+            optimizedComponents.Add(c);
+            AddToAdj(c.NodeIn, c);
+            AddToAdj(c.NodeOut, c);
+        }
+        foreach (var c in _capacitors.Values)
+        {
+            optimizedComponents.Add(c);
+            AddToAdj(c.NodeA, c);
+            AddToAdj(c.NodeB, c);
+        }
+        foreach (var c in _inductors.Values)
+        {
+            optimizedComponents.Add(c);
+            AddToAdj(c.NodeA, c);
+            AddToAdj(c.NodeB, c);
+        }
+        foreach (var c in _diodes.Values)
+        {
+            optimizedComponents.Add(c);
+            AddToAdj(c.Anode, c);
+            AddToAdj(c.Cathode, c);
+        }
+        foreach (var c in _transformers.Values)
+        {
+            optimizedComponents.Add(c);
+            AddToAdj(c.P1, c);
+            AddToAdj(c.P2, c);
+            AddToAdj(c.S1, c);
+            AddToAdj(c.S2, c);
+        }
+        foreach (var c in _vcvs.Values)
+        {
+            optimizedComponents.Add(c);
+            AddToAdj(c.ControlPos, c);
+            AddToAdj(c.ControlNeg, c);
+            AddToAdj(c.OutputPos, c);
+            AddToAdj(c.OutputNeg, c);
+        }
+        foreach (var c in _vccs.Values)
+        {
+            optimizedComponents.Add(c);
+            AddToAdj(c.ControlPos, c);
+            AddToAdj(c.ControlNeg, c);
+            AddToAdj(c.OutputPos, c);
+            AddToAdj(c.OutputNeg, c);
+        }
+        foreach (var c in _ccvs.Values)
+        {
+            optimizedComponents.Add(c);
+            AddToAdj(c.ControlPos, c);
+            AddToAdj(c.ControlNeg, c);
+            AddToAdj(c.OutputPos, c);
+            AddToAdj(c.OutputNeg, c);
+        }
+        foreach (var c in _cccs.Values)
+        {
+            optimizedComponents.Add(c);
+            AddToAdj(c.ControlPos, c);
+            AddToAdj(c.ControlNeg, c);
+            AddToAdj(c.OutputPos, c);
+            AddToAdj(c.OutputNeg, c);
+        }
 
         foreach (var r in _resistors.Values)
         {
-            if (consumedComponents.Contains(r)) continue;
+            if (consumedComponents.Contains(r))
+                continue;
 
             var chainNodes = new LinkedList<NodeId>();
             var chainResistors = new LinkedList<LogicalResistor>();
@@ -1675,37 +1856,57 @@ public class SimulationManager : ISimulation
 
             // Extend Forward (from NodeB)
             var currentForwardNode = chainNodes.Last!.Value;
-            while (currentForwardNode.Value != 0 && _logicalNodes.ContainsKey(currentForwardNode) && IsLineNode(_logicalNodes[currentForwardNode]))
+            while (
+                currentForwardNode.Value != 0
+                && _logicalNodes.ContainsKey(currentForwardNode)
+                && IsLineNode(_logicalNodes[currentForwardNode])
+            )
             {
                 var currentNodeLogical = _logicalNodes[currentForwardNode];
-                var connectedResistors = currentNodeLogical.Connections.OfType<LogicalResistor>().ToList();
+                var connectedResistors = currentNodeLogical
+                    .Connections.OfType<LogicalResistor>()
+                    .ToList();
 
-                if (connectedResistors.Count != 2) break;
+                if (connectedResistors.Count != 2)
+                    break;
 
                 var nextR = connectedResistors.FirstOrDefault(x => x != chainResistors.Last!.Value);
-                if (nextR == null || consumedComponents.Contains(nextR)) break;
+                if (nextR == null || consumedComponents.Contains(nextR))
+                    break;
 
                 chainResistors.AddLast(nextR);
                 consumedComponents.Add(nextR);
-                currentForwardNode = nextR.NodeA == currentNodeLogical.Id ? nextR.NodeB : nextR.NodeA;
+                currentForwardNode =
+                    nextR.NodeA == currentNodeLogical.Id ? nextR.NodeB : nextR.NodeA;
                 chainNodes.AddLast(currentForwardNode);
             }
 
             // Extend Backward (from NodeA)
             var currentBackwardNode = chainNodes.First!.Value;
-            while (currentBackwardNode.Value != 0 && _logicalNodes.ContainsKey(currentBackwardNode) && IsLineNode(_logicalNodes[currentBackwardNode]))
+            while (
+                currentBackwardNode.Value != 0
+                && _logicalNodes.ContainsKey(currentBackwardNode)
+                && IsLineNode(_logicalNodes[currentBackwardNode])
+            )
             {
                 var currentNodeLogical = _logicalNodes[currentBackwardNode];
-                var connectedResistors = currentNodeLogical.Connections.OfType<LogicalResistor>().ToList();
+                var connectedResistors = currentNodeLogical
+                    .Connections.OfType<LogicalResistor>()
+                    .ToList();
 
-                if (connectedResistors.Count != 2) break;
+                if (connectedResistors.Count != 2)
+                    break;
 
-                var prevR = connectedResistors.FirstOrDefault(x => x != chainResistors.First!.Value);
-                if (prevR == null || consumedComponents.Contains(prevR)) break;
+                var prevR = connectedResistors.FirstOrDefault(x =>
+                    x != chainResistors.First!.Value
+                );
+                if (prevR == null || consumedComponents.Contains(prevR))
+                    break;
 
                 chainResistors.AddFirst(prevR);
                 consumedComponents.Add(prevR);
-                currentBackwardNode = prevR.NodeA == currentNodeLogical.Id ? prevR.NodeB : prevR.NodeA;
+                currentBackwardNode =
+                    prevR.NodeA == currentNodeLogical.Id ? prevR.NodeB : prevR.NodeA;
                 chainNodes.AddFirst(currentBackwardNode);
             }
 
@@ -1742,7 +1943,11 @@ public class SimulationManager : ISimulation
                     if (intermediateNode != endNode)
                     {
                         double ratio = currentR / totalR;
-                        _interpolationMap[intermediateNode] = new InterpolationInfo(startNode, endNode, ratio);
+                        _interpolationMap[intermediateNode] = new InterpolationInfo(
+                            startNode,
+                            endNode,
+                            ratio
+                        );
                     }
 
                     resNode = resNode.Next;
@@ -1763,7 +1968,8 @@ public class SimulationManager : ISimulation
 
     private bool IsLineNode(LogicalNode node)
     {
-        if (node.Connections.Count != 2) return false;
+        if (node.Connections.Count != 2)
+            return false;
         // All connections must be optimizable resistors (not variable)
         return node.Connections.All(c => c is LogicalResistor r && r.IsOptimizable);
     }
@@ -1780,7 +1986,8 @@ public class SimulationManager : ISimulation
 
         foreach (var nodeId in nodes)
         {
-            if (nodeId.Value == 0) continue;
+            if (nodeId.Value == 0)
+                continue;
             var physNode = circuit.AddNode();
             _physicalNodes[nodeId] = physNode;
         }
@@ -1806,12 +2013,27 @@ public class SimulationManager : ISimulation
             LogicalCapacitor cap => nodes.Contains(cap.NodeA) && nodes.Contains(cap.NodeB),
             LogicalInductor ind => nodes.Contains(ind.NodeA) && nodes.Contains(ind.NodeB),
             LogicalDiode d => nodes.Contains(d.Anode) && nodes.Contains(d.Cathode),
-            LogicalTransformer t => nodes.Contains(t.P1) && nodes.Contains(t.P2) && nodes.Contains(t.S1) && nodes.Contains(t.S2),
-            LogicalVCVS v => nodes.Contains(v.ControlPos) && nodes.Contains(v.ControlNeg) && nodes.Contains(v.OutputPos) && nodes.Contains(v.OutputNeg),
-            LogicalVCCS v => nodes.Contains(v.ControlPos) && nodes.Contains(v.ControlNeg) && nodes.Contains(v.OutputPos) && nodes.Contains(v.OutputNeg),
-            LogicalCCVS v => nodes.Contains(v.ControlPos) && nodes.Contains(v.ControlNeg) && nodes.Contains(v.OutputPos) && nodes.Contains(v.OutputNeg),
-            LogicalCCCS v => nodes.Contains(v.ControlPos) && nodes.Contains(v.ControlNeg) && nodes.Contains(v.OutputPos) && nodes.Contains(v.OutputNeg),
-            _ => false
+            LogicalTransformer t => nodes.Contains(t.P1)
+                && nodes.Contains(t.P2)
+                && nodes.Contains(t.S1)
+                && nodes.Contains(t.S2),
+            LogicalVCVS v => nodes.Contains(v.ControlPos)
+                && nodes.Contains(v.ControlNeg)
+                && nodes.Contains(v.OutputPos)
+                && nodes.Contains(v.OutputNeg),
+            LogicalVCCS v => nodes.Contains(v.ControlPos)
+                && nodes.Contains(v.ControlNeg)
+                && nodes.Contains(v.OutputPos)
+                && nodes.Contains(v.OutputNeg),
+            LogicalCCVS v => nodes.Contains(v.ControlPos)
+                && nodes.Contains(v.ControlNeg)
+                && nodes.Contains(v.OutputPos)
+                && nodes.Contains(v.OutputNeg),
+            LogicalCCCS v => nodes.Contains(v.ControlPos)
+                && nodes.Contains(v.ControlNeg)
+                && nodes.Contains(v.OutputPos)
+                && nodes.Contains(v.OutputNeg),
+            _ => false,
         };
     }
 
@@ -1820,7 +2042,11 @@ public class SimulationManager : ISimulation
         switch (component)
         {
             case LogicalResistor r:
-                var phyR = new Resistor(GetPhysNode(r.NodeA, circuit), GetPhysNode(r.NodeB, circuit), r.Resistance);
+                var phyR = new Resistor(
+                    GetPhysNode(r.NodeA, circuit),
+                    GetPhysNode(r.NodeB, circuit),
+                    r.Resistance
+                );
                 circuit.AddComponent(phyR);
                 if (r.Id.Value >= 0)
                 {
@@ -1837,65 +2063,104 @@ public class SimulationManager : ISimulation
                 }
                 break;
             case LogicalVoltageSource v:
-                var phyV = new VoltageSource(GetPhysNode(v.NodePos, circuit), GetPhysNode(v.NodeNeg, circuit), v.Voltage);
+                var phyV = new VoltageSource(
+                    GetPhysNode(v.NodePos, circuit),
+                    GetPhysNode(v.NodeNeg, circuit),
+                    v.Voltage
+                );
                 circuit.AddComponent(phyV);
                 _physicalVoltageSources[v.Id] = phyV;
                 break;
             case LogicalCurrentSource c:
-                var phyC = new CurrentSource(GetPhysNode(c.NodeIn, circuit), GetPhysNode(c.NodeOut, circuit), c.Current);
+                var phyC = new CurrentSource(
+                    GetPhysNode(c.NodeIn, circuit),
+                    GetPhysNode(c.NodeOut, circuit),
+                    c.Current
+                );
                 circuit.AddComponent(phyC);
                 _physicalCurrentSources[c.Id] = phyC;
                 break;
             case LogicalCapacitor cap:
-                var phyCap = new Capacitor(GetPhysNode(cap.NodeA, circuit), GetPhysNode(cap.NodeB, circuit), cap.Capacitance);
-                phyCap.VoltageAcross = cap.VoltageAcross;  // Restore state
+                var phyCap = new Capacitor(
+                    GetPhysNode(cap.NodeA, circuit),
+                    GetPhysNode(cap.NodeB, circuit),
+                    cap.Capacitance
+                );
+                phyCap.VoltageAcross = cap.VoltageAcross; // Restore state
                 circuit.AddComponent(phyCap);
                 _physicalCapacitors[cap.Id] = phyCap;
                 break;
             case LogicalInductor ind:
-                var phyInd = new Inductor(GetPhysNode(ind.NodeA, circuit), GetPhysNode(ind.NodeB, circuit), ind.Inductance);
-                phyInd.CurrentThrough = ind.CurrentThrough;  // Restore state
+                var phyInd = new Inductor(
+                    GetPhysNode(ind.NodeA, circuit),
+                    GetPhysNode(ind.NodeB, circuit),
+                    ind.Inductance
+                );
+                phyInd.CurrentThrough = ind.CurrentThrough; // Restore state
                 circuit.AddComponent(phyInd);
                 _physicalInductors[ind.Id] = phyInd;
                 break;
             case LogicalDiode d:
-                var phyD = new Diode(GetPhysNode(d.Anode, circuit), GetPhysNode(d.Cathode, circuit));
-                phyD.OperatingVoltage = d.OperatingVoltage;  // Restore operating point for faster convergence
+                var phyD = new Diode(
+                    GetPhysNode(d.Anode, circuit),
+                    GetPhysNode(d.Cathode, circuit)
+                );
+                phyD.OperatingVoltage = d.OperatingVoltage; // Restore operating point for faster convergence
                 circuit.AddComponent(phyD);
                 _physicalDiodes[d.Id] = phyD;
                 break;
             case LogicalTransformer t:
                 var phyT = new Transformer(
-                    GetPhysNode(t.P1, circuit), GetPhysNode(t.P2, circuit),
-                    GetPhysNode(t.S1, circuit), GetPhysNode(t.S2, circuit), t.Ratio);
+                    GetPhysNode(t.P1, circuit),
+                    GetPhysNode(t.P2, circuit),
+                    GetPhysNode(t.S1, circuit),
+                    GetPhysNode(t.S2, circuit),
+                    t.Ratio
+                );
                 circuit.AddComponent(phyT);
                 _physicalTransformers[t.Id] = phyT;
                 break;
             case LogicalVCVS vcvs:
                 var phyVCVS = new VCVS(
-                    GetPhysNode(vcvs.ControlPos, circuit), GetPhysNode(vcvs.ControlNeg, circuit),
-                    GetPhysNode(vcvs.OutputPos, circuit), GetPhysNode(vcvs.OutputNeg, circuit), vcvs.Gain);
+                    GetPhysNode(vcvs.ControlPos, circuit),
+                    GetPhysNode(vcvs.ControlNeg, circuit),
+                    GetPhysNode(vcvs.OutputPos, circuit),
+                    GetPhysNode(vcvs.OutputNeg, circuit),
+                    vcvs.Gain
+                );
                 circuit.AddComponent(phyVCVS);
                 _physicalVCVS[vcvs.Id] = phyVCVS;
                 break;
             case LogicalVCCS vccs:
                 var phyVCCS = new VCCS(
-                    GetPhysNode(vccs.ControlPos, circuit), GetPhysNode(vccs.ControlNeg, circuit),
-                    GetPhysNode(vccs.OutputPos, circuit), GetPhysNode(vccs.OutputNeg, circuit), vccs.Transconductance);
+                    GetPhysNode(vccs.ControlPos, circuit),
+                    GetPhysNode(vccs.ControlNeg, circuit),
+                    GetPhysNode(vccs.OutputPos, circuit),
+                    GetPhysNode(vccs.OutputNeg, circuit),
+                    vccs.Transconductance
+                );
                 circuit.AddComponent(phyVCCS);
                 _physicalVCCS[vccs.Id] = phyVCCS;
                 break;
             case LogicalCCVS ccvs:
                 var phyCCVS = new CCVS(
-                    GetPhysNode(ccvs.ControlPos, circuit), GetPhysNode(ccvs.ControlNeg, circuit),
-                    GetPhysNode(ccvs.OutputPos, circuit), GetPhysNode(ccvs.OutputNeg, circuit), ccvs.Transresistance);
+                    GetPhysNode(ccvs.ControlPos, circuit),
+                    GetPhysNode(ccvs.ControlNeg, circuit),
+                    GetPhysNode(ccvs.OutputPos, circuit),
+                    GetPhysNode(ccvs.OutputNeg, circuit),
+                    ccvs.Transresistance
+                );
                 circuit.AddComponent(phyCCVS);
                 _physicalCCVS[ccvs.Id] = phyCCVS;
                 break;
             case LogicalCCCS cccs:
                 var phyCCCS = new CCCS(
-                    GetPhysNode(cccs.ControlPos, circuit), GetPhysNode(cccs.ControlNeg, circuit),
-                    GetPhysNode(cccs.OutputPos, circuit), GetPhysNode(cccs.OutputNeg, circuit), cccs.Gain);
+                    GetPhysNode(cccs.ControlPos, circuit),
+                    GetPhysNode(cccs.ControlNeg, circuit),
+                    GetPhysNode(cccs.OutputPos, circuit),
+                    GetPhysNode(cccs.OutputNeg, circuit),
+                    cccs.Gain
+                );
                 circuit.AddComponent(phyCCCS);
                 _physicalCCCS[cccs.Id] = phyCCCS;
                 break;
@@ -1904,7 +2169,8 @@ public class SimulationManager : ISimulation
 
     private Node GetPhysNode(NodeId id, Circuit circuit)
     {
-        if (id.Value == 0) return circuit.Ground;
+        if (id.Value == 0)
+            return circuit.Ground;
         return _physicalNodes[id];
     }
 
@@ -1936,7 +2202,8 @@ public class SimulationManager : ISimulation
 
         public void Dispose()
         {
-            if (_disposed) return;
+            if (_disposed)
+                return;
             _disposed = true;
             _manager._limitHandlers.Remove(_handler);
         }
@@ -2186,7 +2453,8 @@ public class SimulationManager : ISimulation
 
     private void CheckLimits()
     {
-        if (_limits.Count == 0 || _limitHandlers.Count == 0) return;
+        if (_limits.Count == 0 || _limitHandlers.Count == 0)
+            return;
 
         foreach (var (key, config) in _limits)
         {
@@ -2222,33 +2490,45 @@ public class SimulationManager : ISimulation
             // Resistor
             ("Resistor", LimitKind.OverCurrent) => GetResistorCurrent(new ResistorId(component.Id)),
             ("Resistor", LimitKind.OverPower) => GetResistorPower(new ResistorId(component.Id)),
-            ("Resistor", LimitKind.OverVoltage) => GetVoltage(_resistors[new ResistorId(component.Id)].NodeA)
-                                                  - GetVoltage(_resistors[new ResistorId(component.Id)].NodeB),
+            ("Resistor", LimitKind.OverVoltage) => GetVoltage(
+                _resistors[new ResistorId(component.Id)].NodeA
+            ) - GetVoltage(_resistors[new ResistorId(component.Id)].NodeB),
 
             // Voltage Source
-            ("VoltageSource", LimitKind.OverCurrent) => GetVoltageSourceCurrent(new VoltageSourceId(component.Id)),
-            ("VoltageSource", LimitKind.OverPower) => GetVoltageSourceCurrent(new VoltageSourceId(component.Id))
-                                                    * GetVoltageSourceValue(new VoltageSourceId(component.Id)),
+            ("VoltageSource", LimitKind.OverCurrent) => GetVoltageSourceCurrent(
+                new VoltageSourceId(component.Id)
+            ),
+            ("VoltageSource", LimitKind.OverPower) => GetVoltageSourceCurrent(
+                new VoltageSourceId(component.Id)
+            ) * GetVoltageSourceValue(new VoltageSourceId(component.Id)),
 
             // Current Source (current is fixed, but can check terminal voltage)
-            ("CurrentSource", LimitKind.OverVoltage) => GetVoltage(_currentSources[new CurrentSourceId(component.Id)].NodeIn)
-                                                       - GetVoltage(_currentSources[new CurrentSourceId(component.Id)].NodeOut),
+            ("CurrentSource", LimitKind.OverVoltage) => GetVoltage(
+                _currentSources[new CurrentSourceId(component.Id)].NodeIn
+            ) - GetVoltage(_currentSources[new CurrentSourceId(component.Id)].NodeOut),
 
             // Capacitor
-            ("Capacitor", LimitKind.OverVoltage) => GetCapacitorVoltage(new CapacitorId(component.Id)),
-            ("Capacitor", LimitKind.OverCurrent) => GetCapacitorCurrent(new CapacitorId(component.Id)),
+            ("Capacitor", LimitKind.OverVoltage) => GetCapacitorVoltage(
+                new CapacitorId(component.Id)
+            ),
+            ("Capacitor", LimitKind.OverCurrent) => GetCapacitorCurrent(
+                new CapacitorId(component.Id)
+            ),
 
             // Inductor
             ("Inductor", LimitKind.OverCurrent) => GetInductorCurrent(new InductorId(component.Id)),
-            ("Inductor", LimitKind.OverVoltage) => GetVoltage(_inductors[new InductorId(component.Id)].NodeA)
-                                                  - GetVoltage(_inductors[new InductorId(component.Id)].NodeB),
+            ("Inductor", LimitKind.OverVoltage) => GetVoltage(
+                _inductors[new InductorId(component.Id)].NodeA
+            ) - GetVoltage(_inductors[new InductorId(component.Id)].NodeB),
 
             // Diode
             ("Diode", LimitKind.OverCurrent) => GetDiodeCurrent(new DiodeId(component.Id)),
             ("Diode", LimitKind.OverVoltage) => GetDiodeVoltage(new DiodeId(component.Id)),
 
             // Transformer (check primary or secondary current)
-            ("Transformer", LimitKind.OverCurrent) => GetTransformerCurrents(new TransformerId(component.Id)).Primary,
+            ("Transformer", LimitKind.OverCurrent) => GetTransformerCurrents(
+                new TransformerId(component.Id)
+            ).Primary,
 
             // Switch
             ("Switch", LimitKind.OverCurrent) => GetSwitchCurrent(new SwitchId(component.Id)),
@@ -2266,11 +2546,17 @@ public class SimulationManager : ISimulation
             ("CCCS", LimitKind.OverCurrent) => GetCCCSOutputCurrent(new CccsId(component.Id)),
 
             // Default: return 0 for unsupported combinations
-            _ => 0.0
+            _ => 0.0,
         };
     }
 
-    private void FireLimitEvent(ComponentRef component, LimitKind kind, double threshold, double actualValue, bool isExceeded)
+    private void FireLimitEvent(
+        ComponentRef component,
+        LimitKind kind,
+        double threshold,
+        double actualValue,
+        bool isExceeded
+    )
     {
         var evt = new LimitEvent
         {
@@ -2279,7 +2565,7 @@ public class SimulationManager : ISimulation
             Threshold = threshold,
             ActualValue = actualValue,
             IsExceeded = isExceeded,
-            SimulationTime = _simulationTime
+            SimulationTime = _simulationTime,
         };
 
         foreach (var handler in _limitHandlers)

@@ -1,7 +1,7 @@
+using System;
 using NUnit.Framework;
 using Sparky.MNA.Api;
 using Sparky.Tests.TestHelpers;
-using System;
 
 namespace Sparky.Tests
 {
@@ -44,10 +44,10 @@ namespace Sparky.Tests
             // D2: nInNeg (anode) -> nOutPos (cathode) - conducts when Vin < 0
             // D3: nOutNeg (anode) -> nInPos (cathode) - conducts when Vin < 0
             // D4: nOutNeg (anode) -> nInNeg (cathode) - conducts when Vin > 0
-            _sim.AddDiode(nInPos, nOutPos);   // D1
-            _sim.AddDiode(nInNeg, nOutPos);   // D2
-            _sim.AddDiode(nOutNeg, nInPos);   // D3
-            _sim.AddDiode(nOutNeg, nInNeg);   // D4
+            _sim.AddDiode(nInPos, nOutPos); // D1
+            _sim.AddDiode(nInNeg, nOutPos); // D2
+            _sim.AddDiode(nOutNeg, nInPos); // D3
+            _sim.AddDiode(nOutNeg, nInNeg); // D4
 
             // Load resistor across output
             _sim.AddResistor(nOutPos, nOutNeg, 100.0);
@@ -68,7 +68,8 @@ namespace Sparky.Tests
                 {
                     _sim.Step(dt);
                     double vOut = _sim.GetVoltage(nOutPos) - _sim.GetVoltage(nOutNeg);
-                    if (vOut > 0) positiveOutputCount++;
+                    if (vOut > 0)
+                        positiveOutputCount++;
                     totalSteps++;
                 }
 
@@ -78,22 +79,29 @@ namespace Sparky.Tests
                 {
                     _sim.Step(dt);
                     double vOut = _sim.GetVoltage(nOutPos) - _sim.GetVoltage(nOutNeg);
-                    if (vOut > 0) positiveOutputCount++;
+                    if (vOut > 0)
+                        positiveOutputCount++;
                     totalSteps++;
                 }
             }
 
             // Output should be positive (or near zero) for all steps
-            Assert.That(positiveOutputCount, Is.GreaterThanOrEqualTo(totalSteps * 0.9),
-                "Bridge rectifier output should be positive for most steps");
+            Assert.That(
+                positiveOutputCount,
+                Is.GreaterThanOrEqualTo(totalSteps * 0.9),
+                "Bridge rectifier output should be positive for most steps"
+            );
 
             // Final output voltage should be approximately Vin - 2*Vd (two diode drops)
             // With 10V input and ~0.7V diode drops, expect ~8.6V output
             _sim.UpdateVoltageSource(srcId, 10.0);
             _sim.Step(dt);
             double finalVout = _sim.GetVoltage(nOutPos) - _sim.GetVoltage(nOutNeg);
-            Assert.That(finalVout, Is.GreaterThan(7.0).And.LessThan(10.0),
-                "Output should be input minus two diode drops");
+            Assert.That(
+                finalVout,
+                Is.GreaterThan(7.0).And.LessThan(10.0),
+                "Output should be input minus two diode drops"
+            );
         }
 
         [Test]
@@ -107,8 +115,8 @@ namespace Sparky.Tests
             // The capacitor state is maintained internally and we can pre-charge it
             // by running a few steps with a current source.
 
-            double L = 1e-3;  // 1mH
-            double C = 1e-6;  // 1uF
+            double L = 1e-3; // 1mH
+            double C = 1e-6; // 1uF
             double theoreticalPeriod = 2.0 * Math.PI * Math.Sqrt(L * C);
 
             var circuit = new Sparky.MNA.Core.Circuit();
@@ -136,8 +144,8 @@ namespace Sparky.Tests
             circuit.RemoveComponent(chargeSource);
 
             // Simulate for multiple periods
-            double dt = 1e-6;  // 1us timestep for better accuracy
-            int steps = (int)(5 * theoreticalPeriod / dt);  // 5 periods
+            double dt = 1e-6; // 1us timestep for better accuracy
+            int steps = (int)(5 * theoreticalPeriod / dt); // 5 periods
 
             double maxVoltage = double.MinValue;
             double minVoltage = double.MaxValue;
@@ -165,8 +173,11 @@ namespace Sparky.Tests
             Assert.That(minVoltage, Is.LessThan(-5.0), "Voltage should swing negative");
 
             // Should have multiple zero crossings (2 per period, 5 periods = ~10 crossings)
-            Assert.That(zeroCrossings, Is.GreaterThanOrEqualTo(8),
-                "Should have multiple oscillation cycles");
+            Assert.That(
+                zeroCrossings,
+                Is.GreaterThanOrEqualTo(8),
+                "Should have multiple oscillation cycles"
+            );
         }
 
         [Test]
@@ -176,9 +187,9 @@ namespace Sparky.Tests
             // Natural frequency: w0 = 1 / sqrt(L * C)
             // Damping determines oscillation decay
 
-            double R = 10.0;    // 10 Ohms (moderate damping)
-            double L = 1e-3;    // 1mH
-            double C = 1e-6;    // 1uF
+            double R = 10.0; // 10 Ohms (moderate damping)
+            double L = 1e-3; // 1mH
+            double C = 1e-6; // 1uF
             double V = 10.0;
 
             // Damping ratio: zeta = R / (2 * sqrt(L/C))
@@ -186,8 +197,8 @@ namespace Sparky.Tests
             // With these values: zeta = 10 / (2 * sqrt(1000)) = 10 / 63.2 = 0.158 (underdamped)
 
             var nSrc = _sim.CreateNode();
-            var nMid = _sim.CreateNode();  // Between R and L
-            var nCap = _sim.CreateNode();  // Between L and C
+            var nMid = _sim.CreateNode(); // Between R and L
+            var nCap = _sim.CreateNode(); // Between L and C
 
             _sim.AddVoltageSource(nSrc, _sim.Ground, V);
             _sim.AddResistor(nSrc, nMid, R);
@@ -212,7 +223,7 @@ namespace Sparky.Tests
 
                 // Detect peaks
                 bool nowRising = v > prevVoltage;
-                if (rising && !nowRising && v > V * 0.1)  // Peak detected
+                if (rising && !nowRising && v > V * 0.1) // Peak detected
                 {
                     peakCount++;
                     prevMax = currentMax;
@@ -224,16 +235,21 @@ namespace Sparky.Tests
             }
 
             // Underdamped RLC should overshoot the DC value
-            Assert.That(maxVoltage, Is.GreaterThan(V),
-                "Underdamped RLC should overshoot");
+            Assert.That(maxVoltage, Is.GreaterThan(V), "Underdamped RLC should overshoot");
 
             // Should have multiple oscillation peaks
-            Assert.That(peakCount, Is.GreaterThanOrEqualTo(3),
-                "Should observe damped oscillation peaks");
+            Assert.That(
+                peakCount,
+                Is.GreaterThanOrEqualTo(3),
+                "Should observe damped oscillation peaks"
+            );
 
             // Final value should approach source voltage (capacitor fully charged)
-            Assert.That(_sim.GetVoltage(nCap), Is.EqualTo(V).Within(V * 0.1),
-                "Capacitor should approach source voltage");
+            Assert.That(
+                _sim.GetVoltage(nCap),
+                Is.EqualTo(V).Within(V * 0.1),
+                "Capacitor should approach source voltage"
+            );
         }
 
         [Test]
@@ -257,15 +273,21 @@ namespace Sparky.Tests
             _sim.AddTransformer(nT1Sec, _sim.Ground, nT2Sec, _sim.Ground, ratio2);
             _sim.AddResistor(nT2Sec, _sim.Ground, loadR);
 
-            _sim.Step(0);  // DC solve
+            _sim.Step(0); // DC solve
 
             double expectedOutput = V * ratio1 * ratio2;
-            Assert.That(_sim.GetVoltage(nT2Sec), Is.EqualTo(expectedOutput).Within(Tolerances.Voltage),
-                "Cascaded transformers should multiply ratios");
+            Assert.That(
+                _sim.GetVoltage(nT2Sec),
+                Is.EqualTo(expectedOutput).Within(Tolerances.Voltage),
+                "Cascaded transformers should multiply ratios"
+            );
 
             // Intermediate voltage should be V * ratio1
-            Assert.That(_sim.GetVoltage(nT1Sec), Is.EqualTo(V * ratio1).Within(Tolerances.Voltage),
-                "First transformer output should be 20V");
+            Assert.That(
+                _sim.GetVoltage(nT1Sec),
+                Is.EqualTo(V * ratio1).Within(Tolerances.Voltage),
+                "First transformer output should be 20V"
+            );
         }
 
         [Test]
@@ -289,22 +311,31 @@ namespace Sparky.Tests
             _sim.UpdateVoltageSource(srcId, 0.3);
             _sim.Step(0);
             double vOutLow = _sim.GetVoltage(nOut);
-            Assert.That(vOutLow, Is.EqualTo(0.3).Within(0.1),
-                "Below threshold, output should follow input");
+            Assert.That(
+                vOutLow,
+                Is.EqualTo(0.3).Within(0.1),
+                "Below threshold, output should follow input"
+            );
 
             // Test with high voltage (above diode threshold)
             _sim.UpdateVoltageSource(srcId, 5.0);
             _sim.Step(0);
             double vOutHigh = _sim.GetVoltage(nOut);
-            Assert.That(vOutHigh, Is.GreaterThan(0.5).And.LessThan(0.9),
-                "Above threshold, output should clamp to diode forward voltage");
+            Assert.That(
+                vOutHigh,
+                Is.GreaterThan(0.5).And.LessThan(0.9),
+                "Above threshold, output should clamp to diode forward voltage"
+            );
 
             // Test with even higher voltage
             _sim.UpdateVoltageSource(srcId, 10.0);
             _sim.Step(0);
             double vOutVeryHigh = _sim.GetVoltage(nOut);
-            Assert.That(vOutVeryHigh, Is.GreaterThan(0.5).And.LessThan(0.9),
-                "Diode clamp voltage should stay approximately constant");
+            Assert.That(
+                vOutVeryHigh,
+                Is.GreaterThan(0.5).And.LessThan(0.9),
+                "Diode clamp voltage should stay approximately constant"
+            );
         }
 
         [Test]
@@ -317,11 +348,11 @@ namespace Sparky.Tests
             // Initial transient: current rises exponentially with time constant L/R
 
             double Vsupply = 12.0;
-            double Vemf = 8.0;  // Back-EMF (simulating motor at speed)
-            double R = 2.0;     // Series resistance
-            double L = 1e-3;    // Motor inductance (1mH)
+            double Vemf = 8.0; // Back-EMF (simulating motor at speed)
+            double R = 2.0; // Series resistance
+            double L = 1e-3; // Motor inductance (1mH)
 
-            double expectedSteadyCurrent = (Vsupply - Vemf) / R;  // 2A
+            double expectedSteadyCurrent = (Vsupply - Vemf) / R; // 2A
 
             var nSupply = _sim.CreateNode();
             var nMotorIn = _sim.CreateNode();
@@ -330,11 +361,11 @@ namespace Sparky.Tests
             _sim.AddVoltageSource(nSupply, _sim.Ground, Vsupply);
             _sim.AddResistor(nSupply, nMotorIn, R);
             _sim.AddInductor(nMotorIn, nMotorOut, L);
-            _sim.AddVoltageSource(nMotorOut, _sim.Ground, Vemf);  // Back-EMF
+            _sim.AddVoltageSource(nMotorOut, _sim.Ground, Vemf); // Back-EMF
 
             // Time constant tau = L/R = 0.5ms
             double tau = L / R;
-            double dt = tau / 10.0;  // 10 steps per time constant
+            double dt = tau / 10.0; // 10 steps per time constant
 
             // Initial current should be low
             _sim.Step(dt);
@@ -350,12 +381,18 @@ namespace Sparky.Tests
             vAcrossR = _sim.GetVoltage(nSupply) - _sim.GetVoltage(nMotorIn);
             double steadyCurrent = vAcrossR / R;
 
-            Assert.That(steadyCurrent, Is.EqualTo(expectedSteadyCurrent).Within(0.05),
-                "Steady state current should be (Vsupply - Vemf) / R");
+            Assert.That(
+                steadyCurrent,
+                Is.EqualTo(expectedSteadyCurrent).Within(0.05),
+                "Steady state current should be (Vsupply - Vemf) / R"
+            );
 
             // Verify initial current was lower (transient)
-            Assert.That(initialCurrent, Is.LessThan(steadyCurrent * 0.9),
-                "Initial current should be lower due to inductor");
+            Assert.That(
+                initialCurrent,
+                Is.LessThan(steadyCurrent * 0.9),
+                "Initial current should be lower due to inductor"
+            );
         }
     }
 }

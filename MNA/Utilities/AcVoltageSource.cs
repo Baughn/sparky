@@ -40,7 +40,9 @@ public class AcVoltageSource : TimeVaryingSource
         double amplitude,
         double frequency,
         double phase = 0,
-        double offset = 0) : base(sim)
+        double offset = 0
+    )
+        : base(sim)
     {
         Amplitude = amplitude;
         Frequency = frequency;

@@ -73,9 +73,7 @@ public class CircuitBuilderTests
     [Test]
     public void Step_ReturnsBuilderForContinuation()
     {
-        var builder = new CircuitBuilder()
-            .VoltageSource(10.0, "src")
-            .Resistor(100.0, "src", "GND");
+        var builder = new CircuitBuilder().VoltageSource(10.0, "src").Resistor(100.0, "src", "GND");
 
         var result = builder.Step();
 
@@ -85,9 +83,7 @@ public class CircuitBuilderTests
     [Test]
     public void StepN_ReturnsBuilderForContinuation()
     {
-        var builder = new CircuitBuilder()
-            .VoltageSource(10.0, "src")
-            .Resistor(100.0, "src", "GND");
+        var builder = new CircuitBuilder().VoltageSource(10.0, "src").Resistor(100.0, "src", "GND");
 
         var result = builder.StepN(5);
 
@@ -142,8 +138,7 @@ public class CircuitBuilderTests
         // τ = RC = 1000 * 1e-6 = 1ms
         // After 5τ (5ms), should be ~99.3% charged
         // Note: Backward Euler integration undershoots slightly
-        var c = CircuitPatterns.RCCircuit(10.0, 1000.0, 1e-6)
-            .StepN(50, dt: 0.0001); // 5ms total
+        var c = CircuitPatterns.RCCircuit(10.0, 1000.0, 1e-6).StepN(50, dt: 0.0001); // 5ms total
 
         Assert.That(c.V("cap"), Is.EqualTo(10.0).Within(0.1));
     }
@@ -153,8 +148,7 @@ public class CircuitBuilderTests
     {
         // After 1τ, should be ~63.2% charged (1 - e^-1)
         // τ = 1000 * 1e-6 = 1ms
-        var c = CircuitPatterns.RCCircuit(10.0, 1000.0, 1e-6)
-            .StepN(10, dt: 0.0001); // 1ms total = 1τ
+        var c = CircuitPatterns.RCCircuit(10.0, 1000.0, 1e-6).StepN(10, dt: 0.0001); // 1ms total = 1τ
 
         // Expected: 10 * 0.632 = 6.32V
         Assert.That(c.V("cap"), Is.EqualTo(6.32).Within(0.2));
@@ -169,8 +163,7 @@ public class CircuitBuilderTests
     {
         // In steady state, inductor acts as short circuit
         // All voltage drops across resistor
-        var c = CircuitPatterns.RLCircuit(10.0, 100.0, 1e-3)
-            .StepN(100, dt: 0.001); // 100ms >> 5τ
+        var c = CircuitPatterns.RLCircuit(10.0, 100.0, 1e-3).StepN(100, dt: 0.001); // 100ms >> 5τ
 
         // Voltage at "ind" node (between R and L) should be near 0
         // because inductor is nearly shorted
@@ -195,8 +188,7 @@ public class CircuitBuilderTests
     [Test]
     public void SeriesRLC_SteadyState_CapacitorCharges()
     {
-        var c = CircuitPatterns.SeriesRLC(10.0, 100.0, 1e-3, 1e-6)
-            .StepN(200, dt: 0.001); // Long enough for transients to settle
+        var c = CircuitPatterns.SeriesRLC(10.0, 100.0, 1e-3, 1e-6).StepN(200, dt: 0.001); // Long enough for transients to settle
 
         // In DC steady state, capacitor blocks current
         // Capacitor should charge to source voltage
@@ -285,8 +277,7 @@ public class CircuitBuilderTests
     [Test]
     public void Switch_MethodExists_AndReturnsSwitchId()
     {
-        var c = new CircuitBuilder()
-            .VoltageSource(10.0, "src");
+        var c = new CircuitBuilder().VoltageSource(10.0, "src");
 
         var swId = c.Switch("src", "load", closed: true);
         c.Resistor(100.0, "load", "GND").Step();
@@ -306,7 +297,7 @@ public class CircuitBuilderTests
         var c = new CircuitBuilder()
             .VoltageSource(5.0, "src")
             .Resistor(1000.0, "src", "anode")
-            .Diode("anode")  // cathode defaults to GND
+            .Diode("anode") // cathode defaults to GND
             .Step();
 
         // Forward biased diode should have ~0.6-0.7V drop
@@ -320,9 +311,7 @@ public class CircuitBuilderTests
     [Test]
     public void Sim_ProvidesAccessToUnderlyingSimulation()
     {
-        var builder = new CircuitBuilder()
-            .VoltageSource(10.0, "src")
-            .Resistor(100.0, "src", "GND");
+        var builder = new CircuitBuilder().VoltageSource(10.0, "src").Resistor(100.0, "src", "GND");
 
         // Can access SimulationManager for advanced operations
         Assert.That(builder.Sim, Is.Not.Null);

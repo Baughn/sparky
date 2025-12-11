@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Loggers;
+using BenchmarkDotNet.Running;
 using Sparky.MNA.Core;
 
 namespace Sparky.Benchmarks
@@ -10,7 +10,8 @@ namespace Sparky.Benchmarks
     {
         public static void Main(string[] args)
         {
-            var config = ManualConfig.Create(DefaultConfig.Instance)
+            var config = ManualConfig
+                .Create(DefaultConfig.Instance)
                 .WithOption(ConfigOptions.JoinSummary, true);
 
             BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args, config);
@@ -33,7 +34,11 @@ namespace Sparky.Benchmarks
         {
             _dcLadder = BuildResistorLadder(sections: 200, resistance: 1000.0, sourceVoltage: 10.0);
             _nonLinearDc = BuildDiodeClipper();
-            _dcLadderDynamic = BuildResistorLadder(sections: 200, resistance: 1000.0, sourceVoltage: 0.0);
+            _dcLadderDynamic = BuildResistorLadder(
+                sections: 200,
+                resistance: 1000.0,
+                sourceVoltage: 0.0
+            );
         }
 
         [Benchmark(Description = "Linear DC solve: 200-resistor ladder")]
@@ -154,17 +159,17 @@ namespace Sparky.Benchmarks
             circuit.AddComponent(transformer);
 
             // Full-wave bridge to DC bus
-            circuit.AddComponent(new Diode(nSecHot, nBus));          // sec hot -> bus +
-            circuit.AddComponent(new Diode(nSecReturn, nBus));       // sec return -> bus +
-            circuit.AddComponent(new Diode(ground, nSecHot));        // bus - (ground) -> sec hot
-            circuit.AddComponent(new Diode(ground, nSecReturn));     // bus - (ground) -> sec return
+            circuit.AddComponent(new Diode(nSecHot, nBus)); // sec hot -> bus +
+            circuit.AddComponent(new Diode(nSecReturn, nBus)); // sec return -> bus +
+            circuit.AddComponent(new Diode(ground, nSecHot)); // bus - (ground) -> sec hot
+            circuit.AddComponent(new Diode(ground, nSecReturn)); // bus - (ground) -> sec return
 
             circuit.AddComponent(new Capacitor(nBus, ground, 0.0047)); // 4700 uF smoothing cap
-            circuit.AddComponent(new Resistor(nBus, ground, 20.0));    // load
+            circuit.AddComponent(new Resistor(nBus, ground, 20.0)); // load
 
             double dt = 0.0001; // 100 us
             double time = 0.0;
-            int steps = 2000;   // 0.2 s (~10 cycles at 50 Hz)
+            int steps = 2000; // 0.2 s (~10 cycles at 50 Hz)
             double amplitude = 325.0; // ~230 Vrms peak
             double freq = 50.0;
 
@@ -196,10 +201,10 @@ namespace Sparky.Benchmarks
             circuit.AddComponent(new Capacitor(nOut, ground, 470e-6));
             circuit.AddComponent(new Resistor(nOut, ground, 4.0)); // load
 
-            double freq = 20_000.0;      // 20 kHz PWM
-            double period = 1.0 / freq;  // 50 us
-            double dt = period / 50.0;   // 1 us (50 steps per cycle)
-            double runtime = 0.01;       // 10 ms total (~200 cycles)
+            double freq = 20_000.0; // 20 kHz PWM
+            double period = 1.0 / freq; // 50 us
+            double dt = period / 50.0; // 1 us (50 steps per cycle)
+            double runtime = 0.01; // 10 ms total (~200 cycles)
             int steps = (int)(runtime / dt);
 
             double time = 0.0;
@@ -218,7 +223,11 @@ namespace Sparky.Benchmarks
             }
         }
 
-        private static Circuit BuildResistorLadder(int sections, double resistance, double sourceVoltage)
+        private static Circuit BuildResistorLadder(
+            int sections,
+            double resistance,
+            double sourceVoltage
+        )
         {
             var circuit = new Circuit();
             var ground = circuit.Ground;
@@ -235,7 +244,8 @@ namespace Sparky.Benchmarks
                 circuit.AddComponent(new Resistor(pL, nL, resistance));
                 circuit.AddComponent(new Resistor(nL, nR, resistance));
                 circuit.AddComponent(new Resistor(pR, nR, resistance));
-                pL = nL; pR = nR;
+                pL = nL;
+                pR = nR;
             }
 
             // Terminate ladder to ground to avoid an open circuit at the tail.

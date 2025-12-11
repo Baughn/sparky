@@ -1,5 +1,5 @@
-using CSparse.Storage;
 using System;
+using CSparse.Storage;
 
 namespace Sparky.MNA.Core
 {
@@ -9,15 +9,14 @@ namespace Sparky.MNA.Core
         // I = Is * (exp(Vd / (n * Vt)) - 1)
         private const double Is = 1e-12; // Saturation current
         private const double Vt = 0.026; // Thermal voltage (approx at room temp)
-        private const double n = 1.0;    // Emission coefficient
+        private const double n = 1.0; // Emission coefficient
 
         // Operating point (Voltage across diode from previous iteration)
         // Exposed for state preservation during rebuilds (improves Newton-Raphson convergence)
         public double OperatingVoltage { get; set; } = 0.6; // Start with a guess (forward biased)
 
-        public Diode(Node node1, Node node2) : base(node1, node2)
-        {
-        }
+        public Diode(Node node1, Node node2)
+            : base(node1, node2) { }
 
         public override bool IsNonLinear => true;
         public override bool RequiresIteration => true;
@@ -63,14 +62,16 @@ namespace Sparky.MNA.Core
             if (n1 != 0)
             {
                 A.At(n1, n1, gEq);
-                if (n2 != 0) A.At(n1, n2, -gEq);
+                if (n2 != 0)
+                    A.At(n1, n2, -gEq);
                 Z[n1] -= iEq;
             }
 
             if (n2 != 0)
             {
                 A.At(n2, n2, gEq);
-                if (n1 != 0) A.At(n2, n1, -gEq);
+                if (n1 != 0)
+                    A.At(n2, n1, -gEq);
                 Z[n2] += iEq;
             }
         }
@@ -83,11 +84,13 @@ namespace Sparky.MNA.Core
 
             // Simple damping/limiting:
             // Clamp _vd to prevent overflow in exp() and aid convergence.
-            // Max safe exponent is ~700. 
+            // Max safe exponent is ~700.
             // _vd / Vt < 700 => _vd < 700 * 0.026 = 18.2V
             // We clamp to 5.0V which is sufficient for most electronics (diode drop rarely exceeds 2-3V even at high currents).
-            if (newVd > 0.9) newVd = 0.9;
-            if (newVd < -5.0) newVd = -5.0;
+            if (newVd > 0.9)
+                newVd = 0.9;
+            if (newVd < -5.0)
+                newVd = -5.0;
 
             OperatingVoltage = newVd;
         }

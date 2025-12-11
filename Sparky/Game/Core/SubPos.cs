@@ -39,9 +39,7 @@ public readonly record struct SubPos(int U, int V)
     /// <summary>
     /// Clamps U and V to valid range [0, 15].
     /// </summary>
-    public SubPos Clamp() => new(
-        Math.Clamp(U, 0, Size - 1),
-        Math.Clamp(V, 0, Size - 1));
+    public SubPos Clamp() => new(Math.Clamp(U, 0, Size - 1), Math.Clamp(V, 0, Size - 1));
 
     public override string ToString() => $"[{U}, {V}]";
 }

@@ -1,6 +1,6 @@
+using System;
 using NUnit.Framework;
 using Sparky.MNA.Api;
-using System;
 
 namespace Sparky.Tests.MNA
 {
@@ -24,7 +24,8 @@ namespace Sparky.Tests.MNA
             var invalidNode = new NodeId(999);
 
             var ex = Assert.Throws<InvalidNodeException>(() =>
-                _sim.AddResistor(validNode, invalidNode, 100.0));
+                _sim.AddResistor(validNode, invalidNode, 100.0)
+            );
 
             Assert.That(ex!.NodeId, Is.EqualTo(invalidNode));
             Assert.That(ex.Message, Does.Contain("999"));
@@ -36,8 +37,7 @@ namespace Sparky.Tests.MNA
             var invalidNode = new NodeId(999);
             _sim.Step(0.1); // Need to step to trigger the check
 
-            var ex = Assert.Throws<InvalidNodeException>(() =>
-                _sim.GetVoltage(invalidNode));
+            var ex = Assert.Throws<InvalidNodeException>(() => _sim.GetVoltage(invalidNode));
 
             Assert.That(ex!.NodeId, Is.EqualTo(invalidNode));
         }
@@ -53,7 +53,8 @@ namespace Sparky.Tests.MNA
             var n2 = _sim.CreateNode();
 
             var ex = Assert.Throws<InvalidParameterException>(() =>
-                _sim.AddResistor(n1, n2, -10.0));
+                _sim.AddResistor(n1, n2, -10.0)
+            );
 
             Assert.That(ex!.ParameterName, Is.EqualTo("resistance"));
             Assert.That(ex.Value, Is.EqualTo(-10.0));
@@ -66,8 +67,7 @@ namespace Sparky.Tests.MNA
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
-            var ex = Assert.Throws<InvalidParameterException>(() =>
-                _sim.AddResistor(n1, n2, 0.0));
+            var ex = Assert.Throws<InvalidParameterException>(() => _sim.AddResistor(n1, n2, 0.0));
 
             Assert.That(ex!.ParameterName, Is.EqualTo("resistance"));
             Assert.That(ex.Value, Is.EqualTo(0.0));
@@ -84,7 +84,8 @@ namespace Sparky.Tests.MNA
             var n2 = _sim.CreateNode();
 
             var ex = Assert.Throws<InvalidParameterException>(() =>
-                _sim.AddCapacitor(n1, n2, -1e-6));
+                _sim.AddCapacitor(n1, n2, -1e-6)
+            );
 
             Assert.That(ex!.ParameterName, Is.EqualTo("capacitance"));
             Assert.That(ex.Value, Is.EqualTo(-1e-6));
@@ -102,7 +103,8 @@ namespace Sparky.Tests.MNA
             var n2 = _sim.CreateNode();
 
             var ex = Assert.Throws<InvalidParameterException>(() =>
-                _sim.AddInductor(n1, n2, -1e-3));
+                _sim.AddInductor(n1, n2, -1e-3)
+            );
 
             Assert.That(ex!.ParameterName, Is.EqualTo("inductance"));
             Assert.That(ex.Value, Is.EqualTo(-1e-3));
@@ -122,7 +124,8 @@ namespace Sparky.Tests.MNA
             var s2 = _sim.CreateNode();
 
             var ex = Assert.Throws<InvalidParameterException>(() =>
-                _sim.AddTransformer(p1, p2, s1, s2, 0.0));
+                _sim.AddTransformer(p1, p2, s1, s2, 0.0)
+            );
 
             Assert.That(ex!.ParameterName, Is.EqualTo("ratio"));
             Assert.That(ex.Value, Is.EqualTo(0.0));
@@ -137,7 +140,8 @@ namespace Sparky.Tests.MNA
             var s2 = _sim.CreateNode();
 
             var ex = Assert.Throws<InvalidParameterException>(() =>
-                _sim.AddTransformer(p1, p2, s1, s2, -1.0));
+                _sim.AddTransformer(p1, p2, s1, s2, -1.0)
+            );
 
             Assert.That(ex!.ParameterName, Is.EqualTo("ratio"));
             Assert.That(ex.Value, Is.EqualTo(-1.0));
@@ -153,7 +157,8 @@ namespace Sparky.Tests.MNA
             var invalidId = new ResistorId(999);
 
             var ex = Assert.Throws<InvalidComponentException>(() =>
-                _sim.UpdateResistor(invalidId, 100.0));
+                _sim.UpdateResistor(invalidId, 100.0)
+            );
 
             Assert.That(ex!.ComponentType, Is.EqualTo("Resistor"));
             Assert.That(ex.ComponentId, Is.EqualTo(999));
@@ -164,8 +169,7 @@ namespace Sparky.Tests.MNA
         {
             var invalidId = new ResistorId(999);
 
-            var ex = Assert.Throws<InvalidComponentException>(() =>
-                _sim.RemoveResistor(invalidId));
+            var ex = Assert.Throws<InvalidComponentException>(() => _sim.RemoveResistor(invalidId));
 
             Assert.That(ex!.ComponentType, Is.EqualTo("Resistor"));
             Assert.That(ex.ComponentId, Is.EqualTo(999));
@@ -182,8 +186,7 @@ namespace Sparky.Tests.MNA
             var n2 = _sim.CreateNode();
             _sim.AddResistor(n1, n2, 100.0);
 
-            var ex = Assert.Throws<NodeInUseException>(() =>
-                _sim.RemoveNode(n1));
+            var ex = Assert.Throws<NodeInUseException>(() => _sim.RemoveNode(n1));
 
             Assert.That(ex!.NodeId, Is.EqualTo(n1));
             Assert.That(ex.ConnectionCount, Is.EqualTo(1));
@@ -194,8 +197,7 @@ namespace Sparky.Tests.MNA
         {
             var groundNode = _sim.Ground;
 
-            var ex = Assert.Throws<InvalidOperationException>(() =>
-                _sim.RemoveNode(groundNode));
+            var ex = Assert.Throws<InvalidOperationException>(() => _sim.RemoveNode(groundNode));
 
             Assert.That(ex!.Message, Does.Contain("ground"));
         }
@@ -209,8 +211,7 @@ namespace Sparky.Tests.MNA
         {
             using (_sim.BeginBulkUpdate())
             {
-                var ex = Assert.Throws<InvalidOperationException>(() =>
-                    _sim.Step(0.1));
+                var ex = Assert.Throws<InvalidOperationException>(() => _sim.Step(0.1));
 
                 Assert.That(ex!.Message, Does.Contain("bulk update"));
             }

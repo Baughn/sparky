@@ -8,7 +8,8 @@ namespace Sparky.MNA.Core
 
         public override bool RequiresPerStepRestamp => true;
 
-        public CurrentSource(Node node1, Node node2, double current) : base(node1, node2)
+        public CurrentSource(Node node1, Node node2, double current)
+            : base(node1, node2)
         {
             Current = current;
         }
@@ -19,7 +20,7 @@ namespace Sparky.MNA.Core
             int n2 = Node2.Id;
 
             // Current source adds to the RHS vector Z
-            // Current flows from Node1 to Node2? 
+            // Current flows from Node1 to Node2?
             // Convention: Current leaves Node1, enters Node2?
             // Usually: Source from n1 to n2 means current flows n1 -> n2.
             // KCL at n1: ... + I_out = 0 -> ... = -I_out
@@ -29,8 +30,10 @@ namespace Sparky.MNA.Core
             // Node 1 loses current: Z[n1] -= Current
             // Node 2 gains current: Z[n2] += Current
 
-            if (n1 != 0) Z[n1] -= Current;
-            if (n2 != 0) Z[n2] += Current;
+            if (n1 != 0)
+                Z[n1] -= Current;
+            if (n2 != 0)
+                Z[n2] += Current;
         }
 
         public override void AccumulateEnergy(double[] x, double dt)

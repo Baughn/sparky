@@ -16,7 +16,8 @@ namespace Sparky.MNA.Core
         }
         public double Conductance { get; private set; }
 
-        public Resistor(Node node1, Node node2, double resistance) : base(node1, node2)
+        public Resistor(Node node1, Node node2, double resistance)
+            : base(node1, node2)
         {
             Resistance = resistance;
         }
@@ -36,13 +37,15 @@ namespace Sparky.MNA.Core
             if (n1 != 0)
             {
                 A.At(n1, n1, Conductance);
-                if (n2 != 0) A.At(n1, n2, -Conductance);
+                if (n2 != 0)
+                    A.At(n1, n2, -Conductance);
             }
 
             if (n2 != 0)
             {
                 A.At(n2, n2, Conductance);
-                if (n1 != 0) A.At(n2, n1, -Conductance);
+                if (n1 != 0)
+                    A.At(n2, n1, -Conductance);
             }
         }
 

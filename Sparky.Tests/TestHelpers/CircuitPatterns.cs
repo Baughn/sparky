@@ -80,9 +80,7 @@ public static class CircuitPatterns
     /// <param name="r">Load resistance in ohms</param>
     public static CircuitBuilder ResistiveLoad(double sourceV, double r)
     {
-        return new CircuitBuilder()
-            .VoltageSource(sourceV, "src")
-            .Resistor(r, "src", "GND");
+        return new CircuitBuilder().VoltageSource(sourceV, "src").Resistor(r, "src", "GND");
     }
 
     /// <summary>

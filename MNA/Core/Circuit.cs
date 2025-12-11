@@ -16,8 +16,10 @@ namespace Sparky.MNA.Core
         private CoordinateStorage<double>? _matrixA;
         private CompressedColumnStorage<double>? _compressedA;
         private SparseLU? _cachedLu;
+
         // Vector z in Ax = z
         private double[]? _vectorZ;
+
         // Vector x (unknowns)
         private double[]? _vectorX;
         private double[]? _workResidual;
@@ -64,8 +66,10 @@ namespace Sparky.MNA.Core
         {
             Components.Add(component);
             _dirty = true;
-            if (component.RequiresIteration) _requiresIteration = true;
-            if (component.RequiresPerStepRestamp) _requiresPerStepRestamp = true;
+            if (component.RequiresIteration)
+                _requiresIteration = true;
+            if (component.RequiresPerStepRestamp)
+                _requiresPerStepRestamp = true;
         }
 
         public bool RemoveComponent(Component component)
@@ -95,8 +99,10 @@ namespace Sparky.MNA.Core
                     extraEqCount += eqCount;
                 }
 
-                if (component.RequiresIteration) _requiresIteration = true;
-                if (component.RequiresPerStepRestamp) _requiresPerStepRestamp = true;
+                if (component.RequiresIteration)
+                    _requiresIteration = true;
+                if (component.RequiresPerStepRestamp)
+                    _requiresPerStepRestamp = true;
             }
 
             int size = nodeCount + extraEqCount;
@@ -113,7 +119,7 @@ namespace Sparky.MNA.Core
                 component.Stamp(_matrixA, _vectorZ);
             }
 
-             // Anchor ground so the matrix is non-singular and ground stays at 0V
+            // Anchor ground so the matrix is non-singular and ground stays at 0V
             AnchorGround();
 
             _dirty = false;
@@ -122,11 +128,19 @@ namespace Sparky.MNA.Core
 
         public void Solve(double dt)
         {
-            if (_dirty) BuildSystem();
+            if (_dirty)
+                BuildSystem();
 
             // Fast path: nothing changed and static linear circuit
-            if (!_requiresIteration && !_requiresPerStepRestamp && _matrixA != null && _vectorZ != null &&
-                _vectorX != null && _lastStampVersion == _stampVersion && dt.Equals(_lastDt))
+            if (
+                !_requiresIteration
+                && !_requiresPerStepRestamp
+                && _matrixA != null
+                && _vectorZ != null
+                && _vectorX != null
+                && _lastStampVersion == _stampVersion
+                && dt.Equals(_lastDt)
+            )
             {
                 // Ensure node voltages reflect latest solution
                 for (int i = 0; i < Nodes.Count; i++)
@@ -142,7 +156,8 @@ namespace Sparky.MNA.Core
             double tolerance = ConvergenceTolerance;
 
             int solutionSize = _vectorZ?.Length ?? _vectorX?.Length ?? 0;
-            double[]? xPrev = _requiresIteration && solutionSize > 0 ? new double[solutionSize] : null;
+            double[]? xPrev =
+                _requiresIteration && solutionSize > 0 ? new double[solutionSize] : null;
 
             bool converged = false;
 
@@ -153,17 +168,18 @@ namespace Sparky.MNA.Core
             for (int iter = 0; iter < maxIterations; iter++)
             {
                 iterCount = iter + 1;
-            // 1. Clear Z vector (sources need to re-stamp)
-            if (_vectorZ != null) Array.Fill(_vectorZ, 0.0);
+                // 1. Clear Z vector (sources need to re-stamp)
+                if (_vectorZ != null)
+                    Array.Fill(_vectorZ, 0.0);
 
-            // 2. Stamp components (update A and Z)
-            _matrixA?.Clear();
-            // Only invalidate cached structures when they are actually stale.
-            if (_requiresIteration || _requiresPerStepRestamp)
-            {
-                _compressedA = null;
-                _cachedLu = null;
-            }
+                // 2. Stamp components (update A and Z)
+                _matrixA?.Clear();
+                // Only invalidate cached structures when they are actually stale.
+                if (_requiresIteration || _requiresPerStepRestamp)
+                {
+                    _compressedA = null;
+                    _cachedLu = null;
+                }
 
                 // Keep the ground row/col pinned so the matrix is well-conditioned
                 AnchorGround();
@@ -199,9 +215,8 @@ namespace Sparky.MNA.Core
                     }
 
                     double scaledStepTol = tolerance * (1.0 + InfinityNorm(_vectorX));
-                    double scaledResidualTol = _vectorZ != null
-                        ? tolerance * (1.0 + InfinityNorm(_vectorZ))
-                        : tolerance;
+                    double scaledResidualTol =
+                        _vectorZ != null ? tolerance * (1.0 + InfinityNorm(_vectorZ)) : tolerance;
 
                     lastStep = stepNorm;
                     lastResidual = residualNorm;
@@ -210,13 +225,18 @@ namespace Sparky.MNA.Core
                     {
                         converged = true;
                     }
-                    else if (iter > 0 && stepNorm < scaledStepTol && residualNorm < scaledResidualTol)
+                    else if (
+                        iter > 0
+                        && stepNorm < scaledStepTol
+                        && residualNorm < scaledResidualTol
+                    )
                     {
                         converged = true;
                     }
 
                     // Copy current X to xPrev for next iteration check
-                    if (xPrev != null) Array.Copy(_vectorX, xPrev, _vectorX.Length);
+                    if (xPrev != null)
+                        Array.Copy(_vectorX, xPrev, _vectorX.Length);
 
                     // Update nodes with new voltages
                     for (int i = 0; i < Nodes.Count; i++)
@@ -230,14 +250,17 @@ namespace Sparky.MNA.Core
                         component.UpdateOperatingPoint(_vectorX);
                     }
 
-                    if (converged) break;
+                    if (converged)
+                        break;
                 }
             }
 
             LastIterations = iterCount;
             if (!converged)
             {
-                throw new InvalidOperationException($"Circuit solve did not converge within the maximum iterations. Residual={lastResidual}, Step={lastStep}");
+                throw new InvalidOperationException(
+                    $"Circuit solve did not converge within the maximum iterations. Residual={lastResidual}, Step={lastStep}"
+                );
             }
 
             // 5. Finalize Step: Update component states for next time step
@@ -283,7 +306,8 @@ namespace Sparky.MNA.Core
 
         private void AnchorGround()
         {
-            if (_matrixA == null || _vectorZ == null) return;
+            if (_matrixA == null || _vectorZ == null)
+                return;
 
             _matrixA.At(0, 0, 1.0);
             _vectorZ[0] = 0.0;
@@ -292,7 +316,8 @@ namespace Sparky.MNA.Core
         private void ApplyGmin()
         {
             // Add a tiny shunt to ground on every non-ground node to avoid singular matrices
-            if (_matrixA == null) return;
+            if (_matrixA == null)
+                return;
 
             const double gmin = 1e-12;
             for (int i = 1; i < Nodes.Count; i++)
@@ -322,7 +347,9 @@ namespace Sparky.MNA.Core
         {
             if (_compressedA == null)
             {
-                throw new InvalidOperationException("Compressed matrix not available for sparse solve.");
+                throw new InvalidOperationException(
+                    "Compressed matrix not available for sparse solve."
+                );
             }
 
             var lu = _cachedLu;
@@ -331,7 +358,9 @@ namespace Sparky.MNA.Core
                 lu = SparseLU.Create(_compressedA, ColumnOrdering.Natural, 1.0);
                 if (lu == null)
                 {
-                    throw new InvalidOperationException("Circuit solve failed: LU factorization did not succeed.");
+                    throw new InvalidOperationException(
+                        "Circuit solve failed: LU factorization did not succeed."
+                    );
                 }
 
                 // Cache factorization only for linear static circuits (no iteration, no per-step restamp).
@@ -390,7 +419,9 @@ namespace Sparky.MNA.Core
 
                 if (pivotVal < 1e-15)
                 {
-                    throw new InvalidOperationException("Circuit solve failed: matrix is singular in dense solve.");
+                    throw new InvalidOperationException(
+                        "Circuit solve failed: matrix is singular in dense solve."
+                    );
                 }
 
                 if (pivotRow != k)
@@ -439,14 +470,16 @@ namespace Sparky.MNA.Core
         private static bool ShouldUseDense(CoordinateStorage<double> matrixA)
         {
             int n = matrixA.RowCount;
-            if (n <= DenseSizeThreshold) return true;
+            if (n <= DenseSizeThreshold)
+                return true;
 
             double density = matrixA.NonZerosCount / (double)(n * n);
             return density >= DenseDensityThreshold;
         }
 
-        private static CompressedColumnStorage<double> ToCompressed(CoordinateStorage<double> storage) =>
-            SparseMatrix.OfIndexed(storage, false);
+        private static CompressedColumnStorage<double> ToCompressed(
+            CoordinateStorage<double> storage
+        ) => SparseMatrix.OfIndexed(storage, false);
 
         private double[] GetDenseRhsBuffer(int size)
         {
@@ -460,7 +493,11 @@ namespace Sparky.MNA.Core
 
         private double[,] GetDenseBuffer(int size)
         {
-            if (_denseMatrix == null || _denseMatrix.GetLength(0) != size || _denseMatrix.GetLength(1) != size)
+            if (
+                _denseMatrix == null
+                || _denseMatrix.GetLength(0) != size
+                || _denseMatrix.GetLength(1) != size
+            )
             {
                 _denseMatrix = new double[size, size];
             }
@@ -470,7 +507,8 @@ namespace Sparky.MNA.Core
 
         private static void SwapRows(double[,] matrix, int rowA, int rowB)
         {
-            if (rowA == rowB) return;
+            if (rowA == rowB)
+                return;
             int n = matrix.GetLength(1);
             for (int j = 0; j < n; j++)
             {
@@ -478,7 +516,11 @@ namespace Sparky.MNA.Core
             }
         }
 
-        private double ComputeResidualInfinity(CompressedColumnStorage<double> matrixA, double[] x, double[] z)
+        private double ComputeResidualInfinity(
+            CompressedColumnStorage<double> matrixA,
+            double[] x,
+            double[] z
+        )
         {
             if (_workResidual == null || _workResidual.Length != z.Length)
             {
@@ -494,13 +536,18 @@ namespace Sparky.MNA.Core
             return InfinityNorm(_workResidual);
         }
 
-        private static void Multiply(CompressedColumnStorage<double> matrixA, double[] x, double[] result)
+        private static void Multiply(
+            CompressedColumnStorage<double> matrixA,
+            double[] x,
+            double[] result
+        )
         {
             Array.Fill(result, 0.0);
             for (int col = 0; col < matrixA.ColumnCount; col++)
             {
                 double xj = x[col];
-                if (xj == 0) continue;
+                if (xj == 0)
+                    continue;
 
                 int start = matrixA.ColumnPointers[col];
                 int end = matrixA.ColumnPointers[col + 1];
@@ -517,7 +564,8 @@ namespace Sparky.MNA.Core
             for (int i = 0; i < vector.Length; i++)
             {
                 double val = Math.Abs(vector[i]);
-                if (val > max) max = val;
+                if (val > max)
+                    max = val;
             }
 
             return max;
@@ -530,7 +578,8 @@ namespace Sparky.MNA.Core
             for (int i = 0; i < len; i++)
             {
                 double val = Math.Abs(current[i] - previous[i]);
-                if (val > max) max = val;
+                if (val > max)
+                    max = val;
             }
 
             return max;

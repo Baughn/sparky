@@ -137,8 +137,11 @@ public class CellTests
         {
             var world = cell.LocalToWorld(dir);
             var backToLocal = cell.WorldToLocal(world);
-            Assert.That(backToLocal, Is.EqualTo(dir),
-                $"WorldToLocal should inverse LocalToWorld for {dir}");
+            Assert.That(
+                backToLocal,
+                Is.EqualTo(dir),
+                $"WorldToLocal should inverse LocalToWorld for {dir}"
+            );
         }
     }
 

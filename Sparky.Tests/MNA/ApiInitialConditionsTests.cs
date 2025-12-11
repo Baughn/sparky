@@ -68,7 +68,8 @@ public class ApiInitialConditionsTests
     public void SetCapacitorVoltage_InvalidId_ThrowsException()
     {
         Assert.Throws<InvalidComponentException>(() =>
-            _sim.SetCapacitorVoltage(new CapacitorId(999), 5.0));
+            _sim.SetCapacitorVoltage(new CapacitorId(999), 5.0)
+        );
     }
 
     [Test]
@@ -154,7 +155,8 @@ public class ApiInitialConditionsTests
     public void SetInductorCurrent_InvalidId_ThrowsException()
     {
         Assert.Throws<InvalidComponentException>(() =>
-            _sim.SetInductorCurrent(new InductorId(999), 0.1));
+            _sim.SetInductorCurrent(new InductorId(999), 0.1)
+        );
     }
 
     #endregion

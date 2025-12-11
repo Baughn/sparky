@@ -20,7 +20,7 @@ public enum FaceDirection
     Top = 0,
     Right = 1,
     Bottom = 2,
-    Left = 3
+    Left = 3,
 }
 
 /// <summary>
@@ -31,7 +31,8 @@ public static class FaceDirectionExtensions
     /// <summary>
     /// Returns the opposite direction (Top -> Bottom, Left -> Right, etc.).
     /// </summary>
-    public static FaceDirection Opposite(this FaceDirection dir) => (FaceDirection)(((int)dir + 2) % 4);
+    public static FaceDirection Opposite(this FaceDirection dir) =>
+        (FaceDirection)(((int)dir + 2) % 4);
 
     /// <summary>
     /// Rotates the direction by the given degrees (must be 0, 90, 180, or 270).
@@ -41,7 +42,10 @@ public static class FaceDirectionExtensions
     public static FaceDirection Rotate(this FaceDirection dir, int degrees)
     {
         if (degrees % 90 != 0)
-            throw new ArgumentException("Rotation must be a multiple of 90 degrees.", nameof(degrees));
+            throw new ArgumentException(
+                "Rotation must be a multiple of 90 degrees.",
+                nameof(degrees)
+            );
 
         // Normalize to 0-3 steps (each step is 90 degrees clockwise)
         int steps = ((degrees / 90) % 4 + 4) % 4;
@@ -51,14 +55,15 @@ public static class FaceDirectionExtensions
     /// <summary>
     /// Returns the (du, dv) offset within a face for moving in this direction.
     /// </summary>
-    public static (int du, int dv) Offset(this FaceDirection dir) => dir switch
-    {
-        FaceDirection.Top => (0, 1),
-        FaceDirection.Right => (1, 0),
-        FaceDirection.Bottom => (0, -1),
-        FaceDirection.Left => (-1, 0),
-        _ => throw new ArgumentOutOfRangeException(nameof(dir))
-    };
+    public static (int du, int dv) Offset(this FaceDirection dir) =>
+        dir switch
+        {
+            FaceDirection.Top => (0, 1),
+            FaceDirection.Right => (1, 0),
+            FaceDirection.Bottom => (0, -1),
+            FaceDirection.Left => (-1, 0),
+            _ => throw new ArgumentOutOfRangeException(nameof(dir)),
+        };
 
     /// <summary>
     /// All four directions in order: Top, Right, Bottom, Left.
@@ -68,6 +73,6 @@ public static class FaceDirectionExtensions
         FaceDirection.Top,
         FaceDirection.Right,
         FaceDirection.Bottom,
-        FaceDirection.Left
+        FaceDirection.Left,
     };
 }

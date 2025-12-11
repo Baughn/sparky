@@ -17,7 +17,8 @@ namespace Sparky.MNA.Core
 
         public override bool RequiresPerStepRestamp => true;
 
-        public Capacitor(Node node1, Node node2, double capacitance) : base(node1, node2)
+        public Capacitor(Node node1, Node node2, double capacitance)
+            : base(node1, node2)
         {
             Capacitance = capacitance;
         }
@@ -25,7 +26,8 @@ namespace Sparky.MNA.Core
         public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt)
         {
             // DC Steady State: Capacitor is an open circuit (G = 0, I = 0)
-            if (dt <= 0) return;
+            if (dt <= 0)
+                return;
 
             // Transient Model (Backward Euler):
             // Capacitor C is modeled as a conductance G_eq in parallel with a current source I_eq.
@@ -64,7 +66,8 @@ namespace Sparky.MNA.Core
             if (n1 != 0)
             {
                 A.At(n1, n1, gEq);
-                if (n2 != 0) A.At(n1, n2, -gEq);
+                if (n2 != 0)
+                    A.At(n1, n2, -gEq);
 
                 // Stamp Source (RHS)
                 Z[n1] += iEq;
@@ -73,7 +76,8 @@ namespace Sparky.MNA.Core
             if (n2 != 0)
             {
                 A.At(n2, n2, gEq);
-                if (n1 != 0) A.At(n2, n1, -gEq);
+                if (n1 != 0)
+                    A.At(n2, n1, -gEq);
 
                 // Stamp Source (RHS)
                 Z[n2] -= iEq;
@@ -82,7 +86,7 @@ namespace Sparky.MNA.Core
 
         // We need a way to update state after solve
         // But Component doesn't have an Update method yet.
-        // We should add one or handle it in Stamp? 
+        // We should add one or handle it in Stamp?
         // Stamp is called BEFORE solve. We need to update AFTER solve.
         // But wait, for the NEXT step, we use the voltage from THIS step.
         // So we can update the state at the beginning of Stamp?

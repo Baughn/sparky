@@ -118,11 +118,11 @@ public class LimitTests
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);
 
-        _sim.SetResistorLimit(r, LimitKind.OverCurrent, new LimitConfig
-        {
-            Threshold = 0.1,
-            FireEveryStep = true
-        });
+        _sim.SetResistorLimit(
+            r,
+            LimitKind.OverCurrent,
+            new LimitConfig { Threshold = 0.1, FireEveryStep = true }
+        );
 
         var events = new List<LimitEvent>();
         using var sub = _sim.OnLimitEvent(evt => events.Add(evt));
@@ -148,11 +148,11 @@ public class LimitTests
 
         // Threshold 0.1A with 0.02A hysteresis
         // Clears when current < 0.08A
-        _sim.SetResistorLimit(r, LimitKind.OverCurrent, new LimitConfig
-        {
-            Threshold = 0.1,
-            Hysteresis = 0.02
-        });
+        _sim.SetResistorLimit(
+            r,
+            LimitKind.OverCurrent,
+            new LimitConfig { Threshold = 0.1, Hysteresis = 0.02 }
+        );
 
         var events = new List<LimitEvent>();
         using var sub = _sim.OnLimitEvent(evt => events.Add(evt));
@@ -193,7 +193,9 @@ public class LimitTests
         _sim.RemoveResistor(r);
 
         // Verify limit is gone (GetResistorLimit should throw since resistor doesn't exist)
-        Assert.Throws<InvalidComponentException>(() => _sim.SetResistorLimit(r, LimitKind.OverCurrent, new LimitConfig { Threshold = 0.1 }));
+        Assert.Throws<InvalidComponentException>(() =>
+            _sim.SetResistorLimit(r, LimitKind.OverCurrent, new LimitConfig { Threshold = 0.1 })
+        );
     }
 
     [Test]
@@ -502,7 +504,12 @@ public class LimitTests
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
 
-        var config = new LimitConfig { Threshold = 0.5, Hysteresis = 0.1, FireEveryStep = true };
+        var config = new LimitConfig
+        {
+            Threshold = 0.5,
+            Hysteresis = 0.1,
+            FireEveryStep = true,
+        };
         _sim.SetResistorLimit(r, LimitKind.OverCurrent, config);
 
         var retrieved = _sim.GetResistorLimit(r, LimitKind.OverCurrent);
@@ -541,7 +548,12 @@ public class LimitTests
     public void Limit_SetOnNonExistentComponent_Throws()
     {
         Assert.Throws<InvalidComponentException>(() =>
-            _sim.SetResistorLimit(new ResistorId(999), LimitKind.OverCurrent, new LimitConfig { Threshold = 0.1 }));
+            _sim.SetResistorLimit(
+                new ResistorId(999),
+                LimitKind.OverCurrent,
+                new LimitConfig { Threshold = 0.1 }
+            )
+        );
     }
 
     #endregion

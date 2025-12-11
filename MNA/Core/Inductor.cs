@@ -11,7 +11,8 @@ namespace Sparky.MNA.Core
 
         public override bool RequiresPerStepRestamp => true;
 
-        public Inductor(Node node1, Node node2, double inductance) : base(node1, node2)
+        public Inductor(Node node1, Node node2, double inductance)
+            : base(node1, node2)
         {
             Inductance = inductance;
         }
@@ -31,12 +32,14 @@ namespace Sparky.MNA.Core
                 if (n1 != 0)
                 {
                     A.At(n1, n1, gMin);
-                    if (n2 != 0) A.At(n1, n2, -gMin);
+                    if (n2 != 0)
+                        A.At(n1, n2, -gMin);
                 }
                 if (n2 != 0)
                 {
                     A.At(n2, n2, gMin);
-                    if (n1 != 0) A.At(n2, n1, -gMin);
+                    if (n1 != 0)
+                        A.At(n2, n1, -gMin);
                 }
                 return;
             }
@@ -52,14 +55,16 @@ namespace Sparky.MNA.Core
             if (n1 != 0)
             {
                 A.At(n1, n1, gEq);
-                if (n2 != 0) A.At(n1, n2, -gEq);
+                if (n2 != 0)
+                    A.At(n1, n2, -gEq);
                 Z[n1] -= iEq;
             }
 
             if (n2 != 0)
             {
                 A.At(n2, n2, gEq);
-                if (n1 != 0) A.At(n2, n1, -gEq);
+                if (n1 != 0)
+                    A.At(n2, n1, -gEq);
                 Z[n2] += iEq;
             }
         }

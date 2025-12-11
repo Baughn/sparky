@@ -12,7 +12,7 @@ public enum SimDomain
     Thermal,
 
     /// <summary>Rotational mechanics simulation.</summary>
-    Kinetic
+    Kinetic,
 }
 
 /// <summary>
@@ -21,13 +21,10 @@ public enum SimDomain
 public readonly record struct DomainStats(
     /// <summary>Number of nodes in the domain.</summary>
     int NodeCount,
-
     /// <summary>Number of components/links in the domain.</summary>
     int ComponentCount,
-
     /// <summary>Number of iterations (for iterative solvers).</summary>
     int Iterations,
-
     /// <summary>Wall-clock time of last step in milliseconds.</summary>
     double LastStepTimeMs
 );
