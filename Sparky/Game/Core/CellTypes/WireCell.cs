@@ -36,19 +36,12 @@ public class WireCell : Cell, IElectricalCell
         // Wire doesn't add MNA components — it just ensures all ports share the same node.
         // The Grid's edge registry should already make all ports point to the same node.
         // We store one of them for voltage lookup.
-        if (ports.Count > 0)
+        _hasNode = false;
+        foreach (var (_, node) in ports)
         {
-            _node = ports.Values.GetEnumerator().Current;
-            foreach (var (dir, node) in ports)
-            {
-                _node = node;
-                break;
-            }
+            _node = node;
             _hasNode = true;
-        }
-        else
-        {
-            _hasNode = false;
+            break;
         }
     }
 

@@ -5,6 +5,77 @@ using Sparky.MNA.Api;
 namespace Sparky.Tests.Game;
 
 [TestFixture]
+public class CellPosHashTests
+{
+    [Test]
+    public void AdjacentPositions_HaveConsistentHashing()
+    {
+        // Two positions: Sub(0,0) and Sub(1,0) - adjacent in Right/Left
+        var pos0 = new CellPos(new BlockPos(0, 0, 0), BlockFacing.Up, new SubPos(0, 0));
+        var pos1 = new CellPos(new BlockPos(0, 0, 0), BlockFacing.Up, new SubPos(1, 0));
+
+        // Verify they're equal to themselves
+        Assert.That(pos0, Is.EqualTo(pos0));
+        Assert.That(pos1, Is.EqualTo(pos1));
+        Assert.That(pos0, Is.Not.EqualTo(pos1));
+
+        // Get hash codes - they should be different
+        var hash0 = pos0.GetHashCode();
+        var hash1 = pos1.GetHashCode();
+
+        // Verify neighbor calculation works
+        var neighborRight = pos0.Sub.Neighbor(FaceDirection.Right);
+        Assert.That(neighborRight, Is.EqualTo(new SubPos(1, 0)), "Sub(0,0).Neighbor(Right) should be Sub(1,0)");
+
+        var neighborLeft = pos1.Sub.Neighbor(FaceDirection.Left);
+        Assert.That(neighborLeft, Is.EqualTo(new SubPos(0, 0)), "Sub(1,0).Neighbor(Left) should be Sub(0,0)");
+
+        // Log for debugging
+        TestContext.WriteLine($"pos0 = {pos0}, hash = {hash0}");
+        TestContext.WriteLine($"pos1 = {pos1}, hash = {hash1}");
+    }
+
+    [Test]
+    public void CellEdge_NormalizesCorrectly()
+    {
+        // Two adjacent positions: Sub(0,0) and Sub(1,0)
+        var pos0 = new CellPos(new BlockPos(0, 0, 0), BlockFacing.Up, new SubPos(0, 0));
+        var pos1 = new CellPos(new BlockPos(0, 0, 0), BlockFacing.Up, new SubPos(1, 0));
+
+        // Create edge from pos0 going Right (toward pos1)
+        var edgeFromPos0 = CellEdge.Create(pos0, FaceDirection.Right);
+
+        // Create edge from pos1 going Left (toward pos0)
+        var edgeFromPos1 = CellEdge.Create(pos1, FaceDirection.Left);
+
+        TestContext.WriteLine($"pos0 = {pos0}, hash = {pos0.GetHashCode()}");
+        TestContext.WriteLine($"pos1 = {pos1}, hash = {pos1.GetHashCode()}");
+        TestContext.WriteLine($"edgeFromPos0 = (PosA={edgeFromPos0.PosA}, Dir={edgeFromPos0.Direction})");
+        TestContext.WriteLine($"edgeFromPos1 = (PosA={edgeFromPos1.PosA}, Dir={edgeFromPos1.Direction})");
+
+        // CRITICAL: Both edges should be EQUAL since they represent the same boundary
+        Assert.That(edgeFromPos0, Is.EqualTo(edgeFromPos1),
+            "Edge from pos0->Right should equal edge from pos1->Left");
+    }
+
+    [Test]
+    public void CellEdge_GetNeighbor_ReturnsCorrectPosition()
+    {
+        var pos = new CellPos(new BlockPos(0, 0, 0), BlockFacing.Up, new SubPos(1, 1));
+
+        var neighborRight = CellEdge.GetNeighbor(pos, FaceDirection.Right);
+        var neighborLeft = CellEdge.GetNeighbor(pos, FaceDirection.Left);
+        var neighborTop = CellEdge.GetNeighbor(pos, FaceDirection.Top);
+        var neighborBottom = CellEdge.GetNeighbor(pos, FaceDirection.Bottom);
+
+        Assert.That(neighborRight.Sub, Is.EqualTo(new SubPos(2, 1)), "Right neighbor");
+        Assert.That(neighborLeft.Sub, Is.EqualTo(new SubPos(0, 1)), "Left neighbor");
+        Assert.That(neighborTop.Sub, Is.EqualTo(new SubPos(1, 2)), "Top neighbor");
+        Assert.That(neighborBottom.Sub, Is.EqualTo(new SubPos(1, 0)), "Bottom neighbor");
+    }
+}
+
+[TestFixture]
 public class GridTests
 {
     // Simple test cell implementation

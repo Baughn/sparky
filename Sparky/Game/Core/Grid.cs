@@ -15,9 +15,16 @@ namespace Sparky.Game.Core;
 /// 2. They are adjacent within that plane
 /// 3. Both have ports facing the shared edge
 /// </remarks>
-internal readonly record struct CellEdge
+/// <summary>
+/// Edge between two adjacent cell positions on the same face plane.
+/// Used as key for node sharing between adjacent cells.
+/// </summary>
+/// <remarks>
+/// Made public for testing. In production, only used internally by Grid.
+/// </remarks>
+public readonly record struct CellEdge
 {
-    /// <summary>First cell position (normalized to be "smaller").</summary>
+    /// <summary>First cell position (normalized to be "smaller" by hash code).</summary>
     public CellPos PosA { get; }
 
     /// <summary>Direction from PosA toward PosB.</summary>
@@ -44,7 +51,11 @@ internal readonly record struct CellEdge
             return new CellEdge(b, dirFromA.Opposite());
     }
 
-    private static CellPos GetNeighbor(CellPos pos, FaceDirection dir)
+    /// <summary>
+    /// Gets the neighbor position in the given direction.
+    /// Public for testing.
+    /// </summary>
+    public static CellPos GetNeighbor(CellPos pos, FaceDirection dir)
     {
         // Move within the sub-grid
         var newSub = pos.Sub.Neighbor(dir);
@@ -196,7 +207,22 @@ public class Grid
         _edgeNodes.Clear();
         _allocatedNodes.Clear();
 
-        // Step 3: Create nodes and components for each cell
+        // Step 3a: First pass - identify all ground edges
+        // This ensures ground nodes are established before other cells try to use them
+        foreach (var (pos, cell) in _cells)
+        {
+            if (cell.Type != CellType.Ground) continue;
+            if (cell.AsElectrical() is not { } elec) continue;
+
+            foreach (var localDir in elec.GetLocalPortDirections())
+            {
+                var worldDir = cell.LocalToWorld(localDir);
+                var edge = CellEdge.Create(pos, worldDir);
+                _edgeNodes[edge] = _simulation.Ground;
+            }
+        }
+
+        // Step 3b: Create nodes and components for each cell
         foreach (var (pos, cell) in _cells)
         {
             if (cell.AsElectrical() is not { } elec) continue;
@@ -209,21 +235,14 @@ public class Grid
                 var worldDir = cell.LocalToWorld(localDir);
                 var edge = CellEdge.Create(pos, worldDir);
 
-                // Check if this cell is a GroundCell (forces ground)
-                bool forceGround = cell.Type == CellType.Ground;
-
-                if (forceGround)
-                {
-                    ports[worldDir] = _simulation.Ground;
-                    _edgeNodes[edge] = _simulation.Ground;
-                }
-                else if (_edgeNodes.TryGetValue(edge, out var existingNode))
+                // Ground edges were already registered in step 3a
+                if (_edgeNodes.TryGetValue(edge, out var existingNode))
                 {
                     ports[worldDir] = existingNode;
                 }
                 else
                 {
-                    // Check if neighbor at this edge is a ground cell
+                    // Check if neighbor at this edge is a ground cell (redundant but safe)
                     var neighborPos = GetNeighborPos(pos, worldDir);
                     if (neighborPos.HasValue && _cells.TryGetValue(neighborPos.Value, out var neighbor)
                         && neighbor.Type == CellType.Ground)
