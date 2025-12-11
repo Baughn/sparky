@@ -202,14 +202,10 @@ public class GridBuilderTests
     }
 
     [Test]
-    [Ignore("Grid topology connectivity issue - edges match but nodes aren't being shared correctly. Needs investigation.")]
     public void VoltageDivider_DebugConnectivity()
     {
-        // This test was used to debug the connectivity issue.
-        // Edges are being correctly canonicalized, but actual NodeId values
-        // aren't being shared between adjacent cells during RebuildTopology.
-        //
-        // See VoltageDivider_MidpointVoltageIsCorrect for similar skip.
+        // This test verifies that the circuit topology is properly connected.
+        // Components are created and current flows through the resistor.
 
         var builder = new GridBuilder()
             .Ground(0, 0, rotation: 90)
@@ -228,17 +224,13 @@ public class GridBuilderTests
     }
 
     [Test]
-    [Ignore("Grid topology connectivity issue - edges match but nodes aren't being shared correctly. Needs investigation.")]
     public void VoltageDivider_MidpointVoltageIsCorrect()
     {
         // Battery(10V) - R(100) - Wire - R(100) - Ground
         // Expected: Wire node at 5V (midpoint of divider)
         //
-        // NOTE: This test is currently failing due to a topology connectivity bug.
-        // The edges are being correctly canonicalized, but the actual node IDs
-        // aren't being shared between adjacent cells during RebuildTopology.
-        //
-        // TODO: Investigate why edge-to-node mapping isn't working.
+        // This tests that the voltage divider formula works correctly:
+        // V_mid = V_source * R2 / (R1 + R2) = 10V * 100Ω / 200Ω = 5V
 
         var builder = new GridBuilder()
             .Ground(0, 0, rotation: 90)  // Connect to battery -

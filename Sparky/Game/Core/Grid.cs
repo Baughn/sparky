@@ -222,9 +222,64 @@ public class Grid
             }
         }
 
-        // Step 3b: Create nodes and components for each cell
+        // Step 3b: Process Wire cells first (they merge all edges into one node)
         foreach (var (pos, cell) in _cells)
         {
+            if (cell.Type != CellType.Wire) continue;
+            if (cell.AsElectrical() is not { } elec) continue;
+
+            // Collect all edges for this wire
+            var localDirs = elec.GetLocalPortDirections();
+            var edges = new List<CellEdge>();
+            NodeId? sharedNode = null;
+
+            // First pass: find any existing node among all edges
+            foreach (var localDir in localDirs)
+            {
+                var worldDir = cell.LocalToWorld(localDir);
+                var edge = CellEdge.Create(pos, worldDir);
+                edges.Add(edge);
+
+                if (_edgeNodes.TryGetValue(edge, out var existingNode))
+                {
+                    // Prefer ground over other nodes (in case of conflict)
+                    if (existingNode.Value == 0 || !sharedNode.HasValue)
+                    {
+                        sharedNode = existingNode;
+                    }
+                }
+            }
+
+            // If no existing node found, create one
+            if (!sharedNode.HasValue)
+            {
+                sharedNode = _simulation.CreateNode();
+                _allocatedNodes.Add(sharedNode.Value);
+            }
+
+            // Register this node for ALL edges of the wire
+            foreach (var edge in edges)
+            {
+                if (!_edgeNodes.ContainsKey(edge))
+                {
+                    _edgeNodes[edge] = sharedNode.Value;
+                }
+            }
+
+            // Build ports dictionary and create components
+            var ports = new Dictionary<FaceDirection, NodeId>();
+            foreach (var localDir in localDirs)
+            {
+                var worldDir = cell.LocalToWorld(localDir);
+                ports[worldDir] = sharedNode.Value;
+            }
+            elec.CreateComponents(_simulation, ports);
+        }
+
+        // Step 3c: Process non-Wire cells
+        foreach (var (pos, cell) in _cells)
+        {
+            if (cell.Type == CellType.Wire) continue;  // Already processed
             if (cell.AsElectrical() is not { } elec) continue;
 
             var ports = new Dictionary<FaceDirection, NodeId>();
@@ -235,7 +290,7 @@ public class Grid
                 var worldDir = cell.LocalToWorld(localDir);
                 var edge = CellEdge.Create(pos, worldDir);
 
-                // Ground edges were already registered in step 3a
+                // Ground edges were already registered in step 3a, Wire edges in 3b
                 if (_edgeNodes.TryGetValue(edge, out var existingNode))
                 {
                     ports[worldDir] = existingNode;
