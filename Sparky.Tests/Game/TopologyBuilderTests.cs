@@ -1,3 +1,4 @@
+using System.Linq;
 using NUnit.Framework;
 using Sparky.Game.Core;
 using Sparky.Game.Core.ComponentTypes;
@@ -118,6 +119,76 @@ public class TopologyBuilderTests
         var region = regions[new VoxelPos(0, 0, 0)];
         Assert.That(regions[new VoxelPos(0, 0, 1)], Is.SameAs(region));
         Assert.That(regions[new VoxelPos(0, 1, 1)], Is.SameAs(region));
+    }
+
+    [Test]
+    public void FindConductorRegions_CrossBlockCable_OneRegion()
+    {
+        var grid = new VoxelGrid();
+
+        // 4x4 cable spanning 3 blocks along Z (48 voxels long)
+        // This tests cross-block prism connectivity
+        for (int z = 0; z < 48; z++)
+        {
+            for (int y = 0; y < 4; y++)
+            {
+                for (int x = 0; x < 4; x++)
+                {
+                    grid.SetVoxel(new VoxelPos(x, y, z), VoxelType.Conductor);
+                }
+            }
+        }
+
+        var regions = _builder.FindConductorRegions(grid);
+
+        // All voxels should be in the same region despite spanning 3 blocks
+        var firstRegion = regions[new VoxelPos(0, 0, 0)];
+        Assert.That(regions[new VoxelPos(0, 0, 47)], Is.SameAs(firstRegion));
+        Assert.That(regions[new VoxelPos(3, 3, 16)], Is.SameAs(firstRegion)); // In block 2
+        Assert.That(regions[new VoxelPos(3, 3, 32)], Is.SameAs(firstRegion)); // In block 3
+
+        // Should be exactly one region
+        var uniqueRegions = regions.Values.Distinct().Count();
+        Assert.That(uniqueRegions, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void FindConductorRegions_TwoPrismsSameBlock_Connected()
+    {
+        var grid = new VoxelGrid();
+
+        // Two separate prisms that touch within the same block
+        // Prism 1: x=0-3, y=0, z=0
+        for (int x = 0; x < 4; x++)
+            grid.SetVoxel(new VoxelPos(x, 0, 0), VoxelType.Conductor);
+
+        // Prism 2: x=0, y=1-3, z=0 (touches prism 1 at x=0)
+        for (int y = 1; y < 4; y++)
+            grid.SetVoxel(new VoxelPos(0, y, 0), VoxelType.Conductor);
+
+        var regions = _builder.FindConductorRegions(grid);
+
+        // Should be one connected region
+        var region1 = regions[new VoxelPos(3, 0, 0)];
+        var region2 = regions[new VoxelPos(0, 3, 0)];
+        Assert.That(region1, Is.SameAs(region2));
+    }
+
+    [Test]
+    public void FindConductorRegions_DisjointPrisms_SeparateRegions()
+    {
+        var grid = new VoxelGrid();
+
+        // Two prisms with a gap between them
+        grid.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor);
+        grid.SetVoxel(new VoxelPos(5, 0, 0), VoxelType.Conductor); // Gap of 4 voxels
+
+        var regions = _builder.FindConductorRegions(grid);
+
+        // Should be two separate regions
+        var region1 = regions[new VoxelPos(0, 0, 0)];
+        var region2 = regions[new VoxelPos(5, 0, 0)];
+        Assert.That(region1, Is.Not.SameAs(region2));
     }
 
     #endregion

@@ -230,6 +230,56 @@ grid.SetVoxel(pos, Material.Lead);
 Material? mat = grid.GetMaterial(pos);  // null for Air/Insulator
 ```
 
-### Prism Coalescing (Phase 3 - Future)
+### Prism Coalescing (Phase 3 - IMPLEMENTED)
 
-> **Deferred to Phase 3**: Large regions of same-material conductors will coalesce into "prisms" for efficient representation as single resistors. Resistance calculation: R = ρ × L / A where L is length and A is cross-section area.
+Voxels are stored as coalesced axis-aligned prisms for ~1000x memory compression. Instead of storing individual voxels (~50 bytes each), we store prisms (~14 bytes each).
+
+**Architecture**:
+```csharp
+// Block-local storage
+Dictionary<BlockPos, BlockVoxelData> _blocks;
+
+// Each block contains coalesced prisms
+public class BlockVoxelData
+{
+    List<Prism> _prisms;  // ~10-20 per block typical
+
+    public void RebuildFromVoxels(...);  // Greedy coalescing
+    public Prism? FindPrism(int x, int y, int z);  // O(k) lookup, k≈10-20
+}
+
+// Prism struct (14 bytes)
+public readonly record struct Prism(
+    byte LocalX, byte LocalY, byte LocalZ,  // Position 0-15
+    byte SizeX, byte SizeY, byte SizeZ,      // Size 1-16
+    VoxelType Type,
+    Material? Material
+);
+```
+
+**Memory comparison**:
+| Scenario | Per-Voxel | Prism Storage |
+|----------|-----------|---------------|
+| 4×4×160 cable | 128 KB | ~140 bytes |
+| 20 cables | 2.5 MB | ~3 KB |
+| Megabase | 125 MB | ~150 KB |
+
+**Design decisions**:
+- Prisms clip at VS block boundaries (16³) for chunk streaming compatibility
+- Linear search within blocks is fine with ~10-20 prisms
+- Full block rebuild on modification (simpler than incremental updates)
+- Greedy growth: +X, then +Y, then +Z directions
+
+**API** (unchanged from Phase 2):
+```csharp
+grid.SetVoxel(pos, VoxelType.Conductor);  // Triggers rebuild
+grid.GetVoxelType(pos);  // O(1) block + O(k) prism scan
+grid.GetMaterial(pos);
+
+// New prism-aware iteration
+grid.GetAllPrisms();  // Enumerate (BlockPos, Prism) tuples
+grid.GetPrismsInBlock(blockPos);
+grid.PrismCount;  // Total prisms across all blocks
+```
+
+**Resistance calculation** (future): R = ρ × L / A where L is prism length along current flow and A is cross-section area. Tap points (partial face connections) will be handled by TopologyBuilder.
