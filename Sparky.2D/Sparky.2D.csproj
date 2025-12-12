@@ -20,7 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Reference to main Sparky project for VoxelGrid, TopologyBuilder, etc. -->
-    <ProjectReference Include="..\Sparky.csproj" />
+    <!-- Reference to Sparky.Core for MNA solver, VoxelGrid, TopologyBuilder, etc. -->
+    <!-- Does NOT depend on Vintage Story -->
+    <ProjectReference Include="..\Sparky.Core\Sparky.Core.csproj" />
   </ItemGroup>
 </Project>

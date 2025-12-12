@@ -56,7 +56,6 @@
             echo "  ./format.sh --check    - Check formatting without changes"
             echo ""
 
-            export VINTAGE_STORY="${pkgs.vintagestory}/share/vintagestory/"
 
             # GTK/Cairo library path for GtkSharp
             export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [

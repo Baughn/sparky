@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <OutputType>Library</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- Include MNA and Game source files from parent directory -->
+  <ItemGroup>
+    <Compile Include="..\MNA\**\*.cs" LinkBase="MNA" />
+    <Compile Include="..\Sparky\Game\**\*.cs" LinkBase="Game" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CSparse" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Sparky.Tests" />
+  </ItemGroup>
+</Project>

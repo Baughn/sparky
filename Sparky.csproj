@@ -16,6 +16,13 @@
     <None Remove="Sparky.Benchmarks/**" />
     <Compile Remove="Sparky.2D/**" />
     <None Remove="Sparky.2D/**" />
+    <Compile Remove="Sparky.Core/**" />
+    <None Remove="Sparky.Core/**" />
+    <!-- MNA and Game are now in Sparky.Core -->
+    <Compile Remove="MNA/**" />
+    <None Remove="MNA/**" />
+    <Compile Remove="Sparky/Game/**" />
+    <None Remove="Sparky/Game/**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,18 +35,16 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Reference to Sparky.Core for MNA solver and Game/Core types -->
+    <ProjectReference Include="Sparky.Core/Sparky.Core.csproj" />
+  </ItemGroup>
+
   <!-- Copy resources to output folder on Release builds -->
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <None Include="resources/**" CopyToOutputDirectory="PreserveNewest" />
     <None Include="assets/**" CopyToOutputDirectory="PreserveNewest" />
     <None Include="modinfo.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="CSparse" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <InternalsVisibleTo Include="Sparky.Tests" />
   </ItemGroup>
 
   <!-- Package the mod as a zip file after building -->
