@@ -196,11 +196,40 @@ There is no special "WireCell" type. Wire is simply conductor voxels placed by t
 
 Ground is a component with one terminal region that forces its connected conductor region to MNA node 0 (ground).
 
-### Materials (Phase 3)
+### Materials (Phase 2.5 - IMPLEMENTED)
 
-> **Deferred to Phase 3**: Conductor voxels will have material properties (resistivity). Large regions of same-material conductors will coalesce into "prisms" for efficient representation as single resistors.
+Each conductor voxel has an associated `Material` that defines its resistivity:
 
 ```csharp
-public record Material(string Name, double Resistivity);
-// e.g., Copper: 1.7e-8 Ω·m, Lead: 2.2e-7 Ω·m (for fuses)
+public sealed class Material
+{
+    public string Name { get; }
+    public double Resistivity { get; }  // Ω/voxel (game-scaled)
+
+    // Predefined materials
+    public static Material Copper { get; }  // 0.001 Ω/voxel - baseline
+    public static Material Lead { get; }    // 0.01 Ω/voxel - 10x copper, for fuses
+    public static Material Iron { get; }    // 0.005 Ω/voxel - 5x copper
+    public static Material Gold { get; }    // 0.0015 Ω/voxel - 1.5x copper
+}
 ```
+
+**Game-scaled resistivity**: Values are in Ω/voxel for easy mental math:
+- 100 copper voxels = 0.1Ω
+- 100 lead voxels = 1Ω (heats up faster → fuse material)
+
+**API Usage**:
+```csharp
+// Default to copper
+grid.SetVoxel(pos, VoxelType.Conductor);
+
+// Specify material
+grid.SetVoxel(pos, Material.Lead);
+
+// Query material
+Material? mat = grid.GetMaterial(pos);  // null for Air/Insulator
+```
+
+### Prism Coalescing (Phase 3 - Future)
+
+> **Deferred to Phase 3**: Large regions of same-material conductors will coalesce into "prisms" for efficient representation as single resistors. Resistance calculation: R = ρ × L / A where L is length and A is cross-section area.

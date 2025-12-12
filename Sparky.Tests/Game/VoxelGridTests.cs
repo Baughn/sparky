@@ -180,4 +180,77 @@ public class VoxelGridTests
 
         Assert.That(conductors, Has.Count.EqualTo(2));
     }
+
+    #region Material Tests
+
+    [Test]
+    public void SetVoxel_WithMaterial_StoresMaterial()
+    {
+        var grid = new VoxelGrid();
+        var pos = new VoxelPos(0, 0, 0);
+
+        grid.SetVoxel(pos, Material.Lead);
+
+        Assert.That(grid.GetMaterial(pos), Is.SameAs(Material.Lead));
+        Assert.That(grid.GetVoxelType(pos), Is.EqualTo(VoxelType.Conductor));
+    }
+
+    [Test]
+    public void SetVoxel_ConductorWithoutMaterial_DefaultsToCopper()
+    {
+        var grid = new VoxelGrid();
+        var pos = new VoxelPos(0, 0, 0);
+
+        grid.SetVoxel(pos, VoxelType.Conductor);
+
+        Assert.That(grid.GetMaterial(pos), Is.SameAs(Material.Copper));
+    }
+
+    [Test]
+    public void GetMaterial_ReturnsCorrectMaterial()
+    {
+        var grid = new VoxelGrid();
+        var pos1 = new VoxelPos(0, 0, 0);
+        var pos2 = new VoxelPos(1, 0, 0);
+        var pos3 = new VoxelPos(2, 0, 0);
+
+        grid.SetVoxel(pos1, Material.Copper);
+        grid.SetVoxel(pos2, Material.Lead);
+        grid.SetVoxel(pos3, Material.Iron);
+
+        Assert.That(grid.GetMaterial(pos1), Is.SameAs(Material.Copper));
+        Assert.That(grid.GetMaterial(pos2), Is.SameAs(Material.Lead));
+        Assert.That(grid.GetMaterial(pos3), Is.SameAs(Material.Iron));
+    }
+
+    [Test]
+    public void GetMaterial_AirVoxel_ReturnsNull()
+    {
+        var grid = new VoxelGrid();
+        var pos = new VoxelPos(99, 99, 99);  // Never set
+
+        Assert.That(grid.GetMaterial(pos), Is.Null);
+    }
+
+    [Test]
+    public void GetMaterial_InsulatorVoxel_ReturnsNull()
+    {
+        var grid = new VoxelGrid();
+        var pos = new VoxelPos(0, 0, 0);
+        grid.SetVoxel(pos, VoxelType.Insulator);
+
+        Assert.That(grid.GetMaterial(pos), Is.Null);
+    }
+
+    [Test]
+    public void Material_PredefinedValues_HaveCorrectResistivity()
+    {
+        // Verify the predefined materials have expected resistivity ratios
+        Assert.That(Material.Copper.Resistivity, Is.EqualTo(0.001));
+        Assert.That(Material.Lead.Resistivity, Is.EqualTo(0.01));   // 10x copper
+        Assert.That(Material.Iron.Resistivity, Is.EqualTo(0.005)); // 5x copper
+        Assert.That(Material.Gold.Resistivity, Is.EqualTo(0.0015)); // 1.5x copper
+    }
+
+    #endregion
 }

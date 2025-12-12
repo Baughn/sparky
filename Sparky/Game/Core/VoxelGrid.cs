@@ -23,16 +23,34 @@ public class VoxelGrid
     /// </summary>
     /// <param name="pos">The voxel position.</param>
     /// <param name="type">The voxel type. Air removes the voxel from storage.</param>
+    /// <remarks>
+    /// Conductor voxels default to Copper material. Use the overload with Material
+    /// parameter to specify a different material.
+    /// </remarks>
     public void SetVoxel(VoxelPos pos, VoxelType type)
     {
         if (type == VoxelType.Air)
         {
             _voxels.Remove(pos);
         }
+        else if (type == VoxelType.Conductor)
+        {
+            _voxels[pos] = new Voxel(type, Material.Copper);
+        }
         else
         {
-            _voxels[pos] = new Voxel(type);
+            _voxels[pos] = new Voxel(type, null);
         }
+    }
+
+    /// <summary>
+    /// Sets a conductor voxel with a specific material.
+    /// </summary>
+    /// <param name="pos">The voxel position.</param>
+    /// <param name="material">The conductor material.</param>
+    public void SetVoxel(VoxelPos pos, Material material)
+    {
+        _voxels[pos] = new Voxel(VoxelType.Conductor, material);
     }
 
     /// <summary>
@@ -57,6 +75,14 @@ public class VoxelGrid
     public bool IsConductor(VoxelPos pos)
     {
         return _voxels.TryGetValue(pos, out var voxel) && voxel.Type == VoxelType.Conductor;
+    }
+
+    /// <summary>
+    /// Gets the material at the given position, or null if Air/Insulator.
+    /// </summary>
+    public Material? GetMaterial(VoxelPos pos)
+    {
+        return _voxels.TryGetValue(pos, out var voxel) ? voxel.Material : null;
     }
 
     /// <summary>
@@ -106,7 +132,8 @@ public class VoxelGrid
 }
 
 /// <summary>
-/// A voxel with its type. In Phase 3, this will also include Material.
+/// A voxel with its type and optional material.
 /// </summary>
 /// <param name="Type">The voxel type (Conductor or Insulator).</param>
-public readonly record struct Voxel(VoxelType Type);
+/// <param name="Material">The conductor material (null for Air/Insulator).</param>
+public readonly record struct Voxel(VoxelType Type, Material? Material = null);
