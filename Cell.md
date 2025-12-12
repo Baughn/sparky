@@ -77,8 +77,130 @@ This captures how the “cell / sub-solver” model maps onto Vintage Story’s 
   - Release tickets when no loaded cells remain in that network. Apply a sanity cap on distance/size to prevent runaway loads from huge bases; beyond the cap, either pause the network or require a player-placed “anchor” block to opt-in to long-distance loading.
 
 ## Downsides / Risks
-- Chunk churn: heavy edits or large bases can cause many local rebuilds; mitigate with localized flood-fills, rate limiting, and caching network IDs per chunk.  
-- Multi-wire blocks increase adjacency complexity; port IDs must be stable across rotations/variants to avoid reconnect bugs.  
-- Thread safety: any accidental world/BE access off-thread will crash or corrupt state; enforce a strict data-copy boundary for jobs.  
-- Sync/IO: overusing `MarkDirty` or sending large state each tick will hurt bandwidth; keep client payloads minimal and derive visuals where possible.  
+- Chunk churn: heavy edits or large bases can cause many local rebuilds; mitigate with localized flood-fills, rate limiting, and caching network IDs per chunk.
+- Multi-wire blocks increase adjacency complexity; port IDs must be stable across rotations/variants to avoid reconnect bugs.
+- Thread safety: any accidental world/BE access off-thread will crash or corrupt state; enforce a strict data-copy boundary for jobs.
+- Sync/IO: overusing `MarkDirty` or sending large state each tick will hurt bandwidth; keep client payloads minimal and derive visuals where possible.
 - Reflection/attributes are handy for registration, but avoid using reflection in hot tick paths—prefer static registries or source-gen if the boilerplate grows.
+
+---
+
+## Phase 2: Voxel-Based Connectivity Model
+
+> **Note**: This section describes the new voxel-based model that replaces the explicit port-based connectivity from Phase 1.
+
+### Overview
+
+Instead of explicit ports with direction declarations, connectivity is now **implicit via adjacency**. Each VS block contains a 16×16×16 voxel grid. Adjacent conductor voxels automatically connect - no port declarations needed.
+
+### Voxel Coordinates
+
+```csharp
+// Absolute voxel position in world space
+public readonly record struct VoxelPos(int X, int Y, int Z)
+{
+    // 16 voxels per VS block axis
+    public const int VoxelsPerBlock = 16;
+
+    // Which VS block contains this voxel
+    public BlockPos Block => new(
+        X >= 0 ? X / VoxelsPerBlock : (X - VoxelsPerBlock + 1) / VoxelsPerBlock,
+        Y >= 0 ? Y / VoxelsPerBlock : (Y - VoxelsPerBlock + 1) / VoxelsPerBlock,
+        Z >= 0 ? Z / VoxelsPerBlock : (Z - VoxelsPerBlock + 1) / VoxelsPerBlock
+    );
+}
+```
+
+### Voxel Types
+
+```csharp
+public enum VoxelType
+{
+    Air,        // Empty space - no connectivity
+    Conductor,  // Connects to adjacent conductors
+    Insulator   // Blocks connectivity (used in component bodies)
+}
+```
+
+### Implicit Connectivity
+
+Two conductor voxels connect if they are adjacent in any of the 6 cardinal directions. This means:
+- **4 parallel traces** require 8 voxels (4 conductors + 3 gaps)
+- **Wire crossings** are built as 3D structures (physical separation)
+- **Diodes** use insulating voxels between anode and cathode terminals
+
+### Multi-Voxel Components
+
+Components are no longer single cells. A battery might be 14×14×8 voxels:
+- **Terminal regions**: Conductor voxels at + and - ends that interface with external wiring
+- **Body**: Insulating voxels (or just not part of voxel grid) - doesn't participate in connectivity
+- **Behavior**: MNA component (voltage source) connects between terminal regions
+
+```csharp
+public abstract class Component
+{
+    public VoxelPos Origin { get; }
+    public abstract IReadOnlyList<TerminalRegion> Terminals { get; }
+
+    // Called during topology rebuild
+    public abstract void CreateMnaComponents(ISimulation sim,
+        IReadOnlyDictionary<string, NodeId> terminalNodes);
+}
+
+public class TerminalRegion
+{
+    public string Name { get; }  // "positive", "negative", "anode", etc.
+    public IReadOnlySet<VoxelPos> Voxels { get; }  // Conductor voxels in this terminal
+}
+```
+
+### Topology Building
+
+The topology is built by flood-filling connected conductor regions:
+
+1. **Find conductor regions**: Flood-fill from each conductor voxel to find connected components. Each region = one MNA node.
+2. **Map terminals to nodes**: For each component, determine which MNA node each terminal region touches.
+3. **Create MNA components**: Connect voltage sources, resistors, etc. between the appropriate nodes.
+
+```csharp
+public class TopologyBuilder
+{
+    void RebuildTopology(VoxelGrid voxels, IEnumerable<Component> components, ISimulation sim)
+    {
+        // 1. Flood-fill to find connected conductor regions
+        var regions = FindConductorRegions(voxels);  // Each region → one NodeId
+
+        // 2. Map component terminals to nodes
+        foreach (var component in components)
+        {
+            var terminalNodes = new Dictionary<string, NodeId>();
+            foreach (var terminal in component.Terminals)
+            {
+                // Find which region this terminal touches
+                var node = FindNodeForTerminal(terminal, regions);
+                terminalNodes[terminal.Name] = node;
+            }
+
+            // 3. Create MNA components
+            component.CreateMnaComponents(sim, terminalNodes);
+        }
+    }
+}
+```
+
+### Wire is Just Conductor Voxels
+
+There is no special "WireCell" type. Wire is simply conductor voxels placed by the player. Adjacent conductor voxels naturally form connected regions that share an MNA node.
+
+### Ground Component
+
+Ground is a component with one terminal region that forces its connected conductor region to MNA node 0 (ground).
+
+### Materials (Phase 3)
+
+> **Deferred to Phase 3**: Conductor voxels will have material properties (resistivity). Large regions of same-material conductors will coalesce into "prisms" for efficient representation as single resistors.
+
+```csharp
+public record Material(string Name, double Resistivity);
+// e.g., Copper: 1.7e-8 Ω·m, Lead: 2.2e-7 Ω·m (for fuses)
+```

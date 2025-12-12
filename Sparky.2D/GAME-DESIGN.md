@@ -46,32 +46,57 @@ A grid-based puzzle/sandbox game that teaches electrical circuit fundamentals us
 
 ## Core Gameplay
 
-### Grid World
-- 2D tile-based world (16x16 minimum, expandable)
-- Each tile can hold one component or wire segment
-- Wires auto-connect to adjacent compatible tiles
-- Components snap to grid with rotation support
+### Voxel World
+
+Each Vintage Story block contains a **16×16×16 voxel grid**. Circuit elements are placed at voxel resolution:
+
+- **Conductor voxels** connect to all 6 adjacent conductor voxels (implicit connectivity)
+- **4 parallel traces** require 8 voxels (4 conductor + 3 gap for isolation)
+- **Wire crossings** are built as 3D structures - physical separation prevents shorts
+- **Components** are multi-voxel structures (e.g., battery is ~14×14×8 voxels)
+
+For the 2D tablet game, circuits are on a single Y-layer (horizontal slice), but the voxel model supports full 3D.
 
 ### Component Palette
+
+All components are **multi-voxel structures** with terminal regions:
+
 ```
 Basic:
-  [─] Wire          - connects adjacent tiles
-  [+] Battery       - voltage source (configurable V)
-  [█] Resistor      - resistance (configurable Ω)
-  [/] Switch        - toggleable open/closed
-  [⏚] Ground        - reference point
+  Wire           - conductor voxels (player places freely)
+  Battery        - multi-voxel with + and - terminal faces
+  Resistor       - multi-voxel with two terminal faces
+  Switch         - toggleable connection between terminals
+  Ground         - single terminal, forces node to 0V
 
 Intermediate:
-  [▷] Diode         - one-way current flow
-  [◉] LED           - diode + light output
-  [║] Capacitor     - energy storage
-  [●] Lamp          - resistor + light/heat output
+  Diode          - anode + insulator + cathode (3+ voxels)
+  LED            - diode variant with light output
+  Capacitor      - energy storage between terminals
+  Lamp           - resistor variant with light/heat output
 
 Advanced:
-  [⌇] Inductor      - opposes current change
-  [⊠] Transformer   - voltage conversion
-  [◎] Motor         - electrical → rotational
-  [⊛] Generator     - rotational → electrical
+  Inductor       - opposes current change
+  Transformer    - voltage conversion (coupled inductors)
+  Motor          - electrical → rotational
+  Generator      - rotational → electrical
+```
+
+**Component internals are abstracted** - we don't simulate individual voxels inside a battery. The MNA component connects between terminal regions.
+
+### Cable Physics (Phase 3)
+
+> **Note**: Material properties and prism coalescing are deferred to Phase 3.
+
+Cable behavior emerges from voxel properties:
+- **More metal = lower resistance** - a 4×4 cable has 1/16 the resistance of a 1×1 cable
+- **Fuses** - use higher-resistance material (lead) at a specific point; it heats and evaporates first
+- **Damage** - under sustained overload, conductor voxels evaporate randomly
+
+Materials have resistivity (Ω per voxel-length):
+```
+Copper: low resistivity  → good for cables
+Lead:   high resistivity → good for fuses
 ```
 
 ### Visual Feedback
