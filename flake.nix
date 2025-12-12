@@ -34,6 +34,18 @@
         nativeBuildInputs = with pkgs; [
           dotnet-sdk_8
         ];
+
+        # GTK libraries for Sparky.2D GUI
+        gtkLibs = with pkgs; [
+          gtk3
+          cairo
+          pango
+          gdk-pixbuf
+          atk
+          glib
+        ];
+
+        gtkLibPath = pkgs.lib.makeLibraryPath gtkLibs;
       in
       {
         # Development shell
@@ -56,16 +68,12 @@
             echo "  ./format.sh --check    - Check formatting without changes"
             echo ""
 
-
-            # GTK/Cairo library path for GtkSharp
-            export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [
-              pkgs.gtk3
-              pkgs.cairo
-              pkgs.pango
-              pkgs.gdk-pixbuf
-              pkgs.atk
-              pkgs.glib
-            ]}:$LD_LIBRARY_PATH"
+            ${if pkgs.stdenv.isDarwin then ''
+              export DYLD_FALLBACK_LIBRARY_PATH="${gtkLibPath}:$DYLD_FALLBACK_LIBRARY_PATH"
+            '' else ''
+              export VINTAGE_STORY="${pkgs.vintagestory}/share/vintagestory/"
+              export LD_LIBRARY_PATH="${gtkLibPath}:$LD_LIBRARY_PATH"
+            ''}
           '';
         };
       });
