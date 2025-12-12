@@ -26,6 +26,9 @@ public class StandaloneClient : IGameClient, IDisposable
     private CellType _selectedTool = CellType.Wire;
     private int _rotation = 0;
 
+    // Hover state for tooltip
+    private GridPos? _hoveredCell;
+
     // Rendering
     private const int CellSize = 20;
     private const int Padding = 10;
@@ -47,6 +50,7 @@ public class StandaloneClient : IGameClient, IDisposable
                                       Gdk.EventMask.ButtonReleaseMask |
                                       Gdk.EventMask.PointerMotionMask));
         _drawingArea.ButtonPressEvent += OnButtonPress;
+        _drawingArea.MotionNotifyEvent += OnMotionNotify;
 
         _window.Add(_drawingArea);
         _window.ShowAll();
@@ -122,6 +126,9 @@ public class StandaloneClient : IGameClient, IDisposable
 
         // Draw toolbar
         DrawToolbar(ctx);
+
+        // Draw hover tooltip
+        DrawHoverTooltip(ctx);
     }
 
     private void DrawGrid(Context ctx)
@@ -149,21 +156,28 @@ public class StandaloneClient : IGameClient, IDisposable
         var x = Padding + pos.X * CellSize;
         var y = Padding + pos.Y * CellSize;
 
-        // Color based on voltage
+        // Color based on voltage: blue (-5V) → green (0V) → red (+5V)
+        // voltage is normalized to 10V scale, so ±5V = ±0.5
         var voltage = data.State.VoltageNormalized;
-        var r = Math.Clamp(voltage, 0, 1);
-        var g = Math.Clamp(1 - Math.Abs(voltage - 0.5) * 2, 0, 1);
-        var b = Math.Clamp(1 - voltage, 0, 1);
+        var r = Math.Clamp(voltage * 2, 0, 1);           // 0 at ≤0V, 1 at +5V
+        var g = Math.Clamp(1 - Math.Abs(voltage) * 2, 0, 1); // 1 at 0V, 0 at ±5V
+        var b = Math.Clamp(-voltage * 2, 0, 1);          // 1 at -5V, 0 at ≥0V
+        var heat = data.State.PowerNormalized;
 
-        switch (data.Type)
+        // Switch expression ensures compile error if new CellType is added without handling
+        System.Action draw = data.Type switch
         {
-            case CellType.Wire:
+            CellType.Empty => () => { },
+
+            CellType.Wire => () =>
+            {
                 ctx.SetSourceRGB(r * 0.8, g * 0.8, b * 0.8);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
                 ctx.Fill();
-                break;
+            },
 
-            case CellType.Ground:
+            CellType.Ground => () =>
+            {
                 ctx.SetSourceRGB(0.2, 0.8, 0.2);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
                 ctx.Fill();
@@ -173,14 +187,37 @@ public class StandaloneClient : IGameClient, IDisposable
                 ctx.MoveTo(x + CellSize / 2, y + 4);
                 ctx.LineTo(x + CellSize / 2, y + CellSize - 4);
                 ctx.Stroke();
-                break;
+            },
 
-            case CellType.Battery:
-                // Yellow for battery
+            CellType.Battery => () =>
+            {
+                // Yellow for battery negative terminal (origin)
                 ctx.SetSourceRGB(0.9, 0.9, 0.2);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
                 ctx.Fill();
-                // + symbol
+                // - symbol (this is the NEGATIVE terminal)
+                ctx.SetSourceRGB(0, 0, 0);
+                ctx.LineWidth = 2;
+                ctx.MoveTo(x + 4, y + CellSize / 2);
+                ctx.LineTo(x + CellSize - 4, y + CellSize / 2);
+                ctx.Stroke();
+            },
+
+            CellType.BatteryBody => () =>
+            {
+                // Dark gray for battery body (insulator)
+                ctx.SetSourceRGB(0.4, 0.4, 0.3);
+                ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
+                ctx.Fill();
+            },
+
+            CellType.BatteryPositive => () =>
+            {
+                // Yellow for battery positive terminal (far end)
+                ctx.SetSourceRGB(0.9, 0.9, 0.2);
+                ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
+                ctx.Fill();
+                // + symbol (this is the POSITIVE terminal)
                 ctx.SetSourceRGB(0, 0, 0);
                 ctx.LineWidth = 2;
                 ctx.MoveTo(x + CellSize / 2, y + 4);
@@ -188,11 +225,11 @@ public class StandaloneClient : IGameClient, IDisposable
                 ctx.MoveTo(x + 4, y + CellSize / 2);
                 ctx.LineTo(x + CellSize - 4, y + CellSize / 2);
                 ctx.Stroke();
-                break;
+            },
 
-            case CellType.Resistor:
+            CellType.Resistor => () =>
+            {
                 // Color by heat (power dissipation)
-                var heat = data.State.PowerNormalized;
                 ctx.SetSourceRGB(0.5 + heat * 0.5, 0.3 * (1 - heat), 0.1);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
                 ctx.Fill();
@@ -205,8 +242,26 @@ public class StandaloneClient : IGameClient, IDisposable
                 ctx.LineTo(x + 6, y + CellSize - 6);
                 ctx.ClosePath();
                 ctx.Stroke();
-                break;
-        }
+            },
+
+            CellType.ResistorBody => () =>
+            {
+                // Darker brown for resistor body (insulator)
+                ctx.SetSourceRGB(0.4, 0.25, 0.1);
+                ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
+                ctx.Fill();
+            },
+
+            CellType.ResistorTerminalB => () =>
+            {
+                // Same heat-based coloring as origin terminal
+                ctx.SetSourceRGB(0.5 + heat * 0.5, 0.3 * (1 - heat), 0.1);
+                ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
+                ctx.Fill();
+            },
+        };
+
+        draw();
     }
 
     private void DrawToolbar(Context ctx)
@@ -235,6 +290,68 @@ public class StandaloneClient : IGameClient, IDisposable
         // Show rotation
         ctx.MoveTo(Padding + 420, y + 16);
         ctx.ShowText($"Rotation: {_rotation * 90}° [R]");
+    }
+
+    private void DrawHoverTooltip(Context ctx)
+    {
+        if (_hoveredCell == null)
+            return;
+
+        var pos = _hoveredCell.Value;
+        if (!_cells.TryGetValue(pos, out var data))
+            return;
+
+        // Calculate actual voltage from normalized (assuming 10V scale)
+        var actualVoltage = data.State.VoltageNormalized * 10.0;
+        var actualCurrent = data.State.CurrentNormalized * 1.0; // 1A scale
+        var actualPower = data.State.PowerNormalized * 10.0; // 10W scale
+
+        // Build tooltip text
+        var lines = new[]
+        {
+            $"Cell: ({pos.X}, {pos.Y})",
+            $"Type: {data.Type}",
+            $"V: {actualVoltage:F2}V (norm: {data.State.VoltageNormalized:F3})",
+            $"I: {actualCurrent:F3}A",
+            $"P: {actualPower:F2}W"
+        };
+
+        // Position tooltip near the cell but offset so it doesn't cover it
+        var cellX = Padding + pos.X * CellSize;
+        var cellY = Padding + pos.Y * CellSize;
+        var tooltipX = cellX + CellSize + 5;
+        var tooltipY = cellY;
+
+        // Keep tooltip on screen
+        if (tooltipX + 180 > _drawingArea.AllocatedWidth)
+            tooltipX = cellX - 185;
+        if (tooltipY + 90 > _drawingArea.AllocatedHeight)
+            tooltipY = _drawingArea.AllocatedHeight - 95;
+
+        // Draw tooltip background
+        ctx.SetSourceRGBA(0.1, 0.1, 0.1, 0.9);
+        ctx.Rectangle(tooltipX, tooltipY, 180, 85);
+        ctx.Fill();
+
+        // Draw tooltip border
+        ctx.SetSourceRGB(0.5, 0.5, 0.5);
+        ctx.LineWidth = 1;
+        ctx.Rectangle(tooltipX, tooltipY, 180, 85);
+        ctx.Stroke();
+
+        // Draw tooltip text
+        ctx.SetSourceRGB(0.9, 0.9, 0.9);
+        for (int i = 0; i < lines.Length; i++)
+        {
+            ctx.MoveTo(tooltipX + 5, tooltipY + 15 + i * 14);
+            ctx.ShowText(lines[i]);
+        }
+
+        // Highlight the hovered cell
+        ctx.SetSourceRGBA(1, 1, 1, 0.3);
+        ctx.LineWidth = 2;
+        ctx.Rectangle(cellX, cellY, CellSize, CellSize);
+        ctx.Stroke();
     }
 
     private void OnKeyPress(object o, KeyPressEventArgs args)
@@ -281,6 +398,24 @@ public class StandaloneClient : IGameClient, IDisposable
         else if (args.Event.Button == 3) // Right click - remove
         {
             _pendingInput.Enqueue(new RemoveComponent(pos));
+        }
+    }
+
+    private void OnMotionNotify(object o, MotionNotifyEventArgs args)
+    {
+        var gridX = (int)((args.Event.X - Padding) / CellSize);
+        var gridY = (int)((args.Event.Y - Padding) / CellSize);
+
+        GridPos? newHover = null;
+        if (gridX >= 0 && gridX < _gridWidth && gridY >= 0 && gridY < _gridHeight)
+        {
+            newHover = new GridPos(gridX, gridY);
+        }
+
+        if (_hoveredCell != newHover)
+        {
+            _hoveredCell = newHover;
+            _drawingArea.QueueDraw(); // Redraw to update tooltip
         }
     }
 

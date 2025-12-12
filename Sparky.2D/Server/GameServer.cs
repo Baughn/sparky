@@ -104,29 +104,67 @@ public class GameServer : IGameServer
                 break;
 
             case CellType.Battery:
-                // Battery occupies 2 cells - negative at pos, positive at pos+rotation
-                var negativePos = voxelPos;
-                var positivePos = GetTerminalPos(voxelPos, rotation);
+                // Battery occupies 3 grid cells: negative terminal - body - positive terminal
+                var bodyGridPosB = GetTerminalGridPos(pos, rotation, 1);
+                var positiveGridPos = GetTerminalGridPos(pos, rotation, 2);
 
-                _voxelGrid.SetVoxel(negativePos, VoxelType.Conductor);
-                _voxelGrid.SetVoxel(positivePos, VoxelType.Conductor);
+                // Check bounds and remove any existing cells at all 3 positions
+                if (bodyGridPosB.X < 0 || bodyGridPosB.X >= _width || bodyGridPosB.Y < 0 || bodyGridPosB.Y >= _height ||
+                    positiveGridPos.X < 0 || positiveGridPos.X >= _width || positiveGridPos.Y < 0 || positiveGridPos.Y >= _height)
+                    return;
 
-                var battery = new BatteryComponent(negativePos, positivePos, 5.0);
+                if (_cells.ContainsKey(bodyGridPosB)) RemoveCell(bodyGridPosB);
+                if (_cells.ContainsKey(positiveGridPos)) RemoveCell(positiveGridPos);
+
+                // Voxel positions
+                var negativeVoxel = voxelPos;
+                var positiveVoxel = GetTerminalPos(voxelPos, rotation, 2);
+
+                _voxelGrid.SetVoxel(negativeVoxel, VoxelType.Conductor);
+                // Body is insulator (or just air) - don't set it as conductor
+                _voxelGrid.SetVoxel(positiveVoxel, VoxelType.Conductor);
+
+                var battery = new BatteryComponent(negativeVoxel, positiveVoxel, 5.0);
                 _components.Add(battery);
                 cell.Component = battery;
+
+                // Create cell entries for body and positive terminal
+                _cells[bodyGridPosB] = new CellData(CellType.BatteryBody, rotation, pos);
+                _cells[positiveGridPos] = new CellData(CellType.BatteryPositive, rotation, pos);
+                _dirtyCells.Add(bodyGridPosB);
+                _dirtyCells.Add(positiveGridPos);
                 break;
 
             case CellType.Resistor:
-                // Resistor occupies 2 cells - terminal A at pos, terminal B at pos+rotation
-                var terminalA = voxelPos;
-                var terminalB = GetTerminalPos(voxelPos, rotation);
+                // Resistor occupies 3 grid cells: terminal A - body - terminal B
+                var bodyGridPosR = GetTerminalGridPos(pos, rotation, 1);
+                var terminalBGridPos = GetTerminalGridPos(pos, rotation, 2);
 
-                _voxelGrid.SetVoxel(terminalA, VoxelType.Conductor);
-                _voxelGrid.SetVoxel(terminalB, VoxelType.Conductor);
+                // Check bounds and remove any existing cells at all 3 positions
+                if (bodyGridPosR.X < 0 || bodyGridPosR.X >= _width || bodyGridPosR.Y < 0 || bodyGridPosR.Y >= _height ||
+                    terminalBGridPos.X < 0 || terminalBGridPos.X >= _width || terminalBGridPos.Y < 0 || terminalBGridPos.Y >= _height)
+                    return;
 
-                var resistor = new ResistorComponent(terminalA, terminalB, 100.0);
+                if (_cells.ContainsKey(bodyGridPosR)) RemoveCell(bodyGridPosR);
+                if (_cells.ContainsKey(terminalBGridPos)) RemoveCell(terminalBGridPos);
+
+                // Voxel positions
+                var terminalAVoxel = voxelPos;
+                var terminalBVoxel = GetTerminalPos(voxelPos, rotation, 2);
+
+                _voxelGrid.SetVoxel(terminalAVoxel, VoxelType.Conductor);
+                // Body is insulator - don't set it as conductor
+                _voxelGrid.SetVoxel(terminalBVoxel, VoxelType.Conductor);
+
+                var resistor = new ResistorComponent(terminalAVoxel, terminalBVoxel, 100.0);
                 _components.Add(resistor);
                 cell.Component = resistor;
+
+                // Create cell entries for body and terminal B
+                _cells[bodyGridPosR] = new CellData(CellType.ResistorBody, rotation, pos);
+                _cells[terminalBGridPos] = new CellData(CellType.ResistorTerminalB, rotation, pos);
+                _dirtyCells.Add(bodyGridPosR);
+                _dirtyCells.Add(terminalBGridPos);
                 break;
         }
 
@@ -139,6 +177,13 @@ public class GameServer : IGameServer
         if (!_cells.TryGetValue(pos, out var cell))
             return;
 
+        // If this is a non-origin cell, redirect to remove the origin instead
+        if (cell.OriginCell.HasValue)
+        {
+            RemoveCell(cell.OriginCell.Value);
+            return;
+        }
+
         var voxelPos = GridToVoxel(pos);
 
         // Remove component
@@ -148,7 +193,7 @@ public class GameServer : IGameServer
             _components.Remove(cell.Component);
         }
 
-        // Remove voxels based on type
+        // Remove voxels and cells based on type
         switch (cell.Type)
         {
             case CellType.Wire:
@@ -158,9 +203,25 @@ public class GameServer : IGameServer
 
             case CellType.Battery:
             case CellType.Resistor:
+                // 3-cell components: clear both terminals and remove all 3 cell entries
                 _voxelGrid.SetVoxel(voxelPos, VoxelType.Air);
-                var secondPos = GetTerminalPos(voxelPos, cell.Rotation);
-                _voxelGrid.SetVoxel(secondPos, VoxelType.Air);
+                var farTerminalVoxel = GetTerminalPos(voxelPos, cell.Rotation, 2);
+                _voxelGrid.SetVoxel(farTerminalVoxel, VoxelType.Air);
+
+                // Remove body and far terminal cell entries
+                var bodyGridPos = GetTerminalGridPos(pos, cell.Rotation, 1);
+                var farTerminalGridPos = GetTerminalGridPos(pos, cell.Rotation, 2);
+
+                if (_cells.ContainsKey(bodyGridPos))
+                {
+                    _cells.Remove(bodyGridPos);
+                    _dirtyCells.Add(bodyGridPos);
+                }
+                if (_cells.ContainsKey(farTerminalGridPos))
+                {
+                    _cells.Remove(farTerminalGridPos);
+                    _dirtyCells.Add(farTerminalGridPos);
+                }
                 break;
         }
 
@@ -217,6 +278,12 @@ public class GameServer : IGameServer
 
     private CellVisualState ComputeVisualState(GridPos pos, CellData cell)
     {
+        // Body cells are insulators - no voltage display
+        if (cell.Type == CellType.BatteryBody || cell.Type == CellType.ResistorBody)
+        {
+            return CellVisualState.Default;
+        }
+
         var voxelPos = GridToVoxel(pos);
 
         // Get voltage at this cell's position
@@ -226,7 +293,7 @@ public class GameServer : IGameServer
             voltage = (float)(_simulation.GetVoltage(region.NodeId) / 10.0); // Normalize to 10V
         }
 
-        // Get component state if this cell has one
+        // Get component state if this cell has one (origin cells)
         if (cell.Component != null)
         {
             var compState = cell.Component.ComputeVisualState(_simulation);
@@ -237,6 +304,7 @@ public class GameServer : IGameServer
             );
         }
 
+        // Far terminal cells (BatteryPositive, ResistorTerminalB) - just show voltage
         return new CellVisualState(voltage, 0, 0);
     }
 
@@ -249,17 +317,36 @@ public class GameServer : IGameServer
     }
 
     /// <summary>
-    /// Gets the second terminal position based on rotation.
+    /// Gets a terminal position at a given distance based on rotation.
     /// Rotation: 0=+X, 1=+Z, 2=-X, 3=-Z
     /// </summary>
-    private static VoxelPos GetTerminalPos(VoxelPos origin, int rotation)
+    /// <param name="origin">Starting position.</param>
+    /// <param name="rotation">Rotation (0-3).</param>
+    /// <param name="distance">Distance in cells (default 1).</param>
+    private static VoxelPos GetTerminalPos(VoxelPos origin, int rotation, int distance = 1)
     {
         return (rotation % 4) switch
         {
-            0 => new VoxelPos(origin.X + 1, origin.Y, origin.Z),
-            1 => new VoxelPos(origin.X, origin.Y, origin.Z + 1),
-            2 => new VoxelPos(origin.X - 1, origin.Y, origin.Z),
-            3 => new VoxelPos(origin.X, origin.Y, origin.Z - 1),
+            0 => new VoxelPos(origin.X + distance, origin.Y, origin.Z),
+            1 => new VoxelPos(origin.X, origin.Y, origin.Z + distance),
+            2 => new VoxelPos(origin.X - distance, origin.Y, origin.Z),
+            3 => new VoxelPos(origin.X, origin.Y, origin.Z - distance),
+            _ => origin
+        };
+    }
+
+    /// <summary>
+    /// Gets a grid position at a given distance based on rotation.
+    /// Rotation: 0=+X, 1=+Y(grid), 2=-X, 3=-Y(grid)
+    /// </summary>
+    private static GridPos GetTerminalGridPos(GridPos origin, int rotation, int distance = 1)
+    {
+        return (rotation % 4) switch
+        {
+            0 => new GridPos(origin.X + distance, origin.Y),
+            1 => new GridPos(origin.X, origin.Y + distance),
+            2 => new GridPos(origin.X - distance, origin.Y),
+            3 => new GridPos(origin.X, origin.Y - distance),
             _ => origin
         };
     }
@@ -273,10 +360,17 @@ public class GameServer : IGameServer
         public int Rotation { get; }
         public Component? Component { get; set; }
 
-        public CellData(CellType type, int rotation)
+        /// <summary>
+        /// For non-origin cells of multi-cell components, points to the origin cell.
+        /// Null for origin cells and single-cell components.
+        /// </summary>
+        public GridPos? OriginCell { get; }
+
+        public CellData(CellType type, int rotation, GridPos? originCell = null)
         {
             Type = type;
             Rotation = rotation;
+            OriginCell = originCell;
         }
     }
 }

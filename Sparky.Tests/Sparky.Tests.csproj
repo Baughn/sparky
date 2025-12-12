@@ -18,5 +18,7 @@
   <ItemGroup>
     <!-- Reference Sparky.Core directly for MNA solver and Game/Core tests -->
     <ProjectReference Include="..\Sparky.Core\Sparky.Core.csproj" />
+    <!-- Reference Sparky.2D for 2D game integration tests -->
+    <ProjectReference Include="..\Sparky.2D\Sparky.2D.csproj" />
   </ItemGroup>
 </Project>

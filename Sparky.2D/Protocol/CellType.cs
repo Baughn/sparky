@@ -11,11 +11,23 @@ public enum CellType
     /// <summary>Conductor wire that connects adjacent cells.</summary>
     Wire,
 
-    /// <summary>Voltage source with positive and negative terminals.</summary>
+    /// <summary>Voltage source negative terminal (origin cell).</summary>
     Battery,
 
-    /// <summary>Resistance element.</summary>
+    /// <summary>Battery body (insulator between terminals).</summary>
+    BatteryBody,
+
+    /// <summary>Battery positive terminal (far end).</summary>
+    BatteryPositive,
+
+    /// <summary>Resistor terminal A (origin cell).</summary>
     Resistor,
+
+    /// <summary>Resistor body (insulator between terminals).</summary>
+    ResistorBody,
+
+    /// <summary>Resistor terminal B (far end).</summary>
+    ResistorTerminalB,
 
     /// <summary>Ground reference (0V).</summary>
     Ground
