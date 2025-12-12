@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparky.Tests", "Sparky.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparky.Benchmarks", "Sparky.Benchmarks\Sparky.Benchmarks.Runner.csproj", "{070789FB-B689-4A30-9E2B-7EB5EA0319F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparky.2D", "Sparky.2D\Sparky.2D.csproj", "{235B7238-D493-4EC0-B1DF-329E62CB651A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{070789FB-B689-4A30-9E2B-7EB5EA0319F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{070789FB-B689-4A30-9E2B-7EB5EA0319F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{070789FB-B689-4A30-9E2B-7EB5EA0319F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{235B7238-D493-4EC0-B1DF-329E62CB651A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{235B7238-D493-4EC0-B1DF-329E62CB651A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{235B7238-D493-4EC0-B1DF-329E62CB651A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{235B7238-D493-4EC0-B1DF-329E62CB651A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

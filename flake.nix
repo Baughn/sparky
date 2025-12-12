@@ -21,6 +21,14 @@
           # Development tools
           omnisharp-roslyn  # LSP for C#
           csharpier         # Code formatter
+
+          # GTK3 for Sparky.2D GUI
+          gtk3
+          cairo
+          pango
+          gdk-pixbuf
+          atk
+          glib
         ];
 
         nativeBuildInputs = with pkgs; [
@@ -43,11 +51,22 @@
             echo "Available commands:"
             echo "  dotnet build           - Build the mod"
             echo "  dotnet test            - Run tests"
+            echo "  dotnet run --project Sparky.2D  - Run 2D circuit editor"
             echo "  ./format.sh            - Format all C# files"
             echo "  ./format.sh --check    - Check formatting without changes"
             echo ""
 
             export VINTAGE_STORY="${pkgs.vintagestory}/share/vintagestory/"
+
+            # GTK/Cairo library path for GtkSharp
+            export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [
+              pkgs.gtk3
+              pkgs.cairo
+              pkgs.pango
+              pkgs.gdk-pixbuf
+              pkgs.atk
+              pkgs.glib
+            ]}:$LD_LIBRARY_PATH"
           '';
         };
       });

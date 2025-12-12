@@ -6,7 +6,7 @@
     <OutputType>Library</OutputType>
   </PropertyGroup>
 
-  <!-- Exclude apidocs directory from compilation -->
+  <!-- Exclude other projects and apidocs from compilation -->
   <ItemGroup>
     <Compile Remove="apidocs/**" />
     <None Remove="apidocs/**" />
@@ -14,6 +14,8 @@
     <None Remove="Sparky.Tests/**" />
     <Compile Remove="Sparky.Benchmarks/**" />
     <None Remove="Sparky.Benchmarks/**" />
+    <Compile Remove="Sparky.2D/**" />
+    <None Remove="Sparky.2D/**" />
   </ItemGroup>
 
   <ItemGroup>
