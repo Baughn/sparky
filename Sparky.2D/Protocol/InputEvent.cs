@@ -1,8 +1,15 @@
+using System.Text.Json.Serialization;
+
 namespace Sparky.TwoD.Protocol;
 
 /// <summary>
 /// Events sent from client to server for input handling.
 /// </summary>
+[JsonDerivedType(typeof(PlaceComponent), "PlaceComponent")]
+[JsonDerivedType(typeof(RemoveComponent), "RemoveComponent")]
+[JsonDerivedType(typeof(RequestFullState), "RequestFullState")]
+[JsonDerivedType(typeof(SetComponentValue), "SetComponentValue")]
+[JsonDerivedType(typeof(ToggleSwitchInput), "ToggleSwitchInput")]
 public abstract record InputEvent;
 
 /// <summary>

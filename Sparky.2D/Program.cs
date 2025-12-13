@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Sparky.TwoD;
 using Sparky.TwoD.Client;
 using Sparky.TwoD.Protocol;
@@ -22,15 +24,23 @@ Console.WriteLine();
 
 // Main loop
 var lastTime = DateTime.UtcNow;
+long tick = 0;
+var jsonOptions = new JsonSerializerOptions
+{
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    Converters = { new JsonStringEnumConverter() }
+};
+
 while (!client.ShouldClose)
 {
     var now = DateTime.UtcNow;
     var dt = (float)(now - lastTime).TotalSeconds;
     lastTime = now;
 
-    // Poll client input
+    // Poll client input and log to stdout
     foreach (var input in client.PollInput())
     {
+        Console.WriteLine(JsonSerializer.Serialize(new { tick, @event = input }, jsonOptions));
         server.HandleInput(input);
     }
 
@@ -40,6 +50,8 @@ while (!client.ShouldClose)
 
     // Render
     client.Render();
+
+    tick++;
 
     // Cap frame rate (~60 FPS)
     Thread.Sleep(16);

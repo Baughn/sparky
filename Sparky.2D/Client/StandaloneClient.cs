@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using Cairo;
 using Gtk;
 using Sparky.TwoD.Protocol;
@@ -53,6 +54,7 @@ public class StandaloneClient : IGameClient, IDisposable
     private readonly Queue<InputEvent> _pendingInput = new();
     private CellType _selectedTool = CellType.Wire;
     private int _rotation = 0;
+    private bool _debugMode = false;
 
     // Hover state for tooltip
     private GridPos? _hoveredCell;
@@ -365,8 +367,8 @@ public class StandaloneClient : IGameClient, IDisposable
         {
             var x = Padding + i * 90;
 
-            // Highlight selected tool
-            if (tools[i] == _selectedTool)
+            // Highlight selected tool (only if not in debug mode)
+            if (!_debugMode && tools[i] == _selectedTool)
             {
                 ctx.SetSourceRGB(0.4, 0.4, 0.6);
                 ctx.Rectangle(x - 2, y - 2, 84, 24);
@@ -378,8 +380,20 @@ public class StandaloneClient : IGameClient, IDisposable
             ctx.ShowText(toolNames[i]);
         }
 
+        // Debug tool
+        var debugX = Padding + 6 * 90;
+        if (_debugMode)
+        {
+            ctx.SetSourceRGB(0.6, 0.4, 0.4);  // Reddish highlight for debug
+            ctx.Rectangle(debugX - 2, y - 2, 84, 24);
+            ctx.Fill();
+        }
+        ctx.SetSourceRGB(0.9, 0.9, 0.9);
+        ctx.MoveTo(debugX, y + 16);
+        ctx.ShowText("Debug [7]");
+
         // Show rotation
-        ctx.MoveTo(Padding + 560, y + 16);
+        ctx.MoveTo(Padding + 650, y + 16);
         ctx.ShowText($"Rot: {_rotation * 90}° [R]");
     }
 
@@ -451,21 +465,30 @@ public class StandaloneClient : IGameClient, IDisposable
         {
             case Gdk.Key.Key_1:
                 _selectedTool = CellType.Wire;
+                _debugMode = false;
                 break;
             case Gdk.Key.Key_2:
                 _selectedTool = CellType.Battery;
+                _debugMode = false;
                 break;
             case Gdk.Key.Key_3:
                 _selectedTool = CellType.Resistor;
+                _debugMode = false;
                 break;
             case Gdk.Key.Key_4:
                 _selectedTool = CellType.Switch;
+                _debugMode = false;
                 break;
             case Gdk.Key.Key_5:
                 _selectedTool = CellType.Ground;
+                _debugMode = false;
                 break;
             case Gdk.Key.Key_6:
                 _selectedTool = CellType.Empty;  // Eraser
+                _debugMode = false;
+                break;
+            case Gdk.Key.Key_7:
+                _debugMode = true;
                 break;
             case Gdk.Key.r:
             case Gdk.Key.R:
@@ -488,9 +511,14 @@ public class StandaloneClient : IGameClient, IDisposable
 
         var pos = new GridPos(gridX, gridY);
 
-        if (args.Event.Button == 1) // Left click - place or erase
+        if (args.Event.Button == 1) // Left click - place, erase, or debug
         {
-            if (_selectedTool == CellType.Empty)
+            if (_debugMode)
+            {
+                // Debug tool: output cell state to stdout
+                OutputCellDebugInfo(pos);
+            }
+            else if (_selectedTool == CellType.Empty)
             {
                 // Eraser tool: remove component
                 _pendingInput.Enqueue(new RemoveComponent(pos));
@@ -805,6 +833,42 @@ public class StandaloneClient : IGameClient, IDisposable
             default:
                 // Wire and body cells - no extra indicator
                 break;
+        }
+    }
+
+    private void OutputCellDebugInfo(GridPos pos)
+    {
+        var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+        if (_cells.TryGetValue(pos, out var cell))
+        {
+            var debugInfo = new
+            {
+                debug = "cell",
+                pos = new { x = pos.X, y = pos.Y },
+                type = cell.Type.ToString(),
+                rotation = cell.Rotation,
+                state = new
+                {
+                    voltage = cell.State.VoltageNormalized,
+                    current = cell.State.CurrentNormalized,
+                    power = cell.State.PowerNormalized,
+                    switchClosed = cell.State.SwitchClosed
+                }
+            };
+            Console.WriteLine(JsonSerializer.Serialize(debugInfo, jsonOptions));
+        }
+        else
+        {
+            var debugInfo = new
+            {
+                debug = "cell",
+                pos = new { x = pos.X, y = pos.Y },
+                type = "Empty",
+                rotation = 0,
+                state = (object?)null
+            };
+            Console.WriteLine(JsonSerializer.Serialize(debugInfo, jsonOptions));
         }
     }
 
