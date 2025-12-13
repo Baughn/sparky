@@ -71,6 +71,10 @@ dotnet test --filter "FullyQualifiedName~TestName"  # Run specific test
 
 When making changes, update the relevant design docs (*.md in root and MNA/) to stay aligned. Prefer adding detailed subsystem knowledge to context files rather than this file.
 
+## Bugs
+
+When fixing bugs, always make a regression test first.
+
 ## Code Style
 
 - C# .NET 8.0, nullable enabled, LangVersion latest

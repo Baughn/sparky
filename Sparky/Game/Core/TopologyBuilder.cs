@@ -822,6 +822,10 @@ public class TopologyBuilder
             if (affectedRegions.Contains(pair.Item1) || affectedRegions.Contains(pair.Item2))
             {
                 sim.RemoveResistor(resistorId);
+                // Clean up AdjacentResistors on BOTH regions (including non-affected ones)
+                // to prevent stale resistor IDs from causing InvalidComponentException
+                pair.Item1.AdjacentResistors.Remove(resistorId);
+                pair.Item2.AdjacentResistors.Remove(resistorId);
                 resistorsToRemove.Add(pair);
             }
         }

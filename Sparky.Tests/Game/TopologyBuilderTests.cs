@@ -1073,5 +1073,74 @@ public class TopologyBuilderTests
         Assert.That(regions.Values.Distinct().Count(), Is.EqualTo(2), "Step 5: Should have 2 regions after split");
     }
 
+    [Test]
+    public void IncrementalUpdate_AdjacentResistors_NoStaleIdsAfterPartialRebuild()
+    {
+        // This test reproduces a bug where AdjacentResistors contains stale resistor IDs
+        // after an incremental update removes resistors connecting affected and non-affected regions.
+        //
+        // The bug scenario:
+        // 1. Create a chain of resistive voxels spanning multiple blocks
+        // 2. Modify a voxel at one end, triggering incremental update
+        // 3. Regions in expanded dirty area are "affected", regions outside are not
+        // 4. Resistors connecting affected to non-affected regions are removed from simulation
+        // 5. BUT the non-affected region's AdjacentResistors list still contains the stale ID
+        //
+        // Block layout: Block 0 contains x=0-15, Block 1 contains x=16-31, Block 2 contains x=32-47
+        // When we modify x=0, expandedDirty includes blocks 0 and 1 (and neighbors)
+        // So regions at x=0-31 are "affected", but region at x=32 is NOT affected
+        // The resistor between x=31 (affected) and x=32 (not affected) gets removed
+        // But x=32's AdjacentResistors still references the old resistor ID
+
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Create a chain of resistive voxels spanning blocks 0, 1, and 2
+        // x=0-15 in block 0, x=16-31 in block 1, x=32-47 in block 2
+        for (int x = 0; x <= 35; x++)
+        {
+            grid.SetVoxel(new VoxelPos(x, 0, 0), VoxelType.ResistiveConductor);
+        }
+
+        // Build initial topology
+        var regions = _builder.BuildTopology(grid, [], sim);
+
+        // Get the region at x=32 (first voxel in block 2, just outside expanded dirty area)
+        var boundaryRegion = regions[new VoxelPos(32, 0, 0)];
+        var initialResistorCount = boundaryRegion.AdjacentResistors.Count;
+        Assert.That(initialResistorCount, Is.GreaterThan(0),
+            "Boundary region should have adjacent resistors initially");
+
+        // Verify all resistors in AdjacentResistors are valid before the update
+        foreach (var rid in boundaryRegion.AdjacentResistors)
+        {
+            Assert.That(sim.ResistorExists(rid), Is.True,
+                $"Initial: Resistor {rid} in AdjacentResistors should exist in simulation");
+        }
+
+        // Modify region at x=0 by adding an adjacent voxel
+        // This triggers incremental update affecting block 0 and its neighbors (including block 1)
+        // But block 2 is NOT in the expanded dirty area
+        grid.SetVoxel(new VoxelPos(0, 1, 0), VoxelType.ResistiveConductor);
+
+        // Rebuild topology (incremental update)
+        regions = _builder.BuildTopology(grid, [], sim);
+
+        // Get boundary region again
+        boundaryRegion = regions[new VoxelPos(32, 0, 0)];
+
+        // This is the critical test: ALL resistor IDs in AdjacentResistors should be valid
+        // The bug causes stale resistor IDs to remain in AdjacentResistors
+        foreach (var rid in boundaryRegion.AdjacentResistors)
+        {
+            Assert.That(sim.ResistorExists(rid), Is.True,
+                $"After incremental update: Resistor {rid} in AdjacentResistors should exist in simulation");
+
+            // Also verify we can actually query the current without throwing
+            Assert.DoesNotThrow(() => sim.GetResistorCurrent(rid),
+                $"Should be able to get current for resistor {rid}");
+        }
+    }
+
     #endregion
 }
