@@ -69,6 +69,7 @@
             echo ""
 
             ${if pkgs.stdenv.isDarwin then ''
+	      export VINTAGE_STORY="/Applications/Vintage Story.app/"
               export DYLD_FALLBACK_LIBRARY_PATH="${gtkLibPath}:$DYLD_FALLBACK_LIBRARY_PATH"
             '' else ''
               export VINTAGE_STORY="${pkgs.vintagestory}/share/vintagestory/"
