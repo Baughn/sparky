@@ -842,19 +842,29 @@ public class StandaloneClient : IGameClient, IDisposable
 
         if (_cells.TryGetValue(pos, out var cell))
         {
-            var debugInfo = new
-            {
-                debug = "cell",
-                pos = new { x = pos.X, y = pos.Y },
-                type = cell.Type.ToString(),
-                rotation = cell.Rotation,
-                state = new
+            // Only include switchClosed for Switch cells
+            object state = cell.Type == CellType.Switch
+                ? new
                 {
                     voltage = cell.State.VoltageNormalized,
                     current = cell.State.CurrentNormalized,
                     power = cell.State.PowerNormalized,
                     switchClosed = cell.State.SwitchClosed
                 }
+                : new
+                {
+                    voltage = cell.State.VoltageNormalized,
+                    current = cell.State.CurrentNormalized,
+                    power = cell.State.PowerNormalized
+                };
+
+            var debugInfo = new
+            {
+                debug = "cell",
+                pos = new { x = pos.X, y = pos.Y },
+                type = cell.Type.ToString(),
+                rotation = cell.Rotation,
+                state
             };
             Console.WriteLine(JsonSerializer.Serialize(debugInfo, jsonOptions));
         }

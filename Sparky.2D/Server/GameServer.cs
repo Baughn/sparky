@@ -317,7 +317,6 @@ public class GameServer : IGameServer
         if (_topologyDirty)
         {
             _regions = _topologyBuilder.BuildTopology(_voxelGrid, _components, _simulation);
-            _simulation.Step(dt);
             _topologyDirty = false;
 
             // Mark all cells dirty for visual update
@@ -326,6 +325,10 @@ public class GameServer : IGameServer
                 _dirtyCells.Add(pos);
             }
         }
+
+        // Always step simulation to recalculate voltages/currents
+        // (e.g., after switch toggle or component value change)
+        _simulation.Step(dt);
 
         // Generate render commands for dirty cells
         var commands = new List<RenderCommand>();
