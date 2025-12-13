@@ -230,25 +230,54 @@ grid.SetVoxel(pos, Material.Lead);
 Material? mat = grid.GetMaterial(pos);  // null for Air/Insulator
 ```
 
-### Prism Coalescing (Phase 3 - IMPLEMENTED)
+### Voxel Storage: SVO + Incremental Prisms (Phase 3 - IMPLEMENTED)
 
-Voxels are stored as coalesced axis-aligned prisms for ~1000x memory compression. Instead of storing individual voxels (~50 bytes each), we store prisms (~14 bytes each).
+Voxels are stored in a **Sparse Voxel Octree (SVO)** for O(log n) access, with prisms built lazily for topology construction.
 
-**Architecture**:
+**Architecture** (Two-Layer Design):
+
+```
+Layer 1: Sparse Voxel Octree (SVO)
+├── O(log n) get/set operations
+├── Uniform node collapse (8 identical children → single leaf)
+├── Dynamic root expansion for arbitrary coordinates
+└── Support for negative coordinates
+
+Layer 2: Incremental Prism Builder
+├── Per-block prism caching
+├── Dirty block tracking
+├── Lazy rebuild on GetAllPrisms()
+└── Greedy meshing algorithm
+```
+
 ```csharp
-// Block-local storage
-Dictionary<BlockPos, BlockVoxelData> _blocks;
-
-// Each block contains coalesced prisms
-public class BlockVoxelData
+// VoxelGrid delegates to IncrementalPrismBuilder
+public class VoxelGrid
 {
-    List<Prism> _prisms;  // ~10-20 per block typical
+    private readonly IncrementalPrismBuilder _builder = new();
 
-    public void RebuildFromVoxels(...);  // Greedy coalescing
-    public Prism? FindPrism(int x, int y, int z);  // O(k) lookup, k≈10-20
+    public void SetVoxel(VoxelPos pos, VoxelType type);  // O(log n) via SVO
+    public VoxelType GetVoxelType(VoxelPos pos);         // O(log n) via SVO
+    public IEnumerable<(BlockPos, Prism)> GetAllPrisms(); // Lazy rebuild
 }
 
-// Prism struct (14 bytes)
+// IncrementalPrismBuilder combines SVO + lazy prism building
+public class IncrementalPrismBuilder
+{
+    private readonly SparseVoxelOctree _svo;           // Voxel storage
+    private readonly Dictionary<BlockPos, List<Prism>> _prismCache;
+    private readonly HashSet<BlockPos> _dirtyBlocks;  // Invalidated on SetVoxel
+}
+
+// SparseVoxelOctree for efficient sparse storage
+public class SparseVoxelOctree
+{
+    public void Set(VoxelPos pos, VoxelType type, Material? material);
+    public (VoxelType, Material?) Get(VoxelPos pos);
+    public IEnumerable<(VoxelPos, VoxelType, Material?)> GetAllVoxels();
+}
+
+// Prism struct (14 bytes) - unchanged
 public readonly record struct Prism(
     byte LocalX, byte LocalY, byte LocalZ,  // Position 0-15
     byte SizeX, byte SizeY, byte SizeZ,      // Size 1-16
@@ -257,29 +286,45 @@ public readonly record struct Prism(
 );
 ```
 
-**Memory comparison**:
-| Scenario | Per-Voxel | Prism Storage |
-|----------|-----------|---------------|
-| 4×4×160 cable | 128 KB | ~140 bytes |
-| 20 cables | 2.5 MB | ~3 KB |
-| Megabase | 125 MB | ~150 KB |
+**Performance** (3×3×192 wire benchmark):
+
+| Operation | Old (expand-rebuild) | New (SVO + lazy) | Improvement |
+|-----------|---------------------|------------------|-------------|
+| Build grid (1720 voxels) | 18,106 µs | 153 µs | **118× faster** |
+| Memory allocation | 117 MB | 526 KB | **223× less** |
+| Find topology regions | 73 µs | 68 µs | Similar |
+
+**Key optimizations**:
+- **SVO uniform collapse**: A 4³ cube of identical voxels = 1 node, not 64
+- **Lazy prism building**: Prisms only rebuilt when `GetAllPrisms()` is called
+- **Per-block invalidation**: Only affected blocks rebuild, not entire grid
+- **No array expansion**: Old design allocated 4096-element array per SetVoxel
 
 **Design decisions**:
-- Prisms clip at VS block boundaries (16³) for chunk streaming compatibility
-- Linear search within blocks is fine with ~10-20 prisms
-- Full block rebuild on modification (simpler than incremental updates)
-- Greedy growth: +X, then +Y, then +Z directions
+- Prisms still clip at VS block boundaries (16³) for chunk streaming compatibility
+- SVO handles negative coordinates via dynamic root expansion
+- Prism cache invalidated per-block, rebuilt lazily on demand
+- Greedy growth: +X, then +Y, then +Z directions (unchanged)
 
 **API** (unchanged from Phase 2):
 ```csharp
-grid.SetVoxel(pos, VoxelType.Conductor);  // Triggers rebuild
-grid.GetVoxelType(pos);  // O(1) block + O(k) prism scan
+grid.SetVoxel(pos, VoxelType.Conductor);  // O(log n) SVO set
+grid.GetVoxelType(pos);                    // O(log n) SVO get
 grid.GetMaterial(pos);
 
-// New prism-aware iteration
+// Prism iteration (triggers lazy rebuild of dirty blocks)
 grid.GetAllPrisms();  // Enumerate (BlockPos, Prism) tuples
 grid.GetPrismsInBlock(blockPos);
-grid.PrismCount;  // Total prisms across all blocks
+grid.PrismCount;
+
+// New batch API for bulk operations
+grid.SetVoxels(IEnumerable<(VoxelPos, VoxelType, Material?)> voxels);
 ```
+
+**Files**:
+- `Sparky.Core/Game/Core/SparseVoxelOctree.cs` - O(log n) voxel storage
+- `Sparky.Core/Game/Core/IncrementalPrismBuilder.cs` - Lazy prism building
+- `Sparky.Core/Game/Core/SpatialHash.cs` - Generic spatial indexing (for future use)
+- `Sparky/Game/Core/VoxelGrid.cs` - Public API, delegates to builder
 
 **Resistance calculation** (future): R = ρ × L / A where L is prism length along current flow and A is cross-section area. Tap points (partial face connections) will be handled by TopologyBuilder.

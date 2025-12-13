@@ -30,7 +30,7 @@ dotnet test --filter "FullyQualifiedName~TestName"  # Run specific test
 
 ## Architecture
 
-### Two-Layer Design
+### Three-Layer Design
 
 1. **Core Layer (`MNA/Core/`)**: Low-level solver handling matrix assembly and linear algebra
    - `Circuit.cs`: Main solver with Newton-Raphson iteration, dense/sparse path selection
@@ -41,6 +41,12 @@ dotnet test --filter "FullyQualifiedName~TestName"  # Run specific test
    - `ISimulation.cs`: Public interface with strongly-typed IDs
    - `SimulationManager.cs`: Implementation with graph partitioning and line optimization
    - `Exceptions.cs`, `Ids.cs`: Type-safe ID wrappers and custom exceptions
+
+3. **Game Layer (`Game/Core/`)**: Voxel-based world representation
+   - `VoxelGrid.cs`: Sparse voxel storage with O(log n) access via SVO
+   - `TopologyBuilder.cs`: Converts voxel geometry to MNA circuit topology
+   - `SparseVoxelOctree.cs`, `IncrementalPrismBuilder.cs`: Optimized storage internals
+   - See `context/voxel-storage.md` for detailed architecture
 
 ### Key Algorithms
 
@@ -59,7 +65,8 @@ dotnet test --filter "FullyQualifiedName~TestName"  # Run specific test
 
 - `MNA.md`: MNA theory, component stamps, solver architecture
 - `MNA/API.md`: High-level API design, partitioning, line optimization
-- `Cell.md`: Game integration design (ISimCell, SimulationSystem, chunk loading)
+- `Cell.md`: Game integration design (voxel connectivity, materials, prism storage)
+- `context/voxel-storage.md`: VoxelGrid SVO + incremental prism architecture
 - `TEST-PLAN.md`: Comprehensive test coverage roadmap
 
 When making changes, update the relevant design docs (*.md in root and MNA/) to stay aligned. Prefer adding detailed subsystem knowledge to context files rather than this file.
