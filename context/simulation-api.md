@@ -1,6 +1,6 @@
 # Simulation API Layer
 
-Last updated: 2025-12-09
+Last updated: 2025-12-13
 
 This document describes the high-level API in `MNA/Api/` that wraps the core solver.
 
@@ -202,6 +202,72 @@ From `ISimulation.cs`:
 > All methods must be called from a single thread, except `Step()` which may be called from a worker thread after all modifications are complete.
 
 The internal `Parallel.ForEach` in `Step()` is safe because partitions are independent.
+
+## Switch Component
+
+Switch is implemented at the API layer using an internal resistor:
+
+```csharp
+SwitchId AddSwitch(NodeId a, NodeId b, bool initiallyClosed = false);
+void SetSwitchState(SwitchId id, bool closed);
+void ToggleSwitch(SwitchId id);
+bool GetSwitchState(SwitchId id);
+double GetSwitchCurrent(SwitchId id);
+```
+
+| State | Resistance |
+|-------|-----------|
+| Closed | 1e-9 Ω |
+| Open | 1e9 Ω |
+
+State changes use the resistor fast-path (no topology rebuild). The internal resistor is marked as variable (`IsOptimizable = false`).
+
+## Energy Tracking
+
+Each component accumulates energy during `Step()`:
+
+```csharp
+double GetResistorEnergy(ResistorId id);       // Always positive (dissipated)
+double GetVoltageSourceEnergy(VoltageSourceId id);  // +ve = delivering
+double GetCapacitorEnergy(CapacitorId id);     // +ve = charging
+// ... similar for all component types
+
+void ResetEnergyCounters();              // Reset all
+void ResetEnergyCounter(ResistorId id);  // Reset specific
+```
+
+For line-optimized resistor chains, energy is distributed by resistance ratio.
+
+## Limit Events
+
+```csharp
+void SetResistorLimit(ResistorId id, LimitKind kind, LimitConfig config);
+IDisposable OnLimitEvent(LimitEventHandler handler);
+
+enum LimitKind { Current, Voltage, Power }
+record LimitConfig(double Threshold, bool TriggerOnce = false);
+```
+
+Limits are checked after each `Step()`. Events fire when thresholds are exceeded.
+
+## Time Tracking
+
+```csharp
+double SimulationTime { get; }  // Cumulative time from Step() calls
+void ResetTime();               // Reset to zero without clearing circuit
+```
+
+## Default Values
+
+| Parameter | Value |
+|-----------|-------|
+| Diode Is | 1e-14 A |
+| Diode Vt | 26mV |
+| Solver tolerance | 1e-6 |
+| Max Newton iterations | 50 |
+| Gmin shunt | 1e-12 S |
+| Switch closed R | 1e-9 Ω |
+| Switch open R | 1e9 Ω |
 
 ## Diagnostics
 

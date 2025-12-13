@@ -156,6 +156,102 @@ To improve performance ($O(N^2)$ complexity), the circuit is split into independ
     - If optimized, calculate `(V_start - V_end) / R_total`.
     - If physical, retrieve from physical component.
 
+## Switch Component
+
+The Switch is implemented at the API layer (not core) using an internal resistor:
+
+```csharp
+SwitchId AddSwitch(NodeId a, NodeId b, bool initiallyClosed = false);
+void SetSwitchState(SwitchId id, bool closed);
+void ToggleSwitch(SwitchId id);
+void RemoveSwitch(SwitchId id);
+bool SwitchExists(SwitchId id);
+bool GetSwitchState(SwitchId id);
+double GetSwitchCurrent(SwitchId id);
+```
+
+**Implementation Details:**
+- Closed: R = 1e-9 Ω (nearly short)
+- Open: R = 1e9 Ω (nearly open)
+- State changes use the resistor fast-path (no topology rebuild)
+- Internal resistor is marked as variable (`IsOptimizable = false`)
+
+## Energy Tracking
+
+Energy is accumulated per-component during `Step()`:
+
+```csharp
+// Query cumulative energy (Joules)
+double GetVoltageSourceEnergy(VoltageSourceId id);  // +ve = delivering power
+double GetCurrentSourceEnergy(CurrentSourceId id);  // +ve = delivering power
+double GetResistorEnergy(ResistorId id);            // Always positive (dissipated)
+double GetDiodeEnergy(DiodeId id);                  // Always positive (dissipated)
+double GetCapacitorEnergy(CapacitorId id);          // +ve = charging, -ve = discharging
+double GetInductorEnergy(InductorId id);            // +ve = storing, -ve = releasing
+
+// Reset counters
+void ResetEnergyCounters();                   // Reset all to zero
+void ResetEnergyCounter(ResistorId id);       // Reset specific component
+// ... similar for each component type
+```
+
+**Line Optimization Handling:**
+Energy for merged resistor chains is distributed by resistance ratio:
+```
+individual_energy = chain_energy * (R_individual / R_total)
+```
+
+## Limit Events
+
+Components can have limits that trigger events when exceeded:
+
+```csharp
+// Set limits (available for all component types)
+void SetResistorLimit(ResistorId id, LimitKind kind, LimitConfig config);
+void ClearResistorLimit(ResistorId id, LimitKind kind);
+LimitConfig? GetResistorLimit(ResistorId id, LimitKind kind);
+
+// Subscribe to events
+IDisposable OnLimitEvent(LimitEventHandler handler);
+
+public enum LimitKind { Current, Voltage, Power }
+
+public record LimitConfig(double Threshold, bool TriggerOnce = false);
+
+public record struct LimitEvent(
+    ComponentRef Component,
+    LimitKind Kind,
+    double Value,
+    double Threshold,
+    double SimulationTime
+);
+```
+
+Limits are checked after each `Step()`. Use `TriggerOnce = true` to fire only on first violation.
+
+## Time Tracking
+
+Simulation time is tracked automatically:
+
+```csharp
+double SimulationTime { get; }  // Cumulative time from Step() calls
+void ResetTime();               // Reset to zero without clearing circuit
+```
+
+Time advances by `dt` after each `Step(dt)` call. `LimitEvent` includes `SimulationTime` for debugging.
+
+## Default Parameter Values
+
+| Component | Parameter | Default |
+|-----------|-----------|---------|
+| Diode | Is (saturation current) | 1e-14 A |
+| Diode | Vt (thermal voltage) | 26mV (room temp) |
+| Solver | Convergence tolerance | 1e-6 |
+| Solver | Max Newton iterations | 50 |
+| Solver | Gmin shunt | 1e-12 S |
+| Switch | Closed resistance | 1e-9 Ω |
+| Switch | Open resistance | 1e9 Ω |
+
 ## Directory Structure
 ```
 MNA/
@@ -163,7 +259,18 @@ MNA/
 ├── Api/
 │   ├── ISimulation.cs
 │   ├── SimulationManager.cs
-│   └── ...
+│   ├── Ids.cs
+│   ├── Exceptions.cs
+│   ├── Energy/
+│   │   └── EnergyCounter.cs
+│   ├── Limits/
+│   │   ├── LimitConfig.cs
+│   │   ├── LimitEvent.cs
+│   │   └── LimitKind.cs
+│   └── Utilities/
+│       ├── AcVoltageSource.cs
+│       ├── PwmVoltageSource.cs
+│       └── ...
 ├── Core/
 │   ├── Circuit.cs
 │   ├── Component.cs

@@ -1,6 +1,6 @@
 # MNA Core Solver
 
-Last updated: 2025-12-09
+Last updated: 2025-12-13
 
 This document describes the low-level circuit solver in `MNA/Core/`.
 

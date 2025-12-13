@@ -84,6 +84,28 @@ Advanced:
 
 **Component internals are abstracted** - we don't simulate individual voxels inside a battery. The MNA component connects between terminal regions.
 
+### 3-Cell Component Layout (Implemented)
+
+Multi-cell components use a **terminal - body - terminal** pattern:
+
+```
+Battery:  [−] ──[body]── [+]
+          Battery → BatteryBody → BatteryPositive
+          (negative)   (insulator)   (positive)
+
+Resistor: [A] ──[body]── [B]
+          Resistor → ResistorBody → ResistorTerminalB
+          (terminal)  (insulator)   (terminal)
+```
+
+**Key Design Decisions:**
+- **Origin cell** is the placement point (first terminal)
+- **Rotation** (0-3) determines direction: 0=+X, 1=+Y, 2=-X, 3=-Y
+- **Body cell** is an insulator that prevents shorts between terminals
+- **Terminals** connect to adjacent wires; body does not
+
+The layout is defined in `Protocol/ComponentTemplates.cs` and shared between client (ghost preview) and server (placement validation).
+
 ### Cable Physics (Phase 3)
 
 > **Note**: Material properties and prism coalescing are deferred to Phase 3.
@@ -106,9 +128,11 @@ Lead:   high resistivity → good for fuses
 - Speed proportional to current magnitude
 - Color indicates current level (blue→green→yellow→red)
 
-**Voltage Coloring**
-- Node color gradient from ground (black) to highest voltage (bright)
-- Helps visualize potential difference
+**Voltage Coloring** (Implemented)
+- Color gradient: blue (-5V) → green (0V) → red (+5V)
+- Normalized: voltage is divided by 5V for color mapping
+- Terminals show voltage at their node; body cells are dark gray (no electrical data)
+- Helps visualize potential difference at a glance
 
 **Heat Visualization**
 - Components glow red when dissipating significant power
@@ -120,6 +144,32 @@ Lead:   high resistivity → good for fuses
 - Switches: visual open/closed state
 - Motors: rotation speed indicator
 - Capacitors: charge level bar
+
+### Editor Features (Implemented)
+
+**Hover Tooltip**
+Mouse-over any cell to see real-time measurements:
+- Voltage (V) at the node
+- Current (A) flowing through the component
+- Power (W) = V × I
+
+The tooltip updates every simulation step and shows "N/A" for cells without electrical data (body cells, insulators).
+
+**Ghost Preview**
+Before placing a component, a translucent preview shows:
+- **Green tint**: Valid placement (cells are empty, within bounds)
+- **Red tint**: Invalid placement (cells occupied or out of bounds)
+
+For multi-cell components (Battery, Resistor), all cells are previewed with individual validity coloring.
+
+**L-Shaped Wire Routing**
+Click and drag to draw wire along an L-shaped path:
+1. **Direction lock**: Initial drag direction (horizontal or vertical) is detected from first significant movement
+2. **L-path calculation**: Wires run in primary direction first, then secondary
+3. **Continuous preview**: Ghost cells update in real-time during drag
+4. **Batch placement**: On release, all valid wire cells are placed in sequence
+
+This enables rapid wire placement without tedious single-cell clicks.
 
 ### Interaction Modes
 
