@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Cairo;
 using Gtk;
 using Sparky.TwoD.Protocol;
@@ -13,6 +14,33 @@ namespace Sparky.TwoD.Client;
 /// </remarks>
 public class StandaloneClient : IGameClient, IDisposable
 {
+    // macOS native APIs for window activation (GTK's Present() doesn't work reliably on macOS)
+    [DllImport("/usr/lib/libobjc.dylib", EntryPoint = "objc_getClass")]
+    private static extern IntPtr objc_getClass(string className);
+
+    [DllImport("/usr/lib/libobjc.dylib", EntryPoint = "sel_registerName")]
+    private static extern IntPtr sel_registerName(string selector);
+
+    [DllImport("/usr/lib/libobjc.dylib", EntryPoint = "objc_msgSend")]
+    private static extern IntPtr objc_msgSend(IntPtr receiver, IntPtr selector);
+
+    [DllImport("/usr/lib/libobjc.dylib", EntryPoint = "objc_msgSend")]
+    private static extern void objc_msgSend_bool(IntPtr receiver, IntPtr selector, bool arg);
+
+    private static void BringAppToFront()
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            var nsApp = objc_getClass("NSApplication");
+            var sharedApp = sel_registerName("sharedApplication");
+            var activate = sel_registerName("activateIgnoringOtherApps:");
+
+            var app = objc_msgSend(nsApp, sharedApp);
+            objc_msgSend_bool(app, activate, true);
+        }
+        // On Linux, GTK's Present() works fine - nothing extra needed
+    }
+
     private readonly Window _window;
     private readonly DrawingArea _drawingArea;
 
@@ -61,6 +89,10 @@ public class StandaloneClient : IGameClient, IDisposable
 
         _window.Add(_drawingArea);
         _window.ShowAll();
+
+        // Bring window to front
+        _window.Present();
+        BringAppToFront();
     }
 
     public void HandleCommand(RenderCommand command)
