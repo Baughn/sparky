@@ -170,6 +170,42 @@ public class VoxelGrid
     /// Gets the total number of prisms across all blocks.
     /// </summary>
     public int PrismCount => _builder.PrismCount;
+
+    /// <summary>
+    /// Gets the set of blocks that have been modified since the last rebuild.
+    /// </summary>
+    /// <remarks>
+    /// Use this for incremental topology updates to detect which blocks changed.
+    /// </remarks>
+    public IReadOnlySet<BlockPos> DirtyBlocks => _builder.DirtyBlocks;
+
+    /// <summary>
+    /// Returns true if any blocks are dirty (need prism rebuild).
+    /// </summary>
+    public bool HasDirtyBlocks => _builder.HasDirtyBlocks;
+
+    /// <summary>
+    /// A version number that increments every time a voxel is modified.
+    /// Use this to detect if the grid changed since the last topology build.
+    /// </summary>
+    public long Version => _builder.Version;
+
+    /// <summary>
+    /// Gets cached prisms for a block WITHOUT triggering rebuild.
+    /// Returns the OLD prisms if the block is dirty.
+    /// </summary>
+    public IReadOnlyList<Prism> GetCachedPrisms(BlockPos block)
+    {
+        return _builder.GetCachedPrisms(block);
+    }
+
+    /// <summary>
+    /// Rebuilds a single dirty block and returns both old and new prisms.
+    /// </summary>
+    public (IReadOnlyList<Prism> OldPrisms, IReadOnlyList<Prism> NewPrisms) RebuildBlockIncremental(BlockPos block)
+    {
+        return _builder.RebuildBlockIncremental(block);
+    }
 }
 
 /// <summary>

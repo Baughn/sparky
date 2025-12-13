@@ -611,4 +611,467 @@ public class TopologyBuilderTests
     }
 
     #endregion
+
+    #region Large Scale Performance Tests
+
+    /// <summary>
+    /// Tests a U-shaped 3x3x20000 wire with a battery.
+    /// Verifies:
+    /// 1. Line optimization collapses to essentially one resistor
+    /// 2. SetVoxel is fast despite the large grid
+    /// 3. Step after local change is fast
+    /// </summary>
+    [Test]
+    public void UShapedWire_LargeScale_OptimizesAndRemainsResponsive()
+    {
+        const int legLength = 10000;  // Each leg is 3x3x10000
+        const int legSpacing = 10;    // Horizontal distance between legs
+
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+        sim.EnableLineOptimization = true;
+
+        // Build U-shaped wire:
+        // Left leg:  x=0-2, y=0-2, z=0 to legLength-1
+        // Bottom:    x=0 to legSpacing+2, y=0-2, z=legLength (connector)
+        // Right leg: x=legSpacing to legSpacing+2, y=0-2, z=0 to legLength-1
+
+        // Left leg (resistive wire)
+        for (int z = 0; z < legLength; z++)
+            for (int y = 0; y < 3; y++)
+                for (int x = 0; x < 3; x++)
+                    grid.SetVoxel(new VoxelPos(x, y, z), VoxelType.ResistiveConductor);
+
+        // Bottom connector (resistive wire)
+        for (int x = 0; x <= legSpacing + 2; x++)
+            for (int y = 0; y < 3; y++)
+                grid.SetVoxel(new VoxelPos(x, y, legLength), VoxelType.ResistiveConductor);
+
+        // Right leg (resistive wire)
+        for (int z = 0; z < legLength; z++)
+            for (int y = 0; y < 3; y++)
+                for (int x = legSpacing; x < legSpacing + 3; x++)
+                    grid.SetVoxel(new VoxelPos(x, y, z), VoxelType.ResistiveConductor);
+
+        // Battery terminals at z=0 (conductor, not resistive)
+        var negativeTerminal = new VoxelPos(1, 1, 0);  // Center of left leg at z=0
+        var positiveTerminal = new VoxelPos(legSpacing + 1, 1, 0);  // Center of right leg at z=0
+
+        // Mark terminal voxels as pure conductors (not resistive)
+        grid.SetVoxel(negativeTerminal, VoxelType.Conductor);
+        grid.SetVoxel(positiveTerminal, VoxelType.Conductor);
+
+        // Create battery
+        var battery = new BatteryComponent(negativeTerminal, positiveTerminal, 10.0);
+
+        // Verify voxel count is roughly correct (~180000 voxels)
+        int expectedVoxels = 3 * 3 * legLength * 2 + (legSpacing + 3) * 3;  // Two legs + connector
+        Assert.That(grid.VoxelCount, Is.EqualTo(expectedVoxels),
+            $"Expected ~{expectedVoxels} voxels for U-shaped wire");
+
+        // Build topology and run initial solve
+        _builder.BuildTopology(grid, [battery], sim);
+        sim.Step(0);
+
+        // Verify line optimization: should collapse most nodes
+        var stats = sim.GetStats();
+        Assert.That(stats.OptimizedNodeCount, Is.GreaterThan(100),
+            $"Line optimization should collapse many nodes, only optimized {stats.OptimizedNodeCount}");
+
+        // The entire U-shaped wire should essentially become one equivalent resistor
+        // (plus battery internal nodes). Circuit has: ground, battery+, and wire nodes.
+        // With optimization, most wire nodes collapse.
+        // PhysicalNodeCount - OptimizedNodeCount = effective nodes
+        int effectiveNodes = stats.PhysicalNodeCount - stats.OptimizedNodeCount;
+        Assert.That(effectiveNodes, Is.LessThan(20),
+            $"After optimization, should have very few effective nodes, got {effectiveNodes}");
+
+        // Verify current flows (V=IR, so I = V/R)
+        // With ~20000 z-levels of 3x3 wire, total resistance is significant
+        var current = sim.GetVoltageSourceCurrent(battery.VoltageSourceId!.Value);
+        Assert.That(Math.Abs(current), Is.GreaterThan(0),
+            "Current should flow through the circuit");
+
+        // === TIMING TESTS ===
+
+        // Test 1: SetVoxel should be fast (O(log n) via SVO)
+        var setVoxelPos = new VoxelPos(1, 1, legLength + 1);  // Add voxel at end of U
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        grid.SetVoxel(setVoxelPos, VoxelType.ResistiveConductor);
+        sw.Stop();
+        var setVoxelTime = sw.Elapsed.TotalMilliseconds;
+
+        Assert.That(setVoxelTime, Is.LessThan(1.0),
+            $"SetVoxel should be < 1ms even with large grid, took {setVoxelTime:F3}ms");
+
+        // Test 2: Rebuild topology and step should be reasonably fast
+        // The change only affects one block, so prism rebuild is local
+        sw.Restart();
+        _builder.BuildTopology(grid, [battery], sim);
+	sw.Stop();
+        var rebuildTime = sw.Elapsed.TotalMilliseconds;
+
+	sw.Restart();
+	for (int t = 0; t < 10; t++) {
+          sim.Step(0.1);
+	}
+        sw.Stop();
+        var stepTime = sw.Elapsed.TotalMilliseconds;
+
+        // Topology rebuild iterates all prisms but line optimization is O(nodes)
+        // This should still be reasonably fast
+        Assert.That(rebuildTime, Is.LessThan(5.0),
+            $"Topology rebuild should be < 5ms, took {rebuildTime:F3}ms");
+        Assert.That(stepTime, Is.LessThan(10.0),
+            $"Steps after rebuild should be < 1ms each, took {stepTime:F3}ms for 10");
+
+        Console.WriteLine($"U-shaped wire test results:");
+        Console.WriteLine($"  Voxel count: {grid.VoxelCount}");
+        Console.WriteLine($"  Prism count: {grid.PrismCount}");
+        Console.WriteLine($"  Physical nodes: {stats.PhysicalNodeCount}");
+        Console.WriteLine($"  Optimized nodes: {stats.OptimizedNodeCount}");
+        Console.WriteLine($"  Effective nodes: {effectiveNodes}");
+        Console.WriteLine($"  SetVoxel time: {setVoxelTime:F3}ms");
+        Console.WriteLine($"  Rebuild time: {rebuildTime:F3}ms");
+        Console.WriteLine($"  Step time: {stepTime:F3}ms");
+        Console.WriteLine($"  Current: {current:F6}A");
+    }
+
+    #endregion
+
+    #region Incremental Update Edge Cases
+
+    [Test]
+    public void IncrementalUpdate_RegionSplit_RemoveMiddleVoxel_CreatesTwoRegions()
+    {
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Create a 3-voxel wire: A - B - C
+        var posA = new VoxelPos(0, 0, 0);
+        var posB = new VoxelPos(1, 0, 0);  // Middle voxel
+        var posC = new VoxelPos(2, 0, 0);
+
+        grid.SetVoxel(posA, VoxelType.Conductor);
+        grid.SetVoxel(posB, VoxelType.Conductor);
+        grid.SetVoxel(posC, VoxelType.Conductor);
+
+        // Build initial topology - should be one region
+        var regions = _builder.BuildTopology(grid, [], sim);
+        var initialRegionCount = regions.Values.Distinct().Count();
+        Assert.That(initialRegionCount, Is.EqualTo(1), "Initial wire should be one region");
+
+        // Remove middle voxel (split the wire)
+        grid.SetVoxel(posB, VoxelType.Air);
+
+        // Rebuild topology - should now be two regions
+        regions = _builder.BuildTopology(grid, [], sim);
+        var splitRegionCount = regions.Values.Distinct().Count();
+        Assert.That(splitRegionCount, Is.EqualTo(2), "After removing middle voxel, should have 2 regions");
+
+        // Verify the two endpoints are in different regions
+        Assert.That(regions[posA], Is.Not.SameAs(regions[posC]),
+            "Endpoints should be in different regions after split");
+    }
+
+    [Test]
+    public void IncrementalUpdate_RegionMerge_AddConnectingVoxel_CreatesOneRegion()
+    {
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Create two separate wires
+        var posA = new VoxelPos(0, 0, 0);
+        var posC = new VoxelPos(2, 0, 0);
+
+        grid.SetVoxel(posA, VoxelType.Conductor);
+        grid.SetVoxel(posC, VoxelType.Conductor);
+
+        // Build initial topology - should be two regions
+        var regions = _builder.BuildTopology(grid, [], sim);
+        var initialRegionCount = regions.Values.Distinct().Count();
+        Assert.That(initialRegionCount, Is.EqualTo(2), "Two separate voxels should be two regions");
+        Assert.That(regions[posA], Is.Not.SameAs(regions[posC]),
+            "Separate voxels should be in different regions");
+
+        // Add connecting voxel
+        var posB = new VoxelPos(1, 0, 0);
+        grid.SetVoxel(posB, VoxelType.Conductor);
+
+        // Rebuild topology - should now be one region
+        regions = _builder.BuildTopology(grid, [], sim);
+        var mergedRegionCount = regions.Values.Distinct().Count();
+        Assert.That(mergedRegionCount, Is.EqualTo(1), "After adding connector, should have 1 region");
+
+        // Verify all three are in the same region
+        Assert.That(regions[posA], Is.SameAs(regions[posB]),
+            "All voxels should be in same region after merge");
+        Assert.That(regions[posB], Is.SameAs(regions[posC]),
+            "All voxels should be in same region after merge");
+    }
+
+    [Test]
+    public void IncrementalUpdate_CrossBlockSplit_RemoveMiddleVoxel_CreatesTwoRegions()
+    {
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Create a wire spanning 3 blocks along Z axis
+        // Block 0: z=0-15, Block 1: z=16-31, Block 2: z=32-47
+        // Wire goes from z=14 to z=34 (spanning all 3 blocks)
+        for (int z = 14; z <= 34; z++)
+        {
+            grid.SetVoxel(new VoxelPos(0, 0, z), VoxelType.Conductor);
+        }
+
+        // Build initial topology - should be one region
+        var regions = _builder.BuildTopology(grid, [], sim);
+        var initialRegionCount = regions.Values.Distinct().Count();
+        Assert.That(initialRegionCount, Is.EqualTo(1), "Initial wire should be one region");
+
+        var posStart = new VoxelPos(0, 0, 14);  // In block 0
+        var posMiddle = new VoxelPos(0, 0, 24); // In block 1
+        var posEnd = new VoxelPos(0, 0, 34);    // In block 2
+
+        Assert.That(regions[posStart], Is.SameAs(regions[posEnd]),
+            "Start and end should be in same region initially");
+
+        // Remove middle voxel (in block 1)
+        grid.SetVoxel(posMiddle, VoxelType.Air);
+
+        // Rebuild topology - should now be two regions
+        regions = _builder.BuildTopology(grid, [], sim);
+        var splitRegionCount = regions.Values.Distinct().Count();
+        Assert.That(splitRegionCount, Is.EqualTo(2), "After removing middle voxel, should have 2 regions");
+
+        Assert.That(regions[posStart], Is.Not.SameAs(regions[posEnd]),
+            "Start and end should be in different regions after split");
+    }
+
+    [Test]
+    public void IncrementalUpdate_CrossBlockMerge_AddConnectingVoxel_CreatesOneRegion()
+    {
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Create two separate wire segments in different blocks
+        // Segment 1: z=14-15 (in block 0)
+        for (int z = 14; z <= 15; z++)
+        {
+            grid.SetVoxel(new VoxelPos(0, 0, z), VoxelType.Conductor);
+        }
+
+        // Segment 2: z=17-20 (in block 1) - gap at z=16 (block boundary)
+        for (int z = 17; z <= 20; z++)
+        {
+            grid.SetVoxel(new VoxelPos(0, 0, z), VoxelType.Conductor);
+        }
+
+        // Build initial topology - should be two regions
+        var regions = _builder.BuildTopology(grid, [], sim);
+        var initialRegionCount = regions.Values.Distinct().Count();
+        Assert.That(initialRegionCount, Is.EqualTo(2), "Two separate segments should be two regions");
+
+        var posInBlock0 = new VoxelPos(0, 0, 15);
+        var posInBlock1 = new VoxelPos(0, 0, 17);
+        Assert.That(regions[posInBlock0], Is.Not.SameAs(regions[posInBlock1]),
+            "Separate segments should be in different regions");
+
+        // Add connecting voxel at block boundary (z=16)
+        grid.SetVoxel(new VoxelPos(0, 0, 16), VoxelType.Conductor);
+
+        // Rebuild topology - should now be one region
+        regions = _builder.BuildTopology(grid, [], sim);
+        var mergedRegionCount = regions.Values.Distinct().Count();
+        Assert.That(mergedRegionCount, Is.EqualTo(1), "After adding connector, should have 1 region");
+
+        Assert.That(regions[posInBlock0], Is.SameAs(regions[posInBlock1]),
+            "Segments should be in same region after merge");
+    }
+
+    [Test]
+    public void IncrementalUpdate_ResistiveSplit_RemoveMiddle_PreservesResistiveProperties()
+    {
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Create: Terminal - Wire - Wire - Wire - Terminal
+        var posTermA = new VoxelPos(0, 0, 0);
+        var posWire1 = new VoxelPos(1, 0, 0);
+        var posWire2 = new VoxelPos(2, 0, 0);  // Will remove this
+        var posWire3 = new VoxelPos(3, 0, 0);
+        var posTermB = new VoxelPos(4, 0, 0);
+
+        grid.SetVoxel(posTermA, VoxelType.Conductor);
+        grid.SetVoxel(posWire1, VoxelType.ResistiveConductor);
+        grid.SetVoxel(posWire2, VoxelType.ResistiveConductor);
+        grid.SetVoxel(posWire3, VoxelType.ResistiveConductor);
+        grid.SetVoxel(posTermB, VoxelType.Conductor);
+
+        // Build initial topology
+        var regions = _builder.BuildTopology(grid, [], sim);
+
+        // With resistive model: TermA, Wire1, Wire2, Wire3, TermB are separate regions
+        var termARegion = regions[posTermA];
+        var wire1Region = regions[posWire1];
+        var wire2Region = regions[posWire2];
+        var wire3Region = regions[posWire3];
+        var termBRegion = regions[posTermB];
+
+        Assert.That(wire1Region.IsResistive, Is.True, "Wire1 region should be resistive");
+        Assert.That(wire2Region.IsResistive, Is.True, "Wire2 region should be resistive");
+
+        // Remove middle wire
+        grid.SetVoxel(posWire2, VoxelType.Air);
+
+        // Rebuild topology
+        regions = _builder.BuildTopology(grid, [], sim);
+
+        // After split: TermA - Wire1 is separate from Wire3 - TermB
+        Assert.That(regions.ContainsKey(posWire2), Is.False, "Removed voxel should not be in regions");
+
+        // Wire1 should still be resistive and connect to TermA
+        Assert.That(regions[posWire1].IsResistive, Is.True, "Wire1 should still be resistive");
+        Assert.That(regions[posWire3].IsResistive, Is.True, "Wire3 should still be resistive");
+
+        // Wire1 and Wire3 should be in different regions (disconnected)
+        // They're both separate resistive regions, so they were already separate,
+        // but now Wire3 is isolated from TermA's side
+        Assert.That(regions[posTermA], Is.Not.SameAs(regions[posTermB]),
+            "Terminals should be disconnected after removing middle wire");
+    }
+
+    [Test]
+    public void IncrementalUpdate_ConsistencyWithFullRebuild_SingleVoxelChange()
+    {
+        var grid = new VoxelGrid();
+        var sim1 = new SimulationManager();
+        var sim2 = new SimulationManager();
+        var builder1 = new TopologyBuilder();
+        var builder2 = new TopologyBuilder();
+
+        // Create initial wire
+        for (int x = 0; x < 10; x++)
+        {
+            grid.SetVoxel(new VoxelPos(x, 0, 0), VoxelType.Conductor);
+        }
+
+        // Build with builder1 (will use incremental later)
+        builder1.BuildTopology(grid, [], sim1);
+
+        // Add a single voxel
+        grid.SetVoxel(new VoxelPos(10, 0, 0), VoxelType.Conductor);
+
+        // Builder1 does incremental update
+        var regions1 = builder1.BuildTopology(grid, [], sim1);
+
+        // Builder2 does fresh full build
+        var regions2 = builder2.BuildTopology(grid, [], sim2);
+
+        // Compare results
+        Assert.That(regions1.Count, Is.EqualTo(regions2.Count),
+            "Incremental and full rebuild should have same voxel count");
+
+        var uniqueRegions1 = regions1.Values.Distinct().Count();
+        var uniqueRegions2 = regions2.Values.Distinct().Count();
+        Assert.That(uniqueRegions1, Is.EqualTo(uniqueRegions2),
+            $"Incremental ({uniqueRegions1}) and full rebuild ({uniqueRegions2}) should have same region count");
+
+        // Verify all voxels are present
+        for (int x = 0; x <= 10; x++)
+        {
+            var pos = new VoxelPos(x, 0, 0);
+            Assert.That(regions1.ContainsKey(pos), Is.True,
+                $"Incremental result should contain voxel at {pos}");
+            Assert.That(regions2.ContainsKey(pos), Is.True,
+                $"Full rebuild result should contain voxel at {pos}");
+        }
+    }
+
+    [Test]
+    public void IncrementalUpdate_ConsistencyWithFullRebuild_RemoveVoxel()
+    {
+        var grid = new VoxelGrid();
+        var sim1 = new SimulationManager();
+        var sim2 = new SimulationManager();
+        var builder1 = new TopologyBuilder();
+        var builder2 = new TopologyBuilder();
+
+        // Create initial wire
+        for (int x = 0; x < 10; x++)
+        {
+            grid.SetVoxel(new VoxelPos(x, 0, 0), VoxelType.Conductor);
+        }
+
+        // Build with builder1 (will use incremental later)
+        builder1.BuildTopology(grid, [], sim1);
+
+        // Remove a voxel from middle (causes split)
+        grid.SetVoxel(new VoxelPos(5, 0, 0), VoxelType.Air);
+
+        // Builder1 does incremental update
+        var regions1 = builder1.BuildTopology(grid, [], sim1);
+
+        // Builder2 does fresh full build
+        var regions2 = builder2.BuildTopology(grid, [], sim2);
+
+        // Compare results
+        Assert.That(regions1.Count, Is.EqualTo(regions2.Count),
+            "Incremental and full rebuild should have same voxel count");
+
+        var uniqueRegions1 = regions1.Values.Distinct().Count();
+        var uniqueRegions2 = regions2.Values.Distinct().Count();
+        Assert.That(uniqueRegions1, Is.EqualTo(uniqueRegions2),
+            $"Incremental ({uniqueRegions1}) and full rebuild ({uniqueRegions2}) should have same region count after split");
+
+        // Should be 2 regions (split wire)
+        Assert.That(uniqueRegions1, Is.EqualTo(2), "Should have 2 regions after split");
+
+        // Verify the split is correct
+        var posLeft = new VoxelPos(4, 0, 0);
+        var posRight = new VoxelPos(6, 0, 0);
+        Assert.That(regions1[posLeft], Is.Not.SameAs(regions1[posRight]),
+            "Split should create separate regions");
+    }
+
+    [Test]
+    public void IncrementalUpdate_MultipleSequentialChanges_MaintainsCorrectness()
+    {
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Start with empty grid
+        var regions = _builder.BuildTopology(grid, [], sim);
+        Assert.That(regions, Is.Empty, "Empty grid should have no regions");
+
+        // Add first voxel
+        grid.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor);
+        regions = _builder.BuildTopology(grid, [], sim);
+        Assert.That(regions.Values.Distinct().Count(), Is.EqualTo(1), "Step 1: Should have 1 region");
+
+        // Add second voxel (connected)
+        grid.SetVoxel(new VoxelPos(1, 0, 0), VoxelType.Conductor);
+        regions = _builder.BuildTopology(grid, [], sim);
+        Assert.That(regions.Values.Distinct().Count(), Is.EqualTo(1), "Step 2: Should still have 1 region");
+
+        // Add third voxel (disconnected)
+        grid.SetVoxel(new VoxelPos(10, 0, 0), VoxelType.Conductor);
+        regions = _builder.BuildTopology(grid, [], sim);
+        Assert.That(regions.Values.Distinct().Count(), Is.EqualTo(2), "Step 3: Should have 2 regions");
+
+        // Connect them
+        for (int x = 2; x < 10; x++)
+        {
+            grid.SetVoxel(new VoxelPos(x, 0, 0), VoxelType.Conductor);
+        }
+        regions = _builder.BuildTopology(grid, [], sim);
+        Assert.That(regions.Values.Distinct().Count(), Is.EqualTo(1), "Step 4: Should have 1 region after connecting");
+
+        // Remove middle, causing split
+        grid.SetVoxel(new VoxelPos(5, 0, 0), VoxelType.Air);
+        regions = _builder.BuildTopology(grid, [], sim);
+        Assert.That(regions.Values.Distinct().Count(), Is.EqualTo(2), "Step 5: Should have 2 regions after split");
+    }
+
+    #endregion
 }

@@ -19,11 +19,32 @@ public class IncrementalPrismBuilder
     private readonly SparseVoxelOctree _svo = new();
     private readonly Dictionary<BlockPos, List<Prism>> _prismCache = new();
     private readonly HashSet<BlockPos> _dirtyBlocks = new();
+    private long _version;
 
     /// <summary>
     /// Gets the total number of voxels stored.
     /// </summary>
     public int VoxelCount => _svo.VoxelCount;
+
+    /// <summary>
+    /// Gets the set of blocks that have been modified since the last rebuild.
+    /// </summary>
+    /// <remarks>
+    /// Use this to detect which blocks need topology updates.
+    /// The dirty set is cleared when prisms are accessed via GetAllPrisms() or RebuildDirtyBlocks().
+    /// </remarks>
+    public IReadOnlySet<BlockPos> DirtyBlocks => _dirtyBlocks;
+
+    /// <summary>
+    /// Returns true if any blocks are dirty (need prism rebuild).
+    /// </summary>
+    public bool HasDirtyBlocks => _dirtyBlocks.Count > 0;
+
+    /// <summary>
+    /// A version number that increments every time a voxel is modified.
+    /// Use this to detect if the grid changed since the last topology build.
+    /// </summary>
+    public long Version => _version;
 
     /// <summary>
     /// Sets a voxel at the given position.
@@ -40,6 +61,7 @@ public class IncrementalPrismBuilder
         }
 
         _svo.Set(pos, type, material);
+        _version++;
 
         // Mark this block's prism cache as dirty
         InvalidateBlock(pos.Block);
@@ -53,6 +75,7 @@ public class IncrementalPrismBuilder
         foreach (var (pos, type, material) in voxels)
         {
             _svo.Set(pos, type, material);
+            _version++;
             InvalidateBlock(pos.Block);
         }
     }
@@ -115,6 +138,53 @@ public class IncrementalPrismBuilder
             return prisms;
         }
         return [];
+    }
+
+    /// <summary>
+    /// Gets cached prisms for a block WITHOUT triggering rebuild.
+    /// Returns the OLD prisms if the block is dirty.
+    /// </summary>
+    /// <remarks>
+    /// Use this for incremental topology updates to get the old state before rebuild.
+    /// Returns empty if block has no cached prisms (either empty or never built).
+    /// </remarks>
+    public IReadOnlyList<Prism> GetCachedPrisms(BlockPos block)
+    {
+        if (_prismCache.TryGetValue(block, out var prisms))
+        {
+            return prisms;
+        }
+        return [];
+    }
+
+    /// <summary>
+    /// Rebuilds a single dirty block and returns both old and new prisms.
+    /// </summary>
+    /// <param name="block">The block to rebuild.</param>
+    /// <returns>Tuple of (old prisms, new prisms). Old may be empty if block was new.</returns>
+    /// <remarks>
+    /// Use this for incremental topology updates. The block is removed from dirty set.
+    /// If the block was not dirty, returns (current prisms, current prisms).
+    /// </remarks>
+    public (IReadOnlyList<Prism> OldPrisms, IReadOnlyList<Prism> NewPrisms) RebuildBlockIncremental(BlockPos block)
+    {
+        // Get old prisms (may be empty)
+        var oldPrisms = GetCachedPrisms(block);
+
+        if (!_dirtyBlocks.Contains(block))
+        {
+            // Not dirty - return current state as both old and new
+            return (oldPrisms, oldPrisms);
+        }
+
+        // Rebuild
+        RebuildBlock(block);
+        _dirtyBlocks.Remove(block);
+
+        // Get new prisms
+        var newPrisms = GetCachedPrisms(block);
+
+        return (oldPrisms, newPrisms);
     }
 
     /// <summary>

@@ -1,8 +1,16 @@
 # VoxelGrid Storage Architecture
 
-*Last updated: 2025-12-13*
+*Last updated: 2025-12-13 (incremental extension path)*
 
 This document describes the optimized voxel storage system using a Sparse Voxel Octree (SVO) with lazy prism building.
+
+## Key Definitions
+
+**ConductorRegion**: A connected group of conductor prisms that share the same MNA node (same electrical potential). Non-resistive conductors merge into single regions when adjacent. Resistive conductors each get their own region and connect to neighbors via resistors.
+
+**Prism**: A rectangular block of voxels with the same type and material, produced by greedy meshing. Bounded within a single 16³ block.
+
+**Block**: A 16×16×16 chunk of voxel space, indexed by `BlockPos`. Prisms don't span block boundaries.
 
 ## Problem Statement
 
@@ -128,9 +136,93 @@ public class VoxelGrid
 | Build time (flood-fill) | 18,106 µs | 153 µs | 118× faster |
 | Build time (randomized) | 18,686 µs | 236 µs | 79× faster |
 | Memory allocation | 117 MB | 526 KB | 223× less |
-| Topology find regions | 73 µs | 68 µs | Similar |
+| Topology full rebuild | 85 ms | 85 ms | - |
+| Topology incremental | 85 ms | 7.7 ms | 11× faster |
+
+**Large wire extension (3×3×20000 U-shaped wire = 180K voxels)**:
+
+| Operation | Time |
+|-----------|------|
+| Initial build | ~600 ms |
+| Add single voxel (full rebuild) | ~85 ms |
+| Add single voxel (incremental) | <10 ms |
 
 **Why randomized is slower**: Random insertion order causes more SVO node splits and less optimal octree structure compared to flood-fill order which has better spatial locality.
+
+## Incremental Topology Updates
+
+File: `Sparky/Game/Core/TopologyBuilder.cs`
+
+The TopologyBuilder maintains persistent state between `BuildTopology()` calls to enable incremental updates when only a few voxels change.
+
+### Persistent State
+
+```csharp
+private Dictionary<VoxelPos, ConductorRegion>? _cachedRegions;
+private readonly Dictionary<BlockPos, HashSet<ConductorRegion>> _blockToRegions;
+private readonly SpatialHash<(ConductorRegion, BlockPos, Prism)> _prismIndex;
+private readonly Dictionary<(ConductorRegion, ConductorRegion), ResistorId> _regionPairResistors;
+private long _lastBuiltVersion;
+```
+
+### Version Tracking
+
+The `VoxelGrid.Version` property increments on every `SetVoxel` call. TopologyBuilder uses this to detect staleness:
+- If `Version == _lastBuiltVersion`: Skip rebuild entirely
+- Otherwise: Check for incremental or full rebuild
+
+### Merge Detection Algorithm
+
+Multi-block incremental updates use merge detection to ensure correctness:
+
+```
+1. Save old prisms BEFORE triggering rebuild (critical for voxel comparison)
+2. For each dirty block:
+   a. Get new prisms (triggers rebuild)
+   b. For NON-resistive prisms only: check boundary faces for adjacent non-resistive regions
+3. If non-resistive prisms touch >1 distinct non-resistive region: FALL BACK to full rebuild
+4. Otherwise: proceed with incremental update
+```
+
+**Important**: Resistive conductors never merge (each is its own region with resistors to neighbors),
+so they're excluded from merge detection. Only non-resistive conductors can merge into a single region.
+
+| Scenario | Regions Touched | Action |
+|----------|-----------------|--------|
+| Add non-resistive voxel to existing non-resistive region | 1 | Incremental |
+| Add resistive voxel (any neighbors) | N/A | Incremental (resistive never merges) |
+| Add isolated voxel | 0 | Incremental |
+| Add non-resistive voxel bridging 2+ non-resistive regions | 2+ | Full rebuild |
+| Remove voxel (potential split) | 0-1 | Incremental or full rebuild |
+
+### Extension Fast Path
+
+When adding voxels to a large existing region that extends beyond the dirty area:
+
+```
+1. If region extends beyond expanded dirty blocks:
+   a. Compare old voxels (from saved prisms) vs new voxels
+   b. If only ADDING (no voxels removed) and single affected region:
+      → Use ExtendExistingRegion (O(dirty blocks) instead of O(all blocks))
+   c. Otherwise: full rebuild
+```
+
+This enables O(1) topology updates for adding voxels to very large wires (180K+ voxels).
+
+### Incremental Update Flow
+
+```
+1. Remove components from simulation (before removing nodes)
+2. Expand dirty blocks to include neighbors (for cross-block connectivity)
+3. Find all regions with prisms in expanded area
+4. Check if regions extend beyond expanded area → use extension path if safe
+5. Remove resistors and nodes for affected regions
+6. Rebuild prisms for expanded blocks
+7. Run union-find to create new regions
+8. Add new regions to indexes and simulation
+9. Create resistors between adjacent regions
+10. Recreate components with new node mappings
+```
 
 ## Supporting Classes
 
@@ -180,6 +272,14 @@ public readonly record struct OctreeLeaf(
   - Cache invalidation
   - Cross-block behavior
 
+- `TopologyBuilderTests.cs` - 37 tests covering:
+  - Basic topology construction
+  - Resistive wire modeling
+  - Incremental region splits and merges
+  - Cross-block modifications
+  - Consistency between incremental and full rebuilds
+  - Large wire construction with various build orders
+
 ## Future Improvements
 
 1. **True incremental prism updates**: Currently rebuilds entire block on any change. Could use spatial hash to find affected prisms and only update locally.
@@ -189,3 +289,5 @@ public readonly record struct OctreeLeaf(
 3. **Parallel prism building**: Multiple dirty blocks could be rebuilt in parallel since they're independent.
 
 4. **SVO serialization**: For persistence, could serialize SVO directly instead of expanding to voxels.
+
+5. **Incremental merge handling**: Currently falls back to full rebuild when merging regions. Could implement proper merge logic to stay incremental.
