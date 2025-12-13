@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Capacitor - Two parallel plates -->
+  <g fill="none" stroke="#8b4513" stroke-width="3" stroke-linecap="round">
+    <!-- Lead lines -->
+    <line x1="4" y1="32" x2="26" y2="32"/>
+    <line x1="38" y1="32" x2="60" y2="32"/>
+    <!-- Plates -->
+    <line x1="26" y1="16" x2="26" y2="48" stroke="#b87333" stroke-width="4"/>
+    <line x1="38" y1="16" x2="38" y2="48" stroke="#b87333" stroke-width="4"/>
+  </g>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Fuse - Rectangle with filament -->
+  <g stroke="#8b4513" stroke-width="3" stroke-linecap="round">
+    <!-- Lead lines -->
+    <line x1="4" y1="32" x2="14" y2="32" fill="none"/>
+    <line x1="50" y1="32" x2="60" y2="32" fill="none"/>
+    <!-- Rectangular body -->
+    <rect x="14" y="22" width="36" height="20" fill="none" stroke="#b87333" rx="2"/>
+    <!-- Filament inside -->
+    <path d="M20,32 Q26,26 32,32 Q38,38 44,32" fill="none" stroke="#2c2c2c" stroke-width="2"/>
+  </g>
+</svg>

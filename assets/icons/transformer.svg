@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Transformer - Two coupled coils with core -->
+  <g fill="none" stroke="#8b4513" stroke-width="2" stroke-linecap="round">
+    <!-- Left coil (primary) -->
+    <path d="M8,16 Q8,12 12,12 Q16,12 16,16" stroke="#b87333"/>
+    <path d="M8,22 Q8,18 12,18 Q16,18 16,22" stroke="#b87333"/>
+    <path d="M8,28 Q8,24 12,24 Q16,24 16,28" stroke="#b87333"/>
+    <path d="M8,34 Q8,30 12,30 Q16,30 16,34" stroke="#b87333"/>
+    <path d="M8,40 Q8,36 12,36 Q16,36 16,40" stroke="#b87333"/>
+    <path d="M8,46 Q8,42 12,42 Q16,42 16,46" stroke="#b87333"/>
+    <path d="M8,52 Q8,48 12,48 Q16,48 16,52" stroke="#b87333"/>
+    <!-- Right coil (secondary) -->
+    <path d="M48,16 Q48,12 52,12 Q56,12 56,16" stroke="#b87333"/>
+    <path d="M48,22 Q48,18 52,18 Q56,18 56,22" stroke="#b87333"/>
+    <path d="M48,28 Q48,24 52,24 Q56,24 56,28" stroke="#b87333"/>
+    <path d="M48,34 Q48,30 52,30 Q56,30 56,34" stroke="#b87333"/>
+    <path d="M48,40 Q48,36 52,36 Q56,36 56,40" stroke="#b87333"/>
+    <path d="M48,46 Q48,42 52,42 Q56,42 56,46" stroke="#b87333"/>
+    <path d="M48,52 Q48,48 52,48 Q56,48 56,52" stroke="#b87333"/>
+    <!-- Core lines -->
+    <line x1="28" y1="8" x2="28" y2="56" stroke="#2c2c2c" stroke-width="3"/>
+    <line x1="36" y1="8" x2="36" y2="56" stroke="#2c2c2c" stroke-width="3"/>
+    <!-- Connection leads -->
+    <line x1="4" y1="12" x2="8" y2="12"/>
+    <line x1="4" y1="52" x2="8" y2="52"/>
+    <line x1="56" y1="12" x2="60" y2="12"/>
+    <line x1="56" y1="52" x2="60" y2="52"/>
+  </g>
+</svg>

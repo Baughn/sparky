@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- VCVS - Voltage-Controlled Voltage Source (diamond with +/-) -->
+  <g stroke="#8b4513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Control input leads (top/bottom) -->
+    <line x1="32" y1="4" x2="32" y2="14" fill="none"/>
+    <line x1="32" y1="50" x2="32" y2="60" fill="none"/>
+    <!-- Output leads (left/right) -->
+    <line x1="4" y1="32" x2="14" y2="32" fill="none"/>
+    <line x1="50" y1="32" x2="60" y2="32" fill="none"/>
+    <!-- Diamond -->
+    <polygon points="32,14 50,32 32,50 14,32" fill="none" stroke="#b87333" stroke-width="3"/>
+    <!-- Plus sign (output indication) -->
+    <line x1="36" y1="32" x2="44" y2="32" stroke="#2c2c2c" stroke-width="2"/>
+    <line x1="40" y1="28" x2="40" y2="36" stroke="#2c2c2c" stroke-width="2"/>
+    <!-- Minus sign -->
+    <line x1="20" y1="32" x2="28" y2="32" stroke="#2c2c2c" stroke-width="2"/>
+    <!-- V label -->
+    <text x="32" y="36" font-family="Arial" font-size="10" fill="#2c2c2c" text-anchor="middle">V</text>
+  </g>
+</svg>

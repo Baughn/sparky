@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Diode - Triangle with bar -->
+  <g stroke="#8b4513" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Lead lines -->
+    <line x1="4" y1="32" x2="20" y2="32" fill="none"/>
+    <line x1="44" y1="32" x2="60" y2="32" fill="none"/>
+    <!-- Triangle (anode side) -->
+    <polygon points="20,20 20,44 40,32" fill="none" stroke="#b87333"/>
+    <!-- Bar (cathode side) -->
+    <line x1="40" y1="18" x2="40" y2="46" stroke="#b87333" stroke-width="4"/>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Lamp - Incandescent bulb symbol (circle with X) -->
+  <g stroke="#8b4513" stroke-width="3" stroke-linecap="round">
+    <!-- Lead lines -->
+    <line x1="4" y1="32" x2="16" y2="32" fill="none"/>
+    <line x1="48" y1="32" x2="60" y2="32" fill="none"/>
+    <!-- Bulb circle -->
+    <circle cx="32" cy="32" r="16" fill="none" stroke="#b87333"/>
+    <!-- X inside (filament representation) -->
+    <line x1="22" y1="22" x2="42" y2="42" stroke="#b87333" stroke-width="2"/>
+    <line x1="42" y1="22" x2="22" y2="42" stroke="#b87333" stroke-width="2"/>
+  </g>
+</svg>

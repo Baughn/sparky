@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Inductor - Coiled wire -->
+  <g fill="none" stroke="#8b4513" stroke-width="3" stroke-linecap="round">
+    <!-- Lead lines -->
+    <line x1="4" y1="32" x2="10" y2="32"/>
+    <line x1="54" y1="32" x2="60" y2="32"/>
+    <!-- Coils (semicircles) -->
+    <path d="M10,32 Q10,20 16,20 Q22,20 22,32" stroke="#b87333"/>
+    <path d="M22,32 Q22,20 28,20 Q34,20 34,32" stroke="#b87333"/>
+    <path d="M34,32 Q34,20 40,20 Q46,20 46,32" stroke="#b87333"/>
+    <path d="M46,32 Q46,20 52,20 Q54,20 54,32" stroke="#b87333"/>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Current Source - Circle with arrow -->
+  <g stroke="#8b4513" stroke-width="3" stroke-linecap="round">
+    <!-- Lead lines -->
+    <line x1="4" y1="32" x2="16" y2="32" fill="none"/>
+    <line x1="48" y1="32" x2="60" y2="32" fill="none"/>
+    <!-- Circle -->
+    <circle cx="32" cy="32" r="16" fill="none" stroke="#b87333"/>
+    <!-- Arrow pointing right -->
+    <line x1="24" y1="32" x2="40" y2="32" stroke="#2c2c2c" stroke-width="2"/>
+    <polyline points="36,28 40,32 36,36" fill="none" stroke="#2c2c2c" stroke-width="2"/>
+  </g>
+</svg>

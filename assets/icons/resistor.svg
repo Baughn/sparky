@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Resistor - Zigzag style -->
+  <g fill="none" stroke="#8b4513" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Lead lines -->
+    <line x1="4" y1="32" x2="12" y2="32"/>
+    <line x1="52" y1="32" x2="60" y2="32"/>
+    <!-- Zigzag body -->
+    <polyline points="12,32 16,22 24,42 32,22 40,42 48,22 52,32" stroke="#b87333" stroke-width="3"/>
+  </g>
+</svg>

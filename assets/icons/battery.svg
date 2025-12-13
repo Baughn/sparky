@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Battery - Multiple cells -->
+  <g stroke="#8b4513" stroke-width="3" stroke-linecap="round">
+    <!-- Lead lines -->
+    <line x1="4" y1="32" x2="14" y2="32" fill="none"/>
+    <line x1="50" y1="32" x2="60" y2="32" fill="none"/>
+    <!-- Cell 1 (short negative, long positive) -->
+    <line x1="14" y1="22" x2="14" y2="42" stroke="#b87333" stroke-width="2"/>
+    <line x1="22" y1="14" x2="22" y2="50" stroke="#b87333" stroke-width="4"/>
+    <!-- Cell 2 -->
+    <line x1="30" y1="22" x2="30" y2="42" stroke="#b87333" stroke-width="2"/>
+    <line x1="38" y1="14" x2="38" y2="50" stroke="#b87333" stroke-width="4"/>
+    <!-- Cell 3 -->
+    <line x1="46" y1="22" x2="46" y2="42" stroke="#b87333" stroke-width="2"/>
+    <line x1="50" y1="22" x2="50" y2="42" stroke="#b87333" stroke-width="2"/>
+    <!-- Polarity labels -->
+    <text x="8" y="18" font-family="Arial" font-size="12" font-weight="bold" fill="#2c2c2c">-</text>
+    <text x="54" y="20" font-family="Arial" font-size="12" font-weight="bold" fill="#2c2c2c">+</text>
+  </g>
+</svg>

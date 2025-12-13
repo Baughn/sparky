@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Ground - Three horizontal lines, decreasing -->
+  <g stroke="#8b4513" stroke-width="3" stroke-linecap="round">
+    <!-- Vertical lead -->
+    <line x1="32" y1="4" x2="32" y2="24" fill="none"/>
+    <!-- Ground bars (decreasing width) -->
+    <line x1="16" y1="24" x2="48" y2="24" stroke="#b87333"/>
+    <line x1="20" y1="34" x2="44" y2="34" stroke="#b87333"/>
+    <line x1="24" y1="44" x2="40" y2="44" stroke="#b87333"/>
+    <line x1="28" y1="54" x2="36" y2="54" stroke="#b87333"/>
+  </g>
+</svg>
