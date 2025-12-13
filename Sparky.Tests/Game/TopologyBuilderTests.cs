@@ -1142,5 +1142,164 @@ public class TopologyBuilderTests
         }
     }
 
+    [Test]
+    public void CrossBlockAdjacentWires_CreateInterRegionResistors()
+    {
+        // This test targets the exact bug scenario from regression test 1.jsonl:
+        // Two adjacent wire cells at a block boundary should be connected by an inter-region resistor.
+        // Without this resistor, they would have different voltages.
+        //
+        // Block layout: Block 0 contains z=0-15, Block 1 contains z=16-31
+        // Wire at z=15 is in block 0, wire at z=16 is in block 1
+
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Create two adjacent resistive wires at block boundary
+        var wireA = new VoxelPos(11, 0, 15);  // In block 0 (z=0-15)
+        var wireB = new VoxelPos(11, 0, 16);  // In block 1 (z=16-31)
+
+        grid.SetVoxel(wireA, VoxelType.ResistiveConductor);
+        grid.SetVoxel(wireB, VoxelType.ResistiveConductor);
+
+        // Build topology
+        var regions = _builder.BuildTopology(grid, [], sim);
+
+        // Both wires should have their own regions (resistive prisms don't merge)
+        Assert.That(regions.ContainsKey(wireA), Is.True, "Wire A should have a region");
+        Assert.That(regions.ContainsKey(wireB), Is.True, "Wire B should have a region");
+
+        var regionA = regions[wireA];
+        var regionB = regions[wireB];
+
+        Assert.That(regionA, Is.Not.SameAs(regionB), "Adjacent wires should be in separate regions");
+        Assert.That(regionA.IsResistive, Is.True, "Wire A region should be resistive");
+        Assert.That(regionB.IsResistive, Is.True, "Wire B region should be resistive");
+
+        // Each region should have one adjacent resistor (connecting them)
+        Assert.That(regionA.AdjacentResistors.Count, Is.EqualTo(1),
+            $"Wire A should have 1 adjacent resistor, has {regionA.AdjacentResistors.Count}");
+        Assert.That(regionB.AdjacentResistors.Count, Is.EqualTo(1),
+            $"Wire B should have 1 adjacent resistor, has {regionB.AdjacentResistors.Count}");
+
+        // The resistor should be the same one (connecting both regions)
+        Assert.That(regionA.AdjacentResistors.First(), Is.EqualTo(regionB.AdjacentResistors.First()),
+            "Both regions should reference the same resistor");
+    }
+
+    [Test]
+    public void CrossBlockAdjacentWires_IncrementalUpdate_CreateInterRegionResistors()
+    {
+        // Test that cross-block resistors are created when wires are added incrementally
+        // This tests the incremental update path rather than full rebuild
+
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Add first wire and build topology
+        var wireA = new VoxelPos(11, 0, 15);  // In block 0 (z=0-15)
+        grid.SetVoxel(wireA, VoxelType.ResistiveConductor);
+        var regions = _builder.BuildTopology(grid, [], sim);
+
+        Assert.That(regions.ContainsKey(wireA), Is.True, "Wire A should have a region");
+        var regionA = regions[wireA];
+        Assert.That(regionA.AdjacentResistors.Count, Is.EqualTo(0),
+            "Single wire should have no adjacent resistors initially");
+
+        // Add second wire in different block and rebuild (incremental)
+        var wireB = new VoxelPos(11, 0, 16);  // In block 1 (z=16-31)
+        grid.SetVoxel(wireB, VoxelType.ResistiveConductor);
+        regions = _builder.BuildTopology(grid, [], sim);
+
+        // Get updated regions
+        regionA = regions[wireA];
+        var regionB = regions[wireB];
+
+        Assert.That(regionA, Is.Not.SameAs(regionB), "Adjacent wires should be in separate regions");
+
+        // Each region should have one adjacent resistor (connecting them)
+        Assert.That(regionA.AdjacentResistors.Count, Is.EqualTo(1),
+            $"Wire A should have 1 adjacent resistor after incremental update, has {regionA.AdjacentResistors.Count}");
+        Assert.That(regionB.AdjacentResistors.Count, Is.EqualTo(1),
+            $"Wire B should have 1 adjacent resistor after incremental update, has {regionB.AdjacentResistors.Count}");
+
+        // The resistor should be the same one (connecting both regions)
+        Assert.That(regionA.AdjacentResistors.First(), Is.EqualTo(regionB.AdjacentResistors.First()),
+            "Both regions should reference the same resistor");
+
+        // Verify the resistor exists in simulation
+        var resistorId = regionA.AdjacentResistors.First();
+        Assert.That(sim.ResistorExists(resistorId), Is.True,
+            "The inter-region resistor should exist in the simulation");
+    }
+
+    [Test]
+    public void CrossBlockWireChain_IncrementalUpdate_AfterPriorBuilds()
+    {
+        // This test mimics the regression test scenario:
+        // 1. Build with some voxels
+        // 2. Add more voxels (some spanning block boundary) and rebuild
+        // 3. Add even more voxels and rebuild again
+        // The bug may occur when cross-block wires are added in a later incremental update
+
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Phase 1: Build initial topology with some wires (not crossing block boundary)
+        for (int z = 6; z <= 13; z++)
+        {
+            grid.SetVoxel(new VoxelPos(11, 0, z), VoxelType.ResistiveConductor);
+        }
+        var regions = _builder.BuildTopology(grid, [], sim);
+        Assert.That(regions.Count, Is.EqualTo(8), "Phase 1: Should have 8 regions");
+
+        // Phase 2: Add wires that span the block boundary (z=15 and z=16)
+        for (int z = 14; z <= 17; z++)
+        {
+            grid.SetVoxel(new VoxelPos(11, 0, z), VoxelType.ResistiveConductor);
+        }
+        regions = _builder.BuildTopology(grid, [], sim);
+
+        // Verify cross-block connection
+        var wireAt15 = new VoxelPos(11, 0, 15);  // In block 0
+        var wireAt16 = new VoxelPos(11, 0, 16);  // In block 1
+
+        Assert.That(regions.ContainsKey(wireAt15), Is.True, "Wire at z=15 should have a region");
+        Assert.That(regions.ContainsKey(wireAt16), Is.True, "Wire at z=16 should have a region");
+
+        var region15 = regions[wireAt15];
+        var region16 = regions[wireAt16];
+
+        Assert.That(region15, Is.Not.SameAs(region16), "Adjacent wires should be in separate regions");
+        Assert.That(region15.AdjacentResistors.Count, Is.GreaterThanOrEqualTo(1),
+            $"Wire at z=15 should have at least 1 adjacent resistor, has {region15.AdjacentResistors.Count}");
+        Assert.That(region16.AdjacentResistors.Count, Is.GreaterThanOrEqualTo(1),
+            $"Wire at z=16 should have at least 1 adjacent resistor, has {region16.AdjacentResistors.Count}");
+
+        // The critical check: there should be a resistor connecting these two regions
+        var sharedResistor = region15.AdjacentResistors.Intersect(region16.AdjacentResistors).ToList();
+        Assert.That(sharedResistor.Count, Is.EqualTo(1),
+            "Wires at z=15 and z=16 should share exactly one resistor");
+
+        // Phase 3: Add more wires elsewhere and rebuild again
+        for (int x = 9; x <= 14; x++)
+        {
+            grid.SetVoxel(new VoxelPos(x, 0, 15), VoxelType.ResistiveConductor);
+        }
+        regions = _builder.BuildTopology(grid, [], sim);
+
+        // Re-verify cross-block connection after another rebuild
+        region15 = regions[wireAt15];
+        region16 = regions[wireAt16];
+
+        sharedResistor = region15.AdjacentResistors.Intersect(region16.AdjacentResistors).ToList();
+        Assert.That(sharedResistor.Count, Is.EqualTo(1),
+            "After Phase 3: Wires at z=15 and z=16 should still share exactly one resistor");
+
+        // Verify the resistor exists
+        Assert.That(sim.ResistorExists(sharedResistor[0]), Is.True,
+            "The cross-block resistor should exist in the simulation");
+    }
+
     #endregion
 }

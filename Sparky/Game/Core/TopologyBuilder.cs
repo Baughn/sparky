@@ -1161,7 +1161,12 @@ public class TopologyBuilder
         // Create resistors
         foreach (var ((regionA, regionB), totalContactArea) in pairContactAreas)
         {
-            var actualArea = totalContactArea / 2;
+            // When both regions are new, contact area is counted twice (once from each direction).
+            // When one region is new and the other is existing, it's only counted once.
+            // Divide by 2 only when both are new to get the actual contact area.
+            var bothNew = uniqueNewRegions.Contains(regionA) && uniqueNewRegions.Contains(regionB);
+            var actualArea = bothNew ? totalContactArea / 2 : totalContactArea;
+
             if (actualArea > 0)
             {
                 var resistance = resistancePerFace / actualArea;
