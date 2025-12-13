@@ -29,6 +29,12 @@ public class StandaloneClient : IGameClient, IDisposable
     // Hover state for tooltip
     private GridPos? _hoveredCell;
 
+    // Drag state for wire routing
+    private bool _isDragging;
+    private GridPos? _dragStart;
+    private readonly List<GridPos> _dragPath = new();
+    private bool? _dragHorizontalFirst;  // null until direction determined, then locked
+
     // Rendering
     private const int CellSize = 20;
     private const int Padding = 10;
@@ -50,6 +56,7 @@ public class StandaloneClient : IGameClient, IDisposable
                                       Gdk.EventMask.ButtonReleaseMask |
                                       Gdk.EventMask.PointerMotionMask));
         _drawingArea.ButtonPressEvent += OnButtonPress;
+        _drawingArea.ButtonReleaseEvent += OnButtonRelease;
         _drawingArea.MotionNotifyEvent += OnMotionNotify;
 
         _window.Add(_drawingArea);
@@ -123,6 +130,9 @@ public class StandaloneClient : IGameClient, IDisposable
         {
             DrawCell(ctx, pos, data);
         }
+
+        // Draw ghost preview
+        DrawGhostPreview(ctx);
 
         // Draw toolbar
         DrawToolbar(ctx);
@@ -391,13 +401,49 @@ public class StandaloneClient : IGameClient, IDisposable
 
         var pos = new GridPos(gridX, gridY);
 
-        if (args.Event.Button == 1) // Left click - place
+        if (args.Event.Button == 1) // Left click - place or start drag
         {
-            _pendingInput.Enqueue(new PlaceComponent(pos, _selectedTool, _rotation));
+            if (_selectedTool == CellType.Wire)
+            {
+                // Start wire drag
+                _isDragging = true;
+                _dragStart = pos;
+                _dragHorizontalFirst = null;  // Will be determined on first movement
+                _dragPath.Clear();
+                _dragPath.Add(pos);
+                _drawingArea.QueueDraw();
+            }
+            else
+            {
+                // Non-wire: immediate placement
+                _pendingInput.Enqueue(new PlaceComponent(pos, _selectedTool, _rotation));
+            }
         }
         else if (args.Event.Button == 3) // Right click - remove
         {
             _pendingInput.Enqueue(new RemoveComponent(pos));
+        }
+    }
+
+    private void OnButtonRelease(object o, ButtonReleaseEventArgs args)
+    {
+        if (args.Event.Button == 1 && _isDragging)
+        {
+            // Finalize wire drag - place wires on all valid positions
+            foreach (var pos in _dragPath)
+            {
+                if (IsValidPlacement(pos))
+                {
+                    _pendingInput.Enqueue(new PlaceComponent(pos, CellType.Wire, 0));
+                }
+            }
+
+            // Reset drag state
+            _isDragging = false;
+            _dragStart = null;
+            _dragPath.Clear();
+            _dragHorizontalFirst = null;
+            _drawingArea.QueueDraw();
         }
     }
 
@@ -406,16 +452,185 @@ public class StandaloneClient : IGameClient, IDisposable
         var gridX = (int)((args.Event.X - Padding) / CellSize);
         var gridY = (int)((args.Event.Y - Padding) / CellSize);
 
-        GridPos? newHover = null;
-        if (gridX >= 0 && gridX < _gridWidth && gridY >= 0 && gridY < _gridHeight)
+        // Clamp to grid bounds
+        gridX = Math.Clamp(gridX, 0, _gridWidth - 1);
+        gridY = Math.Clamp(gridY, 0, _gridHeight - 1);
+
+        var currentPos = new GridPos(gridX, gridY);
+
+        // Update hover state
+        if (_hoveredCell != currentPos)
         {
-            newHover = new GridPos(gridX, gridY);
+            _hoveredCell = currentPos;
         }
 
-        if (_hoveredCell != newHover)
+        // Update drag path if dragging wire
+        if (_isDragging && _dragStart.HasValue)
         {
-            _hoveredCell = newHover;
-            _drawingArea.QueueDraw(); // Redraw to update tooltip
+            UpdateDragPath(_dragStart.Value, currentPos);
+        }
+
+        _drawingArea.QueueDraw();
+    }
+
+    private void UpdateDragPath(GridPos start, GridPos current)
+    {
+        // Determine direction on first significant movement
+        if (_dragHorizontalFirst == null)
+        {
+            int dx = Math.Abs(current.X - start.X);
+            int dy = Math.Abs(current.Y - start.Y);
+            if (dx > 0 || dy > 0)
+                _dragHorizontalFirst = dx >= dy;
+        }
+
+        _dragPath.Clear();
+        bool horizFirst = _dragHorizontalFirst ?? true;
+
+        if (horizFirst)
+        {
+            // Horizontal then vertical
+            int dx = Math.Sign(current.X - start.X);
+            if (dx != 0)
+            {
+                for (int x = start.X; x != current.X; x += dx)
+                    _dragPath.Add(new GridPos(x, start.Y));
+            }
+            int dy = Math.Sign(current.Y - start.Y);
+            if (dy != 0)
+            {
+                for (int y = start.Y; y != current.Y + dy; y += dy)
+                    _dragPath.Add(new GridPos(current.X, y));
+            }
+            else
+            {
+                // No vertical movement, just add the endpoint
+                _dragPath.Add(new GridPos(current.X, start.Y));
+            }
+        }
+        else
+        {
+            // Vertical then horizontal
+            int dy = Math.Sign(current.Y - start.Y);
+            if (dy != 0)
+            {
+                for (int y = start.Y; y != current.Y; y += dy)
+                    _dragPath.Add(new GridPos(start.X, y));
+            }
+            int dx = Math.Sign(current.X - start.X);
+            if (dx != 0)
+            {
+                for (int x = start.X; x != current.X + dx; x += dx)
+                    _dragPath.Add(new GridPos(x, current.Y));
+            }
+            else
+            {
+                // No horizontal movement, just add the endpoint
+                _dragPath.Add(new GridPos(start.X, current.Y));
+            }
+        }
+
+        // Ensure at least the start position is in the path
+        if (_dragPath.Count == 0)
+            _dragPath.Add(start);
+    }
+
+    private void DrawGhostPreview(Context ctx)
+    {
+        if (_isDragging && _selectedTool == CellType.Wire)
+        {
+            // Draw wire path preview
+            foreach (var pos in _dragPath)
+            {
+                bool valid = IsValidPlacement(pos);
+                DrawGhostCell(ctx, pos, CellType.Wire, valid);
+            }
+        }
+        else if (_hoveredCell.HasValue && !_isDragging)
+        {
+            // Draw component preview at hover position
+            var cells = ComponentTemplates.GetCells(_selectedTool, _rotation);
+            foreach (var (offset, cellType) in cells)
+            {
+                var pos = new GridPos(_hoveredCell.Value.X + offset.X,
+                                       _hoveredCell.Value.Y + offset.Y);
+                bool valid = IsValidPlacement(pos);
+                DrawGhostCell(ctx, pos, cellType, valid);
+            }
+        }
+    }
+
+    private bool IsValidPlacement(GridPos pos)
+    {
+        // Check bounds
+        if (pos.X < 0 || pos.X >= _gridWidth || pos.Y < 0 || pos.Y >= _gridHeight)
+            return false;
+        // Check if cell already occupied
+        return !_cells.ContainsKey(pos);
+    }
+
+    private void DrawGhostCell(Context ctx, GridPos pos, CellType type, bool valid)
+    {
+        var x = Padding + pos.X * CellSize;
+        var y = Padding + pos.Y * CellSize;
+
+        // Draw background fill
+        if (valid)
+        {
+            // Green-tinted translucent for valid placement
+            ctx.SetSourceRGBA(0.2, 0.8, 0.2, 0.4);
+        }
+        else
+        {
+            // Red-tinted translucent for invalid placement
+            ctx.SetSourceRGBA(0.9, 0.2, 0.2, 0.4);
+        }
+        ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
+        ctx.Fill();
+
+        // Draw type indicator with reduced opacity
+        ctx.SetSourceRGBA(0.9, 0.9, 0.9, 0.5);
+        ctx.LineWidth = 1;
+
+        switch (type)
+        {
+            case CellType.Battery:
+                // - symbol
+                ctx.MoveTo(x + 4, y + CellSize / 2);
+                ctx.LineTo(x + CellSize - 4, y + CellSize / 2);
+                ctx.Stroke();
+                break;
+
+            case CellType.BatteryPositive:
+                // + symbol
+                ctx.MoveTo(x + CellSize / 2, y + 4);
+                ctx.LineTo(x + CellSize / 2, y + CellSize - 4);
+                ctx.MoveTo(x + 4, y + CellSize / 2);
+                ctx.LineTo(x + CellSize - 4, y + CellSize / 2);
+                ctx.Stroke();
+                break;
+
+            case CellType.Resistor:
+            case CellType.ResistorTerminalB:
+                // R box
+                ctx.MoveTo(x + 6, y + 6);
+                ctx.LineTo(x + CellSize - 6, y + 6);
+                ctx.LineTo(x + CellSize - 6, y + CellSize - 6);
+                ctx.LineTo(x + 6, y + CellSize - 6);
+                ctx.ClosePath();
+                ctx.Stroke();
+                break;
+
+            case CellType.Ground:
+                // Ground line
+                ctx.MoveTo(x + CellSize / 2, y + 4);
+                ctx.LineTo(x + CellSize / 2, y + CellSize - 4);
+                ctx.Stroke();
+                break;
+
+            default:
+                // Wire and body cells - no extra indicator
+                break;
         }
     }
 
