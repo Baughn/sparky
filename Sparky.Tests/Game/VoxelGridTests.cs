@@ -253,4 +253,55 @@ public class VoxelGridTests
     }
 
     #endregion
+
+    #region ResistiveConductor Prism Tests
+
+    [Test]
+    public void ResistiveConductor_AdjacentVoxels_AreCoalesced()
+    {
+        // ResistiveConductor voxels SHOULD be coalesced for storage efficiency
+        // (topology handles them specially - each prism gets its own node)
+        var grid = new VoxelGrid();
+
+        // Place 3 adjacent ResistiveConductor voxels
+        grid.SetVoxel(new VoxelPos(1, 0, 0), VoxelType.ResistiveConductor);
+        grid.SetVoxel(new VoxelPos(2, 0, 0), VoxelType.ResistiveConductor);
+        grid.SetVoxel(new VoxelPos(3, 0, 0), VoxelType.ResistiveConductor);
+
+        var prisms = grid.GetAllPrisms().ToList();
+
+        // Should be coalesced into 1 prism (3x1x1) for storage efficiency
+        Assert.That(prisms, Has.Count.EqualTo(1),
+            $"Expected 1 coalesced prism for 3 ResistiveConductor voxels, got {prisms.Count}");
+
+        var (_, prism) = prisms[0];
+        Assert.That(prism.SizeX, Is.EqualTo(3), "Prism should be 3x1x1");
+        Assert.That(prism.SizeY, Is.EqualTo(1));
+        Assert.That(prism.SizeZ, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void Conductor_AdjacentVoxels_AreCoalesced()
+    {
+        // Regular Conductor voxels SHOULD be coalesced for storage efficiency
+        var grid = new VoxelGrid();
+
+        // Place 3 adjacent Conductor voxels
+        grid.SetVoxel(new VoxelPos(1, 0, 0), VoxelType.Conductor);
+        grid.SetVoxel(new VoxelPos(2, 0, 0), VoxelType.Conductor);
+        grid.SetVoxel(new VoxelPos(3, 0, 0), VoxelType.Conductor);
+
+        var prisms = grid.GetAllPrisms().ToList();
+
+        // Should be coalesced into 1 prism (3x1x1)
+        Assert.That(prisms, Has.Count.EqualTo(1),
+            $"Expected 1 coalesced prism for 3 Conductor voxels, got {prisms.Count}");
+
+        var (_, prism) = prisms[0];
+        Assert.That(prism.SizeX, Is.EqualTo(3), "Prism should be 3x1x1");
+        Assert.That(prism.SizeY, Is.EqualTo(1));
+        Assert.That(prism.SizeZ, Is.EqualTo(1));
+    }
+
+    #endregion
 }

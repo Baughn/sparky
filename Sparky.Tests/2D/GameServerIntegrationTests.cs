@@ -75,11 +75,11 @@ public class GameServerIntegrationTests
         Assert.That(resistorCell.State.PowerNormalized, Is.GreaterThan(0),
             "Resistor should have non-zero power (current flowing)");
 
-        // Battery cell should show non-zero voltage
+        // Battery negative terminal should be near ground (small negative due to wire resistance)
         Assert.That(setCells.ContainsKey(new GridPos(9, 5)), Is.True, "Battery cell should have SetCell command");
         var batteryCell = setCells[new GridPos(9, 5)];
-        Assert.That(batteryCell.State.VoltageNormalized, Is.GreaterThanOrEqualTo(0),
-            "Battery should have valid voltage");
+        Assert.That(batteryCell.State.VoltageNormalized, Is.GreaterThanOrEqualTo(-0.1f),
+            "Battery negative terminal should be near ground (allowing for wire voltage drops)");
     }
 
     /// <summary>
@@ -353,5 +353,110 @@ public class GameServerIntegrationTests
         Assert.That(clearCells.Contains(new GridPos(5, 5)), Is.True, "Battery origin should be cleared");
         Assert.That(clearCells.Contains(new GridPos(6, 5)), Is.True, "Battery body should be cleared");
         Assert.That(clearCells.Contains(new GridPos(7, 5)), Is.True, "Battery positive should be cleared");
+    }
+
+    /// <summary>
+    /// Tests that wire cells display current correctly when connecting components.
+    /// Layout:
+    ///   BAT- (0,0)  --wire(1,0)--  RES_A (2,0)
+    ///   BODY (0,1)                 BODY  (2,1)
+    ///   BAT+ (0,2)  --wire(1,2)--  RES_B (2,2)
+    ///
+    /// With 10V battery and 2Ω resistor: I = 10V / 2Ω = 5A
+    /// Both wires should show 5A current.
+    /// </summary>
+    [Test]
+    public void WireCells_ShowCorrectCurrent()
+    {
+        var server = new GameServer(16, 16);
+
+        // Battery at (0,0) with rotation 1 (+Y): negative at (0,0), body at (0,1), positive at (0,2)
+        server.HandleInput(new PlaceComponent(new GridPos(0, 0), CellType.Battery, 1));
+
+        // Resistor at (2,0) with rotation 1 (+Y): terminal A at (2,0), body at (2,1), terminal B at (2,2)
+        server.HandleInput(new PlaceComponent(new GridPos(2, 0), CellType.Resistor, 1));
+
+        // Wires connecting the terminals
+        server.HandleInput(new PlaceComponent(new GridPos(1, 0), CellType.Wire));
+        server.HandleInput(new PlaceComponent(new GridPos(1, 2), CellType.Wire));
+
+        // Run DC analysis
+        var commands = server.Tick(0).ToList();
+        var setCells = commands.OfType<SetCell>().ToDictionary(c => c.Pos, c => c);
+
+        // Both wires should show ~5A current (10V / 2Ω = 5A)
+        Assert.That(setCells.ContainsKey(new GridPos(1, 0)), Is.True, "Wire at (1,0) should have SetCell");
+        Assert.That(setCells.ContainsKey(new GridPos(1, 2)), Is.True, "Wire at (1,2) should have SetCell");
+
+        var wire1 = setCells[new GridPos(1, 0)];
+        var wire2 = setCells[new GridPos(1, 2)];
+
+        // Current normalized to 1A reference
+        // Expected ~4.8A due to wire-terminal contact resistances (0.01Ω each, ~4 contacts)
+        // 10V / (2Ω + 0.04Ω) ≈ 4.9A
+        Assert.That(wire1.State.CurrentNormalized, Is.EqualTo(4.9f).Within(0.2f),
+            $"Wire at (1,0) should show ~4.9A current, got {wire1.State.CurrentNormalized}");
+        Assert.That(wire2.State.CurrentNormalized, Is.EqualTo(4.9f).Within(0.2f),
+            $"Wire at (1,2) should show ~4.9A current, got {wire2.State.CurrentNormalized}");
+    }
+
+    /// <summary>
+    /// Tests that longer wire chains all show the same current.
+    /// Layout:
+    ///   BAT- (0,0)  --wire(1,0)--wire(2,0)--wire(3,0)--  RES_A (4,0)
+    ///   BODY (0,1)                                       BODY  (4,1)
+    ///   BAT+ (0,2)  --wire(1,2)--wire(2,2)--wire(3,2)--  RES_B (4,2)
+    ///
+    /// All 6 wires should show ~5A current.
+    /// </summary>
+    [Test]
+    public void WireChain_AllWiresShowSameCurrent()
+    {
+        var server = new GameServer(16, 16);
+
+        // Battery at (0,0) with rotation 1 (+Y)
+        server.HandleInput(new PlaceComponent(new GridPos(0, 0), CellType.Battery, 1));
+
+        // Resistor at (4,0) with rotation 1 (+Y)
+        server.HandleInput(new PlaceComponent(new GridPos(4, 0), CellType.Resistor, 1));
+
+        // Bottom wire chain connecting BAT- to RES_A
+        server.HandleInput(new PlaceComponent(new GridPos(1, 0), CellType.Wire));
+        server.HandleInput(new PlaceComponent(new GridPos(2, 0), CellType.Wire));
+        server.HandleInput(new PlaceComponent(new GridPos(3, 0), CellType.Wire));
+
+        // Top wire chain connecting BAT+ to RES_B
+        server.HandleInput(new PlaceComponent(new GridPos(1, 2), CellType.Wire));
+        server.HandleInput(new PlaceComponent(new GridPos(2, 2), CellType.Wire));
+        server.HandleInput(new PlaceComponent(new GridPos(3, 2), CellType.Wire));
+
+        // Run DC analysis
+        var commands = server.Tick(0).ToList();
+        var setCells = commands.OfType<SetCell>().ToDictionary(c => c.Pos, c => c);
+
+        // All 6 wires should show ~5A current
+        var wirePositions = new[]
+        {
+            new GridPos(1, 0), new GridPos(2, 0), new GridPos(3, 0),
+            new GridPos(1, 2), new GridPos(2, 2), new GridPos(3, 2)
+        };
+
+        // Debug: print all wire currents to understand what's happening
+        foreach (var pos in wirePositions)
+        {
+            Assert.That(setCells.ContainsKey(pos), Is.True, $"Wire at {pos} should have SetCell");
+        }
+
+        var currents = wirePositions.Select(p => (p, setCells[p].State.CurrentNormalized)).ToList();
+        var currentsStr = string.Join(", ", currents.Select(c => $"{c.p}={c.CurrentNormalized:F2}A"));
+        Console.WriteLine($"Wire currents: {currentsStr}");
+
+        // Current slightly less than 5A due to wire-terminal contact resistances
+        // All wires should show approximately the same current
+        foreach (var (pos, current) in currents)
+        {
+            Assert.That(current, Is.EqualTo(4.9f).Within(0.3f),
+                $"Wire at {pos} should show ~4.9A current, got {current}. All currents: {currentsStr}");
+        }
     }
 }

@@ -141,7 +141,7 @@ public class GameServer : IGameServer
         switch (type)
         {
             case CellType.Wire:
-                _voxelGrid.SetVoxel(voxelPos, VoxelType.Conductor);
+                _voxelGrid.SetVoxel(voxelPos, VoxelType.ResistiveConductor);
                 break;
 
             case CellType.Ground:
@@ -374,13 +374,23 @@ public class GameServer : IGameServer
             voltage = (float)(_simulation.GetVoltage(region.NodeId) / 10.0); // Normalize to 10V
         }
 
-        // Get component state if this cell has one (origin cells)
-        if (cell.Component != null)
+        // Get component - either directly on this cell or via OriginCell for far terminals
+        Component? component = cell.Component;
+        if (component == null && cell.OriginCell.HasValue)
         {
-            var compState = cell.Component.ComputeVisualState(_simulation);
+            // Far terminal cell - look up the origin's component
+            if (_cells.TryGetValue(cell.OriginCell.Value, out var originCell))
+            {
+                component = originCell.Component;
+            }
+        }
+
+        if (component != null)
+        {
+            var compState = component.ComputeVisualState(_simulation);
 
             // Special handling for switch to include closed state
-            bool switchClosed = cell.Component is SwitchComponent sw && sw.IsClosed;
+            bool switchClosed = component is SwitchComponent sw && sw.IsClosed;
 
             return new CellVisualState(
                 voltage,
@@ -390,8 +400,67 @@ public class GameServer : IGameServer
             );
         }
 
-        // Far terminal cells (BatteryPositive, ResistorTerminalB) - just show voltage
+        // Wire cells - get current from adjacent resistors or nearby components
+        if (cell.Type == CellType.Wire)
+        {
+            float current = 0f;
+
+            // Try to get current from inter-wire resistors first
+            if (_regions.TryGetValue(voxelPos, out var wireRegion) && wireRegion.AdjacentResistors.Count > 0)
+            {
+                // Use max current (all should be ~equal in series, but handles end-of-chain case)
+                double maxCurrent = 0;
+                foreach (var rid in wireRegion.AdjacentResistors)
+                {
+                    maxCurrent = Math.Max(maxCurrent, Math.Abs(_simulation.GetResistorCurrent(rid)));
+                }
+                current = (float)maxCurrent;
+            }
+            else
+            {
+                // No inter-wire resistors - wire is merged with a terminal
+                // Look at adjacent cells for a component to get current from
+                current = GetCurrentFromAdjacentComponent(pos);
+            }
+            return new CellVisualState(voltage, current, 0, false);
+        }
+
+        // Other cells without components - just show voltage
         return new CellVisualState(voltage, 0, 0, false);
+    }
+
+    /// <summary>
+    /// Gets current from an adjacent component terminal when a wire has no inter-wire resistors.
+    /// This handles wires that are merged with terminal regions.
+    /// </summary>
+    private float GetCurrentFromAdjacentComponent(GridPos wirePos)
+    {
+        // Check all 4 adjacent cells for components
+        var adjacentOffsets = new[] { (1, 0), (-1, 0), (0, 1), (0, -1) };
+        foreach (var (dx, dy) in adjacentOffsets)
+        {
+            var adjPos = new GridPos(wirePos.X + dx, wirePos.Y + dy);
+            if (!_cells.TryGetValue(adjPos, out var adjCell))
+                continue;
+
+            // Get component - either directly on this cell or via OriginCell for far terminals
+            Component? component = adjCell.Component;
+            if (component == null && adjCell.OriginCell.HasValue)
+            {
+                if (_cells.TryGetValue(adjCell.OriginCell.Value, out var originCell))
+                {
+                    component = originCell.Component;
+                }
+            }
+
+            if (component != null)
+            {
+                var compState = component.ComputeVisualState(_simulation);
+                if (compState.CurrentNormalized != 0)
+                    return compState.CurrentNormalized;
+            }
+        }
+        return 0f;
     }
 
     /// <summary>

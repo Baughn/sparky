@@ -23,7 +23,23 @@ public class TopologyBuilder
         public NodeId NodeId { get; set; }
         public HashSet<VoxelPos> Voxels { get; } = new();
         internal List<(BlockPos Block, Prism Prism)> Prisms { get; } = new();
+
+        /// <summary>
+        /// Whether this region contains any resistive conductor prisms.
+        /// </summary>
+        public bool IsResistive { get; internal set; }
+
+        /// <summary>
+        /// Resistor IDs connecting this region to adjacent resistive regions.
+        /// Used to query current through wires.
+        /// </summary>
+        public List<ResistorId> AdjacentResistors { get; } = new();
     }
+
+    /// <summary>
+    /// Default resistance per voxel face contact (ohms).
+    /// </summary>
+    public const double DefaultWireResistance = 0.01;
 
     /// <summary>
     /// Builds MNA topology from voxels and components.
@@ -75,6 +91,9 @@ public class TopologyBuilder
             }
         }
 
+        // Step 2.5: Create resistors between adjacent resistive regions
+        CreateInterRegionResistors(voxels, regions, sim);
+
         // Step 3: Create MNA components
         foreach (var component in componentList)
         {
@@ -112,15 +131,25 @@ public class TopologyBuilder
     /// <summary>
     /// Finds all connected conductor regions using prism adjacency.
     /// </summary>
+    /// <remarks>
+    /// Union rules:
+    /// - Conductor + Conductor: merge (equipotential)
+    /// - Conductor + ResistiveConductor: merge (wire connects to terminal)
+    /// - ResistiveConductor + ResistiveConductor: separate (resistor between them)
+    /// </remarks>
     public Dictionary<VoxelPos, ConductorRegion> FindConductorRegions(VoxelGrid grid)
     {
-        // Collect all conductor prisms with their block positions
-        var allPrisms = new List<(BlockPos Block, Prism Prism)>();
+        // Collect all conductor prisms (both pure and resistive) with their block positions
+        var allPrisms = new List<(BlockPos Block, Prism Prism, bool IsResistive)>();
         foreach (var (block, prism) in grid.GetAllPrisms())
         {
             if (prism.Type == VoxelType.Conductor)
             {
-                allPrisms.Add((block, prism));
+                allPrisms.Add((block, prism, false));
+            }
+            else if (prism.Type == VoxelType.ResistiveConductor)
+            {
+                allPrisms.Add((block, prism, true));
             }
         }
 
@@ -147,6 +176,13 @@ public class TopologyBuilder
                 parent[px] = py;
         }
 
+        // Should these two prisms be unioned? Only if NEITHER is resistive.
+        bool ShouldUnion(int i, int j)
+        {
+            // Resistive prisms never merge - each gets its own node with resistors to neighbors
+            return !allPrisms[i].IsResistive && !allPrisms[j].IsResistive;
+        }
+
         // Check adjacency between all pairs of prisms
         // Optimization: group by block first, then check within-block and cross-block
         var prismsByBlock = new Dictionary<BlockPos, List<int>>();
@@ -170,7 +206,7 @@ public class TopologyBuilder
                 {
                     var pi = allPrisms[indices[i]].Prism;
                     var pj = allPrisms[indices[j]].Prism;
-                    if (PrismsTouch(pi, pj))
+                    if (PrismsTouch(pi, pj) && ShouldUnion(indices[i], indices[j]))
                     {
                         Union(indices[i], indices[j]);
                     }
@@ -197,7 +233,7 @@ public class TopologyBuilder
                     foreach (var j in neighborIndices)
                     {
                         var prismB = allPrisms[j].Prism;
-                        if (PrismsConnectAcrossBlocks(prismA, prismB, dir))
+                        if (PrismsConnectAcrossBlocks(prismA, prismB, dir) && ShouldUnion(i, j))
                         {
                             Union(i, j);
                         }
@@ -216,7 +252,11 @@ public class TopologyBuilder
                 region = new ConductorRegion();
                 regionsByRoot[root] = region;
             }
-            region.Prisms.Add(allPrisms[i]);
+            region.Prisms.Add((allPrisms[i].Block, allPrisms[i].Prism));
+            if (allPrisms[i].IsResistive)
+            {
+                region.IsResistive = true;
+            }
         }
 
         // Build voxel-to-region map by expanding prisms
@@ -338,6 +378,173 @@ public class TopologyBuilder
     private static bool RangesOverlap(int a1, int a2, int b1, int b2)
     {
         return a1 < b2 && b1 < a2;
+    }
+
+    /// <summary>
+    /// Calculates the overlap size of two ranges [a1, a2) and [b1, b2).
+    /// Returns 0 if no overlap.
+    /// </summary>
+    private static int RangeOverlapSize(int a1, int a2, int b1, int b2)
+    {
+        var overlapStart = Math.Max(a1, b1);
+        var overlapEnd = Math.Min(a2, b2);
+        return Math.Max(0, overlapEnd - overlapStart);
+    }
+
+    /// <summary>
+    /// Calculates the contact area (number of voxel faces) between two touching prisms.
+    /// Returns 0 if they don't touch.
+    /// </summary>
+    private static int CalculateContactArea(Prism a, Prism b, BlockPos blockA, BlockPos blockB)
+    {
+        var aEnd = a.End;
+        var bEnd = b.End;
+
+        // Same block - check within-block adjacency
+        if (blockA == blockB)
+        {
+            // Adjacent in X?
+            if (a.LocalX == bEnd.X || aEnd.X == b.LocalX)
+            {
+                int overlapY = RangeOverlapSize(a.LocalY, aEnd.Y, b.LocalY, bEnd.Y);
+                int overlapZ = RangeOverlapSize(a.LocalZ, aEnd.Z, b.LocalZ, bEnd.Z);
+                if (overlapY > 0 && overlapZ > 0)
+                    return overlapY * overlapZ;
+            }
+
+            // Adjacent in Y?
+            if (a.LocalY == bEnd.Y || aEnd.Y == b.LocalY)
+            {
+                int overlapX = RangeOverlapSize(a.LocalX, aEnd.X, b.LocalX, bEnd.X);
+                int overlapZ = RangeOverlapSize(a.LocalZ, aEnd.Z, b.LocalZ, bEnd.Z);
+                if (overlapX > 0 && overlapZ > 0)
+                    return overlapX * overlapZ;
+            }
+
+            // Adjacent in Z?
+            if (a.LocalZ == bEnd.Z || aEnd.Z == b.LocalZ)
+            {
+                int overlapX = RangeOverlapSize(a.LocalX, aEnd.X, b.LocalX, bEnd.X);
+                int overlapY = RangeOverlapSize(a.LocalY, aEnd.Y, b.LocalY, bEnd.Y);
+                if (overlapX > 0 && overlapY > 0)
+                    return overlapX * overlapY;
+            }
+
+            return 0;
+        }
+
+        // Different blocks - check cross-block adjacency
+        // Determine which direction blockB is from blockA
+        var dx = blockB.X - blockA.X;
+        var dy = blockB.Y - blockA.Y;
+        var dz = blockB.Z - blockA.Z;
+
+        // Must be exactly adjacent in one direction
+        if (Math.Abs(dx) + Math.Abs(dy) + Math.Abs(dz) != 1)
+            return 0;
+
+        if (dx == 1 && aEnd.X == 16 && b.LocalX == 0)
+        {
+            int overlapY = RangeOverlapSize(a.LocalY, aEnd.Y, b.LocalY, bEnd.Y);
+            int overlapZ = RangeOverlapSize(a.LocalZ, aEnd.Z, b.LocalZ, bEnd.Z);
+            return overlapY * overlapZ;
+        }
+        if (dx == -1 && a.LocalX == 0 && bEnd.X == 16)
+        {
+            int overlapY = RangeOverlapSize(a.LocalY, aEnd.Y, b.LocalY, bEnd.Y);
+            int overlapZ = RangeOverlapSize(a.LocalZ, aEnd.Z, b.LocalZ, bEnd.Z);
+            return overlapY * overlapZ;
+        }
+        if (dy == 1 && aEnd.Y == 16 && b.LocalY == 0)
+        {
+            int overlapX = RangeOverlapSize(a.LocalX, aEnd.X, b.LocalX, bEnd.X);
+            int overlapZ = RangeOverlapSize(a.LocalZ, aEnd.Z, b.LocalZ, bEnd.Z);
+            return overlapX * overlapZ;
+        }
+        if (dy == -1 && a.LocalY == 0 && bEnd.Y == 16)
+        {
+            int overlapX = RangeOverlapSize(a.LocalX, aEnd.X, b.LocalX, bEnd.X);
+            int overlapZ = RangeOverlapSize(a.LocalZ, aEnd.Z, b.LocalZ, bEnd.Z);
+            return overlapX * overlapZ;
+        }
+        if (dz == 1 && aEnd.Z == 16 && b.LocalZ == 0)
+        {
+            int overlapX = RangeOverlapSize(a.LocalX, aEnd.X, b.LocalX, bEnd.X);
+            int overlapY = RangeOverlapSize(a.LocalY, aEnd.Y, b.LocalY, bEnd.Y);
+            return overlapX * overlapY;
+        }
+        if (dz == -1 && a.LocalZ == 0 && bEnd.Z == 16)
+        {
+            int overlapX = RangeOverlapSize(a.LocalX, aEnd.X, b.LocalX, bEnd.X);
+            int overlapY = RangeOverlapSize(a.LocalY, aEnd.Y, b.LocalY, bEnd.Y);
+            return overlapX * overlapY;
+        }
+
+        return 0;
+    }
+
+    /// <summary>
+    /// Creates resistors between adjacent resistive conductor regions.
+    /// </summary>
+    /// <param name="grid">The voxel grid (needed to check prism types).</param>
+    /// <param name="regions">The conductor regions map.</param>
+    /// <param name="sim">The simulation to add resistors to.</param>
+    /// <param name="resistancePerFace">Resistance per voxel face contact.</param>
+    public void CreateInterRegionResistors(
+        VoxelGrid grid,
+        Dictionary<VoxelPos, ConductorRegion> regions,
+        ISimulation sim,
+        double resistancePerFace = DefaultWireResistance)
+    {
+        // Track which region pairs we've already connected to avoid duplicates
+        var connectedPairs = new HashSet<(ConductorRegion, ConductorRegion)>();
+
+        // Get all unique regions
+        var uniqueRegions = new HashSet<ConductorRegion>(regions.Values);
+
+        // For each pair of regions, check if any of their prisms are adjacent
+        // Create resistors when AT LEAST ONE region is resistive
+        foreach (var regionA in uniqueRegions)
+        {
+            foreach (var regionB in uniqueRegions)
+            {
+                if (regionA == regionB)
+                    continue;
+
+                // At least one region must be resistive (wire-to-wire or wire-to-terminal)
+                if (!regionA.IsResistive && !regionB.IsResistive)
+                    continue;
+
+                // Skip if already connected (in either order)
+                if (connectedPairs.Contains((regionA, regionB)) ||
+                    connectedPairs.Contains((regionB, regionA)))
+                    continue;
+
+                // Check all prism pairs for adjacency
+                int totalContactArea = 0;
+                foreach (var (blockA, prismA) in regionA.Prisms)
+                {
+                    foreach (var (blockB, prismB) in regionB.Prisms)
+                    {
+                        var area = CalculateContactArea(prismA, prismB, blockA, blockB);
+                        totalContactArea += area;
+                    }
+                }
+
+                if (totalContactArea > 0)
+                {
+                    // Create resistor: R = resistancePerFace / contactArea (parallel resistors)
+                    var resistance = resistancePerFace / totalContactArea;
+                    var resistorId = sim.AddResistor(regionA.NodeId, regionB.NodeId, resistance);
+
+                    // Track on both regions for current queries
+                    regionA.AdjacentResistors.Add(resistorId);
+                    regionB.AdjacentResistors.Add(resistorId);
+
+                    connectedPairs.Add((regionA, regionB));
+                }
+            }
+        }
     }
 
     private static IEnumerable<ConductorRegion> GetUniqueRegions(

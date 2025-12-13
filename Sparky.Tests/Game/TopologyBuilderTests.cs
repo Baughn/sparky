@@ -406,4 +406,116 @@ public class TopologyBuilderTests
     }
 
     #endregion
+
+    #region Inter-Region Resistor Tests
+
+    [Test]
+    public void WirePrism_DoesNotMergeWithTerminals()
+    {
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Create a chain: Conductor - ResistiveConductor - ResistiveConductor - Conductor
+        // The two ResistiveConductor voxels will coalesce into one prism
+        // Positions: (0,0,0) - (1,0,0) - (2,0,0) - (3,0,0)
+        grid.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor);          // Terminal A
+        grid.SetVoxel(new VoxelPos(1, 0, 0), VoxelType.ResistiveConductor); // Wire (coalesced)
+        grid.SetVoxel(new VoxelPos(2, 0, 0), VoxelType.ResistiveConductor); // Wire (coalesced)
+        grid.SetVoxel(new VoxelPos(3, 0, 0), VoxelType.Conductor);          // Terminal B
+
+        var regions = _builder.BuildTopology(grid, [], sim);
+
+        // With Option A model: resistive prisms NEVER merge with other prisms
+        // Region structure:
+        // - Region TermA: just Terminal A (conductor)
+        // - Region Wire: the coalesced wire prism (resistive)
+        // - Region TermB: just Terminal B (conductor)
+
+        var regionTermA = regions[new VoxelPos(0, 0, 0)];
+        var regionWire1 = regions[new VoxelPos(1, 0, 0)];
+        var regionWire2 = regions[new VoxelPos(2, 0, 0)];
+        var regionTermB = regions[new VoxelPos(3, 0, 0)];
+
+        // Wire voxels should be in same region (coalesced prism)
+        Assert.That(regionWire1, Is.SameAs(regionWire2), "Wire voxels should be in same region (coalesced)");
+
+        // Wire should NOT merge with terminals
+        Assert.That(regionWire1, Is.Not.SameAs(regionTermA), "Wire should NOT merge with Terminal A");
+        Assert.That(regionWire1, Is.Not.SameAs(regionTermB), "Wire should NOT merge with Terminal B");
+
+        // Terminals should be separate from each other
+        Assert.That(regionTermA, Is.Not.SameAs(regionTermB), "Terminals should be in different regions");
+
+        // Wire region should be resistive, terminals should not
+        Assert.That(regionWire1.IsResistive, Is.True, "Wire region should be resistive");
+        Assert.That(regionTermA.IsResistive, Is.False, "Terminal A region should not be resistive");
+        Assert.That(regionTermB.IsResistive, Is.False, "Terminal B region should not be resistive");
+
+        // Wire region should have 2 adjacent resistors (one to each terminal)
+        Assert.That(regionWire1.AdjacentResistors, Has.Count.EqualTo(2),
+            $"Wire region should have 2 adjacent resistors, has {regionWire1.AdjacentResistors.Count}");
+    }
+
+    [Test]
+    public void AdjacentConductors_MergeWhenNoResistivesBetween()
+    {
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Test that adjacent Conductor voxels still merge when there's no resistive between them
+        grid.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor); // Terminal A
+        grid.SetVoxel(new VoxelPos(1, 0, 0), VoxelType.Conductor); // Terminal B
+
+        var regions = _builder.BuildTopology(grid, [], sim);
+
+        var regionA = regions[new VoxelPos(0, 0, 0)];
+        var regionB = regions[new VoxelPos(1, 0, 0)];
+
+        // Adjacent conductors should merge
+        Assert.That(regionA, Is.SameAs(regionB), "Adjacent Conductor voxels should merge");
+        Assert.That(regionA.IsResistive, Is.False, "Pure conductor region should not be resistive");
+    }
+
+    [Test]
+    public void CoalescedWirePrism_SingleRegionWithTwoResistors()
+    {
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Test that adjacent wire voxels coalesce into one prism/region
+        // but that region still connects to terminals via resistors
+        // Layout: TermA - Wire1 - Wire2 - TermB
+        // Wire1 and Wire2 coalesce into a single 2x1x1 prism
+        grid.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor);          // Terminal A
+        grid.SetVoxel(new VoxelPos(1, 0, 0), VoxelType.ResistiveConductor); // Wire (coalesced)
+        grid.SetVoxel(new VoxelPos(2, 0, 0), VoxelType.ResistiveConductor); // Wire (coalesced)
+        grid.SetVoxel(new VoxelPos(3, 0, 0), VoxelType.Conductor);          // Terminal B
+
+        var regions = _builder.BuildTopology(grid, [], sim);
+
+        var regionTermA = regions[new VoxelPos(0, 0, 0)];
+        var regionWire1 = regions[new VoxelPos(1, 0, 0)];
+        var regionWire2 = regions[new VoxelPos(2, 0, 0)];
+        var regionTermB = regions[new VoxelPos(3, 0, 0)];
+
+        // Wire voxels should be in same region (coalesced prism)
+        Assert.That(regionWire1, Is.SameAs(regionWire2), "Wire voxels should coalesce into same region");
+
+        // Wire region should not merge with terminals
+        Assert.That(regionTermA, Is.Not.SameAs(regionWire1), "Terminal A should not merge with Wire");
+        Assert.That(regionWire1, Is.Not.SameAs(regionTermB), "Wire should not merge with Terminal B");
+        Assert.That(regionTermA, Is.Not.SameAs(regionTermB), "Terminals should be in different regions");
+
+        // Wire region should have 2 adjacent resistors (to TermA and TermB)
+        Assert.That(regionWire1.AdjacentResistors, Has.Count.EqualTo(2),
+            $"Wire region should have 2 adjacent resistors, has {regionWire1.AdjacentResistors.Count}");
+
+        // Terminal regions should have 1 adjacent resistor each (to the wire)
+        Assert.That(regionTermA.AdjacentResistors, Has.Count.EqualTo(1),
+            $"Terminal A should have 1 adjacent resistor, has {regionTermA.AdjacentResistors.Count}");
+        Assert.That(regionTermB.AdjacentResistors, Has.Count.EqualTo(1),
+            $"Terminal B should have 1 adjacent resistor, has {regionTermB.AdjacentResistors.Count}");
+    }
+
+    #endregion
 }

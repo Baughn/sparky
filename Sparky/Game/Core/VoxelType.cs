@@ -12,14 +12,21 @@ public enum VoxelType
     Air = 0,
 
     /// <summary>
-    /// Conductive material. Connects to adjacent conductor voxels.
-    /// In Phase 3, conductors will have Material properties (resistivity).
+    /// Pure conductive material (zero resistance). Connects to adjacent conductor voxels.
+    /// Used for component terminals where wires connect.
     /// </summary>
     Conductor = 1,
+
+    /// <summary>
+    /// Resistive conductive material. Each prism gets its own MNA node.
+    /// Adjacent resistive prisms are connected via auto-generated resistors.
+    /// Merges with adjacent pure Conductor (for wire-to-terminal connections).
+    /// </summary>
+    ResistiveConductor = 2,
 
     /// <summary>
     /// Insulating material. Blocks connectivity.
     /// Used in component bodies to prevent internal shorts (e.g., diode insulator).
     /// </summary>
-    Insulator = 2
+    Insulator = 3
 }

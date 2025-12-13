@@ -74,8 +74,9 @@ public class BlockVoxelData
         // Track which voxels have been claimed by a prism
         var claimed = new bool[4096];
 
-        // Process conductors and insulators separately to keep them in distinct prisms
+        // Process each voxel type separately to keep them in distinct prisms
         ExtractPrisms(voxels, claimed, VoxelType.Conductor);
+        ExtractPrisms(voxels, claimed, VoxelType.ResistiveConductor);
         ExtractPrisms(voxels, claimed, VoxelType.Insulator);
     }
 
