@@ -1,0 +1,50 @@
+{
+    "code": "circuitblock",
+    "class": "BlockCircuit",
+    "entityClass": "BlockEntityCircuit",
+    "creativeinventory": { "general": ["*"] },
+    "behaviors": [],
+    "variantgroups": [],
+    "shape": null,
+    "drawtype": "JSON",
+    "renderpass": "Opaque",
+    "replaceable": 0,
+    "resistance": 2.0,
+    "blockmaterial": "Metal",
+    "textures": {
+        "all": { "base": "game:block/transparent" }
+    },
+    "sidesolid": {
+        "all": false
+    },
+    "sideopaque": {
+        "all": false
+    },
+    "lightAbsorption": 0,
+    "sounds": {
+        "place": "game:block/metal",
+        "break": "game:block/metal",
+        "hit": "game:block/metal"
+    },
+    "attributes": {
+        "handbook": {
+            "groupBy": ["circuitblock-*"]
+        }
+    },
+    "guiTransform": {
+        "rotation": { "x": -22.6, "y": -45, "z": 0 },
+        "origin": { "x": 0.5, "y": 0.35, "z": 0.5 },
+        "scale": 1.56
+    },
+    "tpHandTransform": {
+        "translation": { "x": -1.1, "y": -0.8, "z": -0.7 },
+        "rotation": { "x": 90, "y": 0, "z": 0 },
+        "scale": 0.45
+    },
+    "groundTransform": {
+        "translation": { "x": 0, "y": 0, "z": 0 },
+        "rotation": { "x": 0, "y": 0, "z": 1 },
+        "origin": { "x": 0.5, "y": 0, "z": 0.5 },
+        "scale": 4
+    }
+}
