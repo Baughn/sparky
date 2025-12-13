@@ -65,6 +65,54 @@ public class GameServer : IGameServer
             case RequestFullState:
                 // Handled by GetFullState()
                 break;
+
+            case ToggleSwitchInput toggle:
+                ToggleSwitch(toggle.Pos);
+                break;
+
+            case SetComponentValue setValue:
+                SetComponentValue(setValue.Pos, setValue.Value);
+                break;
+        }
+    }
+
+    private void ToggleSwitch(GridPos pos)
+    {
+        if (!_cells.TryGetValue(pos, out var cell))
+            return;
+
+        if (cell.Component is SwitchComponent sw)
+        {
+            sw.Toggle(_simulation);
+            _dirtyCells.Add(pos);
+        }
+    }
+
+    private void SetComponentValue(GridPos pos, double value)
+    {
+        if (!_cells.TryGetValue(pos, out var cell))
+            return;
+
+        // Handle non-origin cells by redirecting to origin
+        if (cell.OriginCell.HasValue)
+        {
+            SetComponentValue(cell.OriginCell.Value, value);
+            return;
+        }
+
+        switch (cell.Component)
+        {
+            case BatteryComponent battery:
+                battery.Voltage = value;
+                battery.UpdateMnaValue(_simulation);
+                _dirtyCells.Add(pos);
+                break;
+
+            case ResistorComponent resistor:
+                resistor.Resistance = value;
+                resistor.UpdateMnaValue(_simulation);
+                _dirtyCells.Add(pos);
+                break;
         }
     }
 
@@ -101,6 +149,38 @@ public class GameServer : IGameServer
                 var ground = new GroundComponent(voxelPos);
                 _components.Add(ground);
                 cell.Component = ground;
+                break;
+
+            case CellType.Switch:
+                // Switch occupies 3 grid cells: terminal A - body - terminal B
+                var bodyGridPosSw = GetTerminalGridPos(pos, rotation, 1);
+                var terminalBGridPosSw = GetTerminalGridPos(pos, rotation, 2);
+
+                // Check bounds and remove any existing cells at all 3 positions
+                if (bodyGridPosSw.X < 0 || bodyGridPosSw.X >= _width || bodyGridPosSw.Y < 0 || bodyGridPosSw.Y >= _height ||
+                    terminalBGridPosSw.X < 0 || terminalBGridPosSw.X >= _width || terminalBGridPosSw.Y < 0 || terminalBGridPosSw.Y >= _height)
+                    return;
+
+                if (_cells.ContainsKey(bodyGridPosSw)) RemoveCell(bodyGridPosSw);
+                if (_cells.ContainsKey(terminalBGridPosSw)) RemoveCell(terminalBGridPosSw);
+
+                // Voxel positions
+                var terminalAVoxelSw = voxelPos;
+                var terminalBVoxelSw = GetTerminalPos(voxelPos, rotation, 2);
+
+                _voxelGrid.SetVoxel(terminalAVoxelSw, VoxelType.Conductor);
+                // Body is insulator - don't set it as conductor
+                _voxelGrid.SetVoxel(terminalBVoxelSw, VoxelType.Conductor);
+
+                var sw = new SwitchComponent(terminalAVoxelSw, terminalBVoxelSw, false);
+                _components.Add(sw);
+                cell.Component = sw;
+
+                // Create cell entries for body and terminal B
+                _cells[bodyGridPosSw] = new CellData(CellType.SwitchBody, rotation, pos);
+                _cells[terminalBGridPosSw] = new CellData(CellType.SwitchTerminalB, rotation, pos);
+                _dirtyCells.Add(bodyGridPosSw);
+                _dirtyCells.Add(terminalBGridPosSw);
                 break;
 
             case CellType.Battery:
@@ -156,7 +236,7 @@ public class GameServer : IGameServer
                 // Body is insulator - don't set it as conductor
                 _voxelGrid.SetVoxel(terminalBVoxel, VoxelType.Conductor);
 
-                var resistor = new ResistorComponent(terminalAVoxel, terminalBVoxel, 100.0);
+                var resistor = new ResistorComponent(terminalAVoxel, terminalBVoxel, 1.0);
                 _components.Add(resistor);
                 cell.Component = resistor;
 
@@ -203,6 +283,7 @@ public class GameServer : IGameServer
 
             case CellType.Battery:
             case CellType.Resistor:
+            case CellType.Switch:
                 // 3-cell components: clear both terminals and remove all 3 cell entries
                 _voxelGrid.SetVoxel(voxelPos, VoxelType.Air);
                 var farTerminalVoxel = GetTerminalPos(voxelPos, cell.Rotation, 2);
@@ -279,7 +360,7 @@ public class GameServer : IGameServer
     private CellVisualState ComputeVisualState(GridPos pos, CellData cell)
     {
         // Body cells are insulators - no voltage display
-        if (cell.Type == CellType.BatteryBody || cell.Type == CellType.ResistorBody)
+        if (cell.Type == CellType.BatteryBody || cell.Type == CellType.ResistorBody || cell.Type == CellType.SwitchBody)
         {
             return CellVisualState.Default;
         }
@@ -297,15 +378,20 @@ public class GameServer : IGameServer
         if (cell.Component != null)
         {
             var compState = cell.Component.ComputeVisualState(_simulation);
+
+            // Special handling for switch to include closed state
+            bool switchClosed = cell.Component is SwitchComponent sw && sw.IsClosed;
+
             return new CellVisualState(
                 voltage,
                 compState.CurrentNormalized,
-                compState.PowerNormalized
+                compState.PowerNormalized,
+                switchClosed
             );
         }
 
         // Far terminal cells (BatteryPositive, ResistorTerminalB) - just show voltage
-        return new CellVisualState(voltage, 0, 0);
+        return new CellVisualState(voltage, 0, 0, false);
     }
 
     /// <summary>

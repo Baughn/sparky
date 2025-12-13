@@ -18,6 +18,11 @@ public static class ComponentTemplates
         {
             CellType.Wire => [(new GridPos(0, 0), CellType.Wire)],
             CellType.Ground => [(new GridPos(0, 0), CellType.Ground)],
+            CellType.Switch => [
+                (new GridPos(0, 0), CellType.Switch),
+                (GetOffset(rotation, 1), CellType.SwitchBody),
+                (GetOffset(rotation, 2), CellType.SwitchTerminalB),
+            ],
             CellType.Battery => [
                 (new GridPos(0, 0), CellType.Battery),
                 (GetOffset(rotation, 1), CellType.BatteryBody),

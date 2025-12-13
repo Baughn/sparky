@@ -30,22 +30,34 @@ public enum CellType
     ResistorTerminalB,
 
     /// <summary>Ground reference (0V).</summary>
-    Ground
+    Ground,
+
+    /// <summary>Toggleable switch terminal A (origin cell).</summary>
+    Switch,
+
+    /// <summary>Switch body (visual only, between terminals).</summary>
+    SwitchBody,
+
+    /// <summary>Switch terminal B (far end).</summary>
+    SwitchTerminalB
 }
 
 /// <summary>
 /// Visual state for rendering a cell based on simulation results.
 /// </summary>
 public readonly record struct CellVisualState(
-    /// <summary>Voltage at this cell, normalized to [0, 1] for coloring.</summary>
+    /// <summary>Voltage at this cell, normalized to [-1, 1] for coloring.</summary>
     float VoltageNormalized,
 
     /// <summary>Current through this cell, normalized to [0, 1] for coloring.</summary>
     float CurrentNormalized,
 
     /// <summary>Power dissipation, normalized to [0, 1] for heat visualization.</summary>
-    float PowerNormalized
+    float PowerNormalized,
+
+    /// <summary>For switches: true if closed, false if open.</summary>
+    bool SwitchClosed = false
 )
 {
-    public static readonly CellVisualState Default = new(0, 0, 0);
+    public static readonly CellVisualState Default = new(0, 0, 0, false);
 }

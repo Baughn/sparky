@@ -96,4 +96,15 @@ public class BatteryComponent : Component
     /// Gets the MNA voltage source ID, if created.
     /// </summary>
     public VoltageSourceId? VoltageSourceId => _voltageSourceId;
+
+    /// <summary>
+    /// Updates the voltage in the MNA simulation (fast path, no topology rebuild).
+    /// </summary>
+    public void UpdateMnaValue(ISimulation sim)
+    {
+        if (_voltageSourceId.HasValue)
+        {
+            sim.UpdateVoltageSource(_voltageSourceId.Value, Voltage);
+        }
+    }
 }

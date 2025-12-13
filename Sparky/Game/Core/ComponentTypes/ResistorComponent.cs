@@ -96,4 +96,15 @@ public class ResistorComponent : Component
     /// Gets the MNA resistor ID, if created.
     /// </summary>
     public ResistorId? ResistorId => _resistorId;
+
+    /// <summary>
+    /// Updates the resistance in the MNA simulation (fast path, no topology rebuild).
+    /// </summary>
+    public void UpdateMnaValue(ISimulation sim)
+    {
+        if (_resistorId.HasValue)
+        {
+            sim.UpdateResistor(_resistorId.Value, Resistance);
+        }
+    }
 }

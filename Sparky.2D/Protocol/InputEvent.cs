@@ -23,3 +23,13 @@ public sealed record RemoveComponent(GridPos Pos) : InputEvent;
 /// Client requests current grid state (sent on connection).
 /// </summary>
 public sealed record RequestFullState : InputEvent;
+
+/// <summary>
+/// Sets a component's value (voltage for battery, resistance for resistor).
+/// </summary>
+public sealed record SetComponentValue(GridPos Pos, double Value) : InputEvent;
+
+/// <summary>
+/// Toggles a switch's open/closed state.
+/// </summary>
+public sealed record ToggleSwitchInput(GridPos Pos) : InputEvent;
