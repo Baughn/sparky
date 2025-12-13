@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Sparky.Game.Core;
@@ -515,6 +517,97 @@ public class TopologyBuilderTests
             $"Terminal A should have 1 adjacent resistor, has {regionTermA.AdjacentResistors.Count}");
         Assert.That(regionTermB.AdjacentResistors, Has.Count.EqualTo(1),
             $"Terminal B should have 1 adjacent resistor, has {regionTermB.AdjacentResistors.Count}");
+    }
+
+    #endregion
+
+    #region Large Wire Fuzz Tests
+
+    public enum BuildMethod { Randomized, FloodFill, InterpolatedSlices }
+
+    [Test]
+    [TestCase(BuildMethod.Randomized, false)]
+    [TestCase(BuildMethod.Randomized, true)]
+    [TestCase(BuildMethod.FloodFill, false)]
+    [TestCase(BuildMethod.FloodFill, true)]
+    [TestCase(BuildMethod.InterpolatedSlices, false)]
+    [TestCase(BuildMethod.InterpolatedSlices, true)]
+    public void LargeWire_ConsistentTopology_RegardlessOfBuildOrder(BuildMethod method, bool withTimesteps)
+    {
+        var grid = new VoxelGrid();
+        var sim = new SimulationManager();
+
+        // Build wire using specified method
+        BuildWire(grid, method, sim, withTimesteps);
+
+        // Assert prism count (14 total: 1 TermA, 12 wire, 1 TermB)
+        Assert.That(grid.PrismCount, Is.EqualTo(14),
+            $"Expected 14 prisms, got {grid.PrismCount}");
+
+        // Assert region count (resistive prisms don't merge)
+        var regions = _builder.BuildTopology(grid, [], sim);
+        var uniqueRegions = regions.Values.Distinct().Count();
+        Assert.That(uniqueRegions, Is.EqualTo(14),
+            $"Expected 14 unique regions, got {uniqueRegions}");
+
+        // Assert MNA optimization (series resistors should be optimized)
+        sim.EnableLineOptimization = true;
+        sim.Step(0);
+        var stats = sim.GetStats();
+        Assert.That(stats.OptimizedNodeCount, Is.GreaterThanOrEqualTo(10),
+            $"Line optimization should merge most wire nodes, only optimized {stats.OptimizedNodeCount}");
+    }
+
+    private static IEnumerable<VoxelPos> GetLargeWirePositions()
+    {
+        // Terminal A: single voxel at center of Z=0 face
+        yield return new VoxelPos(1, 1, 0);
+
+        // Wire: 3x3x190 from z=1 to z=190
+        for (int z = 1; z <= 190; z++)
+            for (int y = 0; y < 3; y++)
+                for (int x = 0; x < 3; x++)
+                    yield return new VoxelPos(x, y, z);
+
+        // Terminal B: 3x3 at z=191
+        for (int y = 0; y < 3; y++)
+            for (int x = 0; x < 3; x++)
+                yield return new VoxelPos(x, y, 191);
+    }
+
+    private void BuildWire(VoxelGrid grid, BuildMethod method, ISimulation sim, bool withTimesteps)
+    {
+        var positions = GetLargeWirePositions().ToList();
+
+        switch (method)
+        {
+            case BuildMethod.Randomized:
+                var rng = new Random(42); // Fixed seed for reproducibility
+                positions = positions.OrderBy(_ => rng.Next()).ToList();
+                break;
+            case BuildMethod.FloodFill:
+                // Already in Z-first order
+                break;
+            case BuildMethod.InterpolatedSlices:
+                // Group by z/2 for 3x3x2 blocks
+                positions = positions.OrderBy(p => p.Z / 2).ThenBy(p => p.Z).ToList();
+                break;
+        }
+
+        int count = 0;
+        foreach (var pos in positions)
+        {
+            var isTerminal = pos.Z == 0 || pos.Z == 191;
+            grid.SetVoxel(pos, isTerminal ? VoxelType.Conductor : VoxelType.ResistiveConductor);
+            count++;
+
+            if (withTimesteps && count % 100 == 0)
+            {
+                // Rebuild topology and step every 100 voxels (not every single one)
+                _builder.BuildTopology(grid, [], sim);
+                sim.Step(0.001);
+            }
+        }
     }
 
     #endregion

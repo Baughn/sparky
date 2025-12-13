@@ -13,6 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sparky.csproj" />
+    <ProjectReference Include="..\Sparky.Core\Sparky.Core.csproj" />
   </ItemGroup>
 </Project>

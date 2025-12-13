@@ -1,7 +1,9 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Loggers;
+using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
+using Sparky.Game.Core;
+using Sparky.MNA.Api;
 using Sparky.MNA.Core;
 
 namespace Sparky.Benchmarks
@@ -12,7 +14,8 @@ namespace Sparky.Benchmarks
         {
             var config = ManualConfig
                 .Create(DefaultConfig.Instance)
-                .WithOption(ConfigOptions.JoinSummary, true);
+                .WithOption(ConfigOptions.JoinSummary, true)
+                .AddJob(Job.InProcess);
 
             BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args, config);
         }
@@ -284,5 +287,98 @@ namespace Sparky.Benchmarks
         }
 
         private static double Lerp(double from, double to, double t) => from + (to - from) * t;
+    }
+
+    [MemoryDiagnoser]
+    public class TopologyBuilderBenchmarks
+    {
+        private VoxelGrid _gridFloodFill = null!;
+        private VoxelGrid _gridRandomized = null!;
+        private TopologyBuilder _builder = null!;
+
+        [GlobalSetup]
+        public void GlobalSetup()
+        {
+            _builder = new TopologyBuilder();
+            _gridFloodFill = BuildLargeWire(BuildMethod.FloodFill);
+            _gridRandomized = BuildLargeWire(BuildMethod.Randomized);
+        }
+
+        [Benchmark(Description = "Large wire: build grid (flood-fill order)")]
+        public VoxelGrid BuildGridFloodFill()
+        {
+            return BuildLargeWire(BuildMethod.FloodFill);
+        }
+
+        [Benchmark(Description = "Large wire: build grid (randomized order)")]
+        public VoxelGrid BuildGridRandomized()
+        {
+            return BuildLargeWire(BuildMethod.Randomized);
+        }
+
+        [Benchmark(Description = "Large wire: find regions (flood-fill grid)")]
+        public int FindRegionsFloodFill()
+        {
+            var sim = new SimulationManager();
+            var regions = _builder.BuildTopology(_gridFloodFill, [], sim);
+            return regions.Count;
+        }
+
+        [Benchmark(Description = "Large wire: find regions (randomized grid)")]
+        public int FindRegionsRandomized()
+        {
+            var sim = new SimulationManager();
+            var regions = _builder.BuildTopology(_gridRandomized, [], sim);
+            return regions.Count;
+        }
+
+        [Benchmark(Description = "Large wire: full solve with line optimization")]
+        public double FullSolveWithOptimization()
+        {
+            var sim = new SimulationManager();
+            sim.EnableLineOptimization = true;
+            _builder.BuildTopology(_gridFloodFill, [], sim);
+            sim.Step(0);
+            return sim.GetStats().OptimizedNodeCount;
+        }
+
+        private enum BuildMethod { FloodFill, Randomized }
+
+        private static VoxelGrid BuildLargeWire(BuildMethod method)
+        {
+            var grid = new VoxelGrid();
+            var positions = GetLargeWirePositions().ToList();
+
+            if (method == BuildMethod.Randomized)
+            {
+                var rng = new Random(42);
+                positions = positions.OrderBy(_ => rng.Next()).ToList();
+            }
+
+            foreach (var pos in positions)
+            {
+                var isTerminal = pos.Z == 0 || pos.Z == 191;
+                grid.SetVoxel(pos, isTerminal ? VoxelType.Conductor : VoxelType.ResistiveConductor);
+            }
+
+            return grid;
+        }
+
+        private static IEnumerable<VoxelPos> GetLargeWirePositions()
+        {
+            // Terminal A: single voxel at center of Z=0 face
+            yield return new VoxelPos(1, 1, 0);
+
+            // Wire: 3x3x190 from z=1 to z=190
+            for (int z = 1; z <= 190; z++)
+                for (int y = 0; y < 3; y++)
+                    for (int x = 0; x < 3; x++)
+                        yield return new VoxelPos(x, y, z);
+
+            // Terminal B: 3x3 at z=191
+            for (int y = 0; y < 3; y++)
+                for (int x = 0; x < 3; x++)
+                    yield return new VoxelPos(x, y, 191);
+        }
     }
 }
