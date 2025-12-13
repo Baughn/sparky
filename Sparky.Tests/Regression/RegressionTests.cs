@@ -36,4 +36,5 @@ public class RegressionTests
             yield return new TestCaseData(file).SetName(Path.GetFileNameWithoutExtension(file));
         }
     }
+
 }

@@ -84,6 +84,19 @@ public class GameServer : IGameServer
         if (cell.Component is SwitchComponent sw)
         {
             sw.Toggle(_simulation);
+            // Mark all cells dirty - switch toggle affects entire circuit's currents
+            MarkAllCellsDirty();
+        }
+    }
+
+    /// <summary>
+    /// Marks all cells as dirty for visual update.
+    /// Used when simulation state changes affect the entire circuit (e.g., switch toggle).
+    /// </summary>
+    private void MarkAllCellsDirty()
+    {
+        foreach (var pos in _cells.Keys)
+        {
             _dirtyCells.Add(pos);
         }
     }
@@ -105,13 +118,15 @@ public class GameServer : IGameServer
             case BatteryComponent battery:
                 battery.Voltage = value;
                 battery.UpdateMnaValue(_simulation);
-                _dirtyCells.Add(pos);
+                // Mark all cells dirty - voltage change affects entire circuit
+                MarkAllCellsDirty();
                 break;
 
             case ResistorComponent resistor:
                 resistor.Resistance = value;
                 resistor.UpdateMnaValue(_simulation);
-                _dirtyCells.Add(pos);
+                // Mark all cells dirty - resistance change affects entire circuit
+                MarkAllCellsDirty();
                 break;
         }
     }
