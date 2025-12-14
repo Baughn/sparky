@@ -10,40 +10,47 @@ using Material = Sparky.Game.Core.Material;
 namespace Sparky.VSIntegration;
 
 /// <summary>
-/// Generates mesh data for circuit block voxels using greedy meshing.
+/// Generates mesh data for circuit block voxels using greedy meshing and TesselateShape.
 /// </summary>
 public static class VoxelMesher
 {
     /// <summary>
-    /// Material colors (ARGB format for VS).
+    /// Material index to texture path mapping.
     /// </summary>
-    private static readonly Dictionary<byte, int> MaterialColors = new()
+    private static readonly Dictionary<byte, string> MaterialTextures = new()
     {
-        { 0, unchecked((int)0x00000000) }, // Air (transparent)
-        { 1, unchecked((int)0xFFB87333) }, // Copper - #B87333
-        { 2, unchecked((int)0xFFFFD700) }, // Gold - #FFD700
-        { 3, unchecked((int)0xFF7F7F7F) }, // Lead - #7F7F7F
-        { 4, unchecked((int)0xFF8B7355) }, // Iron - #8B7355 (rusty iron color)
+        { 1, "sparky:block/copper" },
+        { 2, "sparky:block/gold" },
+        { 3, "sparky:block/lead" },
+        { 4, "sparky:block/iron" }
     };
 
     /// <summary>
-    /// Material index lookup matching BlockEntityCircuit.
+    /// Cached voxel shape (loaded once per session).
     /// </summary>
-    private static readonly Dictionary<Material, byte> MaterialToIndex = new()
-    {
-        { Material.Copper, 1 },
-        { Material.Gold, 2 },
-        { Material.Lead, 3 },
-        { Material.Iron, 4 }
-    };
+    private static Shape? _cachedVoxelShape;
 
     /// <summary>
-    /// Generates a mesh for the given voxel data using greedy meshing.
-    /// Thread-safe - can be called from tesselation thread.
+    /// Generates a mesh for the given voxel data using greedy meshing and TesselateShape.
     /// </summary>
-    public static MeshData GenerateMesh(byte[] voxelData, ICoreAPI? api)
+    public static MeshData GenerateMesh(byte[] voxelData, ITesselatorAPI tesselator, ICoreClientAPI capi)
     {
-        // Use VS's CubeMeshUtil to create properly formatted cube meshes
+        // Load and cache the voxel shape
+        if (_cachedVoxelShape == null)
+        {
+            var shapeAsset = capi.Assets.TryGet(new AssetLocation("sparky:shapes/block/voxel.json"));
+            if (shapeAsset != null)
+            {
+                _cachedVoxelShape = shapeAsset.ToObject<Shape>();
+            }
+        }
+
+        if (_cachedVoxelShape == null)
+        {
+            capi.Logger.Error("[Sparky] Failed to load voxel shape");
+            return new MeshData(1, 1);
+        }
+
         MeshData? combinedMesh = null;
 
         // Track which voxels have been claimed by a prism
@@ -77,16 +84,21 @@ public static class VoxelMesher
                         }
                     }
 
-                    // Create cube mesh using VS utilities
-                    var cubeMesh = CreateColoredCube(x, y, z, sizeX, sizeY, sizeZ, materialIdx);
+                    // Create mesh for this prism using TesselateShape
+                    var prismMesh = CreatePrismMesh(
+                        tesselator, capi, _cachedVoxelShape,
+                        x, y, z, sizeX, sizeY, sizeZ, materialIdx);
 
-                    if (combinedMesh == null)
+                    if (prismMesh != null)
                     {
-                        combinedMesh = cubeMesh;
-                    }
-                    else
-                    {
-                        combinedMesh.AddMeshData(cubeMesh);
+                        if (combinedMesh == null)
+                        {
+                            combinedMesh = prismMesh;
+                        }
+                        else
+                        {
+                            combinedMesh.AddMeshData(prismMesh);
+                        }
                     }
                 }
             }
@@ -96,102 +108,51 @@ public static class VoxelMesher
     }
 
     /// <summary>
-    /// Creates a colored cube mesh at the specified position.
+    /// Creates a mesh for a single prism using TesselateShape.
     /// </summary>
-    private static MeshData CreateColoredCube(int x, int y, int z, int sizeX, int sizeY, int sizeZ, byte materialIdx)
+    private static MeshData? CreatePrismMesh(
+        ITesselatorAPI tesselator,
+        ICoreClientAPI capi,
+        Shape voxelShape,
+        int x, int y, int z,
+        int sizeX, int sizeY, int sizeZ,
+        byte materialIdx)
     {
-        const float scale = 1f / 16f;
-        float x0 = x * scale;
-        float y0 = y * scale;
-        float z0 = z * scale;
-        float x1 = (x + sizeX) * scale;
-        float y1 = (y + sizeY) * scale;
-        float z1 = (z + sizeZ) * scale;
-
-        // Get color for this material
-        int color = MaterialColors.GetValueOrDefault(materialIdx, unchecked((int)0xFFFFFFFF));
-        byte r = (byte)((color >> 16) & 0xFF);
-        byte g = (byte)((color >> 8) & 0xFF);
-        byte b = (byte)(color & 0xFF);
-        byte a = (byte)((color >> 24) & 0xFF);
-
-        // Create a simple cube mesh manually with proper VS format
-        var mesh = new MeshData(24, 36, false, true, true, false);
-
-        // Define the 8 corners of the cube
-        float[][] corners = new float[][]
+        // Get texture path for this material
+        if (!MaterialTextures.TryGetValue(materialIdx, out var texturePath))
         {
-            new[] { x0, y0, z0 }, // 0: left bottom back
-            new[] { x1, y0, z0 }, // 1: right bottom back
-            new[] { x1, y0, z1 }, // 2: right bottom front
-            new[] { x0, y0, z1 }, // 3: left bottom front
-            new[] { x0, y1, z0 }, // 4: left top back
-            new[] { x1, y1, z0 }, // 5: right top back
-            new[] { x1, y1, z1 }, // 6: right top front
-            new[] { x0, y1, z1 }, // 7: left top front
-        };
-
-        // 6 faces, each with 4 vertices (corner indices)
-        int[][] faces = new int[][]
-        {
-            new[] { 3, 2, 1, 0 }, // bottom (y-)
-            new[] { 4, 5, 6, 7 }, // top (y+)
-            new[] { 0, 1, 5, 4 }, // back (z-)
-            new[] { 2, 3, 7, 6 }, // front (z+)
-            new[] { 3, 0, 4, 7 }, // left (x-)
-            new[] { 1, 2, 6, 5 }, // right (x+)
-        };
-
-        // UV coordinates for each vertex of a face
-        float[][] uvs = new float[][]
-        {
-            new[] { 0f, 0f },
-            new[] { 1f, 0f },
-            new[] { 1f, 1f },
-            new[] { 0f, 1f },
-        };
-
-        int vertexIndex = 0;
-        foreach (var face in faces)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                var corner = corners[face[i]];
-                var uv = uvs[i];
-
-                // Position
-                mesh.xyz[vertexIndex * 3 + 0] = corner[0];
-                mesh.xyz[vertexIndex * 3 + 1] = corner[1];
-                mesh.xyz[vertexIndex * 3 + 2] = corner[2];
-
-                // UV
-                mesh.Uv[vertexIndex * 2 + 0] = uv[0];
-                mesh.Uv[vertexIndex * 2 + 1] = uv[1];
-
-                // Color
-                mesh.Rgba[vertexIndex * 4 + 0] = r;
-                mesh.Rgba[vertexIndex * 4 + 1] = g;
-                mesh.Rgba[vertexIndex * 4 + 2] = b;
-                mesh.Rgba[vertexIndex * 4 + 3] = a;
-
-                vertexIndex++;
-            }
+            texturePath = "sparky:block/copper"; // Default fallback
         }
-        mesh.VerticesCount = 24;
 
-        // Add indices for each face (2 triangles per face)
-        int indexOffset = 0;
-        for (int face = 0; face < 6; face++)
+        // Create texture source
+        var texSource = new MaterialTextureSource(capi, texturePath);
+
+        // Tesselate the shape
+        tesselator.TesselateShape(
+            "sparky-voxel",
+            voxelShape,
+            out MeshData mesh,
+            texSource);
+
+        if (mesh == null || mesh.VerticesCount == 0)
         {
-            int baseVert = face * 4;
-            mesh.Indices[indexOffset++] = baseVert + 0;
-            mesh.Indices[indexOffset++] = baseVert + 1;
-            mesh.Indices[indexOffset++] = baseVert + 2;
-            mesh.Indices[indexOffset++] = baseVert + 0;
-            mesh.Indices[indexOffset++] = baseVert + 2;
-            mesh.Indices[indexOffset++] = baseVert + 3;
+            return null;
         }
-        mesh.IndicesCount = 36;
+
+        // Scale to prism size (shape is 16x16x16, we want sizeX x sizeY x sizeZ voxels)
+        // Each voxel is 1/16 of a block
+        float scaleX = sizeX / 16f;
+        float scaleY = sizeY / 16f;
+        float scaleZ = sizeZ / 16f;
+
+        mesh.Scale(new Vec3f(0, 0, 0), scaleX, scaleY, scaleZ);
+
+        // Translate to position (x, y, z are in voxel coordinates 0-15)
+        float posX = x / 16f;
+        float posY = y / 16f;
+        float posZ = z / 16f;
+
+        mesh.Translate(posX, posY, posZ);
 
         return mesh;
     }
@@ -268,4 +229,31 @@ public static class VoxelMesher
     }
 
     #endregion
+}
+
+/// <summary>
+/// Simple texture source that returns a single texture for all texture codes.
+/// Textures must be pre-loaded into the atlas during mod initialization.
+/// </summary>
+internal class MaterialTextureSource : ITexPositionSource
+{
+    private readonly TextureAtlasPosition _texPos;
+    public Size2i AtlasSize { get; }
+
+    public MaterialTextureSource(ICoreClientAPI capi, string texturePath)
+    {
+        AtlasSize = capi.BlockTextureAtlas.Size;
+
+        var texLoc = new AssetLocation(texturePath);
+        _texPos = capi.BlockTextureAtlas[texLoc];
+
+        // Fallback to unknown texture if not found
+        if (_texPos == null)
+        {
+            capi.Logger.Warning($"[Sparky] Texture not found in atlas: {texturePath}, using unknown texture");
+            _texPos = capi.BlockTextureAtlas.UnknownTexturePosition;
+        }
+    }
+
+    public TextureAtlasPosition this[string textureCode] => _texPos;
 }

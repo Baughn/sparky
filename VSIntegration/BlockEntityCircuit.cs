@@ -256,9 +256,12 @@ public class BlockEntityCircuit : BlockEntity
     /// </summary>
     public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
     {
+        var capi = Api as ICoreClientAPI;
+        if (capi == null) return false;
+
         if (_meshDirty || _cachedMesh == null)
         {
-            _cachedMesh = VoxelMesher.GenerateMesh(_voxelData, Api);
+            _cachedMesh = VoxelMesher.GenerateMesh(_voxelData, tessThreadTesselator, capi);
             _meshDirty = false;
 
             // Debug: log mesh generation results

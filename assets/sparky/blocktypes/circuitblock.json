@@ -5,14 +5,18 @@
     "creativeinventory": { "general": ["*"] },
     "behaviors": [],
     "variantgroups": [],
-    "shape": null,
+    "shape": { "base": "sparky:block/empty" },
     "drawtype": "JSON",
     "renderpass": "Opaque",
     "replaceable": 0,
     "resistance": 2.0,
     "blockmaterial": "Metal",
     "textures": {
-        "all": { "base": "game:block/transparent" }
+        "all": { "base": "sparky:block/copper" },
+        "copper": { "base": "sparky:block/copper" },
+        "gold": { "base": "sparky:block/gold" },
+        "lead": { "base": "sparky:block/lead" },
+        "iron": { "base": "sparky:block/iron" }
     },
     "sidesolid": {
         "all": false
