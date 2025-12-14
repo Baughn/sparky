@@ -1,0 +1,25 @@
+{
+    "code": "conductor-gold",
+    "creativeinventory": { "general": ["*"] },
+    "shape": { "base": "block/cube" },
+    "drawtype": "Cube",
+    "renderpass": "Opaque",
+    "blockmaterial": "Metal",
+    "replaceable": 0,
+    "resistance": 2.0,
+    "textures": {
+        "all": { "base": "sparky:block/gold" }
+    },
+    "sounds": {
+        "place": "game:block/metal",
+        "break": "game:block/metal",
+        "hit": "game:block/metal"
+    },
+    "attributes": {
+        "sparky": {
+            "conductor": true,
+            "material": "gold",
+            "resistivity": 2.44e-8
+        }
+    }
+}

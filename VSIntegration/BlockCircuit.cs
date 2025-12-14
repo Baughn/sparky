@@ -18,15 +18,17 @@ public class BlockCircuit : Block
     }
 
     /// <summary>
-    /// Returns selection boxes for each non-air voxel in the block.
+    /// Returns selection boxes for voxels in the block.
+    /// Uses inherited microblock selection box system.
     /// </summary>
     public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos pos)
     {
         var be = blockAccessor.GetBlockEntity(pos) as BlockEntityCircuit;
         if (be != null)
         {
-            var boxes = be.GetVoxelSelectionBoxes();
-            if (boxes.Length > 0)
+            // Use microblock's selection boxes if available
+            var boxes = be.GetSelectionBoxes(blockAccessor, null);
+            if (boxes != null && boxes.Length > 0)
             {
                 return boxes;
             }

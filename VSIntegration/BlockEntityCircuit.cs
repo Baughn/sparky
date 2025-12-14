@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 using VoxelGrid = Sparky.Game.Core.VoxelGrid;
 using VoxelType = Sparky.Game.Core.VoxelType;
@@ -14,199 +14,54 @@ using SparkyBlockPos = Sparky.Game.Core.BlockPos;
 namespace Sparky.VSIntegration;
 
 /// <summary>
-/// Block entity that stores 16x16x16 voxel data for electrical conductors.
-/// Each voxel can be Air, Conductor, ResistiveConductor, or Insulator,
-/// with an optional material type (Copper, Gold, Lead, Iron).
+/// Circuit block entity that extends VS's microblock system with electrical simulation.
+/// Inherits voxel storage and mesh generation from BlockEntityMicroBlock.
 /// </summary>
-public class BlockEntityCircuit : BlockEntity
+public class BlockEntityCircuit : BlockEntityMicroBlock
 {
-    /// <summary>
-    /// Packed voxel storage: 4096 bytes for a 16x16x16 grid.
-    /// Byte layout: bits 0-1 = VoxelType, bits 2-5 = MaterialIndex
-    /// </summary>
-    private byte[] _voxelData = new byte[4096];
-
     /// <summary>
     /// Network ID assigned by CircuitNetworkManager.
     /// </summary>
     public Guid NetworkId { get; internal set; }
 
     /// <summary>
-    /// Cached mesh for client-side rendering.
+    /// Maps VS block IDs to Sparky conductor materials.
+    /// Populated on mod initialization with conductor block types.
     /// </summary>
-    private MeshData? _cachedMesh;
+    private static readonly Dictionary<int, Material> BlockIdToMaterial = new();
 
     /// <summary>
-    /// True if mesh needs regeneration.
+    /// Registers a VS block as a conductor material.
+    /// Call during mod initialization after blocks are loaded.
     /// </summary>
-    private bool _meshDirty = true;
-
-    /// <summary>
-    /// Material index lookup for packing/unpacking.
-    /// </summary>
-    private static readonly Dictionary<Material, byte> MaterialToIndex = new()
+    public static void RegisterConductor(int blockId, Material material)
     {
-        { Material.Copper, 1 },
-        { Material.Gold, 2 },
-        { Material.Lead, 3 },
-        { Material.Iron, 4 }
-    };
-
-    private static readonly Dictionary<byte, Material> IndexToMaterial = new()
-    {
-        { 1, Material.Copper },
-        { 2, Material.Gold },
-        { 3, Material.Lead },
-        { 4, Material.Iron }
-    };
-
-    /// <summary>
-    /// Gets the number of non-air voxels in this block.
-    /// </summary>
-    public int VoxelCount
-    {
-        get
-        {
-            int count = 0;
-            for (int i = 0; i < 4096; i++)
-            {
-                if ((_voxelData[i] & 0x03) != 0)
-                    count++;
-            }
-            return count;
-        }
+        BlockIdToMaterial[blockId] = material;
     }
 
     /// <summary>
-    /// Sets a voxel at the given local coordinates (0-15 each axis).
+    /// Clears all conductor registrations. Call on mod unload.
     /// </summary>
-    public void SetVoxel(int x, int y, int z, VoxelType type, Material? material = null)
+    public static void ClearConductorRegistrations()
     {
-        if (x < 0 || x > 15 || y < 0 || y > 15 || z < 0 || z > 15)
-            throw new ArgumentOutOfRangeException("Voxel coordinates must be 0-15");
-
-        int index = GetIndex(x, y, z);
-        byte packed = PackVoxel(type, material);
-
-        if (_voxelData[index] != packed)
-        {
-            _voxelData[index] = packed;
-            _meshDirty = true;
-            MarkDirty(redrawOnClient: true);
-
-            Api?.Logger.Debug($"[Sparky] SetVoxel({x},{y},{z}) type={type} material={material?.Name ?? "null"} packed={packed}");
-
-            // Notify network manager on server side
-            if (Api?.Side == EnumAppSide.Server)
-            {
-                var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
-                modSystem?.NetworkManager?.OnBlockVoxelChanged(Pos, x, y, z, type, material);
-            }
-        }
+        BlockIdToMaterial.Clear();
     }
 
     /// <summary>
-    /// Gets the voxel type and material at the given local coordinates.
+    /// Gets whether a VS block ID is a registered conductor.
     /// </summary>
-    public (VoxelType Type, Material? Material) GetVoxel(int x, int y, int z)
+    public static bool IsConductor(int blockId)
     {
-        if (x < 0 || x > 15 || y < 0 || y > 15 || z < 0 || z > 15)
-            return (VoxelType.Air, null);
-
-        int index = GetIndex(x, y, z);
-        return UnpackVoxel(_voxelData[index]);
+        return BlockIdToMaterial.ContainsKey(blockId);
     }
 
     /// <summary>
-    /// Gets the raw voxel data array (for network sync).
+    /// Gets the conductor material for a VS block ID, or null if not a conductor.
     /// </summary>
-    public byte[] GetRawVoxelData() => _voxelData;
-
-    /// <summary>
-    /// Sets the raw voxel data array (for network sync).
-    /// </summary>
-    public void SetRawVoxelData(byte[] data)
+    public static Material? GetConductorMaterial(int blockId)
     {
-        if (data.Length != 4096)
-            throw new ArgumentException("Voxel data must be exactly 4096 bytes");
-
-        Array.Copy(data, _voxelData, 4096);
-        _meshDirty = true;
+        return BlockIdToMaterial.TryGetValue(blockId, out var mat) ? mat : null;
     }
-
-    #region Index Calculation
-
-    private static int GetIndex(int x, int y, int z)
-    {
-        return (y << 8) | (z << 4) | x;
-    }
-
-    #endregion
-
-    #region Packing/Unpacking
-
-    private static byte PackVoxel(VoxelType type, Material? material)
-    {
-        byte typeBits = (byte)((int)type & 0x03);
-        byte materialBits = 0;
-
-        if (material != null && MaterialToIndex.TryGetValue(material, out byte idx))
-        {
-            materialBits = (byte)(idx << 2);
-        }
-
-        return (byte)(typeBits | materialBits);
-    }
-
-    private static (VoxelType Type, Material? Material) UnpackVoxel(byte packed)
-    {
-        var type = (VoxelType)(packed & 0x03);
-        byte materialIdx = (byte)((packed >> 2) & 0x0F);
-
-        Material? material = null;
-        if (materialIdx != 0 && IndexToMaterial.TryGetValue(materialIdx, out var mat))
-        {
-            material = mat;
-        }
-
-        return (type, material);
-    }
-
-    #endregion
-
-    #region Serialization
-
-    public override void ToTreeAttributes(ITreeAttribute tree)
-    {
-        base.ToTreeAttributes(tree);
-        tree.SetBytes("voxelData", _voxelData);
-
-        if (NetworkId != Guid.Empty)
-        {
-            tree.SetBytes("networkId", NetworkId.ToByteArray());
-        }
-    }
-
-    public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
-    {
-        base.FromTreeAttributes(tree, worldAccessForResolve);
-
-        var data = tree.GetBytes("voxelData");
-        if (data != null && data.Length == 4096)
-        {
-            Array.Copy(data, _voxelData, 4096);
-        }
-
-        var netIdBytes = tree.GetBytes("networkId");
-        if (netIdBytes != null && netIdBytes.Length == 16)
-        {
-            NetworkId = new Guid(netIdBytes);
-        }
-
-        _meshDirty = true;
-    }
-
-    #endregion
 
     #region Lifecycle
 
@@ -248,92 +103,198 @@ public class BlockEntityCircuit : BlockEntity
 
     #endregion
 
-    #region Rendering
+    #region Serialization
 
-    /// <summary>
-    /// Called by the chunk tesselator to generate mesh data.
-    /// Runs on a background thread - must be thread-safe.
-    /// </summary>
-    public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
+    public override void ToTreeAttributes(ITreeAttribute tree)
     {
-        var capi = Api as ICoreClientAPI;
-        if (capi == null) return false;
+        base.ToTreeAttributes(tree);
 
-        if (_meshDirty || _cachedMesh == null)
+        if (NetworkId != Guid.Empty)
         {
-            _cachedMesh = VoxelMesher.GenerateMesh(_voxelData, tessThreadTesselator, capi);
-            _meshDirty = false;
-
-            // Debug: log mesh generation results
-            Api?.Logger.Debug($"[Sparky] OnTesselation: VoxelCount={VoxelCount}, MeshVerts={_cachedMesh?.VerticesCount}, MeshIndices={_cachedMesh?.IndicesCount}");
+            tree.SetBytes("networkId", NetworkId.ToByteArray());
         }
-
-        if (_cachedMesh != null && _cachedMesh.VerticesCount > 0)
-        {
-            mesher.AddMeshData(_cachedMesh);
-            return true; // Skip default block mesh
-        }
-
-        return false;
     }
 
-    /// <summary>
-    /// Generates selection boxes for each non-air voxel.
-    /// Used by BlockCircuit.GetSelectionBoxes().
-    /// </summary>
-    public Cuboidf[] GetVoxelSelectionBoxes()
+    public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
     {
-        var boxes = new List<Cuboidf>();
-        const float scale = 1f / 16f;
+        base.FromTreeAttributes(tree, worldAccessForResolve);
 
-        for (int y = 0; y < 16; y++)
+        var netIdBytes = tree.GetBytes("networkId");
+        if (netIdBytes != null && netIdBytes.Length == 16)
         {
-            for (int z = 0; z < 16; z++)
-            {
-                for (int x = 0; x < 16; x++)
-                {
-                    var (type, _) = GetVoxel(x, y, z);
-                    if (type != VoxelType.Air)
-                    {
-                        boxes.Add(new Cuboidf(
-                            x * scale, y * scale, z * scale,
-                            (x + 1) * scale, (y + 1) * scale, (z + 1) * scale
-                        ));
-                    }
-                }
-            }
+            NetworkId = new Guid(netIdBytes);
         }
-
-        return boxes.ToArray();
     }
 
     #endregion
 
-    #region Conversion to/from VoxelGrid
+    #region Conductor Voxel Access
 
     /// <summary>
-    /// Exports all voxels to a VoxelGrid at the correct world positions.
+    /// Sets a single conductor voxel at the given local coordinates (0-15 each axis).
+    /// </summary>
+    public void SetConductorVoxel(int x, int y, int z, Material material)
+    {
+        if (x < 0 || x > 15 || y < 0 || y > 15 || z < 0 || z > 15)
+            throw new ArgumentOutOfRangeException("Voxel coordinates must be 0-15");
+
+        // Find the block ID for this material
+        int blockId = -1;
+        foreach (var kvp in BlockIdToMaterial)
+        {
+            if (kvp.Value == material)
+            {
+                blockId = kvp.Key;
+                break;
+            }
+        }
+
+        if (blockId < 0)
+        {
+            Api?.Logger.Warning($"[Sparky] No block registered for material {material.Name}");
+            return;
+        }
+
+        // Find or add this material to BlockIds
+        byte materialIndex = GetOrAddMaterialIndex(blockId);
+
+        // Set the voxel using inherited method
+        bool changed = SetVoxel(new Vec3i(x, y, z), true, materialIndex, 1);
+
+        if (changed)
+        {
+            // Mark mesh dirty for re-render and regenerate selection boxes
+            MarkMeshDirty();
+            RegenSelectionBoxes(Api.World, null);
+            MarkDirty(true);
+        }
+
+        // Notify network manager on server side
+        if (Api?.Side == EnumAppSide.Server)
+        {
+            var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
+            modSystem?.NetworkManager?.OnBlockVoxelChanged(Pos, x, y, z, VoxelType.Conductor, material);
+        }
+    }
+
+    /// <summary>
+    /// Removes a voxel at the given local coordinates.
+    /// </summary>
+    public void RemoveVoxel(int x, int y, int z)
+    {
+        if (x < 0 || x > 15 || y < 0 || y > 15 || z < 0 || z > 15)
+            return;
+
+        // Clear the voxel using inherited method
+        bool changed = SetVoxel(new Vec3i(x, y, z), false, 0, 1);
+
+        if (changed)
+        {
+            // Mark mesh dirty for re-render and regenerate selection boxes
+            MarkMeshDirty();
+            RegenSelectionBoxes(Api.World, null);
+            MarkDirty(true);
+        }
+
+        // Notify network manager on server side
+        if (Api?.Side == EnumAppSide.Server)
+        {
+            var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
+            modSystem?.NetworkManager?.OnBlockVoxelChanged(Pos, x, y, z, VoxelType.Air, null);
+        }
+    }
+
+    /// <summary>
+    /// Gets the conductor material at the given local coordinates, or null if air/insulator.
+    /// </summary>
+    public Material? GetConductorAt(int x, int y, int z)
+    {
+        if (x < 0 || x > 15 || y < 0 || y > 15 || z < 0 || z > 15)
+            return null;
+
+        // Find the voxel in our cuboids
+        foreach (var cuboid in VoxelCuboids)
+        {
+            FromUint(cuboid, out int x0, out int y0, out int z0, out int x1, out int y1, out int z1, out int matIdx);
+            if (x >= x0 && x < x1 && y >= y0 && y < y1 && z >= z0 && z < z1)
+            {
+                if (BlockIds != null && matIdx < BlockIds.Length)
+                {
+                    return GetConductorMaterial(BlockIds[matIdx]);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Gets or adds a material index for the given block ID.
+    /// </summary>
+    private byte GetOrAddMaterialIndex(int blockId)
+    {
+        if (BlockIds == null)
+        {
+            BlockIds = new int[] { blockId };
+            return 0;
+        }
+
+        for (int i = 0; i < BlockIds.Length; i++)
+        {
+            if (BlockIds[i] == blockId)
+                return (byte)i;
+        }
+
+        // Add new material
+        if (BlockIds.Length >= 255)
+        {
+            Api?.Logger.Warning("[Sparky] Material palette full, reusing last index");
+            return 254;
+        }
+
+        var newIds = new int[BlockIds.Length + 1];
+        Array.Copy(BlockIds, newIds, BlockIds.Length);
+        newIds[BlockIds.Length] = blockId;
+        BlockIds = newIds;
+        return (byte)(BlockIds.Length - 1);
+    }
+
+    #endregion
+
+    #region Conversion to VoxelGrid
+
+    /// <summary>
+    /// Exports all conductor voxels to a VoxelGrid at the correct world positions.
     /// </summary>
     public void ExportToVoxelGrid(VoxelGrid grid, SparkyBlockPos sparkyBlockPos)
     {
-        for (int y = 0; y < 16; y++)
+        if (VoxelCuboids == null || BlockIds == null)
+            return;
+
+        foreach (var cuboid in VoxelCuboids)
         {
-            for (int z = 0; z < 16; z++)
+            FromUint(cuboid, out int x0, out int y0, out int z0, out int x1, out int y1, out int z1, out int matIdx);
+
+            // Get the material for this cuboid
+            Material? material = null;
+            if (matIdx < BlockIds.Length)
             {
-                for (int x = 0; x < 16; x++)
+                material = GetConductorMaterial(BlockIds[matIdx]);
+            }
+
+            // If not a conductor, skip (it's decorative/insulator)
+            if (material == null)
+                continue;
+
+            // Export all voxels in this cuboid
+            for (int y = y0; y < y1; y++)
+            {
+                for (int z = z0; z < z1; z++)
                 {
-                    var (type, material) = GetVoxel(x, y, z);
-                    if (type != VoxelType.Air)
+                    for (int x = x0; x < x1; x++)
                     {
                         var voxelPos = VoxelPos.FromBlockLocal(sparkyBlockPos, x, y, z);
-                        if (material != null)
-                        {
-                            grid.SetVoxel(voxelPos, material);
-                        }
-                        else
-                        {
-                            grid.SetVoxel(voxelPos, type);
-                        }
+                        grid.SetVoxel(voxelPos, material);
                     }
                 }
             }

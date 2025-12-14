@@ -4,8 +4,8 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-using VoxelType = Sparky.Game.Core.VoxelType;
 using Material = Sparky.Game.Core.Material;
+using Sparky.Game.Core;
 
 namespace Sparky.VSIntegration;
 
@@ -32,13 +32,50 @@ public class ItemWireTool : Item
 
     private int _materialIndex = 0;
 
-    public override void OnLoaded(ICoreAPI api)
+    /// <summary>
+    /// Handle left-click (attack) - removes voxels from circuit blocks.
+    /// </summary>
+    public override void OnHeldAttackStart(
+        ItemSlot slot,
+        EntityAgent byEntity,
+        BlockSelection blockSel,
+        EntitySelection entitySel,
+        ref EnumHandHandling handling)
     {
-        base.OnLoaded(api);
+        if (blockSel == null)
+        {
+            base.OnHeldAttackStart(slot, byEntity, blockSel, entitySel, ref handling);
+            return;
+        }
+
+        var world = byEntity.World;
+        var block = world.BlockAccessor.GetBlock(blockSel.Position);
+
+        // If targeting a circuit block, remove voxel instead of breaking block
+        if (block is BlockCircuit)
+        {
+            var be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BlockEntityCircuit;
+            if (be != null)
+            {
+                var (localX, localY, localZ) = GetClickedVoxel(blockSel);
+                be.RemoveVoxel(localX, localY, localZ);
+
+                // If block is now empty, remove it
+                if (be.VoxelCuboids == null || be.VoxelCuboids.Count == 0)
+                {
+                    world.BlockAccessor.SetBlock(0, blockSel.Position);
+                }
+
+                handling = EnumHandHandling.PreventDefault;
+                return;
+            }
+        }
+
+        base.OnHeldAttackStart(slot, byEntity, blockSel, entitySel, ref handling);
     }
 
     /// <summary>
-    /// Handle interaction with blocks.
+    /// Handle right-click (interact) - places voxels.
     /// </summary>
     public override void OnHeldInteractStart(
         ItemSlot slot,
@@ -58,7 +95,7 @@ public class ItemWireTool : Item
         var pos = blockSel.Position;
         var block = world.BlockAccessor.GetBlock(pos);
 
-        // If targeting a circuit block, place/remove voxel
+        // If targeting a circuit block, place voxel
         if (block is BlockCircuit)
         {
             var player = (byEntity as EntityPlayer)?.Player;
@@ -80,18 +117,11 @@ public class ItemWireTool : Item
 
         // If targeting a solid block, try to place on the adjacent face
         var adjacentPos = blockSel.Position.AddCopy(blockSel.Face);
-        var adjacentBlock = world.BlockAccessor.GetBlock(adjacentPos);
-
-        if (adjacentBlock.Replaceable >= 6000)
+        var be = GetOrCreateCircuitBlock(world, adjacentPos);
+        if (be != null)
         {
-            // Create a new block selection for the adjacent position
-            var newSel = new BlockSelection
-            {
-                Position = adjacentPos,
-                Face = blockSel.Face.Opposite,
-                HitPosition = GetOppositeHitPosition(blockSel)
-            };
-            PlaceNewCircuitBlock(world, newSel, byEntity);
+            var (localX, localY, localZ) = GetVoxelPositionOnFace(blockSel);
+            be.SetConductorVoxel(localX, localY, localZ, _selectedMaterial);
             handling = EnumHandHandling.PreventDefault;
             return;
         }
@@ -100,33 +130,51 @@ public class ItemWireTool : Item
     }
 
     /// <summary>
-    /// Called when interacting with an existing circuit block.
+    /// Gets an existing circuit block entity, or creates a new circuit block if the position is replaceable.
+    /// Returns null if the position is occupied by a non-circuit, non-replaceable block.
+    /// </summary>
+    private BlockEntityCircuit? GetOrCreateCircuitBlock(IWorldAccessor world, Vintagestory.API.MathTools.BlockPos pos)
+    {
+        var block = world.BlockAccessor.GetBlock(pos);
+
+        if (block is BlockCircuit)
+        {
+            return world.BlockAccessor.GetBlockEntity(pos) as BlockEntityCircuit;
+        }
+
+        if (block.Replaceable >= 6000)
+        {
+            var circuitBlock = world.GetBlock(new AssetLocation("sparky:circuitblock"));
+            if (circuitBlock == null)
+            {
+                api?.Logger.Warning("Could not find sparky:circuitblock");
+                return null;
+            }
+
+            world.BlockAccessor.SetBlock(circuitBlock.BlockId, pos);
+            return world.BlockAccessor.GetBlockEntity(pos) as BlockEntityCircuit;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Called when right-clicking an existing circuit block. Places a conductor voxel.
     /// </summary>
     public bool OnCircuitBlockInteract(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
     {
-        var be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BlockEntityCircuit;
+        // Check if adjacent voxel would be outside this block
+        var (localX, localY, localZ, outsideBlock) = GetAdjacentVoxelWithOverflow(blockSel);
+
+        // Determine target block position
+        var targetPos = outsideBlock
+            ? blockSel.Position.AddCopy(blockSel.Face)
+            : blockSel.Position;
+
+        var be = GetOrCreateCircuitBlock(world, targetPos);
         if (be == null) return false;
 
-        var (localX, localY, localZ) = GetVoxelPosition(blockSel);
-        bool sneaking = byPlayer.Entity.Controls.Sneak;
-
-        if (sneaking)
-        {
-            // Remove voxel
-            be.SetVoxel(localX, localY, localZ, VoxelType.Air, null);
-
-            // If block is now empty, remove it
-            if (be.VoxelCount == 0)
-            {
-                world.BlockAccessor.SetBlock(0, blockSel.Position);
-            }
-        }
-        else
-        {
-            // Place voxel
-            be.SetVoxel(localX, localY, localZ, VoxelType.Conductor, _selectedMaterial);
-        }
-
+        be.SetConductorVoxel(localX, localY, localZ, _selectedMaterial);
         return true;
     }
 
@@ -135,66 +183,69 @@ public class ItemWireTool : Item
     /// </summary>
     private void PlaceNewCircuitBlock(IWorldAccessor world, BlockSelection blockSel, EntityAgent byEntity)
     {
-        var circuitBlock = world.GetBlock(new AssetLocation("sparky:circuitblock"));
-        if (circuitBlock == null)
-        {
-            api?.Logger.Warning("Could not find sparky:circuitblock");
-            return;
-        }
+        var be = GetOrCreateCircuitBlock(world, blockSel.Position);
+        if (be == null) return;
 
-        world.BlockAccessor.SetBlock(circuitBlock.BlockId, blockSel.Position);
-
-        // Get the newly created block entity
-        var be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BlockEntityCircuit;
-        if (be != null)
-        {
-            var (localX, localY, localZ) = GetVoxelPosition(blockSel);
-            be.SetVoxel(localX, localY, localZ, VoxelType.Conductor, _selectedMaterial);
-        }
+        // Place voxel adjacent to the clicked face (in front of it)
+        var hitPos = blockSel.HitPosition;
+        var face = blockSel.Face;
+        var (localX, localY, localZ) = VoxelPositionHelper.GetAdjacentVoxel(
+            hitPos.X, hitPos.Y, hitPos.Z,
+            face.Normalf.X, face.Normalf.Y, face.Normalf.Z);
+        be.SetConductorVoxel(localX, localY, localZ, _selectedMaterial);
     }
 
     /// <summary>
-    /// Converts hit position to local voxel coordinates (0-15).
+    /// Gets the voxel coordinates (0-15) of the voxel whose face was clicked.
+    /// This is the voxel "behind" the clicked face.
     /// </summary>
-    private (int X, int Y, int Z) GetVoxelPosition(BlockSelection blockSel)
+    private (int X, int Y, int Z) GetClickedVoxel(BlockSelection blockSel)
     {
         var hitPos = blockSel.HitPosition;
-
-        // Convert 0-1 hit position to 0-15 voxel coordinates
-        int x = Math.Clamp((int)(hitPos.X * 16), 0, 15);
-        int y = Math.Clamp((int)(hitPos.Y * 16), 0, 15);
-        int z = Math.Clamp((int)(hitPos.Z * 16), 0, 15);
-
-        return (x, y, z);
-    }
-
-    /// <summary>
-    /// Gets the opposite hit position when placing on adjacent block.
-    /// </summary>
-    private Vec3d GetOppositeHitPosition(BlockSelection blockSel)
-    {
         var face = blockSel.Face;
-        var hit = blockSel.HitPosition;
-
-        // Map hit position to the opposite face
-        return new Vec3d(
-            face.Axis == EnumAxis.X ? (face.Normali.X > 0 ? 0.0 : 1.0) : hit.X,
-            face.Axis == EnumAxis.Y ? (face.Normali.Y > 0 ? 0.0 : 1.0) : hit.Y,
-            face.Axis == EnumAxis.Z ? (face.Normali.Z > 0 ? 0.0 : 1.0) : hit.Z
-        );
+        return VoxelPositionHelper.GetClickedVoxel(
+            hitPos.X, hitPos.Y, hitPos.Z,
+            face.Normalf.X, face.Normalf.Y, face.Normalf.Z);
     }
 
     /// <summary>
-    /// Cycle through materials with scroll wheel or key.
+    /// Gets the voxel coordinates for placing adjacent to a clicked face,
+    /// and indicates if the position is outside the current block.
+    /// If outside, coordinates are wrapped to the adjacent block's local space.
     /// </summary>
-    public override void OnHeldInteractStop(
-        float secondsUsed,
-        ItemSlot slot,
-        EntityAgent byEntity,
-        BlockSelection blockSel,
-        EntitySelection entitySel)
+    private (int X, int Y, int Z, bool OutsideBlock) GetAdjacentVoxelWithOverflow(BlockSelection blockSel)
     {
-        base.OnHeldInteractStop(secondsUsed, slot, byEntity, blockSel, entitySel);
+        var hitPos = blockSel.HitPosition;
+        var face = blockSel.Face;
+        return VoxelPositionHelper.GetAdjacentVoxelWithOverflow(
+            hitPos.X, hitPos.Y, hitPos.Z,
+            face.Normalf.X, face.Normalf.Y, face.Normalf.Z);
+    }
+
+    /// <summary>
+    /// Gets the voxel position when clicking a solid block to place in an adjacent circuit block.
+    /// The voxel should be on the face of the circuit block that touches the solid block.
+    /// </summary>
+    private (int X, int Y, int Z) GetVoxelPositionOnFace(BlockSelection solidBlockSel)
+    {
+        var face = solidBlockSel.Face;
+        var hit = solidBlockSel.HitPosition;
+
+        // The hit position is on the solid block's face.
+        // We need to map this to the adjacent block's coordinate space.
+        // The voxel should be on the face of the adjacent block that touches the solid block.
+        // That's the OPPOSITE face from where we clicked.
+
+        // Map hit coordinates to the adjacent block's space
+        double adjX = face.Axis == EnumAxis.X ? (face.Normali.X > 0 ? 0.0 : 1.0) : hit.X;
+        double adjY = face.Axis == EnumAxis.Y ? (face.Normali.Y > 0 ? 0.0 : 1.0) : hit.Y;
+        double adjZ = face.Axis == EnumAxis.Z ? (face.Normali.Z > 0 ? 0.0 : 1.0) : hit.Z;
+
+        // Use GetClickedVoxel with the opposite face normal to get the voxel ON the face
+        // (not adjacent to it)
+        return VoxelPositionHelper.GetClickedVoxel(
+            adjX, adjY, adjZ,
+            -face.Normalf.X, -face.Normalf.Y, -face.Normalf.Z);
     }
 
     /// <summary>
@@ -249,7 +300,7 @@ public class ItemWireTool : Item
     {
         base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
         dsc.AppendLine($"Selected material: {_selectedMaterial.Name}");
-        dsc.AppendLine("Left click: Place conductor voxel");
-        dsc.AppendLine("Sneak + Left click: Remove voxel");
+        dsc.AppendLine("Right click: Place conductor voxel");
+        dsc.AppendLine("Left click: Remove voxel");
     }
 }

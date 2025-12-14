@@ -3,6 +3,8 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
 
+using Material = Sparky.Game.Core.Material;
+
 namespace Sparky;
 
 /// <summary>
@@ -37,6 +39,51 @@ public class SparkyModSystem : ModSystem
         api.RegisterItemClass("ItemWireTool", typeof(ItemWireTool));
 
         api.Logger.Notification("[Sparky] Mod classes registered");
+    }
+
+    /// <summary>
+    /// Called after all assets are loaded. Register conductor blocks here.
+    /// </summary>
+    public override void AssetsFinalize(ICoreAPI api)
+    {
+        base.AssetsFinalize(api);
+
+        // Register conductor blocks as Sparky materials
+        RegisterConductorBlocks(api);
+    }
+
+    /// <summary>
+    /// Registers conductor blocks with the circuit simulation system.
+    /// </summary>
+    private void RegisterConductorBlocks(ICoreAPI api)
+    {
+        // Clear any previous registrations
+        BlockEntityCircuit.ClearConductorRegistrations();
+
+        // Map of conductor block codes to materials
+        var conductorMap = new (string Code, Material Material)[]
+        {
+            ("sparky:conductor-copper", Material.Copper),
+            ("sparky:conductor-gold", Material.Gold),
+            ("sparky:conductor-lead", Material.Lead),
+            ("sparky:conductor-iron", Material.Iron)
+        };
+
+        foreach (var (code, material) in conductorMap)
+        {
+            var block = api.World.GetBlock(new AssetLocation(code));
+            if (block != null)
+            {
+                BlockEntityCircuit.RegisterConductor(block.BlockId, material);
+                api.Logger.Debug($"[Sparky] Registered conductor: {code} -> {material.Name}");
+            }
+            else
+            {
+                api.Logger.Warning($"[Sparky] Conductor block not found: {code}");
+            }
+        }
+
+        api.Logger.Notification("[Sparky] Conductor blocks registered");
     }
 
     /// <summary>
