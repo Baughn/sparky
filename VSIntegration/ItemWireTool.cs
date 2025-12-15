@@ -72,51 +72,11 @@ public static class WireToolModeExtensions
 
 /// <summary>
 /// Tool for placing and removing conductor voxels in circuit blocks.
+/// Note: Item classes are singletons in VS, so all per-player/per-item state
+/// must be stored in ItemStack.Attributes or ModSystem dictionaries.
 /// </summary>
 public class ItemWireTool : Item
 {
-    /// <summary>
-    /// Current operating mode.
-    /// </summary>
-    public WireToolMode CurrentMode { get; private set; } = WireToolMode.SingleVoxel;
-
-    /// <summary>
-    /// Cable laying state for cable modes.
-    /// </summary>
-    private CableLayingState? _cableState;
-
-    /// <summary>
-    /// Sets the wire tool mode.
-    /// </summary>
-    public void SetMode(WireToolMode mode)
-    {
-        if (CurrentMode == mode)
-            return;
-
-        // Clear any existing cable state when changing modes
-        _cableState?.Cancel();
-        _cableState = null;
-
-        CurrentMode = mode;
-
-        // Create cable state for cable modes
-        var crossSection = mode.GetCrossSection();
-        if (crossSection.HasValue)
-        {
-            _cableState = new CableLayingState(crossSection.Value);
-        }
-    }
-
-    /// <summary>
-    /// Gets the cable laying state, if in a cable mode.
-    /// </summary>
-    public CableLayingState? GetCableState() => _cableState;
-
-    /// <summary>
-    /// Currently selected material for placement.
-    /// </summary>
-    private Material _selectedMaterial = Material.Copper;
-
     /// <summary>
     /// Material selection cycle order.
     /// </summary>
@@ -128,7 +88,71 @@ public class ItemWireTool : Item
         Material.Iron
     };
 
-    private int _materialIndex = 0;
+    /// <summary>
+    /// Gets the wire tool mode from the ItemStack attributes.
+    /// </summary>
+    public WireToolMode GetMode(ItemSlot slot)
+    {
+        return (WireToolMode)slot.Itemstack.Attributes.GetInt("wireToolMode", 0);
+    }
+
+    /// <summary>
+    /// Sets the wire tool mode in ItemStack attributes and clears cable state.
+    /// </summary>
+    public void SetMode(ItemSlot slot, WireToolMode mode, IPlayer player)
+    {
+        var oldMode = GetMode(slot);
+        if (oldMode == mode)
+            return;
+
+        slot.Itemstack.Attributes.SetInt("wireToolMode", (int)mode);
+        slot.MarkDirty();
+
+        // Clear any existing cable state when changing modes
+        var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
+        modSystem.ClearCableState(player.PlayerUID);
+    }
+
+    /// <summary>
+    /// Gets the selected material from the ItemStack attributes.
+    /// </summary>
+    public Material GetSelectedMaterial(ItemSlot slot)
+    {
+        int index = slot.Itemstack.Attributes.GetInt("selectedMaterialIndex", 0);
+        return Materials[Math.Clamp(index, 0, Materials.Length - 1)];
+    }
+
+    /// <summary>
+    /// Sets the selected material in the ItemStack attributes.
+    /// </summary>
+    public void SetSelectedMaterial(ItemSlot slot, Material material)
+    {
+        int index = Array.IndexOf(Materials, material);
+        slot.Itemstack.Attributes.SetInt("selectedMaterialIndex", Math.Max(0, index));
+        slot.MarkDirty();
+    }
+
+    /// <summary>
+    /// Cycles to the next material.
+    /// </summary>
+    public void CycleNextMaterial(ItemSlot slot)
+    {
+        int index = slot.Itemstack.Attributes.GetInt("selectedMaterialIndex", 0);
+        index = (index + 1) % Materials.Length;
+        slot.Itemstack.Attributes.SetInt("selectedMaterialIndex", index);
+        slot.MarkDirty();
+    }
+
+    /// <summary>
+    /// Cycles to the previous material.
+    /// </summary>
+    public void CyclePreviousMaterial(ItemSlot slot)
+    {
+        int index = slot.Itemstack.Attributes.GetInt("selectedMaterialIndex", 0);
+        index = (index - 1 + Materials.Length) % Materials.Length;
+        slot.Itemstack.Attributes.SetInt("selectedMaterialIndex", index);
+        slot.MarkDirty();
+    }
 
     /// <summary>
     /// Handle left-click (attack) - removes voxels from circuit blocks.
@@ -190,11 +214,37 @@ public class ItemWireTool : Item
         }
 
         var world = byEntity.World;
-
-        // Handle cable laying modes
-        if (CurrentMode.IsCableMode() && _cableState != null)
+        var player = (byEntity as EntityPlayer)?.Player;
+        if (player == null)
         {
-            HandleCableModeInteract(world, blockSel, ref handling);
+            base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
+            return;
+        }
+
+        // Get mode and material from ItemStack.Attributes
+        var mode = GetMode(slot);
+        var material = GetSelectedMaterial(slot);
+
+        api?.Logger.Debug($"[Sparky WireTool] OnHeldInteractStart: mode={mode}, isCableMode={mode.IsCableMode()}, side={world.Side}");
+
+        // Handle cable laying modes - only on client side
+        // The client manages the state machine and places blocks (which syncs to server)
+        if (mode.IsCableMode())
+        {
+            if (world.Side == EnumAppSide.Client && api != null)
+            {
+                // Get or create per-player cable state from ModSystem
+                var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
+                var crossSection = mode.GetCrossSection()!.Value;
+                var cableState = modSystem.GetOrCreateCableState(player.PlayerUID, crossSection);
+
+                HandleCableModeInteract(world, blockSel, cableState, material, ref handling);
+            }
+            else
+            {
+                // Server side: just prevent default, client handles everything
+                handling = EnumHandHandling.PreventDefault;
+            }
             return;
         }
 
@@ -205,19 +255,15 @@ public class ItemWireTool : Item
         // If targeting a circuit block, place voxel
         if (block is BlockCircuit)
         {
-            var player = (byEntity as EntityPlayer)?.Player;
-            if (player != null)
-            {
-                OnCircuitBlockInteract(world, player, blockSel);
-                handling = EnumHandHandling.PreventDefault;
-                return;
-            }
+            OnCircuitBlockInteract(world, player, blockSel, slot);
+            handling = EnumHandHandling.PreventDefault;
+            return;
         }
 
         // If targeting a replaceable block (air, grass, etc), place new circuit block
         if (block.Replaceable >= 6000)
         {
-            PlaceNewCircuitBlock(world, blockSel, byEntity);
+            PlaceNewCircuitBlock(world, blockSel, byEntity, slot);
             handling = EnumHandHandling.PreventDefault;
             return;
         }
@@ -228,7 +274,7 @@ public class ItemWireTool : Item
         if (be != null)
         {
             var (localX, localY, localZ) = GetVoxelPositionOnFace(blockSel);
-            be.SetConductorVoxel(localX, localY, localZ, _selectedMaterial);
+            be.SetConductorVoxel(localX, localY, localZ, material);
             handling = EnumHandHandling.PreventDefault;
             return;
         }
@@ -239,29 +285,41 @@ public class ItemWireTool : Item
     /// <summary>
     /// Handles right-click in cable laying mode.
     /// </summary>
-    private void HandleCableModeInteract(IWorldAccessor world, BlockSelection blockSel, ref EnumHandHandling handling)
+    private void HandleCableModeInteract(
+        IWorldAccessor world,
+        BlockSelection blockSel,
+        CableLayingState cableState,
+        Material material,
+        ref EnumHandHandling handling)
     {
-        if (_cableState == null)
-            return;
-
         // Calculate clicked voxel position
         var voxelPos = GetTargetVoxelPos(blockSel);
 
-        switch (_cableState.CurrentPhase)
+        api?.Logger.Debug($"[Sparky WireTool] HandleCableModeInteract: phase={cableState.CurrentPhase}, voxelPos={voxelPos}, side={world.Side}");
+
+        switch (cableState.CurrentPhase)
         {
             case CableLayingState.Phase.Idle:
                 // First click: select start position
-                _cableState.SelectStart(voxelPos, world.BlockAccessor);
+                api?.Logger.Debug($"[Sparky WireTool] Selecting start at {voxelPos}");
+                cableState.SelectStart(voxelPos, world.BlockAccessor);
+                api?.Logger.Debug($"[Sparky WireTool] After SelectStart: phase={cableState.CurrentPhase}");
                 handling = EnumHandHandling.PreventDefault;
                 break;
 
             case CableLayingState.Phase.StartSelected:
             case CableLayingState.Phase.PathReady:
                 // Second click: place cable if we have a valid path
-                if (_cableState.CurrentPath?.Path.Count > 0)
+                api?.Logger.Debug($"[Sparky WireTool] Second click: hasPath={cableState.CurrentPath != null}, pathCount={cableState.CurrentPath?.Path.Count ?? 0}");
+                if (cableState.CurrentPath?.Path.Count > 0)
                 {
-                    PlaceCablePath(world, _cableState.CurrentPath.Value);
-                    _cableState.Cancel();
+                    api?.Logger.Debug($"[Sparky WireTool] Placing cable path with {cableState.CurrentPath.Value.Path.Count} voxels");
+                    PlaceCablePath(world, cableState.CurrentPath.Value, material);
+                    cableState.Cancel();
+                }
+                else
+                {
+                    api?.Logger.Debug("[Sparky WireTool] No valid path to place");
                 }
                 handling = EnumHandHandling.PreventDefault;
                 break;
@@ -288,7 +346,7 @@ public class ItemWireTool : Item
     /// <summary>
     /// Places all voxels in a cable path using batch operations for efficiency.
     /// </summary>
-    private void PlaceCablePath(IWorldAccessor world, PathResult path)
+    private void PlaceCablePath(IWorldAccessor world, PathResult path, Material material)
     {
         // Group voxels by block
         var voxelsByBlock = new Dictionary<(int X, int Y, int Z), List<(int X, int Y, int Z)>>();
@@ -321,7 +379,7 @@ public class ItemWireTool : Item
                 continue;
 
             // Convert to batch format with material
-            var batchVoxels = voxels.Select(v => (v.X, v.Y, v.Z, _selectedMaterial));
+            var batchVoxels = voxels.Select(v => (v.X, v.Y, v.Z, material));
             be.SetConductorVoxelsBatch(batchVoxels);
         }
     }
@@ -358,7 +416,7 @@ public class ItemWireTool : Item
     /// <summary>
     /// Called when right-clicking an existing circuit block. Places a conductor voxel.
     /// </summary>
-    public bool OnCircuitBlockInteract(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+    public bool OnCircuitBlockInteract(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ItemSlot slot)
     {
         // Check if adjacent voxel would be outside this block
         var (localX, localY, localZ, outsideBlock) = GetAdjacentVoxelWithOverflow(blockSel);
@@ -371,14 +429,15 @@ public class ItemWireTool : Item
         var be = GetOrCreateCircuitBlock(world, targetPos);
         if (be == null) return false;
 
-        be.SetConductorVoxel(localX, localY, localZ, _selectedMaterial);
+        var material = GetSelectedMaterial(slot);
+        be.SetConductorVoxel(localX, localY, localZ, material);
         return true;
     }
 
     /// <summary>
     /// Places a new circuit block and sets the initial voxel.
     /// </summary>
-    private void PlaceNewCircuitBlock(IWorldAccessor world, BlockSelection blockSel, EntityAgent byEntity)
+    private void PlaceNewCircuitBlock(IWorldAccessor world, BlockSelection blockSel, EntityAgent byEntity, ItemSlot slot)
     {
         var be = GetOrCreateCircuitBlock(world, blockSel.Position);
         if (be == null) return;
@@ -389,7 +448,8 @@ public class ItemWireTool : Item
         var (localX, localY, localZ) = VoxelPositionHelper.GetAdjacentVoxel(
             hitPos.X, hitPos.Y, hitPos.Z,
             face.Normalf.X, face.Normalf.Y, face.Normalf.Z);
-        be.SetConductorVoxel(localX, localY, localZ, _selectedMaterial);
+        var material = GetSelectedMaterial(slot);
+        be.SetConductorVoxel(localX, localY, localZ, material);
     }
 
     /// <summary>
@@ -446,44 +506,15 @@ public class ItemWireTool : Item
     }
 
     /// <summary>
-    /// Cycles to the next material.
-    /// </summary>
-    public void CycleNextMaterial()
-    {
-        _materialIndex = (_materialIndex + 1) % Materials.Length;
-        _selectedMaterial = Materials[_materialIndex];
-    }
-
-    /// <summary>
-    /// Cycles to the previous material.
-    /// </summary>
-    public void CyclePreviousMaterial()
-    {
-        _materialIndex = (_materialIndex - 1 + Materials.Length) % Materials.Length;
-        _selectedMaterial = Materials[_materialIndex];
-    }
-
-    /// <summary>
-    /// Sets the selected material directly.
-    /// </summary>
-    public void SetMaterial(Material material)
-    {
-        _selectedMaterial = material;
-        _materialIndex = Array.IndexOf(Materials, material);
-        if (_materialIndex < 0) _materialIndex = 0;
-    }
-
-    /// <summary>
-    /// Gets the currently selected material.
-    /// </summary>
-    public Material GetSelectedMaterial() => _selectedMaterial;
-
-    /// <summary>
     /// Returns info text shown in the hotbar.
+    /// Note: ItemStack doesn't have direct slot access here, so we show mode from attributes.
     /// </summary>
     public override string GetHeldItemName(ItemStack itemStack)
     {
-        return $"Wire Tool ({_selectedMaterial.Name})";
+        var mode = (WireToolMode)itemStack.Attributes.GetInt("wireToolMode", 0);
+        int matIndex = itemStack.Attributes.GetInt("selectedMaterialIndex", 0);
+        var material = Materials[Math.Clamp(matIndex, 0, Materials.Length - 1)];
+        return $"Wire Tool ({material.Name}) - {mode.GetDisplayName()}";
     }
 
     /// <summary>
@@ -496,8 +527,12 @@ public class ItemWireTool : Item
         bool withDebugInfo)
     {
         base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
-        dsc.AppendLine($"Selected material: {_selectedMaterial.Name}");
+        var mode = GetMode(inSlot);
+        var material = GetSelectedMaterial(inSlot);
+        dsc.AppendLine($"Mode: {mode.GetDisplayName()}");
+        dsc.AppendLine($"Material: {material.Name}");
         dsc.AppendLine("Right click: Place conductor voxel");
         dsc.AppendLine("Left click: Remove voxel");
+        dsc.AppendLine("F key: Change mode");
     }
 }

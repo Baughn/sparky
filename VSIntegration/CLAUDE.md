@@ -1,6 +1,6 @@
 # VSIntegration Layer
 
-*Last updated: 2025-12-15*
+*Last updated: 2025-12-16*
 
 The VSIntegration folder bridges Vintage Story's game world and Sparky's electrical simulation system.
 
@@ -79,10 +79,16 @@ Block behavior class:
 
 Player tool for building circuits:
 - **Left-click**: Remove voxel from circuit block
-- **Right-click**: Place conductor voxel (with material selection)
-- **Material cycling**: Copper, Gold, Lead, Iron
+- **Right-click**: Place conductor voxel or lay cable (in cable mode)
+- **F key**: Open mode selection dialog
+- **Modes**: SingleVoxel (default), Cable1x1, Cable1x2, Cable2x2, Cable2x3, Cable3x5
 
 Uses `VoxelPositionHelper` (in `Sparky.Core/Game/Core/`) for pure-math hit-position calculations, including overflow handling when placement crosses block boundaries.
+
+**Important: Singleton Pattern**
+`Item` classes are singletons in VS - all players share the same `ItemWireTool` instance. Per-player/per-item state MUST NOT be stored as instance fields. Instead:
+- **Per-item state** (mode, material): Stored in `ItemStack.Attributes` via `GetMode(slot)`/`SetMode(slot, mode, player)`
+- **Per-player runtime state** (cable laying): Stored in `SparkyModSystem` dictionary via `GetCableState(playerUid)`
 
 ## Data Flow: Voxel Placement
 
@@ -188,6 +194,52 @@ Player aims wire tool  →   PreviewUpdateRequest  →   Stores state
                                                      OnRenderFrame
 ```
 
+## Per-Player State Management
+
+Vintage Story's `Item` classes are singletons - all players share the same instance. This requires careful state management for multiplayer:
+
+### State Storage Patterns
+
+| State Type | Storage Location | Example |
+|------------|------------------|---------|
+| Per-item persistent | `ItemStack.Attributes` | Tool mode, selected material |
+| Per-player runtime | `SparkyModSystem` dictionary | CableLayingState |
+
+### ItemStack.Attributes Pattern
+
+```csharp
+// Get mode from the specific ItemStack
+public WireToolMode GetMode(ItemSlot slot)
+{
+    return (WireToolMode)slot.Itemstack.Attributes.GetInt("wireToolMode", 0);
+}
+
+// Set mode on the ItemStack (persists with the item)
+public void SetMode(ItemSlot slot, WireToolMode mode, IPlayer player)
+{
+    slot.Itemstack.Attributes.SetInt("wireToolMode", (int)mode);
+    slot.MarkDirty();
+}
+```
+
+### ModSystem Dictionary Pattern
+
+```csharp
+// In SparkyModSystem.cs
+private readonly Dictionary<string, CableLayingState> _playerCableStates = new();
+
+public CableLayingState? GetCableState(string playerUid)
+{
+    _playerCableStates.TryGetValue(playerUid, out var state);
+    return state;
+}
+```
+
+This allows multiple players to:
+- Have different wire tool settings on different wire tool items
+- Lay cables simultaneously without interfering with each other
+- Switch tools without losing cable laying progress (runtime state clears on mode change)
+
 ## Cable Laying System
 
 The `CableLaying/` folder implements pathfinding-based cable placement.
@@ -208,6 +260,12 @@ VSIntegration/CableLaying/
 ├── CableLayingState.cs      # State machine for two-click workflow
 └── WireToolModeDialog.cs    # F key mode selection GUI
 ```
+
+### State Storage
+
+- **Mode/Material**: `ItemStack.Attributes` (per-item)
+- **CableLayingState**: `SparkyModSystem._playerCableStates` (per-player, keyed by PlayerUID)
+- **Preview**: Rendered client-side, synced to server via `VoxelPreviewSystem`
 
 ### Wire Tool Modes
 

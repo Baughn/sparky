@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Sparky.Game.Core.CableLaying;
 using Sparky.VSIntegration;
 using Sparky.VSIntegration.CableLaying;
 using Vintagestory.API.Client;
@@ -24,6 +26,43 @@ public class SparkyModSystem : ModSystem
     private IClientNetworkChannel? _clientChannel;
     private ICoreClientAPI? _capi;
     private WireToolModeDialog? _modeDialog;
+
+    // Per-player cable laying state (keyed by PlayerUID)
+    private readonly Dictionary<string, CableLayingState> _playerCableStates = new();
+
+    /// <summary>
+    /// Gets the cable laying state for a player, or null if none exists.
+    /// </summary>
+    public CableLayingState? GetCableState(string playerUid)
+    {
+        _playerCableStates.TryGetValue(playerUid, out var state);
+        return state;
+    }
+
+    /// <summary>
+    /// Gets or creates a cable laying state for a player with the specified cross-section.
+    /// </summary>
+    public CableLayingState GetOrCreateCableState(string playerUid, CrossSection crossSection)
+    {
+        if (!_playerCableStates.TryGetValue(playerUid, out var state))
+        {
+            state = new CableLayingState(crossSection);
+            _playerCableStates[playerUid] = state;
+        }
+        return state;
+    }
+
+    /// <summary>
+    /// Clears the cable laying state for a player.
+    /// </summary>
+    public void ClearCableState(string playerUid)
+    {
+        if (_playerCableStates.TryGetValue(playerUid, out var state))
+        {
+            state.Cancel();
+            _playerCableStates.Remove(playerUid);
+        }
+    }
 
     /// <summary>
     /// Called on both client and server during initialization.
@@ -136,8 +175,8 @@ public class SparkyModSystem : ModSystem
         if (player == null) return false;
 
         // Only show menu when holding wire tool
-        var heldItem = player.InventoryManager?.ActiveHotbarSlot?.Itemstack?.Item;
-        if (heldItem is not ItemWireTool wireTool)
+        var slot = player.InventoryManager?.ActiveHotbarSlot;
+        if (slot?.Itemstack?.Item is not ItemWireTool wireTool)
             return false;
 
         // Toggle dialog
@@ -149,7 +188,7 @@ public class SparkyModSystem : ModSystem
 
         _modeDialog = new WireToolModeDialog(_capi, mode =>
         {
-            wireTool.SetMode(mode);
+            wireTool.SetMode(slot, mode, player);
             _capi.ShowChatMessage($"Wire tool mode: {mode.GetDisplayName()}");
         });
         _modeDialog.TryOpen();

@@ -57,11 +57,9 @@ public class BlockCircuit : Block
     {
         // Check if player is holding a wire tool
         var activeSlot = byPlayer.InventoryManager?.ActiveHotbarSlot;
-        var activeItem = activeSlot?.Itemstack?.Item;
-
-        if (activeItem is ItemWireTool wireTool)
+        if (activeSlot?.Itemstack?.Item is ItemWireTool wireTool)
         {
-            return wireTool.OnCircuitBlockInteract(world, byPlayer, blockSel);
+            return wireTool.OnCircuitBlockInteract(world, byPlayer, blockSel, activeSlot);
         }
 
         return base.OnBlockInteractStart(world, byPlayer, blockSel);

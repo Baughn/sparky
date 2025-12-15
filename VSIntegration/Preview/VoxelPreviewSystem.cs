@@ -126,8 +126,8 @@ public class VoxelPreviewSystem : ModSystem
         if (player == null) return;
 
         // Check if player is holding wire tool
-        var heldItem = player.InventoryManager?.ActiveHotbarSlot?.Itemstack?.Item;
-        if (heldItem is not ItemWireTool wireTool)
+        var slot = player.InventoryManager?.ActiveHotbarSlot;
+        if (slot?.Itemstack?.Item is not ItemWireTool wireTool)
         {
             SendPreviewUpdate(new List<PreviewVoxel>());
             return;
@@ -142,23 +142,52 @@ public class VoxelPreviewSystem : ModSystem
         }
 
         // Calculate target voxel position
-        var targetVoxel = CalculateTargetVoxel(blockSel, wireTool);
+        var targetVoxel = CalculateTargetVoxel(blockSel);
         if (targetVoxel == null)
         {
             SendPreviewUpdate(new List<PreviewVoxel>());
             return;
         }
 
-        var voxels = wireTool.CurrentMode.IsCableMode()
-            ? BuildCablePreview(wireTool, targetVoxel.Value)
-            : BuildSingleVoxelPreview(wireTool, targetVoxel.Value);
+        // Get mode and material from ItemStack.Attributes
+        var mode = wireTool.GetMode(slot);
+        var material = wireTool.GetSelectedMaterial(slot);
+
+        // Get face direction for cross-section orientation
+        var faceDir = BlockFaceToVoxelDirection(blockSel.Face);
+
+        List<PreviewVoxel> voxels;
+        if (mode.IsCableMode())
+        {
+            // Get per-player cable state from ModSystem
+            var modSystem = _capi.ModLoader.GetModSystem<SparkyModSystem>();
+            var cableState = modSystem.GetCableState(player.PlayerUID);
+            voxels = BuildCablePreview(cableState, mode, material, targetVoxel.Value, faceDir);
+        }
+        else
+        {
+            voxels = BuildSingleVoxelPreview(material, targetVoxel.Value);
+        }
 
         SendPreviewUpdate(voxels);
     }
 
-    private List<PreviewVoxel> BuildSingleVoxelPreview(ItemWireTool wireTool, (int X, int Y, int Z) target)
+    private static VoxelDirection BlockFaceToVoxelDirection(Vintagestory.API.MathTools.BlockFacing face)
     {
-        var material = wireTool.GetSelectedMaterial();
+        return face.Index switch
+        {
+            0 => VoxelDirection.ZNeg, // North
+            1 => VoxelDirection.XPos, // East
+            2 => VoxelDirection.ZPos, // South
+            3 => VoxelDirection.XNeg, // West
+            4 => VoxelDirection.YPos, // Up
+            5 => VoxelDirection.YNeg, // Down
+            _ => VoxelDirection.YPos
+        };
+    }
+
+    private List<PreviewVoxel> BuildSingleVoxelPreview(Material material, (int X, int Y, int Z) target)
+    {
         var color = VoxelPreviewMesh.GetMaterialColor(material, 128);
 
         return new List<PreviewVoxel>
@@ -167,23 +196,34 @@ public class VoxelPreviewSystem : ModSystem
         };
     }
 
-    private List<PreviewVoxel> BuildCablePreview(ItemWireTool wireTool, (int X, int Y, int Z) target)
+    private List<PreviewVoxel> BuildCablePreview(
+        CableLayingState? cableState,
+        WireToolMode mode,
+        Material material,
+        (int X, int Y, int Z) target,
+        VoxelDirection faceDir)
     {
-        var cableState = wireTool.GetCableState();
-        if (cableState == null)
-            return new List<PreviewVoxel>();
-
-        var material = wireTool.GetSelectedMaterial();
         var targetPos = new VoxelPos(target.X, target.Y, target.Z);
+
+        // If no cable state yet, show cross-section preview based on mode
+        if (cableState == null)
+        {
+            var crossSection = mode.GetCrossSection();
+            if (crossSection == null)
+                return new List<PreviewVoxel>();
+            return BuildCrossSectionPreview(crossSection.Value, targetPos, faceDir, material);
+        }
 
         // Poll for completed pathfinding
         cableState.TryUpdatePath();
+
+        _capi?.Logger.Debug($"[Sparky Preview] BuildCablePreview: phase={cableState.CurrentPhase}, hasPath={cableState.CurrentPath != null}");
 
         switch (cableState.CurrentPhase)
         {
             case CableLayingState.Phase.Idle:
                 // Show cross-section preview at cursor
-                return BuildCrossSectionPreview(cableState.CrossSection, targetPos, material);
+                return BuildCrossSectionPreview(cableState.CrossSection, targetPos, faceDir, material);
 
             case CableLayingState.Phase.StartSelected:
             case CableLayingState.Phase.PathReady:
@@ -196,7 +236,7 @@ public class VoxelPreviewSystem : ModSystem
 
                 // No path yet - show start position
                 if (cableState.StartPosition.HasValue)
-                    return BuildCrossSectionPreview(cableState.CrossSection, cableState.StartPosition.Value, material);
+                    return BuildCrossSectionPreview(cableState.CrossSection, cableState.StartPosition.Value, faceDir, material);
 
                 return new List<PreviewVoxel>();
 
@@ -205,16 +245,14 @@ public class VoxelPreviewSystem : ModSystem
         }
     }
 
-    private List<PreviewVoxel> BuildCrossSectionPreview(CrossSection crossSection, VoxelPos anchor, Material material)
+    private List<PreviewVoxel> BuildCrossSectionPreview(CrossSection crossSection, VoxelPos anchor, VoxelDirection faceDir, Material material)
     {
         var voxels = new List<PreviewVoxel>();
-
-        // Default orientation: cable pointing in +X, flat orientation
         var color = VoxelPreviewMesh.GetMaterialColor(material, 128);
 
-        // For preview before start selection, show a simple cross-section preview
-        // Use +Y direction with Flat orientation as default preview
-        foreach (var pos in crossSection.GetVoxelPositions(anchor, VoxelDirection.YPos, CrossSectionOrientation.Flat))
+        // The face direction is where the cable would go INTO the surface
+        // We want the cross-section perpendicular to this direction
+        foreach (var pos in crossSection.GetVoxelPositions(anchor, faceDir, CrossSectionOrientation.Flat))
         {
             voxels.Add(new PreviewVoxel(pos.X, pos.Y, pos.Z, color));
         }
@@ -300,7 +338,7 @@ public class VoxelPreviewSystem : ModSystem
         return true;
     }
 
-    private (int X, int Y, int Z)? CalculateTargetVoxel(BlockSelection blockSel, ItemWireTool wireTool)
+    private (int X, int Y, int Z)? CalculateTargetVoxel(BlockSelection blockSel)
     {
         var hitPos = blockSel.HitPosition;
         var face = blockSel.Face;
