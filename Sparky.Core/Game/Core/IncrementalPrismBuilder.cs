@@ -3,6 +3,15 @@ using System.Collections.Generic;
 namespace Sparky.Game.Core;
 
 /// <summary>
+/// The voxel data type stored in the octree: type + optional material.
+/// </summary>
+public readonly record struct VoxelData(VoxelType Type, Material? Material)
+{
+    /// <summary>Air voxel (default value for octree).</summary>
+    public static readonly VoxelData Air = new(VoxelType.Air, null);
+}
+
+/// <summary>
 /// Builds and maintains prisms incrementally from an SVO-backed voxel storage.
 /// </summary>
 /// <remarks>
@@ -16,7 +25,7 @@ namespace Sparky.Game.Core;
 /// </remarks>
 public class IncrementalPrismBuilder
 {
-    private readonly SparseVoxelOctree _svo = new();
+    private readonly SparseVoxelOctree<VoxelData> _svo = new(VoxelData.Air);
     private readonly Dictionary<BlockPos, List<Prism>> _prismCache = new();
     private readonly HashSet<BlockPos> _dirtyBlocks = new();
     private long _version;
@@ -51,16 +60,16 @@ public class IncrementalPrismBuilder
     /// </summary>
     public void SetVoxel(VoxelPos pos, VoxelType type, Material? material)
     {
-        var oldType = _svo.Get(pos).Type;
+        var oldData = _svo.Get(pos);
 
         // Skip if no change
-        if (oldType == type && (type == VoxelType.Air ||
-            ReferenceEquals(_svo.Get(pos).Material, material)))
+        if (oldData.Type == type && (type == VoxelType.Air ||
+            ReferenceEquals(oldData.Material, material)))
         {
             return;
         }
 
-        _svo.Set(pos, type, material);
+        _svo.Set(pos, new VoxelData(type, material));
         _version++;
 
         // Mark this block's prism cache as dirty
@@ -74,7 +83,7 @@ public class IncrementalPrismBuilder
     {
         foreach (var (pos, type, material) in voxels)
         {
-            _svo.Set(pos, type, material);
+            _svo.Set(pos, new VoxelData(type, material));
             _version++;
             InvalidateBlock(pos.Block);
         }
@@ -85,7 +94,8 @@ public class IncrementalPrismBuilder
     /// </summary>
     public (VoxelType Type, Material? Material) GetVoxel(VoxelPos pos)
     {
-        return _svo.Get(pos);
+        var data = _svo.Get(pos);
+        return (data.Type, data.Material);
     }
 
     /// <summary>
@@ -231,7 +241,10 @@ public class IncrementalPrismBuilder
     /// </summary>
     public IEnumerable<(VoxelPos Pos, VoxelType Type, Material? Material)> GetAllVoxels()
     {
-        return _svo.GetAllVoxels();
+        foreach (var (pos, data) in _svo.GetAllVoxels())
+        {
+            yield return (pos, data.Type, data.Material);
+        }
     }
 
     private void InvalidateBlock(BlockPos block)
@@ -269,9 +282,9 @@ public class IncrementalPrismBuilder
                 for (int x = 0; x < 16; x++)
                 {
                     var pos = new VoxelPos(baseX + x, baseY + y, baseZ + z);
-                    var (type, material) = _svo.Get(pos);
-                    voxels[x + y * 16 + z * 256] = (type, material);
-                    if (type != VoxelType.Air)
+                    var data = _svo.Get(pos);
+                    voxels[x + y * 16 + z * 256] = (data.Type, data.Material);
+                    if (data.Type != VoxelType.Air)
                         hasAnyVoxels = true;
                 }
             }

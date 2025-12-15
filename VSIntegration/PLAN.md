@@ -105,40 +105,65 @@ VSIntegration/CableLaying/
 
 ## Subsystem Details
 
-### 1. WorldVoxelCache
+### 1. WorldVoxelCache (Implemented)
 
-Converts a 6-block radius around start point into a temporary 3D voxel grid.
+Converts a 7-block radius around start point into a sparse voxel octree for pathfinding.
 
-**Voxel States:**
+**Location:**
+- `Sparky.Core/Game/Core/CableLaying/CacheVoxelState.cs` - Voxel state types
+- `Sparky.Core/Game/Core/CableLaying/IWorldVoxelCache.cs` - Interface for pathfinder
+- `VSIntegration/CableLaying/WorldVoxelCache.cs` - VS-dependent implementation
+
+**Voxel States (5 states):**
 ```csharp
-enum CacheVoxelState
+enum CacheVoxelStateValue : byte
 {
-    Empty,                // Air - cable can occupy
-    Insulation,           // Solid non-conductor - cable can be adjacent
-    PreExistingConductor, // Existing circuit - cable must NOT be adjacent
-    CableConductor        // Path being placed (during A*)
+    Empty,                // Air (Circuit block or air) - cable can occupy
+    Insulation,           // Solid non-conductor - cable can be adjacent for support
+    PreExistingConductor, // Existing circuit conductor - cable must NOT be adjacent
+    CableConductor,       // Path being placed (during A*)
+    Unroutable            // Non-air in non-Circuit block - can't occupy OR use for support
 }
 ```
+
+The `Unroutable` state was added to handle architectural gaps (stairs, fences). Since cables can only be placed inside Circuit blocks, air gaps in non-Circuit blocks should neither be occupied nor provide adjacency support.
 
 **Conversion Rules:**
 
 | Source Block Type | Conversion |
 |-------------------|------------|
-| `BlockEntityCircuit` | Copy voxels; conductors → PreExistingConductor, others → Insulation |
-| `BlockEntityMicroBlock` (non-circuit) | Copy voxels as Insulation |
-| Other blocks | Use VS "mostly solid" face API → shell of Insulation if solid |
+| Air / replaceable blocks | All voxels → Empty |
+| `BlockEntityCircuit` | Conductors → PreExistingConductor, non-conductors → Insulation, unfilled → Empty |
+| `BlockEntityMicroBlock` (non-circuit) | Filled voxels → Insulation, unfilled → Unroutable |
+| Other solid blocks | All voxels → Insulation |
 
-**Cache Invalidation:**
-- Start point changes → full rebuild
-- Block placed/broken in region → invalidate affected block
-- Use flag (not lock) to skip updates while pathfinder is running
+**Storage:**
+- Uses existing `SparseVoxelOctree<CacheVoxelState>` (generalized from VoxelGrid's octree)
+- Uniform region collapsing: a fully solid block = 1 octree node, not 4096 voxels
+- Memory efficient for sparse worlds
+
+**Interface:**
+```csharp
+interface IWorldVoxelCache
+{
+    CacheVoxelState GetState(VoxelPos pos);
+    bool AllEmpty(VoxelPos min, VoxelPos max);
+    bool AnyCardinalNeighbor(VoxelPos pos, CacheVoxelState state);
+    bool IsInPathfindingBounds(VoxelPos pos);  // 6-block radius
+    bool IsInCacheBounds(VoxelPos pos);        // 7-block radius
+    void SetCableConductor(VoxelPos pos);
+    void ClearCableConductors();
+    VoxelPos Origin { get; }
+}
+```
 
 **Implementation Notes:**
-- Cache radius: 7 blocks (one larger than pathfinding radius, to detect conductors adjacent to edge voxels)
-- Grid size: 7 blocks × 16 voxels = 112 voxels per axis (×2 for ±7 = 224)
-- Storage: 3D array `CacheVoxelState[224, 224, 224]` (centered on start, ±7 blocks)
-- Pathfinding limited to inner 6-block radius; outer ring is read-only for adjacency checks
-- Origin tracking for coordinate translation
+- Cache radius: 7 blocks (outer ring for adjacency checks)
+- Pathfinding radius: 6 blocks (cables can only be routed within this)
+- Bounds are voxel-based: 6 blocks = 96 voxels, 7 blocks = 112 voxels
+- `SetCableConductor`/`ClearCableConductors` for temporary path marking during A*
+
+**Tests:** `Sparky.Tests/Game/CableLaying/WorldVoxelCacheTests.cs` (36 tests)
 
 ### 2. CablePathfinder
 
@@ -334,12 +359,14 @@ Every test involving cable generation must call `CableValidator.ValidateCable()`
 - Path not found (blocked)
 - Path not found (too far)
 
-**Unit Tests (WorldVoxelCache):**
-- Empty world
-- Circuit block with existing conductors
-- VS microblock (non-circuit)
-- Mixed block types
-- Cache invalidation on block change
+**Unit Tests (WorldVoxelCache):** ✓ Implemented
+- CacheVoxelState equality and hashing
+- GetState for empty/set positions
+- AllEmpty region checks
+- AnyCardinalNeighbor detection (6 directions)
+- Bounds checking (pathfinding vs cache)
+- SetCableConductor/ClearCableConductors tracking
+- Octree uniform region collapsing
 
 **Integration Tests:**
 - Place cable, verify simulation connectivity

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -7,15 +8,16 @@ namespace Sparky.Game.Core;
 /// A sparse voxel octree for efficient storage and O(log n) access to voxel data.
 /// Supports arbitrary signed coordinates and automatically grows as needed.
 /// </summary>
+/// <typeparam name="T">The value type to store at each voxel position.</typeparam>
 /// <remarks>
 /// Key optimizations:
-/// - Uniform nodes collapse (a 4³ cube of identical voxels = 1 node)
-/// - Lazy allocation (empty regions = null)
-/// - Material stored at leaf level
+/// - Uniform nodes collapse (a 4³ cube of identical values = 1 node)
+/// - Lazy allocation (empty regions = null, returns default value)
 /// </remarks>
-public class SparseVoxelOctree
+public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
 {
-    private OctreeNode? _root;
+    private readonly T _defaultValue;
+    private OctreeNode<T>? _root;
     private int _rootSize;      // Size of root node (power of 2)
     private int _rootOriginX;   // Origin of root node (corner with smallest coordinates)
     private int _rootOriginY;
@@ -23,51 +25,65 @@ public class SparseVoxelOctree
     private int _voxelCount;
 
     /// <summary>
-    /// Gets the total number of non-air voxels stored.
+    /// Creates a new sparse voxel octree.
+    /// </summary>
+    /// <param name="defaultValue">The value returned for unset positions. Setting to this value removes the voxel.</param>
+    public SparseVoxelOctree(T defaultValue = default)
+    {
+        _defaultValue = defaultValue;
+    }
+
+    /// <summary>
+    /// Gets the total number of non-default voxels stored.
     /// </summary>
     public int VoxelCount => _voxelCount;
 
     /// <summary>
+    /// Gets the default value for unset positions.
+    /// </summary>
+    public T DefaultValue => _defaultValue;
+
+    /// <summary>
     /// Sets a voxel at the given position.
     /// </summary>
-    public void Set(VoxelPos pos, VoxelType type, Material? material)
+    public void Set(VoxelPos pos, T value)
     {
-        if (type == VoxelType.Air)
+        if (value.Equals(_defaultValue))
         {
             Remove(pos);
             return;
         }
 
         EnsureContains(pos.X, pos.Y, pos.Z);
-        var oldType = SetInternal(pos.X, pos.Y, pos.Z, type, material);
-        if (oldType == VoxelType.Air)
+        var wasDefault = SetInternal(pos.X, pos.Y, pos.Z, value);
+        if (wasDefault)
             _voxelCount++;
     }
 
     /// <summary>
-    /// Removes a voxel (sets to Air) at the given position.
+    /// Removes a voxel (sets to default) at the given position.
     /// </summary>
     public void Remove(VoxelPos pos)
     {
         if (_root == null)
             return;
 
-        var oldType = SetInternal(pos.X, pos.Y, pos.Z, VoxelType.Air, null);
-        if (oldType != VoxelType.Air)
+        var wasDefault = SetInternal(pos.X, pos.Y, pos.Z, _defaultValue);
+        if (!wasDefault)
             _voxelCount--;
     }
 
     /// <summary>
     /// Gets the voxel data at the given position.
-    /// Returns (Air, null) for empty positions.
+    /// Returns the default value for empty positions.
     /// </summary>
-    public (VoxelType Type, Material? Material) Get(VoxelPos pos)
+    public T Get(VoxelPos pos)
     {
         if (_root == null)
-            return (VoxelType.Air, null);
+            return _defaultValue;
 
         if (!Contains(pos.X, pos.Y, pos.Z))
-            return (VoxelType.Air, null);
+            return _defaultValue;
 
         return GetInternal(_root, _rootSize, _rootOriginX, _rootOriginY, _rootOriginZ, pos.X, pos.Y, pos.Z);
     }
@@ -75,18 +91,18 @@ public class SparseVoxelOctree
     /// <summary>
     /// Sets multiple voxels in a batch (more efficient than individual calls).
     /// </summary>
-    public void SetBatch(IEnumerable<(VoxelPos Pos, VoxelType Type, Material? Material)> voxels)
+    public void SetBatch(IEnumerable<(VoxelPos Pos, T Value)> voxels)
     {
-        foreach (var (pos, type, material) in voxels)
+        foreach (var (pos, value) in voxels)
         {
-            Set(pos, type, material);
+            Set(pos, value);
         }
     }
 
     /// <summary>
-    /// Enumerates all non-air voxels in the octree.
+    /// Enumerates all non-default voxels in the octree.
     /// </summary>
-    public IEnumerable<(VoxelPos Pos, VoxelType Type, Material? Material)> GetAllVoxels()
+    public IEnumerable<(VoxelPos Pos, T Value)> GetAllVoxels()
     {
         if (_root == null)
             yield break;
@@ -111,7 +127,7 @@ public class SparseVoxelOctree
     /// Enumerates all leaf nodes (uniform regions or single voxels).
     /// Useful for building prisms from coalesced regions.
     /// </summary>
-    public IEnumerable<OctreeLeaf> GetLeafNodes()
+    public IEnumerable<OctreeLeaf<T>> GetLeafNodes()
     {
         if (_root == null)
             yield break;
@@ -141,7 +157,7 @@ public class SparseVoxelOctree
             _rootOriginX = (x >> 4) << 4;  // Align to 16
             _rootOriginY = (y >> 4) << 4;
             _rootOriginZ = (z >> 4) << 4;
-            _root = new OctreeNode();
+            _root = new OctreeNode<T> { LeafValue = _defaultValue };
             return;
         }
 
@@ -167,7 +183,7 @@ public class SparseVoxelOctree
         int newOriginY = _rootOriginY - octantY * halfSize;
         int newOriginZ = _rootOriginZ - octantZ * halfSize;
 
-        var newRoot = new OctreeNode { IsLeaf = false };
+        var newRoot = new OctreeNode<T> { IsLeaf = false, LeafValue = _defaultValue };
         // Old root goes into the octant opposite to the expansion direction
         // If target is below (octant=1), we shift origin down, old root goes to +side (bit=1)
         // If target is above (octant=0), origin stays, old root goes to -side (bit=0)
@@ -181,44 +197,44 @@ public class SparseVoxelOctree
         _rootOriginZ = newOriginZ;
     }
 
-    private VoxelType SetInternal(int x, int y, int z, VoxelType type, Material? material)
+    /// <summary>
+    /// Sets a value at the given position. Returns true if the old value was the default.
+    /// </summary>
+    private bool SetInternal(int x, int y, int z, T value)
     {
-        return SetRecursive(ref _root!, _rootSize, _rootOriginX, _rootOriginY, _rootOriginZ, x, y, z, type, material);
+        return SetRecursive(ref _root!, _rootSize, _rootOriginX, _rootOriginY, _rootOriginZ, x, y, z, value);
     }
 
-    private VoxelType SetRecursive(ref OctreeNode node, int size, int originX, int originY, int originZ,
-        int x, int y, int z, VoxelType newType, Material? newMaterial)
+    private bool SetRecursive(ref OctreeNode<T> node, int size, int originX, int originY, int originZ,
+        int x, int y, int z, T newValue)
     {
         if (size == 1)
         {
             // Leaf level - single voxel
-            var oldType = node.LeafType;
-            node.LeafType = newType;
-            node.LeafMaterial = newMaterial;
+            var wasDefault = node.LeafValue.Equals(_defaultValue);
+            node.LeafValue = newValue;
             node.IsLeaf = true;
-            return oldType;
+            return wasDefault;
         }
 
         // If this is a uniform leaf, we need to split it
         if (node.IsLeaf)
         {
             // Check if we're setting to the same value - no change needed
-            if (node.LeafType == newType && node.LeafMaterial == newMaterial)
-                return newType;
+            if (node.LeafValue.Equals(newValue))
+                return node.LeafValue.Equals(_defaultValue);
 
             // Split: create 8 children with the current uniform value
-            var oldType = node.LeafType;
-            var oldMaterial = node.LeafMaterial;
+            var oldValue = node.LeafValue;
             node.IsLeaf = false;
 
             int halfSize = size / 2;
             for (int i = 0; i < 8; i++)
             {
-                var child = new OctreeNode
+                var child = new OctreeNode<T>
                 {
                     IsLeaf = true,
-                    LeafType = oldType,
-                    LeafMaterial = oldMaterial
+                    LeafValue = oldValue
                 };
                 node.Children[i] = child;
             }
@@ -235,9 +251,9 @@ public class SparseVoxelOctree
         int childOriginY = originY + childY * halfSize2;
         int childOriginZ = originZ + childZ * halfSize2;
 
-        node.Children[childIndex] ??= new OctreeNode();
+        node.Children[childIndex] ??= new OctreeNode<T> { LeafValue = _defaultValue };
         var result = SetRecursive(ref node.Children[childIndex]!, halfSize2, childOriginX, childOriginY, childOriginZ,
-            x, y, z, newType, newMaterial);
+            x, y, z, newValue);
 
         // Try to collapse if all children are uniform and identical
         TryCollapse(ref node);
@@ -245,7 +261,7 @@ public class SparseVoxelOctree
         return result;
     }
 
-    private void TryCollapse(ref OctreeNode node)
+    private void TryCollapse(ref OctreeNode<T> node)
     {
         if (node.IsLeaf)
             return;
@@ -255,33 +271,31 @@ public class SparseVoxelOctree
         if (firstChild == null || !firstChild.IsLeaf)
             return;
 
-        var type = firstChild.LeafType;
-        var material = firstChild.LeafMaterial;
+        var value = firstChild.LeafValue;
 
         for (int i = 1; i < 8; i++)
         {
             var child = node.Children[i];
             if (child == null || !child.IsLeaf)
                 return;
-            if (child.LeafType != type || child.LeafMaterial != material)
+            if (!child.LeafValue.Equals(value))
                 return;
         }
 
         // All children are identical uniform leaves - collapse
         node.IsLeaf = true;
-        node.LeafType = type;
-        node.LeafMaterial = material;
+        node.LeafValue = value;
         for (int i = 0; i < 8; i++)
             node.Children[i] = null;
     }
 
-    private static (VoxelType, Material?) GetInternal(OctreeNode node, int size, int originX, int originY, int originZ,
+    private T GetInternal(OctreeNode<T> node, int size, int originX, int originY, int originZ,
         int x, int y, int z)
     {
         while (true)
         {
             if (node.IsLeaf)
-                return (node.LeafType, node.LeafMaterial);
+                return node.LeafValue;
 
             int halfSize = size / 2;
             int childX = (x - originX) >= halfSize ? 1 : 0;
@@ -291,7 +305,7 @@ public class SparseVoxelOctree
 
             var child = node.Children[childIndex];
             if (child == null)
-                return (VoxelType.Air, null);
+                return _defaultValue;
 
             node = child;
             size = halfSize;
@@ -301,12 +315,12 @@ public class SparseVoxelOctree
         }
     }
 
-    private static IEnumerable<(VoxelPos, VoxelType, Material?)> EnumerateVoxels(
-        OctreeNode node, int size, int originX, int originY, int originZ)
+    private IEnumerable<(VoxelPos, T)> EnumerateVoxels(
+        OctreeNode<T> node, int size, int originX, int originY, int originZ)
     {
         if (node.IsLeaf)
         {
-            if (node.LeafType == VoxelType.Air)
+            if (node.LeafValue.Equals(_defaultValue))
                 yield break;
 
             // Enumerate all voxels in this uniform region
@@ -317,7 +331,7 @@ public class SparseVoxelOctree
                     for (int x = 0; x < size; x++)
                     {
                         yield return (new VoxelPos(originX + x, originY + y, originZ + z),
-                            node.LeafType, node.LeafMaterial);
+                            node.LeafValue);
                     }
                 }
             }
@@ -345,18 +359,17 @@ public class SparseVoxelOctree
         }
     }
 
-    private static IEnumerable<OctreeLeaf> EnumerateLeaves(
-        OctreeNode node, int size, int originX, int originY, int originZ)
+    private IEnumerable<OctreeLeaf<T>> EnumerateLeaves(
+        OctreeNode<T> node, int size, int originX, int originY, int originZ)
     {
         if (node.IsLeaf)
         {
-            if (node.LeafType != VoxelType.Air)
+            if (!node.LeafValue.Equals(_defaultValue))
             {
-                yield return new OctreeLeaf(
+                yield return new OctreeLeaf<T>(
                     new VoxelPos(originX, originY, originZ),
                     size,
-                    node.LeafType,
-                    node.LeafMaterial);
+                    node.LeafValue);
             }
             yield break;
         }
@@ -389,12 +402,11 @@ public class SparseVoxelOctree
 /// Internal node of the sparse voxel octree.
 /// Can be either a branch (has children) or a leaf (uniform value).
 /// </summary>
-public class OctreeNode
+public class OctreeNode<T> where T : struct
 {
-    public OctreeNode?[] Children { get; } = new OctreeNode?[8];
+    public OctreeNode<T>?[] Children { get; } = new OctreeNode<T>?[8];
     public bool IsLeaf { get; set; } = true;
-    public VoxelType LeafType { get; set; } = VoxelType.Air;
-    public Material? LeafMaterial { get; set; }
+    public T LeafValue { get; set; }
 }
 
 /// <summary>
@@ -402,6 +414,5 @@ public class OctreeNode
 /// </summary>
 /// <param name="Origin">Corner with smallest coordinates.</param>
 /// <param name="Size">Size of the cubic region (power of 2).</param>
-/// <param name="Type">Voxel type of all voxels in this region.</param>
-/// <param name="Material">Material of all voxels in this region.</param>
-public readonly record struct OctreeLeaf(VoxelPos Origin, int Size, VoxelType Type, Material? Material);
+/// <param name="Value">Value of all voxels in this region.</param>
+public readonly record struct OctreeLeaf<T>(VoxelPos Origin, int Size, T Value);

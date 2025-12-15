@@ -7,12 +7,12 @@ namespace Sparky.Tests.Game;
 [TestFixture]
 public class SparseVoxelOctreeTests
 {
-    private SparseVoxelOctree _svo = null!;
+    private SparseVoxelOctree<VoxelData> _svo = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _svo = new SparseVoxelOctree();
+        _svo = new SparseVoxelOctree<VoxelData>(VoxelData.Air);
     }
 
     #region Basic Operations
@@ -27,31 +27,31 @@ public class SparseVoxelOctreeTests
     public void Set_SingleVoxel_CanBeRetrieved()
     {
         var pos = new VoxelPos(5, 5, 5);
-        _svo.Set(pos, VoxelType.Conductor, Material.Copper);
+        _svo.Set(pos, new VoxelData(VoxelType.Conductor, Material.Copper));
 
-        var (type, material) = _svo.Get(pos);
+        var data = _svo.Get(pos);
 
-        Assert.That(type, Is.EqualTo(VoxelType.Conductor));
-        Assert.That(material, Is.SameAs(Material.Copper));
+        Assert.That(data.Type, Is.EqualTo(VoxelType.Conductor));
+        Assert.That(data.Material, Is.SameAs(Material.Copper));
         Assert.That(_svo.VoxelCount, Is.EqualTo(1));
     }
 
     [Test]
     public void Get_EmptyPosition_ReturnsAir()
     {
-        var (type, material) = _svo.Get(new VoxelPos(99, 99, 99));
+        var data = _svo.Get(new VoxelPos(99, 99, 99));
 
-        Assert.That(type, Is.EqualTo(VoxelType.Air));
-        Assert.That(material, Is.Null);
+        Assert.That(data.Type, Is.EqualTo(VoxelType.Air));
+        Assert.That(data.Material, Is.Null);
     }
 
     [Test]
     public void Set_Air_RemovesVoxel()
     {
         var pos = new VoxelPos(5, 5, 5);
-        _svo.Set(pos, VoxelType.Conductor, Material.Copper);
+        _svo.Set(pos, new VoxelData(VoxelType.Conductor, Material.Copper));
 
-        _svo.Set(pos, VoxelType.Air, null);
+        _svo.Set(pos, VoxelData.Air);
 
         Assert.That(_svo.VoxelCount, Is.EqualTo(0));
         Assert.That(_svo.Get(pos).Type, Is.EqualTo(VoxelType.Air));
@@ -61,14 +61,14 @@ public class SparseVoxelOctreeTests
     public void Set_OverwriteExisting_UpdatesValue()
     {
         var pos = new VoxelPos(5, 5, 5);
-        _svo.Set(pos, VoxelType.Conductor, Material.Copper);
+        _svo.Set(pos, new VoxelData(VoxelType.Conductor, Material.Copper));
 
-        _svo.Set(pos, VoxelType.Insulator, null);
+        _svo.Set(pos, new VoxelData(VoxelType.Insulator, null));
 
         Assert.That(_svo.VoxelCount, Is.EqualTo(1));
-        var (type, material) = _svo.Get(pos);
-        Assert.That(type, Is.EqualTo(VoxelType.Insulator));
-        Assert.That(material, Is.Null);
+        var data = _svo.Get(pos);
+        Assert.That(data.Type, Is.EqualTo(VoxelType.Insulator));
+        Assert.That(data.Material, Is.Null);
     }
 
     #endregion
@@ -79,12 +79,12 @@ public class SparseVoxelOctreeTests
     public void Set_NegativeCoordinates_Works()
     {
         var pos = new VoxelPos(-10, -20, -30);
-        _svo.Set(pos, VoxelType.Conductor, Material.Lead);
+        _svo.Set(pos, new VoxelData(VoxelType.Conductor, Material.Lead));
 
-        var (type, material) = _svo.Get(pos);
+        var data = _svo.Get(pos);
 
-        Assert.That(type, Is.EqualTo(VoxelType.Conductor));
-        Assert.That(material, Is.SameAs(Material.Lead));
+        Assert.That(data.Type, Is.EqualTo(VoxelType.Conductor));
+        Assert.That(data.Material, Is.SameAs(Material.Lead));
     }
 
     [Test]
@@ -100,7 +100,7 @@ public class SparseVoxelOctreeTests
 
         foreach (var pos in positions)
         {
-            _svo.Set(pos, VoxelType.Conductor, Material.Copper);
+            _svo.Set(pos, new VoxelData(VoxelType.Conductor, Material.Copper));
         }
 
         foreach (var pos in positions)
@@ -123,7 +123,7 @@ public class SparseVoxelOctreeTests
         for (int z = 0; z < 2; z++)
             for (int y = 0; y < 2; y++)
                 for (int x = 0; x < 2; x++)
-                    _svo.Set(new VoxelPos(x, y, z), VoxelType.Conductor, Material.Copper);
+                    _svo.Set(new VoxelPos(x, y, z), new VoxelData(VoxelType.Conductor, Material.Copper));
 
         // All should be accessible
         Assert.That(_svo.VoxelCount, Is.EqualTo(8));
@@ -139,8 +139,8 @@ public class SparseVoxelOctreeTests
     public void Set_MixedTypes_DoesNotCollapse()
     {
         // Fill a 2x2x2 cube with different types
-        _svo.Set(new VoxelPos(0, 0, 0), VoxelType.Conductor, Material.Copper);
-        _svo.Set(new VoxelPos(1, 0, 0), VoxelType.Insulator, null);
+        _svo.Set(new VoxelPos(0, 0, 0), new VoxelData(VoxelType.Conductor, Material.Copper));
+        _svo.Set(new VoxelPos(1, 0, 0), new VoxelData(VoxelType.Insulator, null));
 
         var leaves = _svo.GetLeafNodes().ToList();
         Assert.That(leaves, Has.Count.EqualTo(2));
@@ -153,13 +153,13 @@ public class SparseVoxelOctreeTests
         for (int z = 0; z < 2; z++)
             for (int y = 0; y < 2; y++)
                 for (int x = 0; x < 2; x++)
-                    _svo.Set(new VoxelPos(x, y, z), VoxelType.Conductor, Material.Copper);
+                    _svo.Set(new VoxelPos(x, y, z), new VoxelData(VoxelType.Conductor, Material.Copper));
 
         // Change one
-        _svo.Set(new VoxelPos(0, 0, 0), VoxelType.Insulator, null);
+        _svo.Set(new VoxelPos(0, 0, 0), new VoxelData(VoxelType.Insulator, null));
 
         // Change it back
-        _svo.Set(new VoxelPos(0, 0, 0), VoxelType.Conductor, Material.Copper);
+        _svo.Set(new VoxelPos(0, 0, 0), new VoxelData(VoxelType.Conductor, Material.Copper));
 
         // Should be collapsed again
         var leaves = _svo.GetLeafNodes().ToList();
@@ -173,9 +173,9 @@ public class SparseVoxelOctreeTests
     [Test]
     public void GetAllVoxels_ReturnsAllNonAir()
     {
-        _svo.Set(new VoxelPos(0, 0, 0), VoxelType.Conductor, Material.Copper);
-        _svo.Set(new VoxelPos(10, 10, 10), VoxelType.Insulator, null);
-        _svo.Set(new VoxelPos(-5, -5, -5), VoxelType.ResistiveConductor, Material.Lead);
+        _svo.Set(new VoxelPos(0, 0, 0), new VoxelData(VoxelType.Conductor, Material.Copper));
+        _svo.Set(new VoxelPos(10, 10, 10), new VoxelData(VoxelType.Insulator, null));
+        _svo.Set(new VoxelPos(-5, -5, -5), new VoxelData(VoxelType.ResistiveConductor, Material.Lead));
 
         var voxels = _svo.GetAllVoxels().ToList();
 
@@ -189,7 +189,7 @@ public class SparseVoxelOctreeTests
         for (int z = 0; z < 4; z++)
             for (int y = 0; y < 4; y++)
                 for (int x = 0; x < 4; x++)
-                    _svo.Set(new VoxelPos(x, y, z), VoxelType.Conductor, Material.Copper);
+                    _svo.Set(new VoxelPos(x, y, z), new VoxelData(VoxelType.Conductor, Material.Copper));
 
         var voxels = _svo.GetAllVoxels().ToList();
 
@@ -205,9 +205,9 @@ public class SparseVoxelOctreeTests
     {
         var batch = new[]
         {
-            (new VoxelPos(0, 0, 0), VoxelType.Conductor, (Material?)Material.Copper),
-            (new VoxelPos(1, 0, 0), VoxelType.Conductor, (Material?)Material.Copper),
-            (new VoxelPos(2, 0, 0), VoxelType.Insulator, (Material?)null)
+            (new VoxelPos(0, 0, 0), new VoxelData(VoxelType.Conductor, Material.Copper)),
+            (new VoxelPos(1, 0, 0), new VoxelData(VoxelType.Conductor, Material.Copper)),
+            (new VoxelPos(2, 0, 0), new VoxelData(VoxelType.Insulator, null))
         };
 
         _svo.SetBatch(batch);
@@ -228,7 +228,7 @@ public class SparseVoxelOctreeTests
         for (int z = 0; z < 192; z++)
             for (int y = 0; y < 3; y++)
                 for (int x = 0; x < 3; x++)
-                    _svo.Set(new VoxelPos(x, y, z), VoxelType.ResistiveConductor, Material.Copper);
+                    _svo.Set(new VoxelPos(x, y, z), new VoxelData(VoxelType.ResistiveConductor, Material.Copper));
 
         Assert.That(_svo.VoxelCount, Is.EqualTo(3 * 3 * 192));
 
@@ -241,8 +241,8 @@ public class SparseVoxelOctreeTests
     [Test]
     public void Clear_RemovesAllVoxels()
     {
-        _svo.Set(new VoxelPos(0, 0, 0), VoxelType.Conductor, Material.Copper);
-        _svo.Set(new VoxelPos(10, 10, 10), VoxelType.Insulator, null);
+        _svo.Set(new VoxelPos(0, 0, 0), new VoxelData(VoxelType.Conductor, Material.Copper));
+        _svo.Set(new VoxelPos(10, 10, 10), new VoxelData(VoxelType.Insulator, null));
 
         _svo.Clear();
 
@@ -257,7 +257,7 @@ public class SparseVoxelOctreeTests
     [Test]
     public void GetLeafNodes_SingleVoxel_ReturnsLeafWithSize1()
     {
-        _svo.Set(new VoxelPos(5, 5, 5), VoxelType.Conductor, Material.Copper);
+        _svo.Set(new VoxelPos(5, 5, 5), new VoxelData(VoxelType.Conductor, Material.Copper));
 
         var leaves = _svo.GetLeafNodes().ToList();
 
@@ -273,7 +273,7 @@ public class SparseVoxelOctreeTests
         for (int z = 0; z < 4; z++)
             for (int y = 0; y < 4; y++)
                 for (int x = 0; x < 4; x++)
-                    _svo.Set(new VoxelPos(x, y, z), VoxelType.Conductor, Material.Copper);
+                    _svo.Set(new VoxelPos(x, y, z), new VoxelData(VoxelType.Conductor, Material.Copper));
 
         var leaves = _svo.GetLeafNodes().ToList();
 
