@@ -157,6 +157,14 @@ public class CircuitNetworkManager
         _dirtyBlocks.Add(vsPos);
     }
 
+    /// <summary>
+    /// Called when multiple voxels in a block change at once (e.g., cable placement).
+    /// </summary>
+    public void OnBlockVoxelsChangedBatch(BlockPos vsPos)
+    {
+        _dirtyBlocks.Add(vsPos);
+    }
+
     #endregion
 
     #region Chunk Events

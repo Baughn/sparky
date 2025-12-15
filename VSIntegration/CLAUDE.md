@@ -146,6 +146,100 @@ BlockEntityCircuit.RegisterConductor(blockId, Material.Copper);
 
 This populates `BlockIdToMaterial`, enabling `ExportToVoxelGrid()` to distinguish conductor voxels from decorative/insulator blocks.
 
+## Preview System
+
+The `Preview/` folder implements ghost voxel rendering for wire tool placement feedback.
+
+### Architecture
+
+```
+VSIntegration/Preview/
+├── PreviewState.cs           # Protobuf network messages
+├── VoxelPreviewSystem.cs     # ModSystem: server sync + client tick
+├── VoxelPreviewRenderer.cs   # IRenderer: GPU mesh rendering
+└── VoxelPreviewMesh.cs       # Multi-voxel mesh building with face culling
+```
+
+### Rendering Approach
+
+**Key learnings from debugging:**
+
+1. **Render Stage**: Use `EnumRenderStage.Opaque`, not `OIT` (Order-Independent Transparency)
+2. **Texture Binding**: Use `rapi.BindTexture2d(textureId)`, not `prog.Tex2D = textureId`
+3. **Face Culling**: Disable during render with `rapi.GlDisableCullFace()` for preview visibility
+4. **MeshData Setup**: Must include all arrays:
+   ```csharp
+   new MeshData(vertexCount, indexCount, withUv: true, withRgba: true, withFlags: true)
+   ```
+5. **Flags Array**: Initialize with `1 << 8` for each vertex (standard VS flag value)
+6. **UV Coordinates**: Use `CubeMeshUtil.CubeUvCoords` for proper face UVs, then call `meshData.SetTexPos(texPos)` to map to atlas
+
+### Data Flow
+
+```
+Client tick (50Hz)         Server                    All Clients
+────────────────           ──────                    ───────────
+Player aims wire tool  →   PreviewUpdateRequest  →   Stores state
+                           (client→server)           ↓
+                                                     20Hz broadcast
+                                                     ↓
+                           PreviewState          ←   Updates renderer
+                           (server→all clients)      ↓
+                                                     OnRenderFrame
+```
+
+## Cable Laying System
+
+The `CableLaying/` folder implements pathfinding-based cable placement.
+
+### Architecture
+
+```
+Sparky.Core/Game/Core/CableLaying/   (VS-independent)
+├── CacheVoxelState.cs       # Voxel state enum for pathfinding
+├── IWorldVoxelCache.cs      # Interface for world access
+├── CrossSection.cs          # Cable cross-section types (1x1, 2x2, etc.)
+├── CablePathfinder.cs       # A* with cross-section awareness
+├── PathResult.cs            # Pathfinding result types
+└── CableValidator.cs        # Acceptance criteria for tests
+
+VSIntegration/CableLaying/
+├── WorldVoxelCache.cs       # VS-specific cache implementation
+├── CableLayingState.cs      # State machine for two-click workflow
+└── WireToolModeDialog.cs    # F key mode selection GUI
+```
+
+### Wire Tool Modes
+
+| Mode | Cross-Section | Description |
+|------|---------------|-------------|
+| SingleVoxel | 1×1 | Original behavior (place/remove individual voxels) |
+| Cable1x1 | 1×1 | Pathfinding, single-voxel cable |
+| Cable1x2 | 1×2 | Light circuits |
+| Cable2x2 | 2×2 | Medium loads |
+| Cable2x3 | 2×3 | Heavy loads |
+| Cable3x5 | 3×5 | Main feeds |
+
+### Two-Click Workflow
+
+1. Player holds wire tool, presses F → mode selection menu
+2. In cable mode: ghost preview shows cross-section at cursor
+3. Right-click → locks start point, path preview appears
+4. Move cursor → path preview updates (background pathfinding)
+5. Right-click again → cable placed via `SetConductorVoxelsBatch()`
+
+### State Machine (CableLayingState)
+
+```
+Phase.Idle ──RightClick──> Phase.StartSelected ──RightClick──> (place) ──> Phase.Idle
+     ^                            │
+     └────(switch tool/cancel)────┘
+```
+
+- **Idle**: Show cross-section preview at cursor
+- **StartSelected**: Background pathfinding to cursor, show path preview
+- **PathReady**: Path computed, ready for placement
+
 ## Current Limitations
 
 1. **Component support incomplete**: `BuildTopology()` receives `Enumerable.Empty<Component>()` - active components (sources, diodes) not yet integrated

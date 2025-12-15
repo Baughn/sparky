@@ -27,6 +27,7 @@ public static class VoxelPreviewMesh
     /// Builds a mesh for one or more preview voxels.
     /// Culls internal faces where adjacent voxels are both in the preview set.
     /// Vertices are built relative to the minimum voxel position (mesh origin).
+    /// Uses a solid color approach (no texture) for simplicity.
     /// </summary>
     /// <param name="voxels">The voxels to render with their colors.</param>
     /// <returns>A MeshData ready for upload, or null if no voxels.</returns>
@@ -45,12 +46,22 @@ public static class VoxelPreviewMesh
         foreach (var v in voxels)
             voxelSet.Add((v.X, v.Y, v.Z));
 
-        // Create the output mesh
-        var mesh = new MeshData(24 * voxels.Count, 36 * voxels.Count);
+        // Create the output mesh with UVs, RGBA, and Flags
+        var mesh = new MeshData(24 * voxels.Count, 36 * voxels.Count, withUv: true, withRgba: true, withFlags: true);
 
         foreach (var voxel in voxels)
         {
             AddVoxelToMesh(mesh, voxel, voxelSet, minX, minY, minZ);
+        }
+
+        // Ensure Flags array is properly initialized (required for rendering)
+        // Flag value 1 << 8 = 256 is a common default
+        if (mesh.Flags != null)
+        {
+            for (int i = 0; i < mesh.VerticesCount; i++)
+            {
+                mesh.Flags[i] = 1 << 8;
+            }
         }
 
         return mesh;
@@ -108,6 +119,7 @@ public static class VoxelPreviewMesh
         // Get face vertices from CubeMeshUtil (these are in -1 to 1 range, centered)
         int faceIndex = face.Index;
         int vertexOffset = faceIndex * 4 * 3; // 4 vertices per face, 3 coords each
+        int uvOffset = faceIndex * 4 * 2;     // 4 vertices per face, 2 UV coords each
 
         // Apply shading to color (multiply RGB, keep alpha)
         int shadedColor = ApplyShading(argbColor, shading);
@@ -128,7 +140,11 @@ public static class VoxelPreviewMesh
             float wy = y + halfVoxel + (vy * halfVoxel * ZFightingScale);
             float wz = z + halfVoxel + (vz * halfVoxel * ZFightingScale);
 
-            mesh.AddVertex(wx, wy, wz, 0, 0, shadedColor);
+            // Get UV coordinates from cube template (0 to 1 range)
+            float u = CubeMeshUtil.CubeUvCoords[uvOffset + i * 2 + 0];
+            float v = CubeMeshUtil.CubeUvCoords[uvOffset + i * 2 + 1];
+
+            mesh.AddVertex(wx, wy, wz, u, v, shadedColor);
         }
 
         // Add 2 triangles (6 indices) for this face

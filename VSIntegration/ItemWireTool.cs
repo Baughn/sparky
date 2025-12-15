@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -6,6 +8,8 @@ using Vintagestory.API.MathTools;
 
 using Material = Sparky.Game.Core.Material;
 using Sparky.Game.Core;
+using Sparky.Game.Core.CableLaying;
+using Sparky.VSIntegration.CableLaying;
 
 namespace Sparky.VSIntegration;
 
@@ -14,13 +18,56 @@ namespace Sparky.VSIntegration;
 /// </summary>
 public enum WireToolMode
 {
-    /// <summary>
-    /// Default mode: place/remove single voxels.
-    /// </summary>
+    /// <summary>Default mode: place/remove single voxels.</summary>
     SingleVoxel,
+    /// <summary>Cable laying with 1x1 cross-section.</summary>
+    Cable1x1,
+    /// <summary>Cable laying with 1x2 cross-section (light circuits).</summary>
+    Cable1x2,
+    /// <summary>Cable laying with 2x2 cross-section (medium loads).</summary>
+    Cable2x2,
+    /// <summary>Cable laying with 2x3 cross-section (heavy loads).</summary>
+    Cable2x3,
+    /// <summary>Cable laying with 3x5 cross-section (main feeds).</summary>
+    Cable3x5
+}
 
-    // Future modes for cable laying:
-    // CableLaying - two-click routing with A* pathfinding
+/// <summary>
+/// Extension methods for WireToolMode.
+/// </summary>
+public static class WireToolModeExtensions
+{
+    /// <summary>
+    /// Gets the CrossSection for a cable mode, or null for SingleVoxel mode.
+    /// </summary>
+    public static CrossSection? GetCrossSection(this WireToolMode mode) => mode switch
+    {
+        WireToolMode.Cable1x1 => CrossSection.Size1x1,
+        WireToolMode.Cable1x2 => CrossSection.Size1x2,
+        WireToolMode.Cable2x2 => CrossSection.Size2x2,
+        WireToolMode.Cable2x3 => CrossSection.Size2x3,
+        WireToolMode.Cable3x5 => CrossSection.Size3x5,
+        _ => null
+    };
+
+    /// <summary>
+    /// Returns true if this is a cable laying mode (not SingleVoxel).
+    /// </summary>
+    public static bool IsCableMode(this WireToolMode mode) => mode != WireToolMode.SingleVoxel;
+
+    /// <summary>
+    /// Gets a display name for the mode.
+    /// </summary>
+    public static string GetDisplayName(this WireToolMode mode) => mode switch
+    {
+        WireToolMode.SingleVoxel => "Single Voxel",
+        WireToolMode.Cable1x1 => "Cable 1×1",
+        WireToolMode.Cable1x2 => "Cable 1×2",
+        WireToolMode.Cable2x2 => "Cable 2×2",
+        WireToolMode.Cable2x3 => "Cable 2×3",
+        WireToolMode.Cable3x5 => "Cable 3×5",
+        _ => mode.ToString()
+    };
 }
 
 /// <summary>
@@ -32,6 +79,39 @@ public class ItemWireTool : Item
     /// Current operating mode.
     /// </summary>
     public WireToolMode CurrentMode { get; private set; } = WireToolMode.SingleVoxel;
+
+    /// <summary>
+    /// Cable laying state for cable modes.
+    /// </summary>
+    private CableLayingState? _cableState;
+
+    /// <summary>
+    /// Sets the wire tool mode.
+    /// </summary>
+    public void SetMode(WireToolMode mode)
+    {
+        if (CurrentMode == mode)
+            return;
+
+        // Clear any existing cable state when changing modes
+        _cableState?.Cancel();
+        _cableState = null;
+
+        CurrentMode = mode;
+
+        // Create cable state for cable modes
+        var crossSection = mode.GetCrossSection();
+        if (crossSection.HasValue)
+        {
+            _cableState = new CableLayingState(crossSection.Value);
+        }
+    }
+
+    /// <summary>
+    /// Gets the cable laying state, if in a cable mode.
+    /// </summary>
+    public CableLayingState? GetCableState() => _cableState;
+
     /// <summary>
     /// Currently selected material for placement.
     /// </summary>
@@ -93,7 +173,7 @@ public class ItemWireTool : Item
     }
 
     /// <summary>
-    /// Handle right-click (interact) - places voxels.
+    /// Handle right-click (interact) - places voxels or handles cable laying.
     /// </summary>
     public override void OnHeldInteractStart(
         ItemSlot slot,
@@ -110,6 +190,15 @@ public class ItemWireTool : Item
         }
 
         var world = byEntity.World;
+
+        // Handle cable laying modes
+        if (CurrentMode.IsCableMode() && _cableState != null)
+        {
+            HandleCableModeInteract(world, blockSel, ref handling);
+            return;
+        }
+
+        // SingleVoxel mode - original behavior
         var pos = blockSel.Position;
         var block = world.BlockAccessor.GetBlock(pos);
 
@@ -145,6 +234,96 @@ public class ItemWireTool : Item
         }
 
         base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
+    }
+
+    /// <summary>
+    /// Handles right-click in cable laying mode.
+    /// </summary>
+    private void HandleCableModeInteract(IWorldAccessor world, BlockSelection blockSel, ref EnumHandHandling handling)
+    {
+        if (_cableState == null)
+            return;
+
+        // Calculate clicked voxel position
+        var voxelPos = GetTargetVoxelPos(blockSel);
+
+        switch (_cableState.CurrentPhase)
+        {
+            case CableLayingState.Phase.Idle:
+                // First click: select start position
+                _cableState.SelectStart(voxelPos, world.BlockAccessor);
+                handling = EnumHandHandling.PreventDefault;
+                break;
+
+            case CableLayingState.Phase.StartSelected:
+            case CableLayingState.Phase.PathReady:
+                // Second click: place cable if we have a valid path
+                if (_cableState.CurrentPath?.Path.Count > 0)
+                {
+                    PlaceCablePath(world, _cableState.CurrentPath.Value);
+                    _cableState.Cancel();
+                }
+                handling = EnumHandHandling.PreventDefault;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Gets the global voxel position for a block selection.
+    /// </summary>
+    private VoxelPos GetTargetVoxelPos(BlockSelection blockSel)
+    {
+        var (localX, localY, localZ, outsideBlock) = GetAdjacentVoxelWithOverflow(blockSel);
+
+        var blockPos = outsideBlock
+            ? blockSel.Position.AddCopy(blockSel.Face)
+            : blockSel.Position;
+
+        return new VoxelPos(
+            blockPos.X * 16 + localX,
+            blockPos.Y * 16 + localY,
+            blockPos.Z * 16 + localZ);
+    }
+
+    /// <summary>
+    /// Places all voxels in a cable path using batch operations for efficiency.
+    /// </summary>
+    private void PlaceCablePath(IWorldAccessor world, PathResult path)
+    {
+        // Group voxels by block
+        var voxelsByBlock = new Dictionary<(int X, int Y, int Z), List<(int X, int Y, int Z)>>();
+
+        foreach (var voxel in path.Path)
+        {
+            // Handle negative coordinates properly for block position
+            var blockX = voxel.X >= 0 ? voxel.X / 16 : (voxel.X - 15) / 16;
+            var blockY = voxel.Y >= 0 ? voxel.Y / 16 : (voxel.Y - 15) / 16;
+            var blockZ = voxel.Z >= 0 ? voxel.Z / 16 : (voxel.Z - 15) / 16;
+            var localX = ((voxel.X % 16) + 16) % 16;
+            var localY = ((voxel.Y % 16) + 16) % 16;
+            var localZ = ((voxel.Z % 16) + 16) % 16;
+
+            var blockKey = (blockX, blockY, blockZ);
+            if (!voxelsByBlock.TryGetValue(blockKey, out var list))
+            {
+                list = new List<(int, int, int)>();
+                voxelsByBlock[blockKey] = list;
+            }
+            list.Add((localX, localY, localZ));
+        }
+
+        // Place voxels in each block using batch method
+        foreach (var (blockKey, voxels) in voxelsByBlock)
+        {
+            var blockPos = new Vintagestory.API.MathTools.BlockPos(blockKey.X, blockKey.Y, blockKey.Z);
+            var be = GetOrCreateCircuitBlock(world, blockPos);
+            if (be == null)
+                continue;
+
+            // Convert to batch format with material
+            var batchVoxels = voxels.Select(v => (v.X, v.Y, v.Z, _selectedMaterial));
+            be.SetConductorVoxelsBatch(batchVoxels);
+        }
     }
 
     /// <summary>

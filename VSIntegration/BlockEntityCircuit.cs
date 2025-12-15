@@ -131,6 +131,78 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
     #region Conductor Voxel Access
 
     /// <summary>
+    /// Sets multiple conductor voxels at once. More efficient than individual calls
+    /// because it only updates the mesh and notifies the network once at the end.
+    /// </summary>
+    /// <param name="voxels">Local coordinates (0-15 each axis) and material for each voxel.</param>
+    public void SetConductorVoxelsBatch(IEnumerable<(int X, int Y, int Z, Material Material)> voxels)
+    {
+        // Group voxels by material for efficient block ID lookup
+        var voxelsByMaterial = new Dictionary<Material, List<(int X, int Y, int Z)>>();
+        foreach (var (x, y, z, material) in voxels)
+        {
+            if (x < 0 || x > 15 || y < 0 || y > 15 || z < 0 || z > 15)
+                continue;
+
+            if (!voxelsByMaterial.TryGetValue(material, out var list))
+            {
+                list = new List<(int X, int Y, int Z)>();
+                voxelsByMaterial[material] = list;
+            }
+            list.Add((x, y, z));
+        }
+
+        bool anyChanged = false;
+
+        foreach (var (material, positions) in voxelsByMaterial)
+        {
+            // Find the block ID for this material
+            int blockId = -1;
+            foreach (var kvp in BlockIdToMaterial)
+            {
+                if (kvp.Value == material)
+                {
+                    blockId = kvp.Key;
+                    break;
+                }
+            }
+
+            if (blockId < 0)
+            {
+                Api?.Logger.Warning($"[Sparky] No block registered for material {material.Name}");
+                continue;
+            }
+
+            // Find or add this material to BlockIds
+            byte materialIndex = GetOrAddMaterialIndex(blockId);
+
+            // Set all voxels for this material
+            foreach (var (x, y, z) in positions)
+            {
+                if (SetVoxel(new Vec3i(x, y, z), true, materialIndex, 1))
+                {
+                    anyChanged = true;
+                }
+            }
+        }
+
+        if (anyChanged && Api != null)
+        {
+            // Single update for all voxels
+            MarkMeshDirty();
+            RegenSelectionBoxes(Api.World, null);
+            MarkDirty(true);
+
+            // Single notification to network manager
+            if (Api.Side == EnumAppSide.Server)
+            {
+                var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
+                modSystem?.NetworkManager?.OnBlockVoxelsChangedBatch(Pos);
+            }
+        }
+    }
+
+    /// <summary>
     /// Sets a single conductor voxel at the given local coordinates (0-15 each axis).
     /// </summary>
     public void SetConductorVoxel(int x, int y, int z, Material material)

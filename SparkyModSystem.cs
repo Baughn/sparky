@@ -1,4 +1,5 @@
 using Sparky.VSIntegration;
+using Sparky.VSIntegration.CableLaying;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
@@ -21,6 +22,8 @@ public class SparkyModSystem : ModSystem
 
     private IServerNetworkChannel? _serverChannel;
     private IClientNetworkChannel? _clientChannel;
+    private ICoreClientAPI? _capi;
+    private WireToolModeDialog? _modeDialog;
 
     /// <summary>
     /// Called on both client and server during initialization.
@@ -109,11 +112,48 @@ public class SparkyModSystem : ModSystem
     public override void StartClientSide(ICoreClientAPI api)
     {
         base.StartClientSide(api);
+        _capi = api;
 
         // Register network channel for future use
         _clientChannel = api.Network.RegisterChannel(CHANNEL_NAME);
 
+        // Register F key hotkey for wire tool mode selection
+        api.Input.RegisterHotKey(
+            "wiretoolmode",
+            "Wire Tool Mode",
+            GlKeys.F,
+            HotkeyType.GUIOrOtherControls);
+        api.Input.SetHotKeyHandler("wiretoolmode", OnWireToolModeKey);
+
         api.Logger.Notification("[Sparky] Client-side initialization complete");
+    }
+
+    private bool OnWireToolModeKey(KeyCombination comb)
+    {
+        if (_capi == null) return false;
+
+        var player = _capi.World.Player;
+        if (player == null) return false;
+
+        // Only show menu when holding wire tool
+        var heldItem = player.InventoryManager?.ActiveHotbarSlot?.Itemstack?.Item;
+        if (heldItem is not ItemWireTool wireTool)
+            return false;
+
+        // Toggle dialog
+        if (_modeDialog?.IsOpened() == true)
+        {
+            _modeDialog.TryClose();
+            return true;
+        }
+
+        _modeDialog = new WireToolModeDialog(_capi, mode =>
+        {
+            wireTool.SetMode(mode);
+            _capi.ShowChatMessage($"Wire tool mode: {mode.GetDisplayName()}");
+        });
+        _modeDialog.TryOpen();
+        return true;
     }
 
     /// <summary>

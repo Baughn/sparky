@@ -1,4 +1,8 @@
+using System;
 using System.Collections.Generic;
+using Sparky.Game.Core;
+using Sparky.Game.Core.CableLaying;
+using Sparky.VSIntegration.CableLaying;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
@@ -50,7 +54,7 @@ public class VoxelPreviewSystem : ModSystem
         _capi = api;
 
         _renderer = new VoxelPreviewRenderer(api);
-        api.Event.RegisterRenderer(_renderer, EnumRenderStage.OIT, "sparky-voxel-preview");
+        api.Event.RegisterRenderer(_renderer, EnumRenderStage.Opaque, "sparky-voxel-preview");
 
         _clientChannel = api.Network.RegisterChannel(ChannelName)
             .RegisterMessageType<PreviewState>()
@@ -109,13 +113,9 @@ public class VoxelPreviewSystem : ModSystem
         if (_renderer == null) return;
 
         if (state.Voxels.Count == 0)
-        {
             _renderer.ClearPlayerPreview(state.PlayerUid);
-        }
         else
-        {
             _renderer.SetPlayerPreview(state.PlayerUid, state.Voxels);
-        }
     }
 
     private void OnClientTick(float dt)
@@ -149,16 +149,127 @@ public class VoxelPreviewSystem : ModSystem
             return;
         }
 
-        // Build preview with material color
+        var voxels = wireTool.CurrentMode.IsCableMode()
+            ? BuildCablePreview(wireTool, targetVoxel.Value)
+            : BuildSingleVoxelPreview(wireTool, targetVoxel.Value);
+
+        SendPreviewUpdate(voxels);
+    }
+
+    private List<PreviewVoxel> BuildSingleVoxelPreview(ItemWireTool wireTool, (int X, int Y, int Z) target)
+    {
         var material = wireTool.GetSelectedMaterial();
         var color = VoxelPreviewMesh.GetMaterialColor(material, 128);
 
-        var voxels = new List<PreviewVoxel>
+        return new List<PreviewVoxel>
         {
-            new PreviewVoxel(targetVoxel.Value.X, targetVoxel.Value.Y, targetVoxel.Value.Z, color)
+            new PreviewVoxel(target.X, target.Y, target.Z, color)
+        };
+    }
+
+    private List<PreviewVoxel> BuildCablePreview(ItemWireTool wireTool, (int X, int Y, int Z) target)
+    {
+        var cableState = wireTool.GetCableState();
+        if (cableState == null)
+            return new List<PreviewVoxel>();
+
+        var material = wireTool.GetSelectedMaterial();
+        var targetPos = new VoxelPos(target.X, target.Y, target.Z);
+
+        // Poll for completed pathfinding
+        cableState.TryUpdatePath();
+
+        switch (cableState.CurrentPhase)
+        {
+            case CableLayingState.Phase.Idle:
+                // Show cross-section preview at cursor
+                return BuildCrossSectionPreview(cableState.CrossSection, targetPos, material);
+
+            case CableLayingState.Phase.StartSelected:
+            case CableLayingState.Phase.PathReady:
+                // Update goal position (triggers pathfinding if changed)
+                cableState.UpdateGoal(targetPos);
+
+                // Show current path or start position
+                if (cableState.CurrentPath != null)
+                    return BuildPathPreview(cableState.CurrentPath.Value, material);
+
+                // No path yet - show start position
+                if (cableState.StartPosition.HasValue)
+                    return BuildCrossSectionPreview(cableState.CrossSection, cableState.StartPosition.Value, material);
+
+                return new List<PreviewVoxel>();
+
+            default:
+                return new List<PreviewVoxel>();
+        }
+    }
+
+    private List<PreviewVoxel> BuildCrossSectionPreview(CrossSection crossSection, VoxelPos anchor, Material material)
+    {
+        var voxels = new List<PreviewVoxel>();
+
+        // Default orientation: cable pointing in +X, flat orientation
+        var color = VoxelPreviewMesh.GetMaterialColor(material, 128);
+
+        // For preview before start selection, show a simple cross-section preview
+        // Use +Y direction with Flat orientation as default preview
+        foreach (var pos in crossSection.GetVoxelPositions(anchor, VoxelDirection.YPos, CrossSectionOrientation.Flat))
+        {
+            voxels.Add(new PreviewVoxel(pos.X, pos.Y, pos.Z, color));
+        }
+
+        return voxels;
+    }
+
+    private List<PreviewVoxel> BuildPathPreview(PathResult path, Material material)
+    {
+        var voxels = new List<PreviewVoxel>();
+
+        // Color based on path result type
+        var color = path.Type switch
+        {
+            PathResultType.Complete => GetCompletePathColor(material),   // Green tint
+            PathResultType.Partial => GetPartialPathColor(material),     // Yellow tint
+            PathResultType.NoProgress => GetNoProgressColor(),           // Red
+            _ => VoxelPreviewMesh.GetMaterialColor(material, 128)
         };
 
-        SendPreviewUpdate(voxels);
+        foreach (var pos in path.Path)
+        {
+            voxels.Add(new PreviewVoxel(pos.X, pos.Y, pos.Z, color));
+        }
+
+        return voxels;
+    }
+
+    private static int GetCompletePathColor(Material material)
+    {
+        // Green tint - mix material color with green
+        var baseColor = VoxelPreviewMesh.GetMaterialColor(material, 160);
+        return TintColor(baseColor, 0.5f, 1.0f, 0.5f);
+    }
+
+    private static int GetPartialPathColor(Material material)
+    {
+        // Yellow tint - mix material color with yellow
+        var baseColor = VoxelPreviewMesh.GetMaterialColor(material, 160);
+        return TintColor(baseColor, 1.0f, 1.0f, 0.3f);
+    }
+
+    private static int GetNoProgressColor()
+    {
+        // Pure red
+        return (160 << 24) | (255 << 16) | (50 << 8) | 50;
+    }
+
+    private static int TintColor(int argb, float rMult, float gMult, float bMult)
+    {
+        int a = (argb >> 24) & 0xFF;
+        int r = Math.Min(255, (int)(((argb >> 16) & 0xFF) * rMult));
+        int g = Math.Min(255, (int)(((argb >> 8) & 0xFF) * gMult));
+        int b = Math.Min(255, (int)((argb & 0xFF) * bMult));
+        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
     private void SendPreviewUpdate(List<PreviewVoxel> voxels)

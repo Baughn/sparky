@@ -23,9 +23,6 @@ public class VoxelPreviewRenderer : IRenderer
     /// </summary>
     public int RenderRange => 100;
 
-    private const float VoxelSize = 1f / 16f;
-    private const float ZFightingScale = 0.999f;
-
     private readonly ICoreClientAPI _capi;
     private TextureAtlasPosition? _copperTexPos;
     private int _blockAtlasTextureId;
@@ -105,7 +102,7 @@ public class VoxelPreviewRenderer : IRenderer
 
     public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
     {
-        if (stage != EnumRenderStage.OIT) return;
+        if (stage != EnumRenderStage.Opaque) return;
         if (_playerStates.Count == 0) return;
 
         var rapi = _capi.Render;
@@ -126,8 +123,9 @@ public class VoxelPreviewRenderer : IRenderer
 
         // Set up rendering state for transparent meshes
         rapi.GlToggleBlend(true, EnumBlendMode.Standard);
+        rapi.GlDisableCullFace();
 
-        // Use standard shader like ForgeContentsRenderer does
+        // Use standard shader like ToolMoldRenderer does
         var prog = rapi.StandardShader;
         prog.Use();
         prog.RgbaAmbientIn = rapi.AmbientColor;
@@ -142,8 +140,8 @@ public class VoxelPreviewRenderer : IRenderer
         prog.NormalShaded = 0;
         prog.AlphaTest = 0.01f;
 
-        // Set texture like ForgeContentsRenderer does
-        prog.Tex2D = _blockAtlasTextureId;
+        // Bind texture like ToolMoldRenderer does
+        rapi.BindTexture2d(_blockAtlasTextureId);
 
         prog.ViewMatrix = rapi.CameraMatrixOriginf;
         prog.ProjectionMatrix = rapi.CurrentProjectionMatrix;
@@ -174,6 +172,7 @@ public class VoxelPreviewRenderer : IRenderer
         }
 
         prog.Stop();
+        rapi.GlEnableCullFace();
     }
 
     private void RebuildMesh(PlayerPreviewState state)
@@ -188,54 +187,18 @@ public class VoxelPreviewRenderer : IRenderer
         EnsureTextureLoaded();
         if (_copperTexPos == null) return;
 
-        // For now, just build a single voxel mesh
-        // TODO: Support multiple voxels with face culling
-        var voxel = state.Voxels[0];
+        // Set mesh origin at minimum voxel position
+        state.MeshOrigin = VoxelPreviewMesh.ComputeMeshOrigin(state.Voxels);
 
-        // Set mesh origin at voxel position
-        state.MeshOrigin = new Vec3d(
-            voxel.X * VoxelSize,
-            voxel.Y * VoxelSize,
-            voxel.Z * VoxelSize
-        );
-
-        // Build textured cube mesh
-        var meshData = BuildSingleVoxelMesh(_copperTexPos);
+        // Build multi-voxel mesh with face culling
+        var meshData = VoxelPreviewMesh.BuildVoxelMesh(state.Voxels);
         if (meshData == null) return;
+
+        // Map UVs from 0-1 to texture atlas position
+        meshData.SetTexPos(_copperTexPos);
 
         // Upload to GPU
         state.MeshRef = _capi.Render.UploadMesh(meshData);
-    }
-
-    private MeshData BuildSingleVoxelMesh(TextureAtlasPosition texPos)
-    {
-        // Get 2x2x2 cube centered at origin with UVs 0-1
-        var mesh = CubeMeshUtil.GetCube();
-
-        // Scale to voxel size (1/16) and slightly smaller for z-fighting
-        // GetCube returns a 2x2x2 cube, so divide by 2
-        float scale = VoxelSize * ZFightingScale / 2f;
-        mesh.Scale(new Vec3f(0, 0, 0), scale, scale, scale);
-
-        // Translate so cube is at origin (0,0,0) to (voxelSize,voxelSize,voxelSize)
-        // GetCube is centered at origin (-1 to 1), after scale it's centered at 0
-        // Add half voxel size to center it properly
-        float halfSize = VoxelSize / 2f;
-        mesh.Translate(halfSize, halfSize, halfSize);
-
-        // Remap UVs from 0-1 to texture atlas position and set TextureIndices
-        mesh.SetTexPos(texPos);
-
-        // GetCube() initializes RGBA to all zeros - fill with white RGB and 50% alpha
-        for (int i = 0; i < mesh.Rgba.Length; i += 4)
-        {
-            mesh.Rgba[i] = 255;     // R
-            mesh.Rgba[i + 1] = 255; // G
-            mesh.Rgba[i + 2] = 255; // B
-            mesh.Rgba[i + 3] = 128; // A (50%)
-        }
-
-        return mesh;
     }
 
     public void Dispose()
