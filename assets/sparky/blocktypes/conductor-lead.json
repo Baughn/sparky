@@ -1,14 +1,22 @@
 {
     "code": "conductor-lead",
-    "creativeinventory": { "general": ["*"] },
-    "shape": { "base": "block/cube" },
+    "creativeinventory": {
+        "general": [
+            "*"
+        ]
+    },
+    "shape": {
+        "base": "game:block/basic/cube"
+    },
     "drawtype": "Cube",
     "renderpass": "Opaque",
     "blockmaterial": "Metal",
     "replaceable": 0,
     "resistance": 2.0,
     "textures": {
-        "all": { "base": "sparky:block/lead" }
+        "all": {
+            "base": "sparky:block/lead"
+        }
     },
     "sounds": {
         "place": "game:block/metal",

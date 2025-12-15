@@ -21,6 +21,7 @@
           # Development tools
           omnisharp-roslyn  # LSP for C#
           csharpier         # Code formatter
+          imagemagick
 
           # GTK3 for Sparky.2D GUI
           gtk3

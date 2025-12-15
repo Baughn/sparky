@@ -10,10 +10,28 @@ using Sparky.Game.Core;
 namespace Sparky.VSIntegration;
 
 /// <summary>
+/// Operating mode for the wire tool.
+/// </summary>
+public enum WireToolMode
+{
+    /// <summary>
+    /// Default mode: place/remove single voxels.
+    /// </summary>
+    SingleVoxel,
+
+    // Future modes for cable laying:
+    // CableLaying - two-click routing with A* pathfinding
+}
+
+/// <summary>
 /// Tool for placing and removing conductor voxels in circuit blocks.
 /// </summary>
 public class ItemWireTool : Item
 {
+    /// <summary>
+    /// Current operating mode.
+    /// </summary>
+    public WireToolMode CurrentMode { get; private set; } = WireToolMode.SingleVoxel;
     /// <summary>
     /// Currently selected material for placement.
     /// </summary>

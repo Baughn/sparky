@@ -1,6 +1,54 @@
-# Cable Laying Feature Plan
+# Wire Tool Feature Plan
 
 *Created: 2025-12-15*
+
+---
+
+## Preview System (Implemented)
+
+Shows ghost voxels before placement. Visible to all players via server-side state sync.
+
+### Architecture
+
+```
+VSIntegration/Preview/
+├── PreviewState.cs           # Protobuf network messages
+├── VoxelPreviewSystem.cs     # ModSystem: server sync + client tick
+├── VoxelPreviewRenderer.cs   # IRenderer: GPU mesh rendering
+└── VoxelPreviewMesh.cs       # Mesh utilities (for future multi-voxel)
+```
+
+### Data Flow
+
+```
+Client tick (50Hz)         Server                    All Clients
+────────────────           ──────                    ───────────
+Player aims wire tool  →   PreviewUpdateRequest  →   Stores state
+                           (client→server)           ↓
+                                                     20Hz broadcast
+                                                     ↓
+                           PreviewState          ←   Updates renderer
+                           (server→all clients)      ↓
+                                                     OnRenderFrame
+```
+
+### Rendering
+
+- **Stage**: `EnumRenderStage.OIT` (Order-Independent Transparency)
+- **Shader**: VS StandardShader with 50% vertex alpha
+- **Texture**: From circuitblock's "copper" texture slot
+- **Mesh**: `CubeMeshUtil.GetCube()` scaled to 1/16 block, 0.999× for z-fighting
+
+### Key Implementation Notes
+
+- Texture lookup deferred until first render (atlas not ready during init)
+- Uses `prog.Tex2D = atlasTextureId` (not `BindTexture2d`)
+- Mesh origin in world coords; model matrix subtracts camera position
+- Per-player state dictionary allows multiple concurrent previews
+
+---
+
+## Cable Laying Feature (Planned)
 
 ## Overview
 
