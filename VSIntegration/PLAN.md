@@ -167,50 +167,88 @@ interface IWorldVoxelCache
 
 ### 2. CablePathfinder
 
-A* pathfinding accounting for cable cross-section.
+A* pathfinding accounting for cable cross-section with minimum turning radius.
+
+**Start Point Snapping:**
+- When player selects start, search within 1-2 voxels for existing cable end of same cross-section
+- If found: snap to it, inherit travel direction (constrained start)
+- If not found: unconstrained start (any direction valid)
+
+**Minimum Turning Radius:**
+- Minimum straight-line distance between 90° turns = `width × height` voxels
+- Prevents overlapping corners and produces realistic cable paths
+
+| Cross-section | Min turn distance |
+|---------------|-------------------|
+| 1×1 | 1 (no constraint) |
+| 1×2 | 2 voxels |
+| 2×2 | 4 voxels |
+| 2×3 | 6 voxels |
+| 3×5 | 15 voxels |
 
 **Node State:**
 ```csharp
 record PathNode(
-    VoxelPos Position,                    // Anchor corner of cross-section
-    VoxelDirection IncomingDir,           // Direction we arrived from
-    CrossSectionOrientation Orientation   // How cross-section is oriented
+    VoxelPos Position,         // Anchor corner of cross-section
+    VoxelDirection Direction,  // Current travel direction
+    int StepsSinceTurn         // For enforcing minimum turn distance
 );
 ```
 
 **Cost Function:**
 - Base cost: 1 per voxel traveled
-- Penalty: +N for distance from nearest insulation (discourages free-standing runs)
+- Turn penalty: +0.1 for each 90° turn (prefers straight paths)
 - Heuristic: Manhattan distance to goal
 
 **Neighbor Generation:**
-1. For each cardinal direction (6 directions)
-2. Compute new orientation based on direction + "lay flat" rule
-3. Check ALL voxels in cross-section at new position are valid:
-   - Not Insulation (can't occupy solid)
-   - Not PreExistingConductor
-   - At least one adjacent to Insulation or CableConductor
-4. Mark occupied voxels as CableConductor in working copy
+1. For each cardinal direction (6 directions):
+   - **Continue straight**: always considered
+   - **90° turn**: only if `StepsSinceTurn >= minTurnDistance`
+   - **180° reverse**: never allowed
+2. Compute cross-section orientation based on direction + "lay flat" rule
+3. Check ALL voxels in cross-section at new position:
+   - Must be Empty (not Insulation, PreExistingConductor, or Unroutable)
+   - At least one voxel adjacent to Insulation or CableConductor (support)
+   - No voxel adjacent to PreExistingConductor (short circuit prevention)
+4. Mark occupied voxels as CableConductor in cache (for support chain)
 
 **Corner Handling:**
-At 90° turns, generate overlap region:
-- Both the outgoing segment and incoming segment voxels are placed
-- Overlap area equals full cross-section (ensures no weak spots)
+At 90° turns, place overlap region:
+- Union of incoming and outgoing cross-sections at turn point
+- Ensures full electrical cross-section through the corner
+- Minimum turn distance prevents overlapping corners
 
 **"Lay Flat" Rule:**
-For non-square cross-sections:
+For non-square cross-sections (e.g., 2×3):
 - Larger dimension aligns parallel to nearest insulation surface
-- For ambiguous cases (equidistant): prefer +X, then +Y, then +Z
-- For vertical runs with no nearby wall: arbitrary (doesn't matter)
+- Ambiguous cases (equidistant): prefer alignment with +X, then +Y, then +Z
+- Vertical runs with no nearby wall: arbitrary orientation
+
+**Result Types:**
+```csharp
+enum PathResultType { Complete, Partial, NoProgress }
+
+record PathResult(
+    PathResultType Type,
+    IReadOnlyList<VoxelPos> Path,  // All voxels in cable
+    VoxelPos EndPosition           // Where path ends (may not be goal)
+);
+```
+
+- **Complete**: reached goal exactly
+- **Partial**: closest reachable point (player can finish with 1×1 tool)
+- **NoProgress**: completely blocked (invalid start position?)
+
+**Search Behavior:**
+- Track "best path so far" (closest to goal by Manhattan distance)
+- If goal unreachable, continue until search space exhausted
+- Return best path found, even if partial
+- Acceptable since search space is small (~96³ max) and runs off-thread
 
 **Threading:**
 - Run A* on background thread
-- Use flag `_pathfinderRunning` to prevent cache updates during search
-- Present results when done (may be stale if target moved, re-run if needed)
-
-**Failure Handling:**
-- No path found: Show red voxels at start point
-- Target >6 blocks away: Show red indicator, message "Too far"
+- Cache updates deferred while pathfinder running
+- Results may be stale if world changed; re-run if needed
 
 ### 3. CablePreviewRenderer
 
@@ -233,8 +271,9 @@ Renders ghost blocks showing proposed cable path.
 |-------|----------------|
 | Single Voxel mode, no selection | Single ghost voxel at cursor |
 | Cable mode, no selection | Ghost cross-section at cursor |
-| Cable mode, start selected, path found | Ghost blocks along entire path |
-| Cable mode, start selected, no path | Red indicator at start |
+| Cable mode, start selected, Complete path | Ghost blocks along entire path (green tint) |
+| Cable mode, start selected, Partial path | Ghost blocks to closest point + red endpoint indicator |
+| Cable mode, start selected, NoProgress | Red indicator at start |
 
 ### 4. CableValidator
 
@@ -266,15 +305,17 @@ public static class CableValidator
 
 3. **No Conductor Adjacency**: No cable voxel is cardinally adjacent to PreExistingConductor in the source cache
 
-4. **No Conductor Adjacency (cardinal only)**: Cable voxels must not touch pre-existing conductors in ±X, ±Y, ±Z directions
-
-5. **Insulation/Cable Adjacency**: Every cable voxel is adjacent (cardinal) to either:
+4. **Insulation/Cable Adjacency**: Every cable voxel is adjacent (cardinal) to either:
    - Insulation in source cache, OR
    - Another cable voxel
 
-6. **Wall Proximity ("Lay Flat")**: For cross-section W×H where W ≤ H:
+5. **Wall Proximity ("Lay Flat")**: For cross-section W×H where W ≤ H:
    - The cable voxel furthest from any insulation surface is ≤ W voxels away
    - (For 2×3, no voxel is more than 2 voxels from a wall)
+
+6. **Minimum Turn Distance**: Between any two 90° turns, there are at least `W × H` voxels of straight cable
+   - For 2×3: at least 6 voxels between turns
+   - Ensures corners don't overlap and cable has realistic bend radius
 
 ### 5. CableLayingMode
 
@@ -352,12 +393,17 @@ Every test involving cable generation must call `CableValidator.ValidateCable()`
 
 **Unit Tests (CablePathfinder):**
 - Straight line path (each axis)
-- Single 90° corner
-- Multiple corners (L-shape, U-shape, S-shape)
+- Single 90° corner with minimum turn distance respected
+- Multiple corners respecting minimum turn distance
 - Around obstacle
 - Through narrow gap (exactly cross-section width)
-- Path not found (blocked)
-- Path not found (too far)
+- Turn rejected when under minimum distance
+- Start snapping to existing cable end
+- Unconstrained start (no nearby cable)
+- Partial path returned when goal unreachable
+- NoProgress when completely blocked
+- 180° turn never generated
+- Different cross-section sizes (1×1, 2×2, 2×3, 3×5)
 
 **Unit Tests (WorldVoxelCache):** ✓ Implemented
 - CacheVoxelState equality and hashing
