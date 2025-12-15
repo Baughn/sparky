@@ -282,47 +282,51 @@ Renders ghost blocks showing proposed cable path.
 | Cable mode, start selected, Partial path | Ghost blocks to closest point + red endpoint indicator |
 | Cable mode, start selected, NoProgress | Red indicator at start |
 
-### 4. CableValidator
+### 4. CableValidator (Implemented)
 
 Test utility asserting acceptance criteria on generated cables.
+
+**Location:** `Sparky.Core/Game/Core/CableLaying/CableValidator.cs`
 
 ```csharp
 public static class CableValidator
 {
     /// <summary>
-    /// Validates all acceptance criteria for a generated cable.
+    /// Validates all acceptance criteria for a cable path.
     /// Call this in EVERY cable-related test.
     /// </summary>
-    public static void ValidateCable(
-        VoxelGrid grid,
-        IReadOnlyList<VoxelPos> cableVoxels,
+    public static void ValidatePath(
+        IReadOnlyList<VoxelPos> path,
         CrossSection crossSection,
-        WorldVoxelCache sourceCache);
+        IWorldVoxelCache cache);
 }
 ```
 
-**Acceptance Criteria (all must pass):**
+**Implemented Criteria (checked in every pathfinder test):**
 
-1. **Prism Dimensions**: All prisms match cross-section
-   - For 2×3: prisms are 2×3×N, 2×N×3, 3×2×N, N×2×3, 3×N×2, or N×3×2
+1. **No Conductor Adjacency** (Criterion 3): No cable voxel is cardinally adjacent to PreExistingConductor in the source cache
 
-2. **Connection Areas**: Inter-prism overlaps match cross-section
-   - For 2×3: all adjacent prism pairs have 2×3 or 3×2 overlap area
-   - Uses existing `TopologyBuilder` connection area calculation
-
-3. **No Conductor Adjacency**: No cable voxel is cardinally adjacent to PreExistingConductor in the source cache
-
-4. **Insulation/Cable Adjacency**: Every cable voxel is adjacent (cardinal) to either:
+2. **Support Adjacency** (Criterion 4): Every cable voxel is adjacent (cardinal) to either:
    - Insulation in source cache, OR
    - Another cable voxel
 
-5. **Wall Proximity ("Lay Flat")**: For cross-section W×H where W ≤ H:
+3. **Wall Proximity ("Lay Flat")** (Criterion 5): For cross-section W×H where W ≤ H:
    - The cable voxel furthest from any insulation surface is ≤ W voxels away
    - (For 2×3, no voxel is more than 2 voxels from a wall)
 
-6. **Minimum Turn Distance**: Between any two 90° turns, there are at least `W × H` voxels of straight cable
+4. **Minimum Turn Distance** (Criterion 6): Between any two 90° turns, there are at least `W × H` voxels of straight cable
    - For 2×3: at least 6 voxels between turns
    - Ensures corners don't overlap and cable has realistic bend radius
+
+**Deferred Criteria (for integration tests with VoxelGrid):**
+
+5. **Prism Dimensions** (Criterion 1): All prisms match cross-section
+   - For 2×3: prisms are 2×3×N, 2×N×3, 3×2×N, N×2×3, 3×N×2, or N×3×2
+   - Requires TopologyBuilder integration
+
+6. **Connection Areas** (Criterion 2): Inter-prism overlaps match cross-section
+   - For 2×3: all adjacent prism pairs have 2×3 or 3×2 overlap area
+   - Uses existing `TopologyBuilder.CalculateContactArea()`
 
 ### 5. CableLayingMode
 

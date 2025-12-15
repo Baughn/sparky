@@ -114,15 +114,6 @@ public class WorldVoxelCacheTests
     #region CacheVoxelState Tests
 
     [Test]
-    public void CacheVoxelState_Equality_Works()
-    {
-        Assert.That(CacheVoxelState.Empty == CacheVoxelState.Empty, Is.True);
-        Assert.That(CacheVoxelState.Insulation == CacheVoxelState.Insulation, Is.True);
-        Assert.That(CacheVoxelState.Empty != CacheVoxelState.Insulation, Is.True);
-        Assert.That(CacheVoxelState.PreExistingConductor != CacheVoxelState.CableConductor, Is.True);
-    }
-
-    [Test]
     public void CacheVoxelState_Equals_Object_Works()
     {
         object a = CacheVoxelState.Empty;

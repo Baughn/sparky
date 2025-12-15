@@ -80,6 +80,7 @@ public class CablePathfinderTests
 
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete));
         Assert.That(result.Path.Count, Is.GreaterThanOrEqualTo(10)); // At least 10 voxels
+        ValidatePath(result, CrossSection.Size1x1);
     }
 
     [Test]
@@ -95,6 +96,7 @@ public class CablePathfinderTests
         var result = pathfinder.FindPath(start, goal);
 
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete));
+        ValidatePath(result, CrossSection.Size1x1);
     }
 
     [Test]
@@ -110,6 +112,7 @@ public class CablePathfinderTests
         var result = pathfinder.FindPath(start, goal);
 
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete));
+        ValidatePath(result, CrossSection.Size1x1);
     }
 
     #endregion
@@ -130,6 +133,7 @@ public class CablePathfinderTests
         var result = pathfinder.FindPath(start, goal);
 
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete));
+        ValidatePath(result, CrossSection.Size1x1);
     }
 
     [Test]
@@ -149,6 +153,7 @@ public class CablePathfinderTests
         // Should either find a longer path or return partial
         // The direct path would require a turn too soon
         Assert.That(result.Path.Count, Is.GreaterThan(0));
+        ValidatePath(result, CrossSection.Size2x2);
     }
 
     [Test]
@@ -165,6 +170,7 @@ public class CablePathfinderTests
         var result = pathfinder.FindPath(start, goal);
 
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete));
+        ValidatePath(result, CrossSection.Size2x2);
     }
 
     [Test]
@@ -184,6 +190,7 @@ public class CablePathfinderTests
         // Verify no position appears twice (would indicate backtracking)
         var distinct = result.Path.Distinct().ToList();
         Assert.That(distinct.Count, Is.EqualTo(result.Path.Count));
+        ValidatePath(result, CrossSection.Size1x1);
     }
 
     #endregion
@@ -204,24 +211,26 @@ public class CablePathfinderTests
         var result = pathfinder.FindPath(start, goal);
 
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete));
+        ValidatePath(result, CrossSection.Size1x1);
     }
 
     [Test]
     public void FindPath_ThroughNarrowGap_ExactWidth()
     {
-        // Create floor with gap exactly 2 voxels wide
+        // Create floor with gap exactly 2 voxels wide (z=49-50)
         CreateFloor(45, 40, 60, 40, 60);
-        CreateObstacle(48, 55, 46, 50, 48, 49); // Left wall
-        CreateObstacle(48, 55, 46, 50, 51, 60); // Right wall (gap at z=49-51)
+        CreateObstacle(48, 55, 46, 50, 40, 48); // Left wall up to z=48
+        CreateObstacle(48, 55, 46, 50, 51, 60); // Right wall from z=51
 
-        var start = new VoxelPos(45, 46, 50);
-        var goal = new VoxelPos(58, 46, 50);
+        var start = new VoxelPos(45, 46, 49); // Start in line with the gap
+        var goal = new VoxelPos(58, 46, 49);
 
         var pathfinder = new CablePathfinder(_cache, CrossSection.Size1x2);
         var result = pathfinder.FindPath(start, goal);
 
-        // 1x2 cable should fit through 2-voxel gap
+        // 1x2 cable with lay-flat orientation (Width=1 Y, Height=2 Z) fits through 2-voxel gap
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete));
+        ValidatePath(result, CrossSection.Size1x2);
     }
 
     #endregion
@@ -242,6 +251,7 @@ public class CablePathfinderTests
         var result = pathfinder.FindPath(start, goal);
 
         Assert.That(result.Type, Is.EqualTo(PathResultType.NoProgress).Or.EqualTo(PathResultType.Partial));
+        ValidatePath(result, CrossSection.Size1x1); // Validates partial paths, skips NoProgress
     }
 
     [Test]
@@ -262,6 +272,7 @@ public class CablePathfinderTests
             // Partial should get closer than start
             Assert.That(result.DistanceToGoal, Is.LessThan(ManhattanDistance(start, goal)));
         }
+        ValidatePath(result, CrossSection.Size1x1);
     }
 
     #endregion
@@ -281,6 +292,7 @@ public class CablePathfinderTests
         var result = pathfinder.FindPath(start, goal, VoxelDirection.XPos);
 
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete));
+        ValidatePath(result, CrossSection.Size1x1);
     }
 
     [Test]
@@ -296,6 +308,7 @@ public class CablePathfinderTests
         var result = pathfinder.FindPath(start, goal); // No initial direction
 
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete));
+        ValidatePath(result, CrossSection.Size1x1);
     }
 
     #endregion
@@ -340,6 +353,7 @@ public class CablePathfinderTests
                     $"Path voxel {pos} is adjacent to conductor at {conductor}");
             }
         }
+        ValidatePath(result, CrossSection.Size1x1);
     }
 
     #endregion
@@ -361,6 +375,7 @@ public class CablePathfinderTests
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete));
         // 2x3 cable should have 6 voxels per step
         Assert.That(result.Path.Count, Is.GreaterThanOrEqualTo(6));
+        ValidatePath(result, CrossSection.Size2x3);
     }
 
     [Test]
@@ -376,6 +391,7 @@ public class CablePathfinderTests
         var result = pathfinder.FindPath(start, goal);
 
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete));
+        ValidatePath(result, CrossSection.Size3x5);
     }
 
     #endregion
@@ -429,6 +445,18 @@ public class CablePathfinderTests
 
     private static int ManhattanDistance(VoxelPos a, VoxelPos b) =>
         Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) + Math.Abs(a.Z - b.Z);
+
+    /// <summary>
+    /// Validates a path result using CableValidator.
+    /// Only validates Complete and Partial paths (NoProgress has no path to validate).
+    /// </summary>
+    private void ValidatePath(PathResult result, CrossSection crossSection)
+    {
+        if (result.Type == PathResultType.NoProgress)
+            return; // Empty path, nothing to validate
+
+        CableValidator.ValidatePath(result.Path, crossSection, _cache);
+    }
 
     #endregion
 }

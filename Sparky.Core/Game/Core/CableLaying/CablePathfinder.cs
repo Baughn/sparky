@@ -272,19 +272,20 @@ public class CablePathfinder
         int distFirst = DistanceToInsulation(anchor, firstAxis);
         int distSecond = DistanceToInsulation(anchor, secondAxis);
 
-        // Height (larger dimension) should be along the axis with closer insulation
-        // Flat: Width on first, Height on second
-        // Upright: Height on first, Width on second
+        // "Lay flat" means Width (smaller) perpendicular to nearest surface,
+        // Height (larger) parallel to it (spread along the surface).
+        // Flat: Width on first axis, Height on second
+        // Upright: Height on first axis, Width on second
 
         if (distFirst <= distSecond)
         {
-            // Insulation closer on first axis - put height there
-            return CrossSectionOrientation.Upright;
+            // Insulation closer on first axis - put width there (perpendicular)
+            return CrossSectionOrientation.Flat;
         }
         else
         {
-            // Insulation closer on second axis - put height there
-            return CrossSectionOrientation.Flat;
+            // Insulation closer on second axis - put width there
+            return CrossSectionOrientation.Upright;
         }
     }
 
