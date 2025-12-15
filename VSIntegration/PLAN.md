@@ -165,9 +165,16 @@ interface IWorldVoxelCache
 
 **Tests:** `Sparky.Tests/Game/CableLaying/WorldVoxelCacheTests.cs` (36 tests)
 
-### 2. CablePathfinder
+### 2. CablePathfinder (Implemented)
 
 A* pathfinding accounting for cable cross-section with minimum turning radius.
+
+**Location:**
+- `Sparky.Core/Game/Core/CableLaying/CrossSection.cs` - Cross-section types and orientation
+- `Sparky.Core/Game/Core/CableLaying/PathResult.cs` - Result types
+- `Sparky.Core/Game/Core/CableLaying/CablePathfinder.cs` - Main A* implementation
+
+**Tests:** `Sparky.Tests/Game/CableLaying/CablePathfinderTests.cs` (21 tests)
 
 **Start Point Snapping:**
 - When player selects start, search within 1-2 voxels for existing cable end of same cross-section
@@ -391,19 +398,19 @@ public void OnBlockVoxelsChangedBatch(BlockPos vsPos)
 
 Every test involving cable generation must call `CableValidator.ValidateCable()`.
 
-**Unit Tests (CablePathfinder):**
+**Unit Tests (CablePathfinder):** ✓ Implemented
 - Straight line path (each axis)
 - Single 90° corner with minimum turn distance respected
-- Multiple corners respecting minimum turn distance
+- Turn rejected when under minimum distance
 - Around obstacle
 - Through narrow gap (exactly cross-section width)
-- Turn rejected when under minimum distance
-- Start snapping to existing cable end
 - Unconstrained start (no nearby cable)
+- Constrained start (initial direction)
 - Partial path returned when goal unreachable
-- NoProgress when completely blocked
+- NoProgress when completely blocked (no support)
 - 180° turn never generated
 - Different cross-section sizes (1×1, 2×2, 2×3, 3×5)
+- Conductor avoidance validation
 
 **Unit Tests (WorldVoxelCache):** ✓ Implemented
 - CacheVoxelState equality and hashing
