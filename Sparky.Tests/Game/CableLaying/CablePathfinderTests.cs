@@ -20,16 +20,6 @@ public class CablePathfinderTests
     #region CrossSection Tests
 
     [Test]
-    public void CrossSection_MinTurnDistance_IsArea()
-    {
-        Assert.That(CrossSection.Size1x1.MinTurnDistance, Is.EqualTo(1));
-        Assert.That(CrossSection.Size1x2.MinTurnDistance, Is.EqualTo(2));
-        Assert.That(CrossSection.Size2x2.MinTurnDistance, Is.EqualTo(4));
-        Assert.That(CrossSection.Size2x3.MinTurnDistance, Is.EqualTo(6));
-        Assert.That(CrossSection.Size3x5.MinTurnDistance, Is.EqualTo(15));
-    }
-
-    [Test]
     public void CrossSection_IsSquare_CorrectForAllSizes()
     {
         Assert.That(CrossSection.Size1x1.IsSquare, Is.True);

@@ -11,7 +11,7 @@ public readonly record struct CrossSection(int Width, int Height)
     public int Area => Width * Height;
 
     /// <summary>Gets the minimum turning distance for this cross-section.</summary>
-    public int MinTurnDistance => Area;
+    public int MinTurnDistance => Math.Max(Width, Height) + 1;
 
     /// <summary>
     /// Returns true if the cross-section is square (Width == Height).
