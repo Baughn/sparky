@@ -26,6 +26,11 @@ public class CableLayingState
         PathReady
     }
 
+    /// <summary>
+    /// Optional logging action for debugging. Set from VS integration code.
+    /// </summary>
+    public static Action<string>? Log { get; set; }
+
     private readonly CrossSection _crossSection;
     private Phase _currentPhase = Phase.Idle;
     private VoxelPos? _startPosition;
@@ -154,11 +159,15 @@ public class CableLayingState
         // Don't recompute if goal hasn't changed
         if (goal == _lastGoalQueried)
             return;
-        _lastGoalQueried = goal;
 
-        // Start background pathfinding
+        // Start background pathfinding (only if not already running)
         lock (_pathfindLock)
         {
+            // Don't start new task if one is still running - wait for it to complete
+            if (_pendingPathfind != null && !_pendingPathfind.IsCompleted)
+                return;
+
+            _lastGoalQueried = goal;
             var start = _startPosition.Value;
             var dir = _startDirection;
             var pathfinder = _pathfinder;
@@ -190,9 +199,10 @@ public class CableLayingState
                     ? Phase.PathReady
                     : Phase.StartSelected;
             }
-            catch
+            catch (Exception ex)
             {
-                // Pathfinding failed, stay in StartSelected
+                // Log the actual error instead of silently swallowing
+                Log?.Invoke($"[CableLayingState] Pathfinding failed: {ex.Message}");
                 _currentPath = null;
             }
             finally

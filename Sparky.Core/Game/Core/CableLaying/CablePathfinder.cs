@@ -25,6 +25,12 @@ public class CablePathfinder
     private const float DistancePenalty = 3.0f;
 
     /// <summary>
+    /// Maximum iterations before giving up. Prevents runaway searches.
+    /// 50000 is enough for ~96 voxel radius pathfinding bounds.
+    /// </summary>
+    private const int MaxIterations = 50000;
+
+    /// <summary>
     /// Optional logging action. Set this to receive debug logs from pathfinding.
     /// </summary>
     public static Action<string>? Log { get; set; }
@@ -49,6 +55,13 @@ public class CablePathfinder
         Log?.Invoke($"[Pathfinder] FindPath: start={start}, goal={goal}, initialDir={initialDirection}, crossSection={_crossSection}");
 
         _cache.ClearCableConductors();
+
+        // Early exit if goal is way outside pathfinding bounds (no point searching)
+        if (!_cache.IsInPathfindingBounds(goal))
+        {
+            Log?.Invoke($"[Pathfinder] Goal outside pathfinding bounds, returning NoProgress");
+            return PathResult.NoProgress(start, goal);
+        }
 
         // Priority queue: (priority, node)
         var openSet = new PriorityQueue<SearchNode, float>();
@@ -110,6 +123,13 @@ public class CablePathfinder
         {
             var current = openSet.Dequeue();
             iterations++;
+
+            // Prevent runaway searches
+            if (iterations > MaxIterations)
+            {
+                Log?.Invoke($"[Pathfinder] Hit iteration limit ({MaxIterations}), returning best partial");
+                break;
+            }
 
             if (visited.Contains(current))
                 continue;
