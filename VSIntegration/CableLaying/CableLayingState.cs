@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sparky.Game.Core;
 using Sparky.Game.Core.CableLaying;
@@ -33,8 +34,7 @@ public class CableLayingState
 
     private readonly CrossSection _crossSection;
     private Phase _currentPhase = Phase.Idle;
-    private VoxelPos? _startPosition;
-    private VoxelDirection? _startDirection;
+    private IReadOnlyList<VoxelPos>? _startPositions;
     private WorldVoxelCache? _cache;
     private CablePathfinder? _pathfinder;
     private PathResult? _currentPath;
@@ -46,8 +46,7 @@ public class CableLayingState
 
     // Snap position cache (for preview optimization)
     private VoxelPos? _lastSnapQueryPos;
-    private VoxelPos _cachedSnappedPos;
-    private VoxelDirection? _cachedSnappedDir;
+    private IReadOnlyList<VoxelPos>? _cachedSnappedPositions;
 
     /// <summary>
     /// Creates a new cable laying state for the given cross-section.
@@ -60,11 +59,8 @@ public class CableLayingState
     /// <summary>Current phase of the cable laying process.</summary>
     public Phase CurrentPhase => _currentPhase;
 
-    /// <summary>The selected start position, if any.</summary>
-    public VoxelPos? StartPosition => _startPosition;
-
-    /// <summary>The inherited direction from snapping to existing cable, if any.</summary>
-    public VoxelDirection? StartDirection => _startDirection;
+    /// <summary>The selected start positions, if any.</summary>
+    public IReadOnlyList<VoxelPos>? StartPositions => _startPositions;
 
     /// <summary>The current computed path, if any.</summary>
     public PathResult? CurrentPath => _currentPath;
@@ -87,45 +83,53 @@ public class CableLayingState
             clickedPos.Z / 16);
         _cache = new WorldVoxelCache(blockAccessor, centerBlock);
 
-        // Find the best start position within 2 voxels of clicked position
-        var (bestPos, bestDir) = SnapPositionFinder.FindBestStartPosition(clickedPos, _cache, _crossSection);
+        // Find the best start positions within a few voxels of clicked position
+        var positions = SnapPositionFinder.FindBestPosition(clickedPos, _cache, _crossSection, 0f);
+        _startPositions = positions;
 
         // If snapping to existing cable, mark connected cable voxels as "our cable"
         // so pathfinder doesn't reject adjacency to them
-        if (bestDir.HasValue)
+        if (IsAdjacentToPreExistingConductor(positions))
         {
-            _cache.MarkConnectedConductorAsCable(bestPos, maxDistance: 4);
+            _cache.MarkConnectedConductorAsCable(positions[0], maxDistance: 4);
         }
 
-        _startPosition = bestPos;
-        _startDirection = bestDir;
         _pathfinder = new CablePathfinder(_cache, _crossSection);
         _currentPhase = Phase.StartSelected;
         _currentPath = null;
     }
 
     /// <summary>
-    /// Gets the snapped start position for preview purposes without committing to it.
+    /// Checks if any of the positions are adjacent to pre-existing conductor.
+    /// </summary>
+    private bool IsAdjacentToPreExistingConductor(IReadOnlyList<VoxelPos> positions)
+    {
+        if (_cache == null) return false;
+
+        foreach (var pos in positions)
+        {
+            if (_cache.AnyCardinalNeighbor(pos, CacheVoxelState.PreExistingConductor))
+                return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Gets the snapped start positions for preview purposes without committing to it.
     /// Use this in Idle phase to show where the cable would actually start.
-    /// Results are cached when the query position hasn't moved much.
+    /// Results are cached when the query position hasn't moved.
     /// </summary>
     /// <param name="clickedPos">The position the player is targeting.</param>
     /// <param name="blockAccessor">Block accessor for checking world state.</param>
-    /// <returns>The snapped position and inherited direction (if any).</returns>
-    public (VoxelPos Position, VoxelDirection? Direction) GetSnappedStartPosition(
+    /// <returns>The voxel positions where the cable would start.</returns>
+    public IReadOnlyList<VoxelPos> GetSnappedStartPositions(
         VoxelPos clickedPos,
         IBlockAccessor blockAccessor)
     {
-        // Return cached result if position hasn't moved much (within 1 voxel)
-        if (_lastSnapQueryPos.HasValue)
+        // Return cached result if position hasn't moved
+        if (_lastSnapQueryPos.HasValue && clickedPos == _lastSnapQueryPos.Value && _cachedSnappedPositions != null)
         {
-            int dist = Math.Abs(clickedPos.X - _lastSnapQueryPos.Value.X) +
-                       Math.Abs(clickedPos.Y - _lastSnapQueryPos.Value.Y) +
-                       Math.Abs(clickedPos.Z - _lastSnapQueryPos.Value.Z);
-            if (dist == 0)
-            {
-                return (_cachedSnappedPos, _cachedSnappedDir);
-            }
+            return _cachedSnappedPositions;
         }
 
         // Build small cache (1-block radius = 27 blocks vs 2744 for full cache)
@@ -135,14 +139,13 @@ public class CableLayingState
             clickedPos.Z / 16);
         var tempCache = new WorldVoxelCache(blockAccessor, centerBlock, radius: 1);
 
-        var (snappedPos, snappedDir) = SnapPositionFinder.FindBestStartPosition(clickedPos, tempCache, _crossSection);
+        var positions = SnapPositionFinder.FindBestPosition(clickedPos, tempCache, _crossSection, 0f);
 
         // Cache the result
         _lastSnapQueryPos = clickedPos;
-        _cachedSnappedPos = snappedPos;
-        _cachedSnappedDir = snappedDir;
+        _cachedSnappedPositions = positions;
 
-        return (snappedPos, snappedDir);
+        return positions;
     }
 
     /// <summary>
@@ -153,7 +156,7 @@ public class CableLayingState
     public void UpdateGoal(VoxelPos goal)
     {
         // Allow updates in both StartSelected and PathReady phases
-        if (_currentPhase == Phase.Idle || _startPosition == null || _pathfinder == null)
+        if (_currentPhase == Phase.Idle || _startPositions == null || _pathfinder == null)
             return;
 
         // Don't recompute if goal hasn't changed
@@ -168,11 +171,10 @@ public class CableLayingState
                 return;
 
             _lastGoalQueried = goal;
-            var start = _startPosition.Value;
-            var dir = _startDirection;
+            var startPositions = _startPositions;
             var pathfinder = _pathfinder;
 
-            _pendingPathfind = Task.Run(() => pathfinder.FindPath(start, goal, dir));
+            _pendingPathfind = Task.Run(() => pathfinder.FindPath(startPositions, goal));
         }
     }
 
@@ -220,8 +222,7 @@ public class CableLayingState
     public void Cancel()
     {
         _currentPhase = Phase.Idle;
-        _startPosition = null;
-        _startDirection = null;
+        _startPositions = null;
         _cache = null;
         _pathfinder = null;
         _currentPath = null;

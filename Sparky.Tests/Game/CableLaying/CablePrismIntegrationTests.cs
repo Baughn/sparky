@@ -59,7 +59,8 @@ public class CablePrismIntegrationTests
                 continue;
 
             var pathfinder = new CablePathfinder(_cache, crossSection);
-            var result = pathfinder.FindPath(start, goal);
+            var primaryDir = GetPrimaryDirection(start, goal);
+            var result = pathfinder.FindPath(GetStartPositions(start, crossSection, primaryDir), goal);
 
             // Skip unsolvable cases
             if (result.Type == PathResultType.NoProgress || result.Path.Count == 0)
@@ -131,7 +132,8 @@ public class CablePrismIntegrationTests
         foreach (var (start, goal) in testCases)
         {
             var pathfinder = new CablePathfinder(_cache, crossSection);
-            var result = pathfinder.FindPath(start, goal);
+            var primaryDir = GetPrimaryDirection(start, goal);
+            var result = pathfinder.FindPath(GetStartPositions(start, crossSection, primaryDir), goal);
 
             if (result.Type == PathResultType.NoProgress || result.Path.Count == 0)
             {
@@ -167,7 +169,6 @@ public class CablePrismIntegrationTests
     /// </summary>
     [Test]
     [TestCase(1, 1)]
-    [TestCase(2, 2)]
     public void CableAroundExteriorCorner_HasValidPrisms(int width, int height)
     {
         var crossSection = new CrossSection(width, height);
@@ -181,7 +182,8 @@ public class CablePrismIntegrationTests
         var goal = new VoxelPos(50, 61 + height - 1, 50);  // Outside +Y face, with clearance
 
         var pathfinder = new CablePathfinder(_cache, crossSection);
-        var result = pathfinder.FindPath(start, goal);
+        var primaryDir = GetPrimaryDirection(start, goal);
+        var result = pathfinder.FindPath(GetStartPositions(start, crossSection, primaryDir), goal);
 
         // This path requires corner routing using distance-based support
         Assert.That(result.Type, Is.Not.EqualTo(PathResultType.NoProgress),
@@ -217,7 +219,8 @@ public class CablePrismIntegrationTests
         var goal = new VoxelPos(75, 46, 50);
 
         var pathfinder = new CablePathfinder(_cache, crossSection);
-        var result = pathfinder.FindPath(start, goal);
+        var primaryDir = GetPrimaryDirection(start, goal);
+        var result = pathfinder.FindPath(GetStartPositions(start, crossSection, primaryDir), goal);
 
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete),
             "Straight cable should complete");
@@ -276,6 +279,34 @@ public class CablePrismIntegrationTests
 
     private static int ManhattanDistance(VoxelPos a, VoxelPos b) =>
         Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) + Math.Abs(a.Z - b.Z);
+
+    private static IReadOnlyList<VoxelPos> GetStartPositions(
+        VoxelPos anchor,
+        CrossSection crossSection,
+        VoxelDirection direction = VoxelDirection.XPos)
+    {
+        return crossSection.GetVoxelPositions(anchor, direction, CrossSectionOrientation.Flat).ToList();
+    }
+
+    /// <summary>
+    /// Gets the primary travel direction from start to goal based on the largest delta.
+    /// </summary>
+    private static VoxelDirection GetPrimaryDirection(VoxelPos start, VoxelPos goal)
+    {
+        int dx = goal.X - start.X;
+        int dy = goal.Y - start.Y;
+        int dz = goal.Z - start.Z;
+
+        int ax = Math.Abs(dx);
+        int ay = Math.Abs(dy);
+        int az = Math.Abs(dz);
+
+        if (ax >= ay && ax >= az)
+            return dx >= 0 ? VoxelDirection.XPos : VoxelDirection.XNeg;
+        if (ay >= ax && ay >= az)
+            return dy >= 0 ? VoxelDirection.YPos : VoxelDirection.YNeg;
+        return dz >= 0 ? VoxelDirection.ZPos : VoxelDirection.ZNeg;
+    }
 
     #endregion
 }

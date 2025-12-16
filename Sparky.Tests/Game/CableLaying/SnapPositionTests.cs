@@ -46,8 +46,8 @@ public class SnapPositionTests
 
     /// <summary>
     /// For each cable cross-section and cube face, validates that:
-    /// 1. The snapped position touches the surface (at least one voxel adjacent to insulation)
-    /// 2. The snap position allows max(Width, Height) voxels of the cross-section to touch the surface
+    /// 1. The snap position has precisely max(width, height) voxels of the cross-section adjacent to the surface.
+    /// 2. All voxel positions are in empty space.
     /// </summary>
     [Test]
     [TestCaseSource(nameof(CrossSectionsAndFaces))]
@@ -58,30 +58,65 @@ public class SnapPositionTests
         // Get click position just outside the face center
         var clickPos = GetFaceCenterClickPosition(face);
 
-        // Find the snapped position
-        var (snappedPos, _) = SnapPositionFinder.FindBestStartPosition(clickPos, _cache, crossSection);
+        // Find the snapped voxel positions
+        var positions = SnapPositionFinder.FindBestPosition(clickPos, _cache, crossSection, 0f);
 
-        // The cable travels INTO the face (opposite direction)
-        var travelDirection = face.Opposite();
-
-        // Count how many voxels of the cross-section touch insulation
-        // Try both orientations and take the better one
-        int contactFlat = CountInsulationContact(snappedPos, crossSection, travelDirection, CrossSectionOrientation.Flat);
-        int contactUpright = CountInsulationContact(snappedPos, crossSection, travelDirection, CrossSectionOrientation.Upright);
-        int bestContact = Math.Max(contactFlat, contactUpright);
+        // Count how many voxels touch insulation
+        int insulationContact = 0;
+        foreach (var pos in positions)
+        {
+            if (_cache.AnyCardinalNeighbor(pos, CacheVoxelState.Insulation))
+                insulationContact++;
+        }
 
         int expectedContact = Math.Max(crossSection.Width, crossSection.Height);
 
         // Assert (a): touches the surface at all
-        Assert.That(bestContact, Is.GreaterThan(0),
-            $"Snapped position {snappedPos} for {crossSection} cable on face {face} " +
+        Assert.That(insulationContact, Is.GreaterThan(0),
+            $"Snapped positions for {crossSection} cable on face {face} " +
             $"(click at {clickPos}) should touch the surface");
 
         // Assert (b): touches at exactly max(Width, Height) voxels
-        Assert.That(bestContact, Is.EqualTo(expectedContact),
-            $"Snapped position {snappedPos} for {crossSection} cable on face {face} " +
-            $"should touch {expectedContact} voxels, but touches {bestContact}. " +
-            $"(Flat contact: {contactFlat}, Upright contact: {contactUpright})");
+        Assert.That(insulationContact, Is.EqualTo(expectedContact),
+            $"Snapped positions for {crossSection} cable on face {face} " +
+            $"should touch {expectedContact} voxels, but touches {insulationContact}");
+    }
+
+    /// <summary>
+    /// For each cable cross-section and cube face, validates that:
+    /// All N×M voxels of the snapped cross-section are in Empty locations (not embedded in the wall).
+    /// </summary>
+    [Test]
+    [TestCaseSource(nameof(CrossSectionsAndFaces))]
+    public void SnapPosition_AllVoxelsInEmptySpace(
+        CrossSection crossSection,
+        VoxelDirection face)
+    {
+        // Get click position just outside the face center
+        var clickPos = GetFaceCenterClickPosition(face);
+
+        // Find the snapped voxel positions
+        var positions = SnapPositionFinder.FindBestPosition(clickPos, _cache, crossSection, 0f);
+
+        // Check all positions are empty
+        var embeddedPositions = new List<VoxelPos>();
+        foreach (var pos in positions)
+        {
+            var state = _cache.GetState(pos);
+            if (state != CacheVoxelState.Empty)
+                embeddedPositions.Add(pos);
+        }
+
+        int expectedTotal = crossSection.Width * crossSection.Height;
+
+        // Assert: correct number of voxels returned
+        Assert.That(positions.Count, Is.EqualTo(expectedTotal),
+            $"Expected {expectedTotal} voxels for {crossSection} cable, but got {positions.Count}");
+
+        // Assert: all voxels should be in Empty locations
+        Assert.That(embeddedPositions, Is.Empty,
+            $"Snapped positions for {crossSection} cable on face {face}: " +
+            $"expected all voxels empty, but these are embedded: [{string.Join(", ", embeddedPositions)}]");
     }
 
     /// <summary>
@@ -103,29 +138,6 @@ public class SnapPositionTests
             VoxelDirection.ZNeg => new VoxelPos(centerXY, centerXY, CubeOrigin - 1), // -Z face
             _ => throw new ArgumentException($"Unknown face: {face}")
         };
-    }
-
-    /// <summary>
-    /// Counts how many voxels of a cross-section at the given position are adjacent to insulation.
-    /// </summary>
-    private int CountInsulationContact(
-        VoxelPos anchor,
-        CrossSection crossSection,
-        VoxelDirection travelDirection,
-        CrossSectionOrientation orientation)
-    {
-        int count = 0;
-
-        foreach (var voxelPos in crossSection.GetVoxelPositions(anchor, travelDirection, orientation))
-        {
-            // Check if any cardinal neighbor is insulation
-            if (_cache.AnyCardinalNeighbor(voxelPos, CacheVoxelState.Insulation))
-            {
-                count++;
-            }
-        }
-
-        return count;
     }
 
     /// <summary>

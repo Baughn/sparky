@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Sparky.Game.Core;
 using Sparky.Game.Core.CableLaying;
 using Sparky.VSIntegration.CableLaying;
@@ -159,10 +160,18 @@ public class VoxelPreviewSystem : ModSystem
         List<PreviewVoxel> voxels;
         if (mode.IsCableMode())
         {
-            // Get per-player cable state from ModSystem
-            var modSystem = _capi.ModLoader.GetModSystem<SparkyModSystem>();
-            var cableState = modSystem.GetCableState(player.PlayerUID);
-            voxels = BuildCablePreview(cableState, mode, material, targetVoxel.Value, faceDir, _capi.World.BlockAccessor);
+            var crossSection = mode.GetCrossSection();
+            if (crossSection == null)
+            {
+                voxels = BuildSingleVoxelPreview(material, targetVoxel.Value);
+            }
+            else
+            {
+                // Get or create per-player cable state from ModSystem
+                var modSystem = _capi.ModLoader.GetModSystem<SparkyModSystem>();
+                var cableState = modSystem.GetOrCreateCableState(player.PlayerUID, crossSection.Value);
+                voxels = BuildCablePreview(cableState, mode, material, targetVoxel.Value, faceDir, _capi.World.BlockAccessor);
+            }
         }
         else
         {
@@ -197,7 +206,7 @@ public class VoxelPreviewSystem : ModSystem
     }
 
     private List<PreviewVoxel> BuildCablePreview(
-        CableLayingState? cableState,
+        CableLayingState cableState,
         WireToolMode mode,
         Material material,
         (int X, int Y, int Z) target,
@@ -205,15 +214,6 @@ public class VoxelPreviewSystem : ModSystem
         IBlockAccessor blockAccessor)
     {
         var targetPos = new VoxelPos(target.X, target.Y, target.Z);
-
-        // If no cable state yet, show cross-section preview based on mode
-        if (cableState == null)
-        {
-            var crossSection = mode.GetCrossSection();
-            if (crossSection == null)
-                return new List<PreviewVoxel>();
-            return BuildCrossSectionPreview(crossSection.Value, targetPos, faceDir, material);
-        }
 
         // Poll for completed pathfinding
         cableState.TryUpdatePath();
@@ -223,9 +223,9 @@ public class VoxelPreviewSystem : ModSystem
         switch (cableState.CurrentPhase)
         {
             case CableLayingState.Phase.Idle:
-                // Show cross-section preview at snapped position (where cable would actually start)
-                var (snappedPos, _) = cableState.GetSnappedStartPosition(targetPos, blockAccessor);
-                return BuildCrossSectionPreview(cableState.CrossSection, snappedPos, faceDir, material);
+                // Show cross-section preview at snapped positions (where cable would actually start)
+                var snappedPositions = cableState.GetSnappedStartPositions(targetPos, blockAccessor);
+                return BuildPositionsPreview(snappedPositions, material);
 
             case CableLayingState.Phase.StartSelected:
             case CableLayingState.Phase.PathReady:
@@ -236,9 +236,9 @@ public class VoxelPreviewSystem : ModSystem
                 if (cableState.CurrentPath != null)
                     return BuildPathPreview(cableState.CurrentPath.Value, material);
 
-                // No path yet - show start position
-                if (cableState.StartPosition.HasValue)
-                    return BuildCrossSectionPreview(cableState.CrossSection, cableState.StartPosition.Value, faceDir, material);
+                // No path yet - show start positions
+                if (cableState.StartPositions != null)
+                    return BuildPositionsPreview(cableState.StartPositions, material);
 
                 return new List<PreviewVoxel>();
 
@@ -247,18 +247,17 @@ public class VoxelPreviewSystem : ModSystem
         }
     }
 
-    private List<PreviewVoxel> BuildCrossSectionPreview(CrossSection crossSection, VoxelPos anchor, VoxelDirection faceDir, Material material)
+    /// <summary>
+    /// Builds a preview from a list of voxel positions.
+    /// </summary>
+    private static List<PreviewVoxel> BuildPositionsPreview(IReadOnlyList<VoxelPos> positions, Material material)
     {
-        var voxels = new List<PreviewVoxel>();
         var color = VoxelPreviewMesh.GetMaterialColor(material, 128);
-
-        // The face direction is where the cable would go INTO the surface
-        // We want the cross-section perpendicular to this direction
-        foreach (var pos in crossSection.GetVoxelPositions(anchor, faceDir, CrossSectionOrientation.Flat))
+        var voxels = new List<PreviewVoxel>(positions.Count);
+        foreach (var pos in positions)
         {
             voxels.Add(new PreviewVoxel(pos.X, pos.Y, pos.Z, color));
         }
-
         return voxels;
     }
 

@@ -42,17 +42,18 @@ public class CablePathfinder
     }
 
     /// <summary>
-    /// Finds a path from start to goal.
+    /// Finds a path from start positions to goal.
     /// </summary>
-    /// <param name="start">Starting voxel position (anchor corner of cross-section).</param>
+    /// <param name="startPositions">The starting voxel positions (the cable cross-section).</param>
     /// <param name="goal">Goal voxel position.</param>
-    /// <param name="initialDirection">
-    /// If not null, constrains the starting direction (for connecting to existing cable).
-    /// </param>
-    /// <returns>PathResult with the best path found.</returns>
-    public PathResult FindPath(VoxelPos start, VoxelPos goal, VoxelDirection? initialDirection = null)
+    /// <returns>PathResult with the best path found, starting with the exact input positions.</returns>
+    public PathResult FindPath(IReadOnlyList<VoxelPos> startPositions, VoxelPos goal)
     {
-        Log?.Invoke($"[Pathfinder] FindPath: start={start}, goal={goal}, initialDir={initialDirection}, crossSection={_crossSection}");
+        if (startPositions.Count == 0)
+            return PathResult.NoProgress(new VoxelPos(0, 0, 0), goal);
+
+        var anchor = startPositions[0];
+        Log?.Invoke($"[Pathfinder] FindPath: startPositions={startPositions.Count}, anchor={anchor}, goal={goal}, crossSection={_crossSection}");
 
         _cache.ClearCableConductors();
 
@@ -60,7 +61,15 @@ public class CablePathfinder
         if (!_cache.IsInPathfindingBounds(goal))
         {
             Log?.Invoke($"[Pathfinder] Goal outside pathfinding bounds, returning NoProgress");
-            return PathResult.NoProgress(start, goal);
+            return PathResult.NoProgress(anchor, goal);
+        }
+
+        // Find all configurations that match the positions
+        var configs = InferAllConfigurations(startPositions);
+        if (configs.Count == 0)
+        {
+            Log?.Invoke($"[Pathfinder] Could not infer any configuration from positions, returning NoProgress");
+            return PathResult.NoProgress(anchor, goal);
         }
 
         // Priority queue: (priority, node)
@@ -74,46 +83,26 @@ public class CablePathfinder
         int bestDistance = int.MaxValue;
         float bestGScore = float.MaxValue;
 
-        // Initialize with starting nodes
-        if (initialDirection.HasValue)
+        // Try all matching configurations as start nodes (validates and marks positions)
+        int validStarts = 0;
+        foreach (var (direction, orientation) in configs)
         {
-            // Constrained start - single direction
-            var (success, orientation) = TryPlaceCrossSection(start, initialDirection.Value, isStart: true);
+            var (success, _) = TryPlaceCrossSection(anchor, direction, isStart: true);
             if (success)
             {
-                var startNode = new SearchNode(start, initialDirection.Value, orientation, 0);
-                Log?.Invoke($"[Pathfinder] Start node added: dir={initialDirection.Value}, orient={orientation}");
-                openSet.Enqueue(startNode, Heuristic(start, goal));
+                var startNode = new SearchNode(anchor, direction, orientation, 0);
+                openSet.Enqueue(startNode, Heuristic(anchor, goal));
                 gScore[startNode] = 0;
+                validStarts++;
             }
-            else
-            {
-                Log?.Invoke($"[Pathfinder] Start failed TryPlaceCrossSection: dir={initialDirection.Value}");
-            }
-        }
-        else
-        {
-            // Unconstrained start - try all directions
-            int validStarts = 0;
-            foreach (var dir in VoxelDirectionExtensions.All)
-            {
-                var (success, orientation) = TryPlaceCrossSection(start, dir, isStart: true);
-                if (success)
-                {
-                    var startNode = new SearchNode(start, dir, orientation, 0);
-                    validStarts++;
-                    openSet.Enqueue(startNode, Heuristic(start, goal));
-                    gScore[startNode] = 0;
-                }
-            }
-            Log?.Invoke($"[Pathfinder] Unconstrained start: {validStarts}/6 directions valid");
         }
 
-        // If no valid start positions, return NoProgress
-        if (openSet.Count == 0)
+        Log?.Invoke($"[Pathfinder] Tried {configs.Count} configs, {validStarts} valid starts");
+
+        if (validStarts == 0)
         {
             Log?.Invoke($"[Pathfinder] NoProgress: no valid start positions");
-            return PathResult.NoProgress(start, goal);
+            return PathResult.NoProgress(anchor, goal);
         }
 
         int iterations = 0;
@@ -202,7 +191,7 @@ public class CablePathfinder
         Log?.Invoke($"[Pathfinder] Search exhausted: iterations={iterations}, visited={visited.Count}, accepted={neighborsAccepted}, rejectedVisited={neighborsRejectedByVisited}, rejectedPlacement={neighborsRejectedByPlacement}");
 
         // No complete path found - return best partial
-        if (bestNode.HasValue && bestDistance < ManhattanDistance(start, goal))
+        if (bestNode.HasValue && bestDistance < ManhattanDistance(anchor, goal))
         {
             // Reconstruct path to best node
             _cache.ClearCableConductors();
@@ -211,8 +200,37 @@ public class CablePathfinder
             return PathResult.Partial(path, bestNode.Value.Position, goal);
         }
 
-        Log?.Invoke($"[Pathfinder] NoProgress: bestDist={bestDistance}, startDist={ManhattanDistance(start, goal)}");
-        return PathResult.NoProgress(start, goal);
+        Log?.Invoke($"[Pathfinder] NoProgress: bestDist={bestDistance}, startDist={ManhattanDistance(anchor, goal)}");
+        return PathResult.NoProgress(anchor, goal);
+    }
+
+    /// <summary>
+    /// Infers all matching travel direction and orientation combinations from a set of voxel positions.
+    /// For 1x1 cross-sections, all 6 directions match (since they produce the same single position).
+    /// For larger cross-sections, typically only one or two configurations match.
+    /// </summary>
+    private List<(VoxelDirection Direction, CrossSectionOrientation Orientation)> InferAllConfigurations(
+        IReadOnlyList<VoxelPos> positions)
+    {
+        var result = new List<(VoxelDirection, CrossSectionOrientation)>();
+
+        if (positions.Count == 0)
+            return result;
+
+        var positionSet = positions.ToHashSet();
+        var anchor = positions[0];
+
+        foreach (var dir in VoxelDirectionExtensions.All)
+        {
+            foreach (var orient in new[] { CrossSectionOrientation.Flat, CrossSectionOrientation.Upright })
+            {
+                var generated = _crossSection.GetVoxelPositions(anchor, dir, orient).ToHashSet();
+                if (generated.SetEquals(positionSet))
+                    result.Add((dir, orient));
+            }
+        }
+
+        return result;
     }
 
     /// <summary>

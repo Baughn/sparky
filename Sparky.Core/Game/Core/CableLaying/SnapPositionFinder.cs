@@ -3,117 +3,213 @@ namespace Sparky.Game.Core.CableLaying;
 /// <summary>
 /// Finds the best snap position for cable placement.
 /// Searches nearby positions to find optimal start points based on support quality.
+/// Returns the actual voxel positions where the cable should start.
 /// </summary>
 public static class SnapPositionFinder
 {
     /// <summary>
-    /// Finds the best start position within 2 voxels of the clicked position.
-    /// Scores positions based on support quality and existing cable proximity.
-    /// Ties are broken by Euclidean distance to clicked position (closer wins).
+    /// Finds the best start positions within 3 voxels of the clicked position.
+    /// Returns the actual voxel positions that make up the cable's starting cross-section.
+    ///
+    /// Scoring rules:
+    /// - Negative infinity if not all N×M voxels are in Empty
+    /// - -1000 if not precisely max(N,M) voxels touching Insulator
+    /// - -manhattan distance from clicked to geometric center of snap
+    /// - +3 if adjacent to exactly N×M pre-existing conductor voxels
+    /// - +2 for time-dependent direction preference
     /// </summary>
     /// <param name="clicked">The voxel position the player clicked.</param>
     /// <param name="cache">The world voxel cache for checking neighbors.</param>
-    /// <param name="crossSection">The cable cross-section (for future cross-section-aware snapping).</param>
-    /// <returns>The best snap position and inherited direction (if connecting to existing cable).</returns>
-    public static (VoxelPos Position, VoxelDirection? Direction) FindBestStartPosition(
+    /// <param name="crossSection">The cable cross-section.</param>
+    /// <param name="currentTime">Current time for direction preference.</param>
+    /// <returns>The voxel positions where the cable should start.</returns>
+    public static IReadOnlyList<VoxelPos> FindBestPosition(
         VoxelPos clicked,
         IWorldVoxelCache cache,
-        CrossSection crossSection)
+        CrossSection crossSection,
+        float currentTime)
     {
-        VoxelPos bestPos = clicked;
-        VoxelDirection? bestDir = null;
-        int bestScore = ScorePosition(clicked, cache, crossSection, out var clickedDir);
-        int bestDistSq = 0; // Distance squared from clicked (0 for clicked itself)
-        if (clickedDir.HasValue)
-            bestDir = clickedDir;
+        IReadOnlyList<VoxelPos> bestPositions = [clicked];
+        int bestScore = int.MinValue;
 
-        // Search within 2 voxels
-        for (int dx = -2; dx <= 2; dx++)
+        int maxSearch = 3;
+
+        for (int dx = -maxSearch; dx <= maxSearch; dx++)
         {
-            for (int dy = -2; dy <= 2; dy++)
+            for (int dy = -maxSearch; dy <= maxSearch; dy++)
             {
-                for (int dz = -2; dz <= 2; dz++)
+                for (int dz = -maxSearch; dz <= maxSearch; dz++)
                 {
-                    if (dx == 0 && dy == 0 && dz == 0)
-                        continue;
+                    var anchor = clicked.Offset(dx, dy, dz);
 
-                    var pos = clicked.Offset(dx, dy, dz);
-                    int score = ScorePosition(pos, cache, crossSection, out var dir);
-                    int distSq = dx * dx + dy * dy + dz * dz;
-
-                    // Better score wins, or same score but closer to cursor
-                    if (score > bestScore || (score == bestScore && distSq < bestDistSq))
+                    // Try all support directions for this position
+                    foreach (var supportDir in VoxelDirectionExtensions.All)
                     {
-                        bestScore = score;
-                        bestDistSq = distSq;
-                        bestPos = pos;
-                        bestDir = dir;
+                        int score = ScorePositionWithSupport(
+                            anchor, clicked, cache, crossSection, supportDir, currentTime,
+                            out var positions);
+
+                        if (score > bestScore)
+                        {
+                            bestScore = score;
+                            bestPositions = positions;
+                        }
                     }
                 }
             }
         }
 
-        return (bestPos, bestDir);
+        return bestPositions;
     }
 
     /// <summary>
-    /// Scores a potential start position.
-    /// Higher score = better position.
+    /// Scores a position with a specific support direction.
+    /// Tries all combinations of travel direction and orientation.
     /// </summary>
-    /// <param name="pos">The position to score (this is the min-corner of the cross-section).</param>
-    /// <param name="cache">The world voxel cache.</param>
-    /// <param name="crossSection">The cable cross-section.</param>
-    /// <param name="inheritedDirection">Output: direction from adjacent existing cable, if any.</param>
-    /// <returns>Score value (higher is better, negative means invalid).</returns>
-    public static int ScorePosition(
-        VoxelPos pos,
+    private static int ScorePositionWithSupport(
+        VoxelPos anchor,
+        VoxelPos target,
         IWorldVoxelCache cache,
         CrossSection crossSection,
-        out VoxelDirection? inheritedDirection)
+        VoxelDirection supportDir,
+        float currentTime,
+        out IReadOnlyList<VoxelPos> chosenPositions)
     {
-        inheritedDirection = null;
+        chosenPositions = [anchor];
 
-        // Must be empty and within bounds
-        if (!cache.IsInPathfindingBounds(pos))
-            return -1000;
+        // Get the two perpendicular axes for travel direction
+        var (axis1, axis2) = supportDir.GetPerpendicularAxes();
+        var travelDir1 = AxisToDirection(axis1);
+        var travelDir2 = AxisToDirection(axis2);
 
-        var state = cache.GetState(pos);
-        if (state != CacheVoxelState.Empty && state != CacheVoxelState.CableConductor)
-            return -1000;
+        // Try all 4 combinations: 2 travel directions × 2 orientations
+        var candidates = new[]
+        {
+            (travelDir1, CrossSectionOrientation.Flat, 0),
+            (travelDir1, CrossSectionOrientation.Upright, 1),
+            (travelDir2, CrossSectionOrientation.Flat, 2),
+            (travelDir2, CrossSectionOrientation.Upright, 3)
+        };
+
+        int bestScore = int.MinValue;
+
+        // Time-based preference: pick one of the 4 configurations to prefer
+        int timePreference = (int)currentTime % 4;
+
+        foreach (var (travelDir, orientation, index) in candidates)
+        {
+            var positions = crossSection.GetVoxelPositions(anchor, travelDir, orientation).ToList();
+            int score = ScoreConfiguration(positions, target, cache, crossSection, supportDir);
+
+            // Add time preference bonus
+            if (index == timePreference)
+                score += 2;
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                chosenPositions = positions;
+            }
+        }
+
+        return bestScore;
+    }
+
+    /// <summary>
+    /// Scores a specific configuration of voxel positions.
+    /// </summary>
+    private static int ScoreConfiguration(
+        IReadOnlyList<VoxelPos> positions,
+        VoxelPos target,
+        IWorldVoxelCache cache,
+        CrossSection crossSection,
+        VoxelDirection supportDir)
+    {
+        int n = crossSection.Width;
+        int m = crossSection.Height;
+        int totalVoxels = n * m;
+        int requiredContact = Math.Max(n, m);
+
+        // Rule 1: All N×M voxels must be Empty (or CableConductor for self-overlap)
+        foreach (var voxelPos in positions)
+        {
+            if (!cache.IsInPathfindingBounds(voxelPos))
+                return int.MinValue;
+
+            var state = cache.GetState(voxelPos);
+            if (state != CacheVoxelState.Empty && state != CacheVoxelState.CableConductor)
+                return int.MinValue;
+        }
 
         int score = 0;
 
-        // Bonus for having insulation support
-        if (cache.AnyCardinalNeighbor(pos, CacheVoxelState.Insulation))
-            score += 100;
-
-        // Bonus for being adjacent to existing cable (for connection)
-        if (cache.AnyCardinalNeighbor(pos, CacheVoxelState.PreExistingConductor))
+        // Rule 2: Exactly max(N,M) voxels must touch Insulator in the support direction
+        int insulatorContact = 0;
+        foreach (var voxelPos in positions)
         {
-            score += 50;
-
-            // Try to determine direction from adjacent conductor
-            inheritedDirection = FindCableDirection(pos, cache);
+            var neighbor = voxelPos.Neighbor(supportDir);
+            if (cache.GetState(neighbor) == CacheVoxelState.Insulation)
+                insulatorContact++;
         }
+
+        if (insulatorContact != requiredContact)
+            score -= 1000;
+
+        // Rule 3: -manhattan distance from target to geometric center
+        var center = ComputeGeometricCenter(positions);
+        int manhattanDist = Math.Abs(target.X - center.X) +
+                           Math.Abs(target.Y - center.Y) +
+                           Math.Abs(target.Z - center.Z);
+        score -= manhattanDist;
+
+        // Rule 4: +3 if adjacent to exactly N×M pre-existing conductor voxels
+        int conductorAdjacent = CountAdjacentConductorVoxels(positions, cache);
+        if (conductorAdjacent == totalVoxels)
+            score += 3;
 
         return score;
     }
 
     /// <summary>
-    /// Attempts to determine the travel direction from an adjacent existing cable.
+    /// Computes the geometric center of a list of voxel positions.
     /// </summary>
-    private static VoxelDirection? FindCableDirection(VoxelPos pos, IWorldVoxelCache cache)
+    private static VoxelPos ComputeGeometricCenter(IReadOnlyList<VoxelPos> positions)
     {
-        // Find which direction has the existing conductor
-        foreach (var dir in VoxelDirectionExtensions.All)
+        int sumX = 0, sumY = 0, sumZ = 0;
+        foreach (var p in positions)
         {
-            var neighbor = pos.Neighbor(dir);
-            if (cache.GetState(neighbor) == CacheVoxelState.PreExistingConductor)
-            {
-                // The new cable should continue in the direction AWAY from the existing cable
-                return dir.Opposite();
-            }
+            sumX += p.X;
+            sumY += p.Y;
+            sumZ += p.Z;
         }
-        return null;
+        return new VoxelPos(sumX / positions.Count, sumY / positions.Count, sumZ / positions.Count);
+    }
+
+    /// <summary>
+    /// Counts how many voxels in the cross-section are adjacent to pre-existing conductor.
+    /// </summary>
+    private static int CountAdjacentConductorVoxels(IReadOnlyList<VoxelPos> positions, IWorldVoxelCache cache)
+    {
+        int count = 0;
+        foreach (var pos in positions)
+        {
+            if (cache.AnyCardinalNeighbor(pos, CacheVoxelState.PreExistingConductor))
+                count++;
+        }
+        return count;
+    }
+
+    /// <summary>
+    /// Converts an axis index (0=X, 1=Y, 2=Z) to a positive direction.
+    /// </summary>
+    private static VoxelDirection AxisToDirection(int axis)
+    {
+        return axis switch
+        {
+            0 => VoxelDirection.XPos,
+            1 => VoxelDirection.YPos,
+            2 => VoxelDirection.ZPos,
+            _ => VoxelDirection.XPos
+        };
     }
 }
