@@ -217,7 +217,7 @@ public class VoxelPreviewSystem : ModSystem
         // Poll for completed pathfinding
         cableState.TryUpdatePath();
 
-        _capi?.Logger.Debug($"[Sparky Preview] BuildCablePreview: phase={cableState.CurrentPhase}, hasPath={cableState.CurrentPath != null}");
+        // Spammy: _capi?.Logger.Debug($"[Sparky Preview] BuildCablePreview: phase={cableState.CurrentPhase}, hasPath={cableState.CurrentPath != null}");
 
         switch (cableState.CurrentPhase)
         {

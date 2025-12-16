@@ -18,6 +18,11 @@ public class CablePathfinder
     /// <summary>Small penalty for turns to prefer straight paths.</summary>
     private const float TurnPenalty = 0.1f;
 
+    /// <summary>
+    /// Optional logging action. Set this to receive debug logs from pathfinding.
+    /// </summary>
+    public static Action<string>? Log { get; set; }
+
     public CablePathfinder(IWorldVoxelCache cache, CrossSection crossSection)
     {
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
@@ -35,6 +40,8 @@ public class CablePathfinder
     /// <returns>PathResult with the best path found.</returns>
     public PathResult FindPath(VoxelPos start, VoxelPos goal, VoxelDirection? initialDirection = null)
     {
+        Log?.Invoke($"[Pathfinder] FindPath: start={start}, goal={goal}, initialDir={initialDirection}, crossSection={_crossSection}");
+
         _cache.ClearCableConductors();
 
         // Priority queue: (priority, node)
@@ -55,33 +62,48 @@ public class CablePathfinder
             var startNode = new SearchNode(start, initialDirection.Value, 0);
             if (TryPlaceCrossSection(start, initialDirection.Value, isStart: true))
             {
+                Log?.Invoke($"[Pathfinder] Start node added: dir={initialDirection.Value}");
                 openSet.Enqueue(startNode, Heuristic(start, goal));
                 gScore[startNode] = 0;
+            }
+            else
+            {
+                Log?.Invoke($"[Pathfinder] Start failed TryPlaceCrossSection: dir={initialDirection.Value}");
             }
         }
         else
         {
             // Unconstrained start - try all directions
+            int validStarts = 0;
             foreach (var dir in VoxelDirectionExtensions.All)
             {
                 var startNode = new SearchNode(start, dir, 0);
                 if (TryPlaceCrossSection(start, dir, isStart: true))
                 {
+                    validStarts++;
                     openSet.Enqueue(startNode, Heuristic(start, goal));
                     gScore[startNode] = 0;
                 }
             }
+            Log?.Invoke($"[Pathfinder] Unconstrained start: {validStarts}/6 directions valid");
         }
 
         // If no valid start positions, return NoProgress
         if (openSet.Count == 0)
         {
+            Log?.Invoke($"[Pathfinder] NoProgress: no valid start positions");
             return PathResult.NoProgress(start, goal);
         }
+
+        int iterations = 0;
+        int neighborsRejectedByVisited = 0;
+        int neighborsRejectedByPlacement = 0;
+        int neighborsAccepted = 0;
 
         while (openSet.Count > 0)
         {
             var current = openSet.Dequeue();
+            iterations++;
 
             if (visited.Contains(current))
                 continue;
@@ -103,23 +125,34 @@ public class CablePathfinder
             if (IsAtGoal(current.Position, goal))
             {
                 var path = ReconstructPath(cameFrom, current);
+                Log?.Invoke($"[Pathfinder] Complete: iterations={iterations}, pathLength={path.Count}, visited={visited.Count}");
                 return PathResult.Complete(path, goal);
             }
 
             // Check bounds
             if (!_cache.IsInPathfindingBounds(current.Position))
+            {
+                // Spammy: Log?.Invoke($"[Pathfinder] Node {current.Position} outside bounds, skipping");
                 continue;
+            }
 
             // Generate neighbors
             foreach (var neighbor in GetNeighbors(current))
             {
                 if (visited.Contains(neighbor))
+                {
+                    neighborsRejectedByVisited++;
                     continue;
+                }
 
                 // Try to place cross-section at neighbor position
                 if (!CanPlaceCrossSection(neighbor.Position, neighbor.Direction))
+                {
+                    neighborsRejectedByPlacement++;
                     continue;
+                }
 
+                neighborsAccepted++;
                 float tentativeG = currentG + 1;
                 if (neighbor.Direction != current.Direction)
                     tentativeG += TurnPenalty;
@@ -134,15 +167,19 @@ public class CablePathfinder
             }
         }
 
+        Log?.Invoke($"[Pathfinder] Search exhausted: iterations={iterations}, visited={visited.Count}, accepted={neighborsAccepted}, rejectedVisited={neighborsRejectedByVisited}, rejectedPlacement={neighborsRejectedByPlacement}");
+
         // No complete path found - return best partial
         if (bestNode.HasValue && bestDistance < ManhattanDistance(start, goal))
         {
             // Reconstruct path to best node
             _cache.ClearCableConductors();
             var path = ReconstructPathAndMark(cameFrom, bestNode.Value);
+            Log?.Invoke($"[Pathfinder] Partial: pathLength={path.Count}, bestDist={bestDistance}, endPos={bestNode.Value.Position}");
             return PathResult.Partial(path, bestNode.Value.Position, goal);
         }
 
+        Log?.Invoke($"[Pathfinder] NoProgress: bestDist={bestDistance}, startDist={ManhattanDistance(start, goal)}");
         return PathResult.NoProgress(start, goal);
     }
 
@@ -229,10 +266,16 @@ public class CablePathfinder
             var state = _cache.GetState(pos);
 
             if (state != CacheVoxelState.Empty && state != CacheVoxelState.CableConductor)
+            {
+                Log?.Invoke($"[Pathfinder] TryPlace FAIL: pos={pos} state={state} (need Empty/CableConductor)");
                 return false;
+            }
 
             if (_cache.AnyCardinalNeighbor(pos, CacheVoxelState.PreExistingConductor))
+            {
+                Log?.Invoke($"[Pathfinder] TryPlace FAIL: pos={pos} adjacent to PreExistingConductor");
                 return false;
+            }
 
             if (!hasSupport)
             {
@@ -243,10 +286,25 @@ public class CablePathfinder
 
         // For start, require support from insulation only (no existing cable to connect to)
         if (isStart && !positions.Any(p => _cache.AnyCardinalNeighbor(p, CacheVoxelState.Insulation)))
+        {
+            Log?.Invoke($"[Pathfinder] TryPlace FAIL: isStart but no insulation neighbor. Checking neighbors...");
+            foreach (var pos in positions)
+            {
+                foreach (var dir in VoxelDirectionExtensions.All)
+                {
+                    var neighbor = pos.Neighbor(dir);
+                    var neighborState = _cache.GetState(neighbor);
+                    Log?.Invoke($"[Pathfinder]   {pos} -> {dir}: {neighborState}");
+                }
+            }
             return false;
+        }
 
         if (!hasSupport)
+        {
+            Log?.Invoke($"[Pathfinder] TryPlace FAIL: no support (insulation or cable neighbor)");
             return false;
+        }
 
         // Second pass: mark
         foreach (var pos in positions)

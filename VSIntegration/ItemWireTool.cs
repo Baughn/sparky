@@ -221,34 +221,33 @@ public class ItemWireTool : Item
             return;
         }
 
-        // Get mode and material from ItemStack.Attributes
+        // Server side: always prevent default, client handles all placement
+        // Block changes sync automatically via VS's block change system
+        if (world.Side == EnumAppSide.Server)
+        {
+            handling = EnumHandHandling.PreventDefault;
+            return;
+        }
+
+        // Client side: handle all placement logic
         var mode = GetMode(slot);
         var material = GetSelectedMaterial(slot);
 
         api?.Logger.Debug($"[Sparky WireTool] OnHeldInteractStart: mode={mode}, isCableMode={mode.IsCableMode()}, side={world.Side}");
 
-        // Handle cable laying modes - only on client side
-        // The client manages the state machine and places blocks (which syncs to server)
-        if (mode.IsCableMode())
+        // Handle cable laying modes
+        if (mode.IsCableMode() && api != null)
         {
-            if (world.Side == EnumAppSide.Client && api != null)
-            {
-                // Get or create per-player cable state from ModSystem
-                var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
-                var crossSection = mode.GetCrossSection()!.Value;
-                var cableState = modSystem.GetOrCreateCableState(player.PlayerUID, crossSection);
+            // Get or create per-player cable state from ModSystem
+            var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
+            var crossSection = mode.GetCrossSection()!.Value;
+            var cableState = modSystem.GetOrCreateCableState(player.PlayerUID, crossSection);
 
-                HandleCableModeInteract(world, blockSel, cableState, material, ref handling);
-            }
-            else
-            {
-                // Server side: just prevent default, client handles everything
-                handling = EnumHandHandling.PreventDefault;
-            }
+            HandleCableModeInteract(world, blockSel, cableState, material, ref handling);
             return;
         }
 
-        // SingleVoxel mode - original behavior
+        // SingleVoxel mode
         var pos = blockSel.Position;
         var block = world.BlockAccessor.GetBlock(pos);
 

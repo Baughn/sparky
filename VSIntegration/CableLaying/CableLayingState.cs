@@ -93,7 +93,8 @@ public class CableLayingState
     /// <param name="goal">The target voxel position.</param>
     public void UpdateGoal(VoxelPos goal)
     {
-        if (_currentPhase != Phase.StartSelected || _startPosition == null || _pathfinder == null)
+        // Allow updates in both StartSelected and PathReady phases
+        if (_currentPhase == Phase.Idle || _startPosition == null || _pathfinder == null)
             return;
 
         // Don't recompute if goal hasn't changed

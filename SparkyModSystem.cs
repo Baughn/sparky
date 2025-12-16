@@ -164,6 +164,9 @@ public class SparkyModSystem : ModSystem
             HotkeyType.GUIOrOtherControls);
         api.Input.SetHotKeyHandler("wiretoolmode", OnWireToolModeKey);
 
+        // Hook up pathfinder logging
+        CablePathfinder.Log = msg => api.Logger.Debug(msg);
+
         api.Logger.Notification("[Sparky] Client-side initialization complete");
     }
 
