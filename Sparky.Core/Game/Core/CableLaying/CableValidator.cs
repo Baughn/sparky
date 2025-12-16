@@ -1,3 +1,5 @@
+using Sparky.Game.Core;
+
 namespace Sparky.Game.Core.CableLaying;
 
 /// <summary>
@@ -240,6 +242,72 @@ public static class CableValidator
         if (dz == -1) return VoxelDirection.ZNeg;
 
         return null;
+    }
+
+    /// <summary>
+    /// Validates that all prism dimensions match the cross-section (Criterion 1).
+    /// For a W×H cross-section, each prism should have two dimensions matching W and H,
+    /// with the third being the length along the cable direction.
+    /// </summary>
+    /// <param name="prisms">The prisms extracted from the cable path.</param>
+    /// <param name="crossSection">The cable cross-section.</param>
+    /// <exception cref="CableValidationException">Thrown when a prism doesn't match the cross-section.</exception>
+    public static void ValidatePrismDimensions(
+        IEnumerable<(BlockPos Block, Prism Prism)> prisms,
+        CrossSection crossSection)
+    {
+        int width = crossSection.Width;
+        int height = crossSection.Height;
+        var expectedDims = new[] { Math.Min(width, height), Math.Max(width, height) };
+
+        foreach (var (block, prism) in prisms)
+        {
+            // Get the three dimensions sorted
+            var dims = new[] { prism.SizeX, prism.SizeY, prism.SizeZ }.Order().ToArray();
+
+            // The two smallest dimensions should match the cross-section
+            // (the largest is the length along the cable direction)
+            if (dims[0] != expectedDims[0] || dims[1] != expectedDims[1])
+            {
+                throw new CableValidationException(
+                    $"Prism dimension violation: prism at block {block} has size " +
+                    $"{prism.SizeX}×{prism.SizeY}×{prism.SizeZ}, but cross-section is " +
+                    $"{width}×{height}. Expected two smallest dims to be ({expectedDims[0]}, {expectedDims[1]})");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Validates that contact areas between adjacent prisms match the cross-section (Criterion 2).
+    /// For a W×H cross-section, the contact area between connected prisms should be W×H voxels.
+    /// </summary>
+    /// <param name="prisms">The prisms extracted from the cable path.</param>
+    /// <param name="crossSection">The cable cross-section.</param>
+    /// <exception cref="CableValidationException">Thrown when contact areas don't match.</exception>
+    public static void ValidatePrismContactAreas(
+        IReadOnlyList<(BlockPos Block, Prism Prism)> prisms,
+        CrossSection crossSection)
+    {
+        int expectedArea = crossSection.Width * crossSection.Height;
+
+        // Check all pairs of prisms for contact
+        for (int i = 0; i < prisms.Count; i++)
+        {
+            for (int j = i + 1; j < prisms.Count; j++)
+            {
+                int area = TopologyBuilder.CalculateContactArea(
+                    prisms[i].Prism, prisms[j].Prism,
+                    prisms[i].Block, prisms[j].Block);
+
+                if (area > 0 && area != expectedArea)
+                {
+                    throw new CableValidationException(
+                        $"Contact area violation: prisms at blocks {prisms[i].Block} and " +
+                        $"{prisms[j].Block} have contact area {area}, but expected {expectedArea} " +
+                        $"for {crossSection.Width}×{crossSection.Height} cross-section");
+                }
+            }
+        }
     }
 }
 

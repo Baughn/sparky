@@ -1446,7 +1446,7 @@ public class TopologyBuilder
     /// Calculates the contact area (number of voxel faces) between two touching prisms.
     /// Returns 0 if they don't touch.
     /// </summary>
-    private static int CalculateContactArea(Prism a, Prism b, BlockPos blockA, BlockPos blockB)
+    internal static int CalculateContactArea(Prism a, Prism b, BlockPos blockA, BlockPos blockB)
     {
         var aEnd = a.End;
         var bEnd = b.End;
