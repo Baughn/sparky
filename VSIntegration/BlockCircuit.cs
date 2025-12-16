@@ -49,6 +49,7 @@ public class BlockCircuit : Block
 
     /// <summary>
     /// Handle block interaction - delegates to wire tool if held.
+    /// In cable mode, returns false to let ItemWireTool.OnHeldInteractStart handle it.
     /// </summary>
     public override bool OnBlockInteractStart(
         IWorldAccessor world,
@@ -59,6 +60,12 @@ public class BlockCircuit : Block
         var activeSlot = byPlayer.InventoryManager?.ActiveHotbarSlot;
         if (activeSlot?.Itemstack?.Item is ItemWireTool wireTool)
         {
+            // In cable mode, let the item's OnHeldInteractStart handle it.
+            // Bug fix: previously this always called OnCircuitBlockInteract which
+            // places single voxels, bypassing cable mode's two-click workflow.
+            if (wireTool.GetMode(activeSlot).IsCableMode())
+                return false;
+
             return wireTool.OnCircuitBlockInteract(world, byPlayer, blockSel, activeSlot);
         }
 

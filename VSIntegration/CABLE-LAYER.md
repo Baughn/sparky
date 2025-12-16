@@ -409,6 +409,13 @@ Mode selection dialog opened with F key.
 
 ## Changes to Existing Code (All Implemented)
 
+### BlockCircuit.cs ✓
+
+Block-level interaction handler respects wire tool mode:
+- In cable mode, returns `false` to defer to `ItemWireTool.OnHeldInteractStart`
+- In single-voxel mode, calls `OnCircuitBlockInteract` directly
+- Bug fix (2025-12-16): Previously always called `OnCircuitBlockInteract`, bypassing cable mode's two-click workflow
+
 ### BlockEntityCircuit.cs ✓
 
 Added batch method for efficient multi-voxel placement:
