@@ -68,20 +68,13 @@ public class CablePrismIntegrationTests
                 continue;
             }
 
-            // Convert path to VoxelGrid
-            var grid = new VoxelGrid();
-            foreach (var pos in result.Path)
-            {
-                grid.SetVoxel(pos, VoxelType.Conductor);
-            }
-
-            // Extract prisms
-            var prisms = grid.GetAllPrisms().ToList();
+            // Build prisms using test helper (no 16³ block limits)
+            var prisms = TestPrismBuilder.BuildPrisms(result.Path);
 
             // Validate Criterion 1: Prism dimensions
             try
             {
-                CableValidator.ValidatePrismDimensions(prisms, crossSection);
+                TestPrismBuilder.ValidatePrismDimensions(prisms, crossSection);
             }
             catch (CableValidationException ex)
             {
@@ -93,7 +86,7 @@ public class CablePrismIntegrationTests
             // Validate Criterion 2: Contact areas
             try
             {
-                CableValidator.ValidatePrismContactAreas(prisms, crossSection);
+                TestPrismBuilder.ValidatePrismContactAreas(prisms, crossSection);
             }
             catch (CableValidationException ex)
             {
@@ -146,19 +139,13 @@ public class CablePrismIntegrationTests
                 continue;
             }
 
-            // Convert path to VoxelGrid
-            var grid = new VoxelGrid();
-            foreach (var pos in result.Path)
-            {
-                grid.SetVoxel(pos, VoxelType.Conductor);
-            }
-
-            var prisms = grid.GetAllPrisms().ToList();
+            // Build prisms using test helper (no 16³ block limits)
+            var prisms = TestPrismBuilder.BuildPrisms(result.Path);
 
             try
             {
-                CableValidator.ValidatePrismDimensions(prisms, crossSection);
-                CableValidator.ValidatePrismContactAreas(prisms, crossSection);
+                TestPrismBuilder.ValidatePrismDimensions(prisms, crossSection);
+                TestPrismBuilder.ValidatePrismContactAreas(prisms, crossSection);
             }
             catch (CableValidationException ex)
             {
@@ -189,8 +176,9 @@ public class CablePrismIntegrationTests
         CreateCube(new VoxelPos(40, 45, 40), 16);
 
         // Route from one face around the corner to an adjacent face
-        var start = new VoxelPos(39, 53, 50); // Outside -X face
-        var goal = new VoxelPos(50, 61, 50);  // Outside +Y face
+        // Positions account for cross-section size: need clearance from cube surface
+        var start = new VoxelPos(39 - width + 1, 53, 50); // Outside -X face, with clearance
+        var goal = new VoxelPos(50, 61 + height - 1, 50);  // Outside +Y face, with clearance
 
         var pathfinder = new CablePathfinder(_cache, crossSection);
         var result = pathfinder.FindPath(start, goal);
@@ -202,18 +190,12 @@ public class CablePrismIntegrationTests
         if (result.Path.Count == 0)
             return;
 
-        // Convert path to VoxelGrid
-        var grid = new VoxelGrid();
-        foreach (var pos in result.Path)
-        {
-            grid.SetVoxel(pos, VoxelType.Conductor);
-        }
-
-        var prisms = grid.GetAllPrisms().ToList();
+        // Build prisms using test helper (no 16³ block limits)
+        var prisms = TestPrismBuilder.BuildPrisms(result.Path);
 
         // Validate prisms
-        CableValidator.ValidatePrismDimensions(prisms, crossSection);
-        CableValidator.ValidatePrismContactAreas(prisms, crossSection);
+        TestPrismBuilder.ValidatePrismDimensions(prisms, crossSection);
+        TestPrismBuilder.ValidatePrismContactAreas(prisms, crossSection);
     }
 
     /// <summary>
@@ -240,23 +222,16 @@ public class CablePrismIntegrationTests
         Assert.That(result.Type, Is.EqualTo(PathResultType.Complete),
             "Straight cable should complete");
 
-        // Convert path to VoxelGrid
-        var grid = new VoxelGrid();
-        foreach (var pos in result.Path)
-        {
-            grid.SetVoxel(pos, VoxelType.Conductor);
-        }
-
-        var prisms = grid.GetAllPrisms().ToList();
+        // Build prisms using test helper (no 16³ block limits)
+        var prisms = TestPrismBuilder.BuildPrisms(result.Path);
 
         // Validate prisms
-        CableValidator.ValidatePrismDimensions(prisms, crossSection);
-        CableValidator.ValidatePrismContactAreas(prisms, crossSection);
+        TestPrismBuilder.ValidatePrismDimensions(prisms, crossSection);
+        TestPrismBuilder.ValidatePrismContactAreas(prisms, crossSection);
 
-        // For a straight cable spanning ~50 voxels (~3 blocks), expect 3-4 prisms
-        // (one per block, possibly more at boundaries)
-        Assert.That(prisms.Count, Is.LessThanOrEqualTo(6),
-            $"Straight cable should produce few prisms, got {prisms.Count}");
+        // For a straight cable, expect exactly 1 prism (no block boundary splits)
+        Assert.That(prisms.Count, Is.EqualTo(1),
+            $"Straight cable should produce exactly 1 prism, got {prisms.Count}");
     }
 
     #endregion
