@@ -132,6 +132,32 @@ public class WorldVoxelCache : IWorldVoxelCache
         _cableConductors.Clear();
     }
 
+    /// <inheritdoc/>
+    public int DistanceToInsulation(VoxelPos pos, int maxDistance)
+    {
+        // Expanding search by Manhattan distance
+        for (int d = 1; d <= maxDistance; d++)
+        {
+            // Check all positions at Manhattan distance d
+            for (int dx = -d; dx <= d; dx++)
+            {
+                for (int dy = -(d - Math.Abs(dx)); dy <= d - Math.Abs(dx); dy++)
+                {
+                    int remainingDist = d - Math.Abs(dx) - Math.Abs(dy);
+                    // Two possible dz values for this Manhattan distance (positive and negative)
+                    foreach (int dz in new[] { remainingDist, -remainingDist })
+                    {
+                        if (remainingDist == 0 && dz != 0) continue; // Avoid duplicate at dz=0
+                        var checkPos = pos.Offset(dx, dy, dz);
+                        if (_octree.Get(checkPos) == CacheVoxelState.Insulation)
+                            return d;
+                    }
+                }
+            }
+        }
+        return maxDistance + 1;
+    }
+
     /// <summary>
     /// Rebuilds the entire cache from the world.
     /// </summary>

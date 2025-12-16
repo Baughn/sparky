@@ -396,6 +396,163 @@ public class CablePathfinderTests
 
     #endregion
 
+    #region Cube Surface Routing Tests
+
+    /// <summary>
+    /// Tests routing between all pairs of faces on a floating cube.
+    /// This is a regression test for inefficient routing that took 56 voxels
+    /// for a path that should be ~16-20 voxels.
+    /// </summary>
+    [Test]
+    public void FindPath_CubeSurface_AllFacePairs_EfficientRouting()
+    {
+        const int cubeSize = 16;
+        var cubeOrigin = new VoxelPos(42, 42, 42); // Cube from (42,42,42) to (57,57,57)
+
+        // Create the cube (solid insulator block floating in space)
+        CreateCube(cubeOrigin, cubeSize);
+
+        // Face center positions (1 voxel outside each face, at face center)
+        var center = cubeSize / 2; // 8
+        var faceCenters = new Dictionary<string, VoxelPos>
+        {
+            ["XNeg"] = new(cubeOrigin.X - 1, cubeOrigin.Y + center, cubeOrigin.Z + center),
+            ["XPos"] = new(cubeOrigin.X + cubeSize, cubeOrigin.Y + center, cubeOrigin.Z + center),
+            ["YNeg"] = new(cubeOrigin.X + center, cubeOrigin.Y - 1, cubeOrigin.Z + center),
+            ["YPos"] = new(cubeOrigin.X + center, cubeOrigin.Y + cubeSize, cubeOrigin.Z + center),
+            ["ZNeg"] = new(cubeOrigin.X + center, cubeOrigin.Y + center, cubeOrigin.Z - 1),
+            ["ZPos"] = new(cubeOrigin.X + center, cubeOrigin.Y + center, cubeOrigin.Z + cubeSize),
+        };
+
+        // Expected max path lengths:
+        // - Adjacent faces (share an edge): ~center + center = cubeSize voxels
+        // - Opposite faces: need to go around, so ~2 * cubeSize voxels
+        // Add some margin for corner handling
+        int adjacentMaxPath = cubeSize + 4;
+        int oppositeMaxPath = cubeSize * 2 + 4;
+
+        var faceNames = faceCenters.Keys.ToList();
+        var failures = new List<string>();
+
+        for (int i = 0; i < faceNames.Count; i++)
+        {
+            for (int j = i + 1; j < faceNames.Count; j++)
+            {
+                var face1 = faceNames[i];
+                var face2 = faceNames[j];
+                var start = faceCenters[face1];
+                var goal = faceCenters[face2];
+
+                bool isOpposite = AreOppositeFaces(face1, face2);
+                int expectedMaxPath = isOpposite ? oppositeMaxPath : adjacentMaxPath;
+
+                var pathfinder = new CablePathfinder(_cache, CrossSection.Size1x1);
+                var result = pathfinder.FindPath(start, goal);
+
+                // Validate path
+                if (result.Type == PathResultType.NoProgress)
+                {
+                    failures.Add($"{face1}->{face2}: NoProgress (start={start}, goal={goal})");
+                    continue;
+                }
+
+                try
+                {
+                    ValidatePath(result, CrossSection.Size1x1);
+                }
+                catch (Exception ex)
+                {
+                    failures.Add($"{face1}->{face2}: Validation failed - {ex.Message}");
+                    continue;
+                }
+
+                if (result.Path.Count > expectedMaxPath)
+                {
+                    failures.Add($"{face1}->{face2}: Path too long - got {result.Path.Count}, expected <= {expectedMaxPath}");
+                }
+
+                // Clear cable conductors for next iteration
+                _cache.ClearCableConductors();
+            }
+        }
+
+        if (failures.Count > 0)
+        {
+            Assert.Fail($"Cube routing failures:\n{string.Join("\n", failures)}");
+        }
+    }
+
+    /// <summary>
+    /// Tests a specific case: routing from XNeg face to YNeg face (adjacent faces).
+    /// </summary>
+    [Test]
+    public void FindPath_CubeSurface_AdjacentFaces_XNegToYNeg()
+    {
+        const int cubeSize = 16;
+        var cubeOrigin = new VoxelPos(42, 42, 42);
+        CreateCube(cubeOrigin, cubeSize);
+
+        var center = cubeSize / 2;
+        var start = new VoxelPos(cubeOrigin.X - 1, cubeOrigin.Y + center, cubeOrigin.Z + center);
+        var goal = new VoxelPos(cubeOrigin.X + center, cubeOrigin.Y - 1, cubeOrigin.Z + center);
+
+        // Enable logging for this test
+        var logs = new List<string>();
+        CablePathfinder.Log = msg => logs.Add(msg);
+
+        var pathfinder = new CablePathfinder(_cache, CrossSection.Size1x1);
+        var result = pathfinder.FindPath(start, goal);
+
+        CablePathfinder.Log = null;
+
+        // Print logs for debugging
+        Console.WriteLine($"Start: {start}, Goal: {goal}");
+        Console.WriteLine($"Result: {result.Type}, Path count: {result.Path.Count}");
+        if (result.Type == PathResultType.Partial)
+        {
+            Console.WriteLine($"End position: {result.EndPosition}, Distance to goal: {result.DistanceToGoal}");
+        }
+        foreach (var log in logs.TakeLast(20))
+        {
+            Console.WriteLine(log);
+        }
+
+        Assert.That(result.Type, Is.EqualTo(PathResultType.Complete), "Should find complete path");
+        ValidatePath(result, CrossSection.Size1x1);
+
+        // Path should be roughly cubeSize voxels (center + center = 8 + 8 = 16, plus corner)
+        int expectedMaxPath = cubeSize + 4;
+        Assert.That(result.Path.Count, Is.LessThanOrEqualTo(expectedMaxPath),
+            $"Path too long: got {result.Path.Count} voxels, expected <= {expectedMaxPath}");
+    }
+
+    private static bool AreOppositeFaces(string face1, string face2)
+    {
+        return (face1 == "XNeg" && face2 == "XPos") ||
+               (face1 == "XPos" && face2 == "XNeg") ||
+               (face1 == "YNeg" && face2 == "YPos") ||
+               (face1 == "YPos" && face2 == "YNeg") ||
+               (face1 == "ZNeg" && face2 == "ZPos") ||
+               (face1 == "ZPos" && face2 == "ZNeg");
+    }
+
+    private void CreateCube(VoxelPos origin, int size)
+    {
+        for (int x = 0; x < size; x++)
+        {
+            for (int y = 0; y < size; y++)
+            {
+                for (int z = 0; z < size; z++)
+                {
+                    _cache.SetState(new VoxelPos(origin.X + x, origin.Y + y, origin.Z + z),
+                        CacheVoxelState.Insulation);
+                }
+            }
+        }
+    }
+
+    #endregion
+
     #region Helper Methods
 
     /// <summary>Creates a floor (insulation) at Y level.</summary>

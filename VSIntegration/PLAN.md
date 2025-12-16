@@ -154,6 +154,7 @@ interface IWorldVoxelCache
     void SetCableConductor(VoxelPos pos);
     void ClearCableConductors();
     VoxelPos Origin { get; }
+    int DistanceToInsulation(VoxelPos pos, int maxDistance);  // Manhattan distance search
 }
 ```
 
@@ -205,6 +206,9 @@ record PathNode(
 **Cost Function:**
 - Base cost: 1 per voxel traveled
 - Turn penalty: +0.1 for each 90° turn (prefers straight paths)
+- Distance penalty: +3.0 per voxel distance from insulation (beyond adjacent)
+  - `stepCost = 1.0 + max(0, distToInsulation - 1) * 3.0`
+  - Allows corner routing while preferring surface routes
 - Heuristic: Manhattan distance to goal
 
 **Neighbor Generation:**
@@ -215,7 +219,7 @@ record PathNode(
 2. Compute cross-section orientation based on direction + "lay flat" rule
 3. Check ALL voxels in cross-section at new position:
    - Must be Empty (not Insulation, PreExistingConductor, or Unroutable)
-   - At least one voxel adjacent to Insulation or CableConductor (support)
+   - At least one voxel within `2 × Height` distance to Insulation or CableConductor (extended support range for corner routing)
    - No voxel adjacent to PreExistingConductor (short circuit prevention)
 4. Mark occupied voxels as CableConductor in cache (for support chain)
 
@@ -310,9 +314,10 @@ public static class CableValidator
    - Insulation in source cache, OR
    - Another cable voxel
 
-3. **Wall Proximity ("Lay Flat")** (Criterion 5): For cross-section W×H where W ≤ H:
-   - The cable voxel furthest from any insulation surface is ≤ W voxels away
-   - (For 2×3, no voxel is more than 2 voxels from a wall)
+3. **Wall Proximity (Extended Support)** (Criterion 5): Cable voxels can be up to `2 × Height` from insulation:
+   - For 1×1: max 2 voxels away (allows corner routing)
+   - For 2×3: max 6 voxels away
+   - Surface routes preferred via distance penalty in cost function
 
 4. **Minimum Turn Distance** (Criterion 6): Between any two 90° turns, there are at least `W × H` voxels of straight cable
    - For 2×3: at least 6 voxels between turns

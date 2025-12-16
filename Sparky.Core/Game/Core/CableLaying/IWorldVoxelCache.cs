@@ -57,4 +57,13 @@ public interface IWorldVoxelCache
     /// Gets the origin (center) of the cache in world voxel coordinates.
     /// </summary>
     VoxelPos Origin { get; }
+
+    /// <summary>
+    /// Finds the minimum Manhattan distance from a position to any insulation voxel.
+    /// Used for extended support range checking (corners, etc.).
+    /// </summary>
+    /// <param name="pos">The position to check.</param>
+    /// <param name="maxDistance">Maximum search distance.</param>
+    /// <returns>Distance to nearest insulation (1 = adjacent), or maxDistance+1 if none within range.</returns>
+    int DistanceToInsulation(VoxelPos pos, int maxDistance);
 }

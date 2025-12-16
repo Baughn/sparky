@@ -298,6 +298,36 @@ Phase.Idle ──RightClick──> Phase.StartSelected ──RightClick──> (
 - **StartSelected**: Background pathfinding to cursor, show path preview
 - **PathReady**: Path computed, ready for placement
 
+### Pathfinding Algorithm
+
+`CablePathfinder` uses A* with cross-section awareness and distance-based support.
+
+**Distance-Based Support (Corner Routing)**
+
+Cable voxels can be up to `2 × CrossSection.Height` voxels away from insulation:
+
+| Cross-Section | Height | Max Distance |
+|--------------|--------|--------------|
+| 1×1 | 1 | 2 voxels |
+| 1×2, 2×2 | 2 | 4 voxels |
+| 2×3 | 3 | 6 voxels |
+| 3×5 | 5 | 10 voxels |
+
+This allows routing around exterior corners of floating objects. Cost penalty discourages unnecessary distance:
+
+```
+stepCost = 1.0 + max(0, distanceToInsulation - 1) × DistancePenalty
+```
+
+Where `DistancePenalty = 3.0`. Surface routes (distance 1) have base cost 1.0; corner routes are more expensive but possible.
+
+**Key constraints:**
+- No 180° turns (reverse direction)
+- Minimum `W × H` voxels between 90° turns (cross-section area)
+- No adjacency to `PreExistingConductor` (short circuit prevention)
+- Start position requires adjacent insulation (no starting from corners)
+- Support chain: cable-to-cable adjacency counts as distance 1
+
 ## Current Limitations
 
 1. **Component support incomplete**: `BuildTopology()` receives `Enumerable.Empty<Component>()` - active components (sources, diodes) not yet integrated

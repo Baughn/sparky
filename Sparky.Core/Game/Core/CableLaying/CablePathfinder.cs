@@ -19,6 +19,12 @@ public class CablePathfinder
     private const float TurnPenalty = 0.1f;
 
     /// <summary>
+    /// Penalty per voxel of distance from insulation surface.
+    /// High enough to prefer surface routes, but allows corner routing.
+    /// </summary>
+    private const float DistancePenalty = 3.0f;
+
+    /// <summary>
     /// Optional logging action. Set this to receive debug logs from pathfinding.
     /// </summary>
     public static Action<string>? Log { get; set; }
@@ -146,14 +152,18 @@ public class CablePathfinder
                 }
 
                 // Try to place cross-section at neighbor position
-                if (!CanPlaceCrossSection(neighbor.Position, neighbor.Direction))
+                var (canPlace, distToInsulation) = CanPlaceCrossSection(neighbor.Position, neighbor.Direction);
+                if (!canPlace)
                 {
                     neighborsRejectedByPlacement++;
                     continue;
                 }
 
                 neighborsAccepted++;
-                float tentativeG = currentG + 1;
+
+                // Base cost + distance penalty (0 if adjacent, increases for further distances)
+                float stepCost = 1.0f + Math.Max(0, distToInsulation - 1) * DistancePenalty;
+                float tentativeG = currentG + stepCost;
                 if (neighbor.Direction != current.Direction)
                     tentativeG += TurnPenalty;
 
@@ -221,11 +231,14 @@ public class CablePathfinder
 
     /// <summary>
     /// Checks if a cross-section can be placed at the given position.
+    /// Returns validity and minimum distance to insulation for cost calculation.
     /// </summary>
-    private bool CanPlaceCrossSection(VoxelPos anchor, VoxelDirection direction)
+    /// <returns>Tuple of (valid, minDistanceToInsulation). Distance is 1 if adjacent.</returns>
+    private (bool Valid, int MinDistance) CanPlaceCrossSection(VoxelPos anchor, VoxelDirection direction)
     {
         var orientation = DetermineOrientation(anchor, direction);
-        bool hasSupport = false;
+        int maxDist = 2 * _crossSection.Height;
+        int minDistance = int.MaxValue;
 
         foreach (var pos in _crossSection.GetVoxelPositions(anchor, direction, orientation))
         {
@@ -233,32 +246,38 @@ public class CablePathfinder
 
             // Must be empty (can occupy)
             if (state != CacheVoxelState.Empty && state != CacheVoxelState.CableConductor)
-                return false;
+                return (false, 0);
 
             // Check for adjacent PreExistingConductor (short circuit)
             if (_cache.AnyCardinalNeighbor(pos, CacheVoxelState.PreExistingConductor))
-                return false;
+                return (false, 0);
 
-            // Check for support (Insulation or CableConductor neighbor)
-            if (!hasSupport)
-            {
-                hasSupport = _cache.AnyCardinalNeighbor(pos, CacheVoxelState.Insulation) ||
-                             _cache.AnyCardinalNeighbor(pos, CacheVoxelState.CableConductor);
-            }
+            // Find distance to support (insulation or cable)
+            int dist = _cache.DistanceToInsulation(pos, maxDist);
+
+            // Cable conductor neighbor counts as distance 1 (direct support)
+            if (_cache.AnyCardinalNeighbor(pos, CacheVoxelState.CableConductor))
+                dist = Math.Min(dist, 1);
+
+            minDistance = Math.Min(minDistance, dist);
         }
 
-        return hasSupport;
+        // Valid if any voxel is within extended support range
+        bool valid = minDistance <= maxDist;
+        return (valid, minDistance);
     }
 
     /// <summary>
     /// Tries to place a cross-section at the given position, marking voxels in cache.
     /// Used for the start position to establish initial cable markers.
+    /// Start positions require adjacent insulation (distance 1) for stability.
     /// </summary>
     private bool TryPlaceCrossSection(VoxelPos anchor, VoxelDirection direction, bool isStart)
     {
         var orientation = DetermineOrientation(anchor, direction);
         var positions = _crossSection.GetVoxelPositions(anchor, direction, orientation).ToList();
-        bool hasSupport = false;
+        int maxDist = 2 * _crossSection.Height;
+        int minDistance = int.MaxValue;
 
         // First pass: validate
         foreach (var pos in positions)
@@ -277,32 +296,25 @@ public class CablePathfinder
                 return false;
             }
 
-            if (!hasSupport)
-            {
-                hasSupport = _cache.AnyCardinalNeighbor(pos, CacheVoxelState.Insulation) ||
-                             _cache.AnyCardinalNeighbor(pos, CacheVoxelState.CableConductor);
-            }
+            // Find distance to support
+            int dist = _cache.DistanceToInsulation(pos, maxDist);
+            if (_cache.AnyCardinalNeighbor(pos, CacheVoxelState.CableConductor))
+                dist = Math.Min(dist, 1);
+
+            minDistance = Math.Min(minDistance, dist);
         }
 
-        // For start, require support from insulation only (no existing cable to connect to)
+        // For start, require adjacent insulation (distance 1) - no starting from corners
         if (isStart && !positions.Any(p => _cache.AnyCardinalNeighbor(p, CacheVoxelState.Insulation)))
         {
-            Log?.Invoke($"[Pathfinder] TryPlace FAIL: isStart but no insulation neighbor. Checking neighbors...");
-            foreach (var pos in positions)
-            {
-                foreach (var dir in VoxelDirectionExtensions.All)
-                {
-                    var neighbor = pos.Neighbor(dir);
-                    var neighborState = _cache.GetState(neighbor);
-                    Log?.Invoke($"[Pathfinder]   {pos} -> {dir}: {neighborState}");
-                }
-            }
+            Log?.Invoke($"[Pathfinder] TryPlace FAIL: isStart but no adjacent insulation. minDist={minDistance}");
             return false;
         }
 
-        if (!hasSupport)
+        // Must have support within extended range
+        if (minDistance > maxDist)
         {
-            Log?.Invoke($"[Pathfinder] TryPlace FAIL: no support (insulation or cable neighbor)");
+            Log?.Invoke($"[Pathfinder] TryPlace FAIL: no support within range. minDist={minDistance}, maxDist={maxDist}");
             return false;
         }
 

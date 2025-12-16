@@ -94,16 +94,16 @@ public static class CableValidator
     }
 
     /// <summary>
-    /// Criterion 5: Wall Proximity ("Lay Flat")
-    /// For cross-section W×H where W ≤ H, the cable voxel furthest from
-    /// any insulation surface is ≤ W voxels away.
+    /// Criterion 5: Wall Proximity (Extended Support Range)
+    /// Cable voxels can be up to 2× cross-section height from insulation.
+    /// This allows corner routing while preferring surface routes via cost penalty.
     /// </summary>
     private static void ValidateWallProximity(
         IReadOnlyList<VoxelPos> path,
         CrossSection crossSection,
         IWorldVoxelCache cache)
     {
-        int maxAllowedDistance = crossSection.Width;
+        int maxAllowedDistance = 2 * crossSection.Height;
 
         foreach (var pos in path)
         {
