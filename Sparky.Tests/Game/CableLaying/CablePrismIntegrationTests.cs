@@ -46,6 +46,11 @@ public class CablePrismIntegrationTests
 
         for (int i = 0; i < numTests; i++)
         {
+	    // Stop if we already have enough failures.
+	    if (failures.Count > 1) {
+	      break;
+	    }
+	
             // Generate random start/goal within the floor area
             var (start, goal) = GenerateRandomStartGoal(random, 25, 75, 46);
 
