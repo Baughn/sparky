@@ -88,7 +88,7 @@ public class CableLayingState
         _cache = new WorldVoxelCache(blockAccessor, centerBlock);
 
         // Find the best start position within 2 voxels of clicked position
-        var (bestPos, bestDir) = FindBestStartPosition(clickedPos, _cache);
+        var (bestPos, bestDir) = SnapPositionFinder.FindBestStartPosition(clickedPos, _cache, _crossSection);
 
         // If snapping to existing cable, mark connected cable voxels as "our cable"
         // so pathfinder doesn't reject adjacency to them
@@ -135,7 +135,7 @@ public class CableLayingState
             clickedPos.Z / 16);
         var tempCache = new WorldVoxelCache(blockAccessor, centerBlock, radius: 1);
 
-        var (snappedPos, snappedDir) = FindBestStartPosition(clickedPos, tempCache);
+        var (snappedPos, snappedDir) = SnapPositionFinder.FindBestStartPosition(clickedPos, tempCache, _crossSection);
 
         // Cache the result
         _lastSnapQueryPos = clickedPos;
@@ -228,104 +228,4 @@ public class CableLayingState
         _pendingPathfind = null;
     }
 
-    /// <summary>
-    /// Finds the best start position within 2 voxels of the clicked position.
-    /// Scores positions based on support quality and existing cable proximity.
-    /// Ties are broken by Euclidean distance to clicked position (closer wins).
-    /// </summary>
-    private (VoxelPos Position, VoxelDirection? Direction) FindBestStartPosition(
-        VoxelPos clicked,
-        IWorldVoxelCache cache)
-    {
-        VoxelPos bestPos = clicked;
-        VoxelDirection? bestDir = null;
-        int bestScore = ScorePosition(clicked, cache, out var clickedDir);
-        int bestDistSq = 0; // Distance squared from clicked (0 for clicked itself)
-        if (clickedDir.HasValue)
-            bestDir = clickedDir;
-
-        // Search within 2 voxels
-        for (int dx = -2; dx <= 2; dx++)
-        {
-            for (int dy = -2; dy <= 2; dy++)
-            {
-                for (int dz = -2; dz <= 2; dz++)
-                {
-                    if (dx == 0 && dy == 0 && dz == 0)
-                        continue;
-
-                    var pos = clicked.Offset(dx, dy, dz);
-                    int score = ScorePosition(pos, cache, out var dir);
-                    int distSq = dx * dx + dy * dy + dz * dz;
-
-                    // Better score wins, or same score but closer to cursor
-                    if (score > bestScore || (score == bestScore && distSq < bestDistSq))
-                    {
-                        bestScore = score;
-                        bestDistSq = distSq;
-                        bestPos = pos;
-                        bestDir = dir;
-                    }
-                }
-            }
-        }
-
-        return (bestPos, bestDir);
-    }
-
-    /// <summary>
-    /// Scores a potential start position.
-    /// Higher score = better position.
-    /// </summary>
-    private int ScorePosition(VoxelPos pos, IWorldVoxelCache cache, out VoxelDirection? inheritedDirection)
-    {
-        inheritedDirection = null;
-
-        // Must be empty or within bounds
-        if (!cache.IsInPathfindingBounds(pos))
-            return -1000;
-
-        var state = cache.GetState(pos);
-        if (state != CacheVoxelState.Empty && state != CacheVoxelState.CableConductor)
-            return -1000;
-
-        int score = 0;
-
-        // Bonus for having insulation support
-        if (cache.AnyCardinalNeighbor(pos, CacheVoxelState.Insulation))
-            score += 100;
-
-        // Bonus for being adjacent to existing cable (for connection)
-        if (cache.AnyCardinalNeighbor(pos, CacheVoxelState.PreExistingConductor))
-        {
-            score += 50;
-
-            // Try to determine direction from adjacent conductor
-            inheritedDirection = FindCableDirection(pos, cache);
-        }
-
-        // Penalty for being adjacent to conductor without connection intent
-        // (might cause short circuit)
-        // This is handled by the pathfinder, so no penalty here
-
-        return score;
-    }
-
-    /// <summary>
-    /// Attempts to determine the travel direction from an adjacent existing cable.
-    /// </summary>
-    private VoxelDirection? FindCableDirection(VoxelPos pos, IWorldVoxelCache cache)
-    {
-        // Find which direction has the existing conductor
-        foreach (var dir in VoxelDirectionExtensions.All)
-        {
-            var neighbor = pos.Neighbor(dir);
-            if (cache.GetState(neighbor) == CacheVoxelState.PreExistingConductor)
-            {
-                // The new cable should continue in the direction AWAY from the existing cable
-                return dir.Opposite();
-            }
-        }
-        return null;
-    }
 }
