@@ -162,7 +162,7 @@ public class VoxelPreviewSystem : ModSystem
             // Get per-player cable state from ModSystem
             var modSystem = _capi.ModLoader.GetModSystem<SparkyModSystem>();
             var cableState = modSystem.GetCableState(player.PlayerUID);
-            voxels = BuildCablePreview(cableState, mode, material, targetVoxel.Value, faceDir);
+            voxels = BuildCablePreview(cableState, mode, material, targetVoxel.Value, faceDir, _capi.World.BlockAccessor);
         }
         else
         {
@@ -201,7 +201,8 @@ public class VoxelPreviewSystem : ModSystem
         WireToolMode mode,
         Material material,
         (int X, int Y, int Z) target,
-        VoxelDirection faceDir)
+        VoxelDirection faceDir,
+        IBlockAccessor blockAccessor)
     {
         var targetPos = new VoxelPos(target.X, target.Y, target.Z);
 
@@ -222,8 +223,9 @@ public class VoxelPreviewSystem : ModSystem
         switch (cableState.CurrentPhase)
         {
             case CableLayingState.Phase.Idle:
-                // Show cross-section preview at cursor
-                return BuildCrossSectionPreview(cableState.CrossSection, targetPos, faceDir, material);
+                // Show cross-section preview at snapped position (where cable would actually start)
+                var (snappedPos, _) = cableState.GetSnappedStartPosition(targetPos, blockAccessor);
+                return BuildCrossSectionPreview(cableState.CrossSection, snappedPos, faceDir, material);
 
             case CableLayingState.Phase.StartSelected:
             case CableLayingState.Phase.PathReady:

@@ -26,6 +26,7 @@ public class WorldVoxelCache : IWorldVoxelCache
     private readonly VoxelPos _origin;
     private readonly IBlockAccessor _blockAccessor;
     private readonly VSBlockPos _centerBlock;
+    private readonly int _radius;
 
     // Track cable conductor positions for clearing
     private readonly HashSet<VoxelPos> _cableConductors = new();
@@ -35,10 +36,13 @@ public class WorldVoxelCache : IWorldVoxelCache
     /// </summary>
     /// <param name="blockAccessor">VS block accessor for reading world data.</param>
     /// <param name="centerBlock">The center block position (where cable starts).</param>
-    public WorldVoxelCache(IBlockAccessor blockAccessor, VSBlockPos centerBlock)
+    /// <param name="radius">Cache radius in blocks. Default is full CacheRadius (7).
+    /// Use smaller radius (e.g., 1) for snap-only calculations.</param>
+    public WorldVoxelCache(IBlockAccessor blockAccessor, VSBlockPos centerBlock, int radius = CacheRadius)
     {
         _blockAccessor = blockAccessor ?? throw new ArgumentNullException(nameof(blockAccessor));
         _centerBlock = centerBlock.Copy();
+        _radius = radius;
 
         // Origin is center of the center block
         _origin = new VoxelPos(
@@ -132,6 +136,65 @@ public class WorldVoxelCache : IWorldVoxelCache
         _cableConductors.Clear();
     }
 
+    /// <summary>
+    /// Flood-fills from a position, converting connected PreExistingConductor voxels to CableConductor.
+    /// Used when extending an existing cable - marks the connected cable as "ours" so pathfinder
+    /// doesn't reject adjacency to it.
+    /// </summary>
+    /// <param name="startPos">Position to start flood-fill from (should be adjacent to existing cable).</param>
+    /// <param name="maxDistance">Maximum Manhattan distance to flood-fill.</param>
+    /// <returns>Number of voxels converted.</returns>
+    public int MarkConnectedConductorAsCable(VoxelPos startPos, int maxDistance = 4)
+    {
+        int converted = 0;
+        var visited = new HashSet<VoxelPos>();
+        var queue = new Queue<VoxelPos>();
+
+        // Find initial conductor neighbors to start flood-fill
+        foreach (var dir in VoxelDirectionExtensions.All)
+        {
+            var neighbor = startPos.Neighbor(dir);
+            if (_octree.Get(neighbor) == CacheVoxelState.PreExistingConductor)
+            {
+                queue.Enqueue(neighbor);
+            }
+        }
+
+        while (queue.Count > 0)
+        {
+            var pos = queue.Dequeue();
+
+            if (visited.Contains(pos))
+                continue;
+            visited.Add(pos);
+
+            // Check distance limit
+            int dist = Math.Abs(pos.X - startPos.X) + Math.Abs(pos.Y - startPos.Y) + Math.Abs(pos.Z - startPos.Z);
+            if (dist > maxDistance)
+                continue;
+
+            // Convert PreExistingConductor to CableConductor
+            if (_octree.Get(pos) == CacheVoxelState.PreExistingConductor)
+            {
+                _octree.Set(pos, CacheVoxelState.CableConductor);
+                _cableConductors.Add(pos);
+                converted++;
+
+                // Add neighbors to queue
+                foreach (var dir in VoxelDirectionExtensions.All)
+                {
+                    var neighbor = pos.Neighbor(dir);
+                    if (!visited.Contains(neighbor))
+                    {
+                        queue.Enqueue(neighbor);
+                    }
+                }
+            }
+        }
+
+        return converted;
+    }
+
     /// <inheritdoc/>
     public int DistanceToInsulation(VoxelPos pos, int maxDistance)
     {
@@ -167,11 +230,11 @@ public class WorldVoxelCache : IWorldVoxelCache
         _cableConductors.Clear();
 
         // Iterate all blocks in the cache radius
-        for (int bz = -CacheRadius; bz <= CacheRadius; bz++)
+        for (int bz = -_radius; bz <= _radius; bz++)
         {
-            for (int by = -CacheRadius; by <= CacheRadius; by++)
+            for (int by = -_radius; by <= _radius; by++)
             {
-                for (int bx = -CacheRadius; bx <= CacheRadius; bx++)
+                for (int bx = -_radius; bx <= _radius; bx++)
                 {
                     var blockPos = _centerBlock.AddCopy(bx, by, bz);
                     ProcessBlock(blockPos);

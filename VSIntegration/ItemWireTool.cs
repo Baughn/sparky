@@ -308,18 +308,19 @@ public class ItemWireTool : Item
 
             case CableLayingState.Phase.StartSelected:
             case CableLayingState.Phase.PathReady:
-                // Second click: place cable if we have a valid path
+                // Second click: place cable if we have a valid path, then reset
                 api?.Logger.Debug($"[Sparky WireTool] Second click: hasPath={cableState.CurrentPath != null}, pathCount={cableState.CurrentPath?.Path.Count ?? 0}");
                 if (cableState.CurrentPath?.Path.Count > 0)
                 {
                     api?.Logger.Debug($"[Sparky WireTool] Placing cable path with {cableState.CurrentPath.Value.Path.Count} voxels");
                     PlaceCablePath(world, cableState.CurrentPath.Value, material);
-                    cableState.Cancel();
                 }
                 else
                 {
                     api?.Logger.Debug("[Sparky WireTool] No valid path to place");
                 }
+                // Always reset to idle on second click
+                cableState.Cancel();
                 handling = EnumHandHandling.PreventDefault;
                 break;
         }

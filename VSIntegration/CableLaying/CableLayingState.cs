@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Sparky.Game.Core;
 using Sparky.Game.Core.CableLaying;
@@ -37,6 +38,11 @@ public class CableLayingState
     private Task<PathResult>? _pendingPathfind;
     private VoxelPos _lastGoalQueried;
     private readonly object _pathfindLock = new();
+
+    // Snap position cache (for preview optimization)
+    private VoxelPos? _lastSnapQueryPos;
+    private VoxelPos _cachedSnappedPos;
+    private VoxelDirection? _cachedSnappedDir;
 
     /// <summary>
     /// Creates a new cable laying state for the given cross-section.
@@ -79,11 +85,59 @@ public class CableLayingState
         // Find the best start position within 2 voxels of clicked position
         var (bestPos, bestDir) = FindBestStartPosition(clickedPos, _cache);
 
+        // If snapping to existing cable, mark connected cable voxels as "our cable"
+        // so pathfinder doesn't reject adjacency to them
+        if (bestDir.HasValue)
+        {
+            _cache.MarkConnectedConductorAsCable(bestPos, maxDistance: 4);
+        }
+
         _startPosition = bestPos;
         _startDirection = bestDir;
         _pathfinder = new CablePathfinder(_cache, _crossSection);
         _currentPhase = Phase.StartSelected;
         _currentPath = null;
+    }
+
+    /// <summary>
+    /// Gets the snapped start position for preview purposes without committing to it.
+    /// Use this in Idle phase to show where the cable would actually start.
+    /// Results are cached when the query position hasn't moved much.
+    /// </summary>
+    /// <param name="clickedPos">The position the player is targeting.</param>
+    /// <param name="blockAccessor">Block accessor for checking world state.</param>
+    /// <returns>The snapped position and inherited direction (if any).</returns>
+    public (VoxelPos Position, VoxelDirection? Direction) GetSnappedStartPosition(
+        VoxelPos clickedPos,
+        IBlockAccessor blockAccessor)
+    {
+        // Return cached result if position hasn't moved much (within 1 voxel)
+        if (_lastSnapQueryPos.HasValue)
+        {
+            int dist = Math.Abs(clickedPos.X - _lastSnapQueryPos.Value.X) +
+                       Math.Abs(clickedPos.Y - _lastSnapQueryPos.Value.Y) +
+                       Math.Abs(clickedPos.Z - _lastSnapQueryPos.Value.Z);
+            if (dist == 0)
+            {
+                return (_cachedSnappedPos, _cachedSnappedDir);
+            }
+        }
+
+        // Build small cache (1-block radius = 27 blocks vs 2744 for full cache)
+        var centerBlock = new VSBlockPos(
+            clickedPos.X / 16,
+            clickedPos.Y / 16,
+            clickedPos.Z / 16);
+        var tempCache = new WorldVoxelCache(blockAccessor, centerBlock, radius: 1);
+
+        var (snappedPos, snappedDir) = FindBestStartPosition(clickedPos, tempCache);
+
+        // Cache the result
+        _lastSnapQueryPos = clickedPos;
+        _cachedSnappedPos = snappedPos;
+        _cachedSnappedDir = snappedDir;
+
+        return (snappedPos, snappedDir);
     }
 
     /// <summary>
@@ -167,6 +221,7 @@ public class CableLayingState
     /// <summary>
     /// Finds the best start position within 2 voxels of the clicked position.
     /// Scores positions based on support quality and existing cable proximity.
+    /// Ties are broken by Euclidean distance to clicked position (closer wins).
     /// </summary>
     private (VoxelPos Position, VoxelDirection? Direction) FindBestStartPosition(
         VoxelPos clicked,
@@ -175,6 +230,7 @@ public class CableLayingState
         VoxelPos bestPos = clicked;
         VoxelDirection? bestDir = null;
         int bestScore = ScorePosition(clicked, cache, out var clickedDir);
+        int bestDistSq = 0; // Distance squared from clicked (0 for clicked itself)
         if (clickedDir.HasValue)
             bestDir = clickedDir;
 
@@ -190,10 +246,13 @@ public class CableLayingState
 
                     var pos = clicked.Offset(dx, dy, dz);
                     int score = ScorePosition(pos, cache, out var dir);
+                    int distSq = dx * dx + dy * dy + dz * dz;
 
-                    if (score > bestScore)
+                    // Better score wins, or same score but closer to cursor
+                    if (score > bestScore || (score == bestScore && distSq < bestDistSq))
                     {
                         bestScore = score;
+                        bestDistSq = distSq;
                         bestPos = pos;
                         bestDir = dir;
                     }
