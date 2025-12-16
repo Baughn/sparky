@@ -56,16 +56,10 @@ dotnet test --filter "FullyQualifiedName~TestName"  # Run specific test
 - **Newton-Raphson**: Iterative linearization for nonlinear components (diodes)
 - **Backward Euler**: Time integration for capacitors/inductors
 
-### Game Integration
-
-- `SparkyModSystem.cs`: Mod entry point
-- See `Cell.md` for planned cell/sub-solver model mapping to Vintage Story's block entity system
-
 ## Design Documentation
 
 - `MNA.md`: MNA theory, component stamps, solver architecture
 - `MNA/API.md`: High-level API design, partitioning, line optimization
-- `Cell.md`: Game integration design (voxel connectivity, materials, prism storage)
 - `context/voxel-storage.md`: VoxelGrid SVO + incremental prism architecture
 - `TEST-PLAN.md`: Comprehensive test coverage roadmap
 

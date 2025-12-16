@@ -1,6 +1,7 @@
 # Wire Tool Feature Plan
 
 *Created: 2025-12-15*
+*Updated: 2025-12-16*
 
 ---
 
@@ -13,9 +14,9 @@ Shows ghost voxels before placement. Visible to all players via server-side stat
 ```
 VSIntegration/Preview/
 ├── PreviewState.cs           # Protobuf network messages
-├── VoxelPreviewSystem.cs     # ModSystem: server sync + client tick
+├── VoxelPreviewSystem.cs     # ModSystem: server sync + client tick + cable preview logic
 ├── VoxelPreviewRenderer.cs   # IRenderer: GPU mesh rendering
-└── VoxelPreviewMesh.cs       # Mesh utilities (for future multi-voxel)
+└── VoxelPreviewMesh.cs       # Mesh utilities for multi-voxel preview
 ```
 
 ### Data Flow
@@ -34,80 +35,93 @@ Player aims wire tool  →   PreviewUpdateRequest  →   Stores state
 
 ### Rendering
 
-- **Stage**: `EnumRenderStage.OIT` (Order-Independent Transparency)
-- **Shader**: VS StandardShader with 50% vertex alpha
-- **Texture**: From circuitblock's "copper" texture slot
-- **Mesh**: `CubeMeshUtil.GetCube()` scaled to 1/16 block, 0.999× for z-fighting
+- **Stage**: `EnumRenderStage.Opaque` (not OIT - works better for ghost rendering)
+- **Shader**: VS StandardShader with vertex alpha
+- **Texture**: From circuitblock's texture slot, mapped via atlas
+- **Mesh**: Built dynamically with face culling for multi-voxel paths
 
 ### Key Implementation Notes
 
 - Texture lookup deferred until first render (atlas not ready during init)
-- Uses `prog.Tex2D = atlasTextureId` (not `BindTexture2d`)
+- Uses `rapi.BindTexture2d(textureId)` for texture binding
 - Mesh origin in world coords; model matrix subtracts camera position
 - Per-player state dictionary allows multiple concurrent previews
+- Cable preview colors: green (complete path), yellow (partial), red (no progress)
 
 ---
 
-## Cable Laying Feature (Planned)
+## Cable Laying Feature (Implemented)
 
-## Overview
+### Overview
 
-Add cable-laying modes to ItemWireTool, allowing players to route cables between two points with automatic pathfinding. Mode selection via F key menu (like chisel tool).
+Cable-laying modes added to ItemWireTool, allowing players to route cables between two points with automatic pathfinding. Mode selection via F key menu (like chisel tool).
 
-## User Interaction
+### User Interaction
 
 1. Player holds wire tool, presses F → mode selection menu appears (grid of 6 options)
-2. In cable mode: ghost preview shows at cursor (starting point preview, updated every frame)
+2. In cable mode: ghost preview shows snapped cross-section at cursor
 3. Player right-clicks starting point → start is locked, path preview appears as cursor moves
-4. Player moves cursor → path preview updates (throttled to 100ms)
+4. Player moves cursor → path preview updates (background pathfinding)
 5. Player right-clicks end point → cable is placed
-6. Cancel: switch away from wire tool
+6. Cancel: switch away from wire tool or change mode
 
-## Modes (F key menu, 6-item grid)
+### Modes (F key menu, 6-item grid)
 
 | Mode | Cross-Section | Description |
 |------|---------------|-------------|
-| Single Voxel | 1×1 | Current behavior (place/remove individual voxels) |
+| Single Voxel | 1×1 | Original behavior (place/remove individual voxels) |
 | Cable 1×1 | 1×1 | Pathfinding, single-voxel cable |
 | Cable 1×2 | 1×2 | Light circuits |
 | Cable 2×2 | 2×2 | Medium loads |
 | Cable 2×3 | 2×3 | Heavy loads |
 | Cable 3×5 | 3×5 | Main feeds |
 
-## Preview System
+### Preview System
 
 **Pre-selection preview (every frame):**
 - Single Voxel mode: Show ghost of voxel that would be placed on right-click
-- Cable modes: Show ghost of starting cross-section at cursor position
-- This is cheap - no pathfinding, just hit detection + cross-section placement
+- Cable modes: Show ghost of starting cross-section at snapped position
+- Uses `SnapPositionFinder` for optimal placement against surfaces
 
-**Post-selection preview (100ms throttle):**
+**Post-selection preview (background thread):**
 - Only in cable modes after first right-click
 - Shows full path from start to cursor position
 - A* pathfinding runs on background thread
+- Color indicates path status (green=complete, yellow=partial, red=blocked)
 
-## Material Selection
+### Material Selection (Implemented)
 
-For now: hardcode to Copper.
+Material cycling implemented - use scroll wheel or hotkeys to change material:
+- Copper (default)
+- Gold
+- Lead
+- Iron
 
-Future: Hold conductor material in one hand, wire tool in other. Tool reads material from off-hand slot.
+Material stored per-item in `ItemStack.Attributes`.
 
-## Architecture
+### Architecture
 
 ```
-VSIntegration/CableLaying/
-├── WorldVoxelCache.cs       # Convert world region to 4-state voxel grid
+Sparky.Core/Game/Core/CableLaying/   (VS-independent)
+├── CacheVoxelState.cs       # Voxel state types for pathfinding
+├── IWorldVoxelCache.cs      # Interface for world access
+├── CrossSection.cs          # Cross-section types and orientation
 ├── CablePathfinder.cs       # A* with cross-section awareness
-├── CablePreviewRenderer.cs  # Ghost mesh rendering
-├── CableValidator.cs        # Acceptance criteria assertions (for tests)
-└── CableLayingMode.cs       # State machine, ItemWireTool integration
+├── PathResult.cs            # Pathfinding result types
+├── CableValidator.cs        # Acceptance criteria for tests
+└── SnapPositionFinder.cs    # Start position snapping logic
+
+VSIntegration/CableLaying/
+├── WorldVoxelCache.cs       # VS-specific cache implementation
+├── CableLayingState.cs      # State machine for two-click workflow
+└── WireToolModeDialog.cs    # F key mode selection GUI
 ```
 
 ## Subsystem Details
 
 ### 1. WorldVoxelCache (Implemented)
 
-Converts a 7-block radius around start point into a sparse voxel octree for pathfinding.
+Converts a configurable radius around start point into a sparse voxel octree for pathfinding.
 
 **Location:**
 - `Sparky.Core/Game/Core/CableLaying/CacheVoxelState.cs` - Voxel state types
@@ -126,7 +140,7 @@ enum CacheVoxelStateValue : byte
 }
 ```
 
-The `Unroutable` state was added to handle architectural gaps (stairs, fences). Since cables can only be placed inside Circuit blocks, air gaps in non-Circuit blocks should neither be occupied nor provide adjacency support.
+The `Unroutable` state handles architectural gaps (stairs, fences). Since cables can only be placed inside Circuit blocks, air gaps in non-Circuit blocks should neither be occupied nor provide adjacency support.
 
 **Conversion Rules:**
 
@@ -149,20 +163,22 @@ interface IWorldVoxelCache
     CacheVoxelState GetState(VoxelPos pos);
     bool AllEmpty(VoxelPos min, VoxelPos max);
     bool AnyCardinalNeighbor(VoxelPos pos, CacheVoxelState state);
-    bool IsInPathfindingBounds(VoxelPos pos);  // 6-block radius
-    bool IsInCacheBounds(VoxelPos pos);        // 7-block radius
+    bool IsInPathfindingBounds(VoxelPos pos);
+    bool IsInCacheBounds(VoxelPos pos);
     void SetCableConductor(VoxelPos pos);
     void ClearCableConductors();
+    void MarkConnectedConductorAsCable(VoxelPos start, int maxDistance);  // For snapping to existing cables
     VoxelPos Origin { get; }
-    int DistanceToInsulation(VoxelPos pos, int maxDistance);  // Manhattan distance search
+    int DistanceToInsulation(VoxelPos pos, int maxDistance);
 }
 ```
 
 **Implementation Notes:**
-- Cache radius: 7 blocks (outer ring for adjacency checks)
+- Configurable radius (default 7 blocks, can use 1 block for preview snapping)
 - Pathfinding radius: 6 blocks (cables can only be routed within this)
 - Bounds are voxel-based: 6 blocks = 96 voxels, 7 blocks = 112 voxels
 - `SetCableConductor`/`ClearCableConductors` for temporary path marking during A*
+- `MarkConnectedConductorAsCable` allows snapping to existing cables without triggering conductor adjacency rejection
 
 **Tests:** `Sparky.Tests/Game/CableLaying/WorldVoxelCacheTests.cs` (36 tests)
 
@@ -178,9 +194,9 @@ A* pathfinding accounting for cable cross-section with minimum turning radius.
 **Tests:** `Sparky.Tests/Game/CableLaying/CablePathfinderTests.cs` (21 tests)
 
 **Start Point Snapping:**
-- When player selects start, search within 1-2 voxels for existing cable end of same cross-section
-- If found: snap to it, inherit travel direction (constrained start)
-- If not found: unconstrained start (any direction valid)
+- Uses `SnapPositionFinder` to find optimal start position within 3 voxels of click
+- If adjacent to PreExistingConductor: marks connected conductor as CableConductor to allow continuation
+- Scoring considers: insulator contact, distance from click, existing cable adjacency
 
 **Minimum Turning Radius:**
 - Minimum straight-line distance between 90° turns = `width × height` voxels
@@ -257,36 +273,54 @@ record PathResult(
 - Acceptable since search space is small (~96³ max) and runs off-thread
 
 **Threading:**
-- Run A* on background thread
-- Cache updates deferred while pathfinder running
+- Run A* on background thread via `Task.Run()`
+- Results polled each tick via `TryUpdatePath()`
 - Results may be stale if world changed; re-run if needed
 
-### 3. CablePreviewRenderer
+### 3. SnapPositionFinder (Implemented)
 
-Renders ghost blocks showing proposed cable path.
+Finds optimal starting position for cable placement.
 
-**Requirements:**
-- World-relative mesh (not anchored to block entity)
-- Translucent/ghost appearance
-- Two modes: pre-selection (cross-section only) and post-selection (full path)
-- Visible to all players (server-side state)
+**Location:** `Sparky.Core/Game/Core/CableLaying/SnapPositionFinder.cs`
 
-**Implementation Approach:**
-- Use VS `IRenderer` interface for custom rendering
-- Build mesh once when path changes (list of cube faces)
-- Store world-space vertices
-- Each frame: multiply by view-projection matrix, draw with transparency
+**Tests:** `Sparky.Tests/Game/CableLaying/SnapPositionTests.cs`
+
+**Algorithm:**
+1. Search within 3 voxels of clicked position
+2. For each candidate position, try all valid support directions
+3. For each support direction, try all travel direction + orientation combinations
+4. Score each configuration based on:
+   - All voxels must be Empty (negative infinity if not)
+   - Exactly `max(N,M)` voxels must touch Insulator (-1000 penalty if not)
+   - Manhattan distance from click to geometric center (negative)
+   - +3 bonus if adjacent to exactly N×M pre-existing conductor voxels
+   - +2 bonus for time-based direction preference (visual variety)
+
+**Purpose:**
+- Ensures cables always start from a valid supported position
+- Allows snapping to existing cable ends for continuation
+- Provides smooth preview even when cursor is slightly off-target
+
+### 4. CablePreviewRenderer (Implemented)
+
+Integrated into `VoxelPreviewSystem.cs` rather than a separate file. Renders ghost blocks showing proposed cable path.
+
+**Implementation:**
+- Uses same `VoxelPreviewRenderer` as single voxel preview
+- `BuildCablePreview()` in VoxelPreviewSystem handles cable-specific logic
+- `BuildPositionsPreview()` for cross-section preview in Idle phase
+- `BuildPathPreview()` for full path preview in StartSelected/PathReady phases
 
 **Preview States:**
 | State | What to render |
 |-------|----------------|
 | Single Voxel mode, no selection | Single ghost voxel at cursor |
-| Cable mode, no selection | Ghost cross-section at cursor |
-| Cable mode, start selected, Complete path | Ghost blocks along entire path (green tint) |
-| Cable mode, start selected, Partial path | Ghost blocks to closest point + red endpoint indicator |
-| Cable mode, start selected, NoProgress | Red indicator at start |
+| Cable mode, Idle phase | Ghost cross-section at snapped cursor position |
+| Cable mode, StartSelected, Complete path | Ghost blocks along entire path (green tint) |
+| Cable mode, StartSelected, Partial path | Ghost blocks to closest point (yellow tint) |
+| Cable mode, StartSelected, NoProgress | Red indicator at start |
 
-### 4. CableValidator (Implemented)
+### 5. CableValidator (Implemented)
 
 Test utility asserting acceptance criteria on generated cables.
 
@@ -333,79 +367,84 @@ public static class CableValidator
    - For 2×3: all adjacent prism pairs have 2×3 or 3×2 overlap area
    - Uses existing `TopologyBuilder.CalculateContactArea()`
 
-### 5. CableLayingMode
+### 6. CableLayingState (Implemented)
 
-State machine integrated with ItemWireTool.
+State machine for cable laying workflow. Per-player instance stored in `SparkyModSystem`.
+
+**Location:** `VSIntegration/CableLaying/CableLayingState.cs`
 
 **States:**
 ```
-Idle ──RightClick──> StartSelected ──RightClick──> (place cable) ──> Idle
-  ^                        |
-  └────(switch tool)───────┘
+Phase.Idle ──RightClick──> Phase.StartSelected ──RightClick──> (place cable) ──> Phase.Idle
+     ^                            │                                   │
+     │                            ↓                                   │
+     │                     Phase.PathReady ──────────────────────────→│
+     │                            │                                   │
+     └────(switch tool/Cancel())──┴───────────────────────────────────┘
 ```
 
-**Mode Menu:**
-- F key opens VS-style mode selection dialog
-- 2×3 grid showing all 6 modes with icons
-- Click to select, ESC to cancel
+**Key Methods:**
+- `SelectStart(voxelPos, blockAccessor)`: Builds cache, initializes pathfinder
+- `GetSnappedStartPositions(pos, blockAccessor)`: For Idle phase preview (uses small 1-block cache)
+- `UpdateGoal(pos)`: Triggers background pathfinding if position changed
+- `TryUpdatePath()`: Polls for completed pathfinding, returns true if new result
+- `Cancel()`: Resets to Idle phase
 
-## Changes to Existing Code
+**Threading:**
+- Background pathfinding via `Task.Run()`
+- Lock prevents concurrent pathfind requests
+- Results polled each tick, not awaited
 
-### BlockEntityCircuit.cs
+### 7. WireToolModeDialog (Implemented)
 
-Add batch method:
+Mode selection dialog opened with F key.
+
+**Location:** `VSIntegration/CableLaying/WireToolModeDialog.cs`
+
+**Features:**
+- 2×3 grid of buttons for 6 modes
+- Standard VS dialog styling
+- ESC or title bar close to cancel
+- Click mode button to select and close
+
+## Changes to Existing Code (All Implemented)
+
+### BlockEntityCircuit.cs ✓
+
+Added batch method for efficient multi-voxel placement:
 ```csharp
-/// <summary>
-/// Sets multiple conductor voxels in a batch. More efficient than individual calls.
-/// </summary>
 public void SetConductorVoxelsBatch(IEnumerable<(int X, int Y, int Z, Material Material)> voxels)
-{
-    bool anyChanged = false;
-    foreach (var (x, y, z, material) in voxels)
-    {
-        // Set voxel without triggering updates
-        anyChanged = true;
-    }
-
-    if (anyChanged)
-    {
-        MarkMeshDirty();
-        RegenSelectionBoxes(Api.World, null);
-        MarkDirty(true);
-
-        // Single notification to network manager
-        if (Api?.Side == EnumAppSide.Server)
-        {
-            var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
-            modSystem?.NetworkManager?.OnBlockVoxelsChangedBatch(Pos);
-        }
-    }
-}
 ```
 
-### CircuitNetworkManager.cs
+### CircuitNetworkManager.cs ✓
 
-Add batch notification:
+Added batch notification:
 ```csharp
-/// <summary>
-/// Called when multiple voxels in a block change at once.
-/// </summary>
 public void OnBlockVoxelsChangedBatch(BlockPos vsPos)
-{
-    _dirtyBlocks.Add(vsPos);
-}
 ```
 
-### ItemWireTool.cs
+### ItemWireTool.cs ✓
 
-- Add `WireToolMode` enum
-- Add mode menu handling (F key)
-- Integrate CableLayingMode state machine
-- Update preview rendering based on mode
+- Added `WireToolMode` enum with 6 modes
+- Added `WireToolModeExtensions` for cross-section mapping
+- Per-item state stored in `ItemStack.Attributes` (mode, material)
+- Per-player cable state retrieved from `SparkyModSystem`
+- `HandleCableModeInteract()` for two-click cable placement
+- `PlaceCablePath()` groups voxels by block, uses batch placement
+- `GetOrCreateCircuitBlock()` creates circuit blocks as needed
+
+### SparkyModSystem.cs ✓
+
+Added per-player cable state management:
+```csharp
+private readonly Dictionary<string, CableLayingState> _playerCableStates;
+public CableLayingState GetOrCreateCableState(string playerUid, CrossSection crossSection);
+public void ClearCableState(string playerUid);
+```
 
 ## Test Plan
 
-Every test involving cable generation must call `CableValidator.ValidateCable()`.
+Every test involving cable generation must call `CableValidator.ValidatePath()`.
 
 **Unit Tests (CablePathfinder):** ✓ Implemented
 - Straight line path (each axis)
@@ -430,21 +469,26 @@ Every test involving cable generation must call `CableValidator.ValidateCable()`
 - SetCableConductor/ClearCableConductors tracking
 - Octree uniform region collapsing
 
-**Integration Tests:**
+**Unit Tests (SnapPositionFinder):** ✓ Implemented
+- Snapping to surfaces
+- Snapping to existing cable ends
+- Score-based selection
+
+**Integration Tests:** (TODO)
 - Place cable, verify simulation connectivity
 - Place cable near existing circuit, verify no connection
 - Place cable through multiple VS blocks
 
-## Open Questions
+## Open Questions (All Resolved)
 
 1. ~~Cross-section selection UI~~ → F key menu (resolved)
-2. ~~Material selection~~ → Off-hand material, hardcode copper for now (resolved)
+2. ~~Material selection~~ → Per-item, cyclable via ItemStack.Attributes (resolved)
 3. ~~Cost per voxel~~ → Later (resolved)
 
 ## Performance Budget
 
-- Cache build: <50ms for 6-block radius
+- Cache build: <50ms for 7-block radius, <5ms for 1-block preview cache
 - A* search: <100ms typical, 6-block limit prevents runaway
-- Pre-selection preview: Every frame (cheap, no pathfinding)
-- Post-selection preview: 100ms throttle for pathfinding
-- Cable placement: Batched, single topology rebuild
+- Pre-selection preview: Every frame (cheap, uses small 1-block cache with result caching)
+- Post-selection preview: Background thread, polled each tick
+- Cable placement: Batched by block, single topology rebuild per block

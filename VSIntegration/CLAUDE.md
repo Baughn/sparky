@@ -6,6 +6,8 @@ The VSIntegration folder bridges Vintage Story's game world and Sparky's electri
 
 Whenever you make a change to this code, also change VSIntegration/CLAUDE.md.
 
+See CABLE-LAYER.md for details on the cable-laying tool.
+
 ## Architecture Overview
 
 ```
