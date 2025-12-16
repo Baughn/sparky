@@ -10,6 +10,7 @@ using Material = Sparky.Game.Core.Material;
 using Sparky.Game.Core;
 using Sparky.Game.Core.CableLaying;
 using Sparky.VSIntegration.CableLaying;
+using Sparky.VSIntegration.Preview;
 
 namespace Sparky.VSIntegration;
 
@@ -155,6 +156,23 @@ public class ItemWireTool : Item
     }
 
     /// <summary>
+    /// Gets the material index for network serialization.
+    /// </summary>
+    private int GetMaterialIndex(Material material)
+    {
+        return Array.IndexOf(Materials, material);
+    }
+
+    /// <summary>
+    /// Sends a voxel placement/removal request to the server.
+    /// </summary>
+    private void SendVoxelPlacement(VoxelPlacementRequest request)
+    {
+        var previewSystem = api?.ModLoader.GetModSystem<VoxelPreviewSystem>();
+        previewSystem?.SendVoxelPlacement(request);
+    }
+
+    /// <summary>
     /// Handle left-click (attack) - removes voxels from circuit blocks.
     /// </summary>
     public override void OnHeldAttackStart(
@@ -171,26 +189,41 @@ public class ItemWireTool : Item
         }
 
         var world = byEntity.World;
-        var block = world.BlockAccessor.GetBlock(blockSel.Position);
 
-        // If targeting a circuit block, remove voxel instead of breaking block
-        if (block is BlockCircuit)
+        // Server side: prevent default, client sends network message
+        if (world.Side == EnumAppSide.Server)
         {
-            var be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BlockEntityCircuit;
-            if (be != null)
+            var block = world.BlockAccessor.GetBlock(blockSel.Position);
+            if (block is BlockCircuit)
             {
-                var (localX, localY, localZ) = GetClickedVoxel(blockSel);
-                be.RemoveVoxel(localX, localY, localZ);
-
-                // If block is now empty, remove it
-                if (be.VoxelCuboids == null || be.VoxelCuboids.Count == 0)
-                {
-                    world.BlockAccessor.SetBlock(0, blockSel.Position);
-                }
-
                 handling = EnumHandHandling.PreventDefault;
-                return;
             }
+            return;
+        }
+
+        // Client side: send removal request to server
+        var clientBlock = world.BlockAccessor.GetBlock(blockSel.Position);
+        if (clientBlock is BlockCircuit)
+        {
+            var (localX, localY, localZ) = GetClickedVoxel(blockSel);
+
+            // Convert to global voxel coordinates
+            var globalX = blockSel.Position.X * 16 + localX;
+            var globalY = blockSel.Position.Y * 16 + localY;
+            var globalZ = blockSel.Position.Z * 16 + localZ;
+
+            var request = new VoxelPlacementRequest
+            {
+                IsRemoval = true,
+                Voxels = new List<VoxelPlacement>
+                {
+                    new VoxelPlacement(globalX, globalY, globalZ)
+                }
+            };
+            SendVoxelPlacement(request);
+
+            handling = EnumHandHandling.PreventDefault;
+            return;
         }
 
         base.OnHeldAttackStart(slot, byEntity, blockSel, entitySel, ref handling);
@@ -247,14 +280,25 @@ public class ItemWireTool : Item
             return;
         }
 
-        // SingleVoxel mode
+        // SingleVoxel mode - send placement request to server
         var pos = blockSel.Position;
         var block = world.BlockAccessor.GetBlock(pos);
+        var matIndex = GetMaterialIndex(material);
 
-        // If targeting a circuit block, place voxel
+        // If targeting a circuit block, place voxel adjacent to clicked face
         if (block is BlockCircuit)
         {
-            OnCircuitBlockInteract(world, player, blockSel, slot);
+            var (localX, localY, localZ, outsideBlock) = GetAdjacentVoxelWithOverflow(blockSel);
+            var targetPos = outsideBlock ? blockSel.Position.AddCopy(blockSel.Face) : blockSel.Position;
+            var globalX = targetPos.X * 16 + localX;
+            var globalY = targetPos.Y * 16 + localY;
+            var globalZ = targetPos.Z * 16 + localZ;
+
+            var request = new VoxelPlacementRequest
+            {
+                Voxels = new List<VoxelPlacement> { new VoxelPlacement(globalX, globalY, globalZ, matIndex) }
+            };
+            SendVoxelPlacement(request);
             handling = EnumHandHandling.PreventDefault;
             return;
         }
@@ -262,18 +306,39 @@ public class ItemWireTool : Item
         // If targeting a replaceable block (air, grass, etc), place new circuit block
         if (block.Replaceable >= 6000)
         {
-            PlaceNewCircuitBlock(world, blockSel, byEntity, slot);
+            var hitPos = blockSel.HitPosition;
+            var face = blockSel.Face;
+            var (localX, localY, localZ) = VoxelPositionHelper.GetAdjacentVoxel(
+                hitPos.X, hitPos.Y, hitPos.Z,
+                face.Normalf.X, face.Normalf.Y, face.Normalf.Z);
+            var globalX = pos.X * 16 + localX;
+            var globalY = pos.Y * 16 + localY;
+            var globalZ = pos.Z * 16 + localZ;
+
+            var request = new VoxelPlacementRequest
+            {
+                Voxels = new List<VoxelPlacement> { new VoxelPlacement(globalX, globalY, globalZ, matIndex) }
+            };
+            SendVoxelPlacement(request);
             handling = EnumHandHandling.PreventDefault;
             return;
         }
 
         // If targeting a solid block, try to place on the adjacent face
         var adjacentPos = blockSel.Position.AddCopy(blockSel.Face);
-        var be = GetOrCreateCircuitBlock(world, adjacentPos);
-        if (be != null)
+        var adjacentBlock = world.BlockAccessor.GetBlock(adjacentPos);
+        if (adjacentBlock.Replaceable >= 6000 || adjacentBlock is BlockCircuit)
         {
             var (localX, localY, localZ) = GetVoxelPositionOnFace(blockSel);
-            be.SetConductorVoxel(localX, localY, localZ, material);
+            var globalX = adjacentPos.X * 16 + localX;
+            var globalY = adjacentPos.Y * 16 + localY;
+            var globalZ = adjacentPos.Z * 16 + localZ;
+
+            var request = new VoxelPlacementRequest
+            {
+                Voxels = new List<VoxelPlacement> { new VoxelPlacement(globalX, globalY, globalZ, matIndex) }
+            };
+            SendVoxelPlacement(request);
             handling = EnumHandHandling.PreventDefault;
             return;
         }
@@ -344,112 +409,43 @@ public class ItemWireTool : Item
     }
 
     /// <summary>
-    /// Places all voxels in a cable path using batch operations for efficiency.
+    /// Sends a cable path placement request to the server.
     /// </summary>
     private void PlaceCablePath(IWorldAccessor world, PathResult path, Material material)
     {
-        // Group voxels by block
-        var voxelsByBlock = new Dictionary<(int X, int Y, int Z), List<(int X, int Y, int Z)>>();
-
-        foreach (var voxel in path.Path)
+        var matIndex = GetMaterialIndex(material);
+        var request = new VoxelPlacementRequest
         {
-            // Handle negative coordinates properly for block position
-            var blockX = voxel.X >= 0 ? voxel.X / 16 : (voxel.X - 15) / 16;
-            var blockY = voxel.Y >= 0 ? voxel.Y / 16 : (voxel.Y - 15) / 16;
-            var blockZ = voxel.Z >= 0 ? voxel.Z / 16 : (voxel.Z - 15) / 16;
-            var localX = ((voxel.X % 16) + 16) % 16;
-            var localY = ((voxel.Y % 16) + 16) % 16;
-            var localZ = ((voxel.Z % 16) + 16) % 16;
-
-            var blockKey = (blockX, blockY, blockZ);
-            if (!voxelsByBlock.TryGetValue(blockKey, out var list))
-            {
-                list = new List<(int, int, int)>();
-                voxelsByBlock[blockKey] = list;
-            }
-            list.Add((localX, localY, localZ));
-        }
-
-        // Place voxels in each block using batch method
-        foreach (var (blockKey, voxels) in voxelsByBlock)
-        {
-            var blockPos = new Vintagestory.API.MathTools.BlockPos(blockKey.X, blockKey.Y, blockKey.Z);
-            var be = GetOrCreateCircuitBlock(world, blockPos);
-            if (be == null)
-                continue;
-
-            // Convert to batch format with material
-            var batchVoxels = voxels.Select(v => (v.X, v.Y, v.Z, material));
-            be.SetConductorVoxelsBatch(batchVoxels);
-        }
+            Voxels = path.Path.Select(v => new VoxelPlacement(v.X, v.Y, v.Z, matIndex)).ToList()
+        };
+        SendVoxelPlacement(request);
     }
 
     /// <summary>
-    /// Gets an existing circuit block entity, or creates a new circuit block if the position is replaceable.
-    /// Returns null if the position is occupied by a non-circuit, non-replaceable block.
-    /// </summary>
-    private BlockEntityCircuit? GetOrCreateCircuitBlock(IWorldAccessor world, Vintagestory.API.MathTools.BlockPos pos)
-    {
-        var block = world.BlockAccessor.GetBlock(pos);
-
-        if (block is BlockCircuit)
-        {
-            return world.BlockAccessor.GetBlockEntity(pos) as BlockEntityCircuit;
-        }
-
-        if (block.Replaceable >= 6000)
-        {
-            var circuitBlock = world.GetBlock(new AssetLocation("sparky:circuitblock"));
-            if (circuitBlock == null)
-            {
-                api?.Logger.Warning("Could not find sparky:circuitblock");
-                return null;
-            }
-
-            world.BlockAccessor.SetBlock(circuitBlock.BlockId, pos);
-            return world.BlockAccessor.GetBlockEntity(pos) as BlockEntityCircuit;
-        }
-
-        return null;
-    }
-
-    /// <summary>
-    /// Called when right-clicking an existing circuit block. Places a conductor voxel.
+    /// Called when right-clicking an existing circuit block. Sends placement request to server.
     /// </summary>
     public bool OnCircuitBlockInteract(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ItemSlot slot)
     {
-        // Check if adjacent voxel would be outside this block
+        // Server side: prevent default, client sends network message
+        if (world.Side == EnumAppSide.Server)
+            return true;
+
+        // Client side: send placement request
         var (localX, localY, localZ, outsideBlock) = GetAdjacentVoxelWithOverflow(blockSel);
-
-        // Determine target block position
-        var targetPos = outsideBlock
-            ? blockSel.Position.AddCopy(blockSel.Face)
-            : blockSel.Position;
-
-        var be = GetOrCreateCircuitBlock(world, targetPos);
-        if (be == null) return false;
+        var targetPos = outsideBlock ? blockSel.Position.AddCopy(blockSel.Face) : blockSel.Position;
+        var globalX = targetPos.X * 16 + localX;
+        var globalY = targetPos.Y * 16 + localY;
+        var globalZ = targetPos.Z * 16 + localZ;
 
         var material = GetSelectedMaterial(slot);
-        be.SetConductorVoxel(localX, localY, localZ, material);
+        var matIndex = GetMaterialIndex(material);
+
+        var request = new VoxelPlacementRequest
+        {
+            Voxels = new List<VoxelPlacement> { new VoxelPlacement(globalX, globalY, globalZ, matIndex) }
+        };
+        SendVoxelPlacement(request);
         return true;
-    }
-
-    /// <summary>
-    /// Places a new circuit block and sets the initial voxel.
-    /// </summary>
-    private void PlaceNewCircuitBlock(IWorldAccessor world, BlockSelection blockSel, EntityAgent byEntity, ItemSlot slot)
-    {
-        var be = GetOrCreateCircuitBlock(world, blockSel.Position);
-        if (be == null) return;
-
-        // Place voxel adjacent to the clicked face (in front of it)
-        var hitPos = blockSel.HitPosition;
-        var face = blockSel.Face;
-        var (localX, localY, localZ) = VoxelPositionHelper.GetAdjacentVoxel(
-            hitPos.X, hitPos.Y, hitPos.Z,
-            face.Normalf.X, face.Normalf.Y, face.Normalf.Z);
-        var material = GetSelectedMaterial(slot);
-        be.SetConductorVoxel(localX, localY, localZ, material);
     }
 
     /// <summary>

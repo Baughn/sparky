@@ -92,30 +92,37 @@ Uses `VoxelPositionHelper` (in `Sparky.Core/Game/Core/`) for pure-math hit-posit
 - **Per-item state** (mode, material): Stored in `ItemStack.Attributes` via `GetMode(slot)`/`SetMode(slot, mode, player)`
 - **Per-player runtime state** (cable laying): Stored in `SparkyModSystem` dictionary via `GetCableState(playerUid)`
 
-## Data Flow: Voxel Placement
+## Data Flow: Voxel Placement (Multiplayer-Safe)
+
+All voxel placement/removal goes through the server via network messages:
 
 ```
-1. Player right-clicks with ItemWireTool
+Client                              Server                          Other Clients
+──────                              ──────                          ─────────────
+1. Player right-clicks
    ↓
-2. ItemWireTool.OnCircuitBlockInteract()
-   - Calculates target voxel from hit position
-   - Handles block boundary overflow
+2. ItemWireTool calculates voxel pos
    ↓
-3. BlockEntityCircuit.SetConductorVoxel(x, y, z, material)
-   - Gets VS block ID for material from BlockIdToMaterial registry
-   - Calls inherited SetVoxel() to update VoxelCuboids
-   - Marks mesh dirty, regenerates selection boxes
-   - Notifies CircuitNetworkManager.OnBlockVoxelChanged()
-   ↓
-4. CircuitNetworkManager adds to _dirtyBlocks
-   ↓
-5. On next game tick: ProcessDirtyBlocks()
-   - Merges affected blocks into single VoxelGrid
-   - TopologyBuilder.BuildTopology() extracts prisms, finds regions
-   - Updates ISimulation with nodes and resistors
-   ↓
-6. Simulation.Step(dt) runs MNA solver each tick
+3. SendVoxelPlacement(request)  →   4. VoxelPreviewSystem.OnVoxelPlacementRequest()
+                                       - Validates player distance (~15 blocks)
+                                       - Groups voxels by block position
+                                       - GetOrCreateCircuitBlock() for each
+                                       - SetConductorVoxelsBatch() or RemoveVoxel()
+                                       ↓
+                                    5. BlockEntityCircuit notifies
+                                       CircuitNetworkManager.OnBlockVoxelsChangedBatch()
+                                       ↓
+                                    6. ProcessDirtyBlocks() on game tick
+                                       - TopologyBuilder.BuildTopology()
+                                       - Updates ISimulation
+                                       ↓
+                                    7. VS auto-syncs block entity  →  Block entity update
+                                       via MarkDirty(true)              └─ Voxels visible
 ```
+
+**Network Messages** (defined in PreviewState.cs):
+- `VoxelPlacementRequest`: List of voxels + IsRemoval flag
+- `VoxelPlacement`: Global X/Y/Z coordinates + material index
 
 ## Coordinate Systems
 
@@ -156,17 +163,27 @@ This populates `BlockIdToMaterial`, enabling `ExportToVoxelGrid()` to distinguis
 
 ## Preview System
 
-The `Preview/` folder implements ghost voxel rendering for wire tool placement feedback.
+The `Preview/` folder implements ghost voxel rendering for wire tool placement feedback, and **handles all voxel placement network messages**.
 
 ### Architecture
 
 ```
 VSIntegration/Preview/
-├── PreviewState.cs           # Protobuf network messages
-├── VoxelPreviewSystem.cs     # ModSystem: server sync + client tick
+├── PreviewState.cs           # Protobuf network messages (preview + placement)
+├── VoxelPreviewSystem.cs     # ModSystem: preview sync, placement handling
 ├── VoxelPreviewRenderer.cs   # IRenderer: GPU mesh rendering
 └── VoxelPreviewMesh.cs       # Multi-voxel mesh building with face culling
 ```
+
+### Voxel Placement (Server-Side)
+
+`VoxelPreviewSystem.OnVoxelPlacementRequest()` handles all wire tool placement:
+- Receives `VoxelPlacementRequest` from clients
+- Validates player is within range (~15 blocks)
+- Groups voxels by block position
+- Creates circuit blocks as needed (`GetOrCreateCircuitBlock`)
+- Calls `SetConductorVoxelsBatch()` or `RemoveVoxel()` on server
+- VS auto-syncs block entity state to all clients
 
 ### Rendering Approach
 

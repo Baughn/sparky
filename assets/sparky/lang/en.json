@@ -1,5 +1,5 @@
 {
     "block-circuitblock": "Circuit Block",
     "item-wiretool": "Wire Tool",
-    "itemdesc-wiretool": "A tool for placing and removing conductor voxels. Left click to place, sneak + left click to remove."
+    "itemdesc-wiretool": "A tool for placing and removing conductor voxels. Right click to place, F to change mode, left click to remove."
 }
