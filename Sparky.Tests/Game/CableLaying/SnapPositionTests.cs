@@ -9,8 +9,7 @@ namespace Sparky.Tests.Game.CableLaying;
 /// These tests validate that snap positions properly account for cable cross-section size.
 /// </summary>
 [TestFixture]
-public class SnapPositionTests
-{
+public class SnapPositionTests {
     // 16³ cube of insulation floating in space
     private const int CubeOrigin = 50;
     private const int CubeSize = 16;
@@ -19,8 +18,7 @@ public class SnapPositionTests
     private MockWorldVoxelCache _cache = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         // Create cache centered on the cube
         var center = new VoxelPos(CubeOrigin + CubeSize / 2, CubeOrigin + CubeSize / 2, CubeOrigin + CubeSize / 2);
         _cache = new MockWorldVoxelCache(center);
@@ -32,12 +30,9 @@ public class SnapPositionTests
     /// <summary>
     /// Test data: all combinations of cross-sections and cube faces.
     /// </summary>
-    public static IEnumerable<TestCaseData> CrossSectionsAndFaces()
-    {
-        foreach (var crossSection in CrossSection.AllSizes)
-        {
-            foreach (var face in VoxelDirectionExtensions.All)
-            {
+    public static IEnumerable<TestCaseData> CrossSectionsAndFaces() {
+        foreach (var crossSection in CrossSection.AllSizes) {
+            foreach (var face in VoxelDirectionExtensions.All) {
                 yield return new TestCaseData(crossSection, face)
                     .SetName($"{crossSection}_Face_{face}");
             }
@@ -53,8 +48,7 @@ public class SnapPositionTests
     [TestCaseSource(nameof(CrossSectionsAndFaces))]
     public void SnapPosition_TouchesSurface_WithCorrectContactCount(
         CrossSection crossSection,
-        VoxelDirection face)
-    {
+        VoxelDirection face) {
         // Get click position just outside the face center
         var clickPos = GetFaceCenterClickPosition(face);
 
@@ -63,8 +57,7 @@ public class SnapPositionTests
 
         // Count how many voxels touch insulation
         int insulationContact = 0;
-        foreach (var pos in positions)
-        {
+        foreach (var pos in positions) {
             if (_cache.AnyCardinalNeighbor(pos, CacheVoxelState.Insulation))
                 insulationContact++;
         }
@@ -90,8 +83,7 @@ public class SnapPositionTests
     [TestCaseSource(nameof(CrossSectionsAndFaces))]
     public void SnapPosition_AllVoxelsInEmptySpace(
         CrossSection crossSection,
-        VoxelDirection face)
-    {
+        VoxelDirection face) {
         // Get click position just outside the face center
         var clickPos = GetFaceCenterClickPosition(face);
 
@@ -100,8 +92,7 @@ public class SnapPositionTests
 
         // Check all positions are empty
         var embeddedPositions = new List<VoxelPos>();
-        foreach (var pos in positions)
-        {
+        foreach (var pos in positions) {
             var state = _cache.GetState(pos);
             if (state != CacheVoxelState.Empty)
                 embeddedPositions.Add(pos);
@@ -122,14 +113,12 @@ public class SnapPositionTests
     /// <summary>
     /// Gets the click position at the center of a cube face, just outside the surface.
     /// </summary>
-    private VoxelPos GetFaceCenterClickPosition(VoxelDirection face)
-    {
+    private VoxelPos GetFaceCenterClickPosition(VoxelDirection face) {
         int centerYZ = CubeOrigin + CubeSize / 2; // Center in Y and Z
         int centerXZ = CubeOrigin + CubeSize / 2; // Center in X and Z
         int centerXY = CubeOrigin + CubeSize / 2; // Center in X and Y
 
-        return face switch
-        {
+        return face switch {
             VoxelDirection.XPos => new VoxelPos(CubeEnd + 1, centerYZ, centerYZ),     // +X face
             VoxelDirection.XNeg => new VoxelPos(CubeOrigin - 1, centerYZ, centerYZ), // -X face
             VoxelDirection.YPos => new VoxelPos(centerXZ, CubeEnd + 1, centerXZ),     // +Y face
@@ -143,14 +132,10 @@ public class SnapPositionTests
     /// <summary>
     /// Creates a cube of insulation at the given origin.
     /// </summary>
-    private void CreateCube(VoxelPos origin, int size)
-    {
-        for (int x = 0; x < size; x++)
-        {
-            for (int y = 0; y < size; y++)
-            {
-                for (int z = 0; z < size; z++)
-                {
+    private void CreateCube(VoxelPos origin, int size) {
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
                     _cache.SetState(new VoxelPos(origin.X + x, origin.Y + y, origin.Z + z),
                         CacheVoxelState.Insulation);
                 }

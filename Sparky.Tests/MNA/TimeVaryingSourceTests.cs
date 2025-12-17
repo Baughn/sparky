@@ -10,21 +10,18 @@ namespace Sparky.Tests.MNA;
 /// Tests for time-varying source utilities (AC, PWM).
 /// </summary>
 [TestFixture]
-public class TimeVaryingSourceTests
-{
+public class TimeVaryingSourceTests {
     private SimulationManager _sim = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _sim = new SimulationManager();
     }
 
     #region AC Voltage Source Tests
 
     [Test]
-    public void AcVoltageSource_AtTimeZero_ReturnsOffsetPlusSineOfPhase()
-    {
+    public void AcVoltageSource_AtTimeZero_ReturnsOffsetPlusSineOfPhase() {
         var n1 = _sim.CreateNode();
         var ac = new AcVoltageSource(
             _sim,
@@ -41,8 +38,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void AcVoltageSource_AtQuarterPeriod_ReturnsPeakAmplitude()
-    {
+    public void AcVoltageSource_AtQuarterPeriod_ReturnsPeakAmplitude() {
         var n1 = _sim.CreateNode();
         var ac = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
 
@@ -51,8 +47,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void AcVoltageSource_WithOffset_AddsOffsetToWaveform()
-    {
+    public void AcVoltageSource_WithOffset_AddsOffsetToWaveform() {
         var n1 = _sim.CreateNode();
         var ac = new AcVoltageSource(
             _sim,
@@ -68,8 +63,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void AcVoltageSource_WithPhase_ShiftsWaveform()
-    {
+    public void AcVoltageSource_WithPhase_ShiftsWaveform() {
         var n1 = _sim.CreateNode();
         // Phase = π/2 shifts the waveform by quarter period
         var ac = new AcVoltageSource(
@@ -86,8 +80,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void AcVoltageSource_Update_SetsVoltageToCurrentTime()
-    {
+    public void AcVoltageSource_Update_SetsVoltageToCurrentTime() {
         var n1 = _sim.CreateNode();
         var ac = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
 
@@ -95,8 +88,7 @@ public class TimeVaryingSourceTests
         _sim.AddResistor(n1, _sim.Ground, 100.0);
 
         // Advance to quarter period
-        for (int i = 0; i < 25; i++)
-        {
+        for (int i = 0; i < 25; i++) {
             ac.Update();
             _sim.Step(0.01);
         }
@@ -107,8 +99,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void AcVoltageSource_ParameterChange_AffectsNextUpdate()
-    {
+    public void AcVoltageSource_ParameterChange_AffectsNextUpdate() {
         var n1 = _sim.CreateNode();
         var ac = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
 
@@ -120,8 +111,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void AcVoltageSource_Remove_RemovesFromSimulation()
-    {
+    public void AcVoltageSource_Remove_RemovesFromSimulation() {
         var n1 = _sim.CreateNode();
         var ac = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
 
@@ -138,8 +128,7 @@ public class TimeVaryingSourceTests
     #region AC Current Source Tests
 
     [Test]
-    public void AcCurrentSource_AtQuarterPeriod_ReturnsPeakAmplitude()
-    {
+    public void AcCurrentSource_AtQuarterPeriod_ReturnsPeakAmplitude() {
         var n1 = _sim.CreateNode();
         var ac = new AcCurrentSource(_sim, _sim.Ground, n1, amplitude: 0.1, frequency: 1.0);
 
@@ -148,8 +137,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void AcCurrentSource_Update_SetsCurrentToCurrentTime()
-    {
+    public void AcCurrentSource_Update_SetsCurrentToCurrentTime() {
         var n1 = _sim.CreateNode();
         var ac = new AcCurrentSource(_sim, _sim.Ground, n1, amplitude: 0.1, frequency: 1.0);
 
@@ -157,8 +145,7 @@ public class TimeVaryingSourceTests
         _sim.AddResistor(n1, _sim.Ground, 100.0);
 
         // Advance to quarter period
-        for (int i = 0; i < 25; i++)
-        {
+        for (int i = 0; i < 25; i++) {
             ac.Update();
             _sim.Step(0.01);
         }
@@ -173,8 +160,7 @@ public class TimeVaryingSourceTests
     #region PWM Voltage Source Tests
 
     [Test]
-    public void PwmVoltageSource_DuringOnPhase_ReturnsVHigh()
-    {
+    public void PwmVoltageSource_DuringOnPhase_ReturnsVHigh() {
         var n1 = _sim.CreateNode();
         var pwm = new PwmVoltageSource(
             _sim,
@@ -192,8 +178,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void PwmVoltageSource_DuringOffPhase_ReturnsVLow()
-    {
+    public void PwmVoltageSource_DuringOffPhase_ReturnsVLow() {
         var n1 = _sim.CreateNode();
         var pwm = new PwmVoltageSource(
             _sim,
@@ -211,8 +196,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void PwmVoltageSource_DutyCycle25Percent_OnForQuarterPeriod()
-    {
+    public void PwmVoltageSource_DutyCycle25Percent_OnForQuarterPeriod() {
         var n1 = _sim.CreateNode();
         var pwm = new PwmVoltageSource(
             _sim,
@@ -230,8 +214,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void PwmVoltageSource_SecondPeriod_RepeatsPattern()
-    {
+    public void PwmVoltageSource_SecondPeriod_RepeatsPattern() {
         var n1 = _sim.CreateNode();
         var pwm = new PwmVoltageSource(
             _sim,
@@ -249,8 +232,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void PwmVoltageSource_Update_TogglesBetweenHighAndLow()
-    {
+    public void PwmVoltageSource_Update_TogglesBetweenHighAndLow() {
         var n1 = _sim.CreateNode();
         var pwm = new PwmVoltageSource(
             _sim,
@@ -269,8 +251,7 @@ public class TimeVaryingSourceTests
         bool sawHigh = false;
         bool sawLow = false;
 
-        for (int i = 0; i < 100; i++)
-        {
+        for (int i = 0; i < 100; i++) {
             pwm.Update();
             _sim.Step(1e-4);
 
@@ -290,8 +271,7 @@ public class TimeVaryingSourceTests
     #region SourceUpdater Tests
 
     [Test]
-    public void SourceUpdater_UpdateAll_UpdatesAllRegisteredSources()
-    {
+    public void SourceUpdater_UpdateAll_UpdatesAllRegisteredSources() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -315,8 +295,7 @@ public class TimeVaryingSourceTests
         updater.Add(ac2);
 
         // Advance to t=0.25 (quarter period)
-        for (int i = 0; i < 25; i++)
-        {
+        for (int i = 0; i < 25; i++) {
             updater.UpdateAll();
             _sim.Step(0.01);
         }
@@ -332,8 +311,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void SourceUpdater_Remove_StopsUpdatingSource()
-    {
+    public void SourceUpdater_Remove_StopsUpdatingSource() {
         var n1 = _sim.CreateNode();
         var ac = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
         _sim.AddResistor(n1, _sim.Ground, 100.0);
@@ -349,8 +327,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void SourceUpdater_RemoveAll_RemovesSourcesFromSimulation()
-    {
+    public void SourceUpdater_RemoveAll_RemovesSourcesFromSimulation() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -369,8 +346,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void SourceUpdater_UpdateAll_SkipsRemovedSources()
-    {
+    public void SourceUpdater_UpdateAll_SkipsRemovedSources() {
         var n1 = _sim.CreateNode();
         var ac = new AcVoltageSource(_sim, n1, _sim.Ground, amplitude: 10.0, frequency: 1.0);
         _sim.AddResistor(n1, _sim.Ground, 100.0);
@@ -390,8 +366,7 @@ public class TimeVaryingSourceTests
     #region Integration Tests
 
     [Test]
-    public void AcVoltageSource_FullWaveRectifier_ProducesPositiveVoltage()
-    {
+    public void AcVoltageSource_FullWaveRectifier_ProducesPositiveVoltage() {
         // Simple half-wave rectifier: AC -> Diode -> Load
         var nAc = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -404,8 +379,7 @@ public class TimeVaryingSourceTests
         double maxNegative = 0;
 
         // Run for several cycles
-        for (int i = 0; i < 500; i++)
-        {
+        for (int i = 0; i < 500; i++) {
             ac.Update();
             _sim.Step(1e-5);
 
@@ -419,8 +393,7 @@ public class TimeVaryingSourceTests
     }
 
     [Test]
-    public void PwmVoltageSource_AverageVoltage_MatchesDutyCycle()
-    {
+    public void PwmVoltageSource_AverageVoltage_MatchesDutyCycle() {
         var n1 = _sim.CreateNode();
         var pwm = new PwmVoltageSource(
             _sim,
@@ -438,8 +411,7 @@ public class TimeVaryingSourceTests
         int samples = 0;
 
         // Run for many cycles to get good average
-        for (int i = 0; i < 10000; i++)
-        {
+        for (int i = 0; i < 10000; i++) {
             pwm.Update();
             _sim.Step(1e-6);
             sum += _sim.GetVoltage(n1);

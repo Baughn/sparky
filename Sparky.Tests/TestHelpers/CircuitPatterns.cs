@@ -4,8 +4,7 @@ namespace Sparky.Tests.TestHelpers;
 /// Pre-built circuit patterns for common test scenarios.
 /// Each method returns a CircuitBuilder that can be further customized.
 /// </summary>
-public static class CircuitPatterns
-{
+public static class CircuitPatterns {
     /// <summary>
     /// Creates a voltage divider: Vsrc -- R1 -- mid -- R2 -- GND
     /// Node names: "src", "mid"
@@ -13,8 +12,7 @@ public static class CircuitPatterns
     /// <param name="sourceV">Source voltage</param>
     /// <param name="r1">Upper resistor (src to mid)</param>
     /// <param name="r2">Lower resistor (mid to GND)</param>
-    public static CircuitBuilder VoltageDivider(double sourceV, double r1, double r2)
-    {
+    public static CircuitBuilder VoltageDivider(double sourceV, double r1, double r2) {
         return new CircuitBuilder()
             .VoltageSource(sourceV, "src")
             .Resistor(r1, "src", "mid")
@@ -29,8 +27,7 @@ public static class CircuitPatterns
     /// <param name="sourceV">Source voltage</param>
     /// <param name="r">Resistance in ohms</param>
     /// <param name="c">Capacitance in farads</param>
-    public static CircuitBuilder RCCircuit(double sourceV, double r, double c)
-    {
+    public static CircuitBuilder RCCircuit(double sourceV, double r, double c) {
         return new CircuitBuilder()
             .VoltageSource(sourceV, "src")
             .Resistor(r, "src", "cap")
@@ -45,8 +42,7 @@ public static class CircuitPatterns
     /// <param name="sourceV">Source voltage</param>
     /// <param name="r">Resistance in ohms</param>
     /// <param name="l">Inductance in henries</param>
-    public static CircuitBuilder RLCircuit(double sourceV, double r, double l)
-    {
+    public static CircuitBuilder RLCircuit(double sourceV, double r, double l) {
         return new CircuitBuilder()
             .VoltageSource(sourceV, "src")
             .Resistor(r, "src", "ind")
@@ -62,8 +58,7 @@ public static class CircuitPatterns
     /// <param name="r">Resistance in ohms</param>
     /// <param name="l">Inductance in henries</param>
     /// <param name="c">Capacitance in farads</param>
-    public static CircuitBuilder SeriesRLC(double sourceV, double r, double l, double c)
-    {
+    public static CircuitBuilder SeriesRLC(double sourceV, double r, double l, double c) {
         return new CircuitBuilder()
             .VoltageSource(sourceV, "src")
             .Resistor(r, "src", "r_out")
@@ -78,8 +73,7 @@ public static class CircuitPatterns
     /// </summary>
     /// <param name="sourceV">Source voltage</param>
     /// <param name="r">Load resistance in ohms</param>
-    public static CircuitBuilder ResistiveLoad(double sourceV, double r)
-    {
+    public static CircuitBuilder ResistiveLoad(double sourceV, double r) {
         return new CircuitBuilder().VoltageSource(sourceV, "src").Resistor(r, "src", "GND");
     }
 
@@ -90,8 +84,7 @@ public static class CircuitPatterns
     /// </summary>
     /// <param name="current">Source current in amps</param>
     /// <param name="r">Load resistance in ohms</param>
-    public static CircuitBuilder CurrentSourceWithLoad(double current, double r)
-    {
+    public static CircuitBuilder CurrentSourceWithLoad(double current, double r) {
         return new CircuitBuilder()
             .CurrentSource(current, "GND", "load")
             .Resistor(r, "load", "GND");

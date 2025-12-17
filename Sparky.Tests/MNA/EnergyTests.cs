@@ -9,21 +9,18 @@ namespace Sparky.Tests.MNA;
 /// Validates cumulative energy tracking for sources and loads.
 /// </summary>
 [TestFixture]
-public class EnergyTests
-{
+public class EnergyTests {
     private SimulationManager _sim = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _sim = new SimulationManager();
     }
 
     #region Basic Accumulation Tests
 
     [Test]
-    public void ResistorEnergy_DCCircuit_EqualsExpectedDissipation()
-    {
+    public void ResistorEnergy_DCCircuit_EqualsExpectedDissipation() {
         // 10V -- R(100) -- GND
         // P = V²/R = 100/100 = 1W
         // E = P × t = 1W × 0.001s = 0.001J
@@ -42,8 +39,7 @@ public class EnergyTests
     }
 
     [Test]
-    public void VoltageSourceEnergy_DCCircuit_EqualsExpectedDelivery()
-    {
+    public void VoltageSourceEnergy_DCCircuit_EqualsExpectedDelivery() {
         // 10V -- R(100) -- GND
         // I = V/R = 0.1A
         // P = V × I = 10 × 0.1 = 1W
@@ -63,8 +59,7 @@ public class EnergyTests
     }
 
     [Test]
-    public void MultiStepAccumulation_EnergySumsCorrectly()
-    {
+    public void MultiStepAccumulation_EnergySumsCorrectly() {
         // Run 10 steps of 0.001s each
         // Total energy should be 10 × (1W × 0.001s) = 0.01J
         var nPos = _sim.CreateNode();
@@ -72,8 +67,7 @@ public class EnergyTests
         _sim.AddVoltageSource(nPos, _sim.Ground, 10.0);
         var r = _sim.AddResistor(nPos, _sim.Ground, 100.0);
 
-        for (int i = 0; i < 10; i++)
-        {
+        for (int i = 0; i < 10; i++) {
             _sim.Step(0.001);
         }
 
@@ -89,8 +83,7 @@ public class EnergyTests
     #region Reset Tests
 
     [Test]
-    public void ResetEnergyCounters_ClearsAllEnergy()
-    {
+    public void ResetEnergyCounters_ClearsAllEnergy() {
         var nPos = _sim.CreateNode();
 
         var vs = _sim.AddVoltageSource(nPos, _sim.Ground, 10.0);
@@ -110,8 +103,7 @@ public class EnergyTests
     }
 
     [Test]
-    public void ResetEnergyCounter_ClearsSpecificComponent()
-    {
+    public void ResetEnergyCounter_ClearsSpecificComponent() {
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
 
@@ -136,8 +128,7 @@ public class EnergyTests
     #region Energy Conservation Tests
 
     [Test]
-    public void EnergyConservation_SourceEnergyEqualsLoadEnergy()
-    {
+    public void EnergyConservation_SourceEnergyEqualsLoadEnergy() {
         // Energy delivered by source should equal energy dissipated by load
         var nPos = _sim.CreateNode();
 
@@ -153,8 +144,7 @@ public class EnergyTests
     }
 
     [Test]
-    public void EnergyConservation_VoltageDivider_SourceEqualsSum()
-    {
+    public void EnergyConservation_VoltageDivider_SourceEqualsSum() {
         // 10V -- R1(100) -- n1 -- R2(100) -- GND
         // Source energy = R1 energy + R2 energy
         var nPos = _sim.CreateNode();
@@ -177,8 +167,7 @@ public class EnergyTests
     #region Line Optimization Tests
 
     [Test]
-    public void LineOptimizedResistors_EnergyDistributedByResistanceRatio()
-    {
+    public void LineOptimizedResistors_EnergyDistributedByResistanceRatio() {
         // Three resistors in series: R1(100) -- R2(200) -- R3(300)
         // Total R = 600, current I = 10/600 = 1/60 A
         // Power distribution: P_i = I² × R_i
@@ -206,8 +195,7 @@ public class EnergyTests
     }
 
     [Test]
-    public void LineOptimizedResistors_TotalEnergyMatchesEquivalent()
-    {
+    public void LineOptimizedResistors_TotalEnergyMatchesEquivalent() {
         // Compare optimized chain to single equivalent resistor
         _sim.EnableLineOptimization = true;
 
@@ -235,8 +223,7 @@ public class EnergyTests
     #region Transient Tests
 
     [Test]
-    public void CapacitorEnergy_Charging_PositiveNetAbsorption()
-    {
+    public void CapacitorEnergy_Charging_PositiveNetAbsorption() {
         // RC charging circuit: capacitor absorbs energy while charging
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -246,8 +233,7 @@ public class EnergyTests
         var c = _sim.AddCapacitor(n1, _sim.Ground, 1e-6);
 
         // Charge for several time constants
-        for (int i = 0; i < 50; i++)
-        {
+        for (int i = 0; i < 50; i++) {
             _sim.Step(1e-4);
         }
 
@@ -257,8 +243,7 @@ public class EnergyTests
     }
 
     [Test]
-    public void InductorEnergy_Charging_PositiveNetAbsorption()
-    {
+    public void InductorEnergy_Charging_PositiveNetAbsorption() {
         // RL charging circuit: inductor absorbs energy while current builds
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -268,8 +253,7 @@ public class EnergyTests
         var l = _sim.AddInductor(n1, _sim.Ground, 0.1);
 
         // Let current build up
-        for (int i = 0; i < 50; i++)
-        {
+        for (int i = 0; i < 50; i++) {
             _sim.Step(1e-4);
         }
 
@@ -283,8 +267,7 @@ public class EnergyTests
     #region Current Source Tests
 
     [Test]
-    public void CurrentSourceEnergy_DeliveringPower_TracksCorrectly()
-    {
+    public void CurrentSourceEnergy_DeliveringPower_TracksCorrectly() {
         // Current source pushing current through resistor
         // Current flows from nodeIn (Ground) to nodeOut (n1)
         // n1 is at higher potential (10V) than Ground (0V)
@@ -311,50 +294,43 @@ public class EnergyTests
     #region Invalid ID Tests
 
     [Test]
-    public void GetResistorEnergy_InvalidId_ThrowsException()
-    {
+    public void GetResistorEnergy_InvalidId_ThrowsException() {
         var invalidId = new ResistorId(999);
         Assert.Throws<InvalidComponentException>(() => _sim.GetResistorEnergy(invalidId));
     }
 
     [Test]
-    public void GetVoltageSourceEnergy_InvalidId_ThrowsException()
-    {
+    public void GetVoltageSourceEnergy_InvalidId_ThrowsException() {
         var invalidId = new VoltageSourceId(999);
         Assert.Throws<InvalidComponentException>(() => _sim.GetVoltageSourceEnergy(invalidId));
     }
 
     [Test]
-    public void GetCurrentSourceEnergy_InvalidId_ThrowsException()
-    {
+    public void GetCurrentSourceEnergy_InvalidId_ThrowsException() {
         var invalidId = new CurrentSourceId(999);
         Assert.Throws<InvalidComponentException>(() => _sim.GetCurrentSourceEnergy(invalidId));
     }
 
     [Test]
-    public void GetCapacitorEnergy_InvalidId_ThrowsException()
-    {
+    public void GetCapacitorEnergy_InvalidId_ThrowsException() {
         var invalidId = new CapacitorId(999);
         Assert.Throws<InvalidComponentException>(() => _sim.GetCapacitorEnergy(invalidId));
     }
 
     [Test]
-    public void GetInductorEnergy_InvalidId_ThrowsException()
-    {
+    public void GetInductorEnergy_InvalidId_ThrowsException() {
         var invalidId = new InductorId(999);
         Assert.Throws<InvalidComponentException>(() => _sim.GetInductorEnergy(invalidId));
     }
 
     [Test]
-    public void GetDiodeEnergy_InvalidId_ThrowsException()
-    {
+    public void GetDiodeEnergy_InvalidId_ThrowsException() {
         var invalidId = new DiodeId(999);
         Assert.Throws<InvalidComponentException>(() => _sim.GetDiodeEnergy(invalidId));
     }
 
     [Test]
-    public void ResetEnergyCounter_InvalidId_ThrowsException()
-    {
+    public void ResetEnergyCounter_InvalidId_ThrowsException() {
         var invalidId = new ResistorId(999);
         Assert.Throws<InvalidComponentException>(() => _sim.ResetEnergyCounter(invalidId));
     }
@@ -364,8 +340,7 @@ public class EnergyTests
     #region Diode Energy Tests
 
     [Test]
-    public void DiodeEnergy_ForwardBiased_DissipatesEnergy()
-    {
+    public void DiodeEnergy_ForwardBiased_DissipatesEnergy() {
         // Forward biased diode dissipates energy as heat
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();

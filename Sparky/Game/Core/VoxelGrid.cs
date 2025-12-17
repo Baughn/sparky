@@ -14,8 +14,7 @@ namespace Sparky.Game.Core;
 /// - Per-block prism caching with lazy rebuild
 /// - Only affected blocks are invalidated on voxel changes
 /// </remarks>
-public class VoxelGrid
-{
+public class VoxelGrid {
     private readonly IncrementalPrismBuilder _builder = new();
 
     /// <summary>
@@ -32,10 +31,8 @@ public class VoxelGrid
     /// Conductor voxels default to Copper material. Use the overload with Material
     /// parameter to specify a different material.
     /// </remarks>
-    public void SetVoxel(VoxelPos pos, VoxelType type)
-    {
-        Material? material = type switch
-        {
+    public void SetVoxel(VoxelPos pos, VoxelType type) {
+        Material? material = type switch {
             VoxelType.Conductor => Material.Copper,
             VoxelType.ResistiveConductor => Material.Copper,
             _ => null
@@ -48,24 +45,21 @@ public class VoxelGrid
     /// </summary>
     /// <param name="pos">The voxel position.</param>
     /// <param name="material">The conductor material.</param>
-    public void SetVoxel(VoxelPos pos, Material material)
-    {
+    public void SetVoxel(VoxelPos pos, Material material) {
         _builder.SetVoxel(pos, VoxelType.Conductor, material);
     }
 
     /// <summary>
     /// Sets multiple voxels in a batch (more efficient than individual calls).
     /// </summary>
-    public void SetVoxels(IEnumerable<(VoxelPos Pos, VoxelType Type, Material? Material)> voxels)
-    {
+    public void SetVoxels(IEnumerable<(VoxelPos Pos, VoxelType Type, Material? Material)> voxels) {
         _builder.SetVoxels(voxels);
     }
 
     /// <summary>
     /// Gets the voxel at the given position, or null if Air (not stored).
     /// </summary>
-    public Voxel? GetVoxel(VoxelPos pos)
-    {
+    public Voxel? GetVoxel(VoxelPos pos) {
         var (type, material) = _builder.GetVoxel(pos);
         if (type == VoxelType.Air)
             return null;
@@ -75,16 +69,14 @@ public class VoxelGrid
     /// <summary>
     /// Gets the voxel type at the given position. Returns Air for unstored positions.
     /// </summary>
-    public VoxelType GetVoxelType(VoxelPos pos)
-    {
+    public VoxelType GetVoxelType(VoxelPos pos) {
         return _builder.GetVoxelType(pos);
     }
 
     /// <summary>
     /// Returns true if a conductor voxel exists at the position.
     /// </summary>
-    public bool IsConductor(VoxelPos pos)
-    {
+    public bool IsConductor(VoxelPos pos) {
         var type = GetVoxelType(pos);
         return type == VoxelType.Conductor || type == VoxelType.ResistiveConductor;
     }
@@ -92,21 +84,17 @@ public class VoxelGrid
     /// <summary>
     /// Gets the material at the given position, or null if Air/Insulator.
     /// </summary>
-    public Material? GetMaterial(VoxelPos pos)
-    {
+    public Material? GetMaterial(VoxelPos pos) {
         return _builder.GetMaterial(pos);
     }
 
     /// <summary>
     /// Returns all conductor voxels adjacent to the given position.
     /// </summary>
-    public IEnumerable<VoxelPos> GetAdjacentConductors(VoxelPos pos)
-    {
-        foreach (var dir in VoxelDirectionExtensions.All)
-        {
+    public IEnumerable<VoxelPos> GetAdjacentConductors(VoxelPos pos) {
+        foreach (var dir in VoxelDirectionExtensions.All) {
             var neighbor = pos.Neighbor(dir);
-            if (IsConductor(neighbor))
-            {
+            if (IsConductor(neighbor)) {
                 yield return neighbor;
             }
         }
@@ -115,10 +103,8 @@ public class VoxelGrid
     /// <summary>
     /// Returns all non-Air voxels in the grid.
     /// </summary>
-    public IEnumerable<KeyValuePair<VoxelPos, Voxel>> GetAllVoxels()
-    {
-        foreach (var (pos, type, material) in _builder.GetAllVoxels())
-        {
+    public IEnumerable<KeyValuePair<VoxelPos, Voxel>> GetAllVoxels() {
+        foreach (var (pos, type, material) in _builder.GetAllVoxels()) {
             yield return new KeyValuePair<VoxelPos, Voxel>(pos, new Voxel(type, material));
         }
     }
@@ -126,12 +112,9 @@ public class VoxelGrid
     /// <summary>
     /// Returns all conductor voxels in the grid.
     /// </summary>
-    public IEnumerable<VoxelPos> GetAllConductors()
-    {
-        foreach (var (pos, type, _) in _builder.GetAllVoxels())
-        {
-            if (type == VoxelType.Conductor || type == VoxelType.ResistiveConductor)
-            {
+    public IEnumerable<VoxelPos> GetAllConductors() {
+        foreach (var (pos, type, _) in _builder.GetAllVoxels()) {
+            if (type == VoxelType.Conductor || type == VoxelType.ResistiveConductor) {
                 yield return pos;
             }
         }
@@ -140,24 +123,21 @@ public class VoxelGrid
     /// <summary>
     /// Removes all voxels from the grid.
     /// </summary>
-    public void Clear()
-    {
+    public void Clear() {
         _builder.Clear();
     }
 
     /// <summary>
     /// Gets all prisms in the grid.
     /// </summary>
-    public IEnumerable<(BlockPos Block, Prism Prism)> GetAllPrisms()
-    {
+    public IEnumerable<(BlockPos Block, Prism Prism)> GetAllPrisms() {
         return _builder.GetAllPrisms();
     }
 
     /// <summary>
     /// Gets all prisms in a specific block.
     /// </summary>
-    public IEnumerable<Prism> GetPrismsInBlock(BlockPos blockPos)
-    {
+    public IEnumerable<Prism> GetPrismsInBlock(BlockPos blockPos) {
         return _builder.GetPrismsInBlock(blockPos);
     }
 
@@ -194,16 +174,14 @@ public class VoxelGrid
     /// Gets cached prisms for a block WITHOUT triggering rebuild.
     /// Returns the OLD prisms if the block is dirty.
     /// </summary>
-    public IReadOnlyList<Prism> GetCachedPrisms(BlockPos block)
-    {
+    public IReadOnlyList<Prism> GetCachedPrisms(BlockPos block) {
         return _builder.GetCachedPrisms(block);
     }
 
     /// <summary>
     /// Rebuilds a single dirty block and returns both old and new prisms.
     /// </summary>
-    public (IReadOnlyList<Prism> OldPrisms, IReadOnlyList<Prism> NewPrisms) RebuildBlockIncremental(BlockPos block)
-    {
+    public (IReadOnlyList<Prism> OldPrisms, IReadOnlyList<Prism> NewPrisms) RebuildBlockIncremental(BlockPos block) {
         return _builder.RebuildBlockIncremental(block);
     }
 }

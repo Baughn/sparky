@@ -6,8 +6,7 @@ namespace Sparky.MNA.Utilities;
 /// <summary>
 /// AC voltage source: V(t) = Offset + Amplitude × sin(2π × Frequency × t + Phase)
 /// </summary>
-public class AcVoltageSource : TimeVaryingSource
-{
+public class AcVoltageSource : TimeVaryingSource {
     /// <summary>The underlying voltage source ID.</summary>
     public VoltageSourceId Id { get; }
 
@@ -42,8 +41,7 @@ public class AcVoltageSource : TimeVaryingSource
         double phase = 0,
         double offset = 0
     )
-        : base(sim)
-    {
+        : base(sim) {
         Amplitude = amplitude;
         Frequency = frequency;
         Phase = phase;
@@ -55,21 +53,18 @@ public class AcVoltageSource : TimeVaryingSource
     }
 
     /// <inheritdoc />
-    public override double GetValue(double time)
-    {
+    public override double GetValue(double time) {
         return Offset + Amplitude * Math.Sin(2 * Math.PI * Frequency * time + Phase);
     }
 
     /// <inheritdoc />
-    public override void Update()
-    {
+    public override void Update() {
         double value = GetValue(Sim.SimulationTime);
         Sim.UpdateVoltageSource(Id, value);
     }
 
     /// <inheritdoc />
-    public override void Remove()
-    {
+    public override void Remove() {
         Sim.RemoveVoltageSource(Id);
     }
 

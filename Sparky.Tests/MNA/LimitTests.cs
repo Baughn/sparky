@@ -6,21 +6,18 @@ using Sparky.Tests.TestHelpers;
 namespace Sparky.Tests.MNA;
 
 [TestFixture]
-public class LimitTests
-{
+public class LimitTests {
     private SimulationManager _sim = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _sim = new SimulationManager();
     }
 
     #region Basic Limit Triggering
 
     [Test]
-    public void Limit_BasicOverCurrent_FiresEventWhenExceeded()
-    {
+    public void Limit_BasicOverCurrent_FiresEventWhenExceeded() {
         // 12V source, 100 ohm resistor = 0.12A current
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
@@ -43,8 +40,7 @@ public class LimitTests
     }
 
     [Test]
-    public void Limit_NotExceeded_NoEventFires()
-    {
+    public void Limit_NotExceeded_NoEventFires() {
         // 5V source, 100 ohm resistor = 0.05A current
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
@@ -62,8 +58,7 @@ public class LimitTests
     }
 
     [Test]
-    public void Limit_OverPower_FiresEventWhenExceeded()
-    {
+    public void Limit_OverPower_FiresEventWhenExceeded() {
         // 12V source, 100 ohm resistor = 0.12A current, P = 1.44W
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
@@ -87,8 +82,7 @@ public class LimitTests
     #region Edge-Triggered Behavior
 
     [Test]
-    public void Limit_EdgeTriggered_OnlyFiresOnTransition()
-    {
+    public void Limit_EdgeTriggered_OnlyFiresOnTransition() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);
@@ -112,8 +106,7 @@ public class LimitTests
     }
 
     [Test]
-    public void Limit_FireEveryStep_FiresRepeatedly()
-    {
+    public void Limit_FireEveryStep_FiresRepeatedly() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);
@@ -140,8 +133,7 @@ public class LimitTests
     #region Hysteresis
 
     [Test]
-    public void Limit_Hysteresis_DoesNotClearImmediately()
-    {
+    public void Limit_Hysteresis_DoesNotClearImmediately() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0, isVariable: true);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);
@@ -181,8 +173,7 @@ public class LimitTests
     #region Component Removal Cleanup
 
     [Test]
-    public void Limit_RemovedWithComponent_NoOrphanedLimits()
-    {
+    public void Limit_RemovedWithComponent_NoOrphanedLimits() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);
@@ -199,8 +190,7 @@ public class LimitTests
     }
 
     [Test]
-    public void Limit_ClearedOnSimulationClear()
-    {
+    public void Limit_ClearedOnSimulationClear() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);
@@ -231,8 +221,7 @@ public class LimitTests
     #region Multiple Handlers
 
     [Test]
-    public void Limit_MultipleHandlers_AllReceiveEvents()
-    {
+    public void Limit_MultipleHandlers_AllReceiveEvents() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);
@@ -255,8 +244,7 @@ public class LimitTests
     }
 
     [Test]
-    public void Limit_HandlerUnsubscribed_NoLongerReceivesEvents()
-    {
+    public void Limit_HandlerUnsubscribed_NoLongerReceivesEvents() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0, isVariable: true);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);
@@ -287,8 +275,7 @@ public class LimitTests
     #region Handler Exception Isolation
 
     [Test]
-    public void Limit_HandlerException_DoesNotBreakSimulation()
-    {
+    public void Limit_HandlerException_DoesNotBreakSimulation() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);
@@ -313,8 +300,7 @@ public class LimitTests
     #region Signed Value / Directional Behavior
 
     [Test]
-    public void Limit_SignedCurrentPositive_ExceedsPositiveThreshold()
-    {
+    public void Limit_SignedCurrentPositive_ExceedsPositiveThreshold() {
         // Current flows from high to low potential (node -> ground)
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
@@ -333,8 +319,7 @@ public class LimitTests
     }
 
     [Test]
-    public void Limit_SignedCurrentNegative_DoesNotExceedPositiveThreshold()
-    {
+    public void Limit_SignedCurrentNegative_DoesNotExceedPositiveThreshold() {
         // Current flows opposite direction (ground -> node)
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(_sim.Ground, node, 100.0); // Swapped nodes
@@ -353,8 +338,7 @@ public class LimitTests
     }
 
     [Test]
-    public void Limit_NegativeThreshold_DetectsNegativeCurrent()
-    {
+    public void Limit_NegativeThreshold_DetectsNegativeCurrent() {
         // Test negative threshold to detect reverse current
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(_sim.Ground, node, 100.0); // Node order gives negative current
@@ -376,8 +360,7 @@ public class LimitTests
     }
 
     [Test]
-    public void Limit_NegativeThreshold_TriggeredByLessNegativeCurrent()
-    {
+    public void Limit_NegativeThreshold_TriggeredByLessNegativeCurrent() {
         // Current of -0.05A is greater than threshold of -0.1A
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(_sim.Ground, node, 200.0); // 12V/200R = 0.06A, but negative direction
@@ -404,8 +387,7 @@ public class LimitTests
     #region Voltage Source Limits
 
     [Test]
-    public void Limit_VoltageSourceCurrent_FiresEvent()
-    {
+    public void Limit_VoltageSourceCurrent_FiresEvent() {
         // 12V source with 100 ohm load delivers 0.12A
         // Note: Voltage source current sign convention may be negative
         // (current flowing OUT of positive terminal)
@@ -433,8 +415,7 @@ public class LimitTests
     #region Simulation Time Tracking
 
     [Test]
-    public void SimulationTime_AccumulatesCorrectly()
-    {
+    public void SimulationTime_AccumulatesCorrectly() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);
@@ -452,8 +433,7 @@ public class LimitTests
     }
 
     [Test]
-    public void SimulationTime_ResetsOnClear()
-    {
+    public void SimulationTime_ResetsOnClear() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);
@@ -469,8 +449,7 @@ public class LimitTests
     }
 
     [Test]
-    public void LimitEvent_IncludesSimulationTime()
-    {
+    public void LimitEvent_IncludesSimulationTime() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);
@@ -499,13 +478,11 @@ public class LimitTests
     #region Limit Get/Set/Clear
 
     [Test]
-    public void Limit_GetReturnsSetConfig()
-    {
+    public void Limit_GetReturnsSetConfig() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
 
-        var config = new LimitConfig
-        {
+        var config = new LimitConfig {
             Threshold = 0.5,
             Hysteresis = 0.1,
             FireEveryStep = true,
@@ -521,8 +498,7 @@ public class LimitTests
     }
 
     [Test]
-    public void Limit_GetReturnsNullIfNotSet()
-    {
+    public void Limit_GetReturnsNullIfNotSet() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
 
@@ -532,8 +508,7 @@ public class LimitTests
     }
 
     [Test]
-    public void Limit_ClearRemovesLimit()
-    {
+    public void Limit_ClearRemovesLimit() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
 
@@ -545,8 +520,7 @@ public class LimitTests
     }
 
     [Test]
-    public void Limit_SetOnNonExistentComponent_Throws()
-    {
+    public void Limit_SetOnNonExistentComponent_Throws() {
         Assert.Throws<InvalidComponentException>(() =>
             _sim.SetResistorLimit(
                 new ResistorId(999),
@@ -561,8 +535,7 @@ public class LimitTests
     #region No Handlers Optimization
 
     [Test]
-    public void Limit_NoHandlers_DoesNotCrash()
-    {
+    public void Limit_NoHandlers_DoesNotCrash() {
         var node = _sim.CreateNode();
         var r = _sim.AddResistor(node, _sim.Ground, 100.0);
         var v = _sim.AddVoltageSource(node, _sim.Ground, 12.0);

@@ -3,8 +3,7 @@ using System;
 namespace Sparky.MNA.Api;
 
 /// <summary>Base exception for simulation-related errors.</summary>
-public class SimulationException : Exception
-{
+public class SimulationException : Exception {
     public SimulationException(string message)
         : base(message) { }
 
@@ -13,26 +12,22 @@ public class SimulationException : Exception
 }
 
 /// <summary>Thrown when an operation references a node that does not exist.</summary>
-public class InvalidNodeException : SimulationException
-{
+public class InvalidNodeException : SimulationException {
     public NodeId NodeId { get; }
 
     public InvalidNodeException(NodeId nodeId)
-        : base($"Node {nodeId} does not exist.")
-    {
+        : base($"Node {nodeId} does not exist.") {
         NodeId = nodeId;
     }
 }
 
 /// <summary>Thrown when an operation references a component that does not exist.</summary>
-public class InvalidComponentException : SimulationException
-{
+public class InvalidComponentException : SimulationException {
     public string ComponentType { get; }
     public int ComponentId { get; }
 
     public InvalidComponentException(string componentType, int componentId)
-        : base($"{componentType} with ID {componentId} does not exist.")
-    {
+        : base($"{componentType} with ID {componentId} does not exist.") {
         ComponentType = componentType;
         ComponentId = componentId;
     }
@@ -67,15 +62,13 @@ public class InvalidComponentException : SimulationException
 }
 
 /// <summary>Thrown when a component parameter value is invalid (e.g., negative resistance).</summary>
-public class InvalidParameterException : SimulationException
-{
+public class InvalidParameterException : SimulationException {
     public string ParameterName { get; }
     public double Value { get; }
     public string Constraint { get; }
 
     public InvalidParameterException(string parameterName, double value, string constraint)
-        : base($"Invalid value {value} for parameter '{parameterName}': {constraint}")
-    {
+        : base($"Invalid value {value} for parameter '{parameterName}': {constraint}") {
         ParameterName = parameterName;
         Value = value;
         Constraint = constraint;
@@ -83,14 +76,12 @@ public class InvalidParameterException : SimulationException
 }
 
 /// <summary>Thrown when attempting to remove a node that still has connected components.</summary>
-public class NodeInUseException : SimulationException
-{
+public class NodeInUseException : SimulationException {
     public NodeId NodeId { get; }
     public int ConnectionCount { get; }
 
     public NodeInUseException(NodeId nodeId, int connectionCount)
-        : base($"Cannot remove {nodeId}: it has {connectionCount} connected component(s).")
-    {
+        : base($"Cannot remove {nodeId}: it has {connectionCount} connected component(s).") {
         NodeId = nodeId;
         ConnectionCount = connectionCount;
     }

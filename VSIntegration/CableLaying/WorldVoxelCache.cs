@@ -14,8 +14,7 @@ namespace Sparky.VSIntegration.CableLaying;
 /// Caches world voxel data for cable pathfinding.
 /// Converts VS blocks in a 7-block radius to a sparse octree of CacheVoxelState.
 /// </summary>
-public class WorldVoxelCache : IWorldVoxelCache
-{
+public class WorldVoxelCache : IWorldVoxelCache {
     /// <summary>Cache radius in blocks for adjacency checking.</summary>
     public const int CacheRadius = 7;
 
@@ -38,8 +37,7 @@ public class WorldVoxelCache : IWorldVoxelCache
     /// <param name="centerBlock">The center block position (where cable starts).</param>
     /// <param name="radius">Cache radius in blocks. Default is full CacheRadius (7).
     /// Use smaller radius (e.g., 1) for snap-only calculations.</param>
-    public WorldVoxelCache(IBlockAccessor blockAccessor, VSBlockPos centerBlock, int radius = CacheRadius)
-    {
+    public WorldVoxelCache(IBlockAccessor blockAccessor, VSBlockPos centerBlock, int radius = CacheRadius) {
         _blockAccessor = blockAccessor ?? throw new ArgumentNullException(nameof(blockAccessor));
         _centerBlock = centerBlock.Copy();
         _radius = radius;
@@ -61,20 +59,15 @@ public class WorldVoxelCache : IWorldVoxelCache
     public VoxelPos Origin => _origin;
 
     /// <inheritdoc/>
-    public CacheVoxelState GetState(VoxelPos pos)
-    {
+    public CacheVoxelState GetState(VoxelPos pos) {
         return _octree.Get(pos);
     }
 
     /// <inheritdoc/>
-    public bool AllEmpty(VoxelPos min, VoxelPos max)
-    {
-        for (int z = min.Z; z < max.Z; z++)
-        {
-            for (int y = min.Y; y < max.Y; y++)
-            {
-                for (int x = min.X; x < max.X; x++)
-                {
+    public bool AllEmpty(VoxelPos min, VoxelPos max) {
+        for (int z = min.Z; z < max.Z; z++) {
+            for (int y = min.Y; y < max.Y; y++) {
+                for (int x = min.X; x < max.X; x++) {
                     if (_octree.Get(new VoxelPos(x, y, z)) != CacheVoxelState.Empty)
                         return false;
                 }
@@ -84,10 +77,8 @@ public class WorldVoxelCache : IWorldVoxelCache
     }
 
     /// <inheritdoc/>
-    public bool AnyCardinalNeighbor(VoxelPos pos, CacheVoxelState state)
-    {
-        foreach (var dir in VoxelDirectionExtensions.All)
-        {
+    public bool AnyCardinalNeighbor(VoxelPos pos, CacheVoxelState state) {
+        foreach (var dir in VoxelDirectionExtensions.All) {
             var neighbor = pos.Neighbor(dir);
             if (_octree.Get(neighbor) == state)
                 return true;
@@ -96,8 +87,7 @@ public class WorldVoxelCache : IWorldVoxelCache
     }
 
     /// <inheritdoc/>
-    public bool IsInPathfindingBounds(VoxelPos pos)
-    {
+    public bool IsInPathfindingBounds(VoxelPos pos) {
         int dx = Math.Abs(pos.X - _origin.X);
         int dy = Math.Abs(pos.Y - _origin.Y);
         int dz = Math.Abs(pos.Z - _origin.Z);
@@ -108,8 +98,7 @@ public class WorldVoxelCache : IWorldVoxelCache
     }
 
     /// <inheritdoc/>
-    public bool IsInCacheBounds(VoxelPos pos)
-    {
+    public bool IsInCacheBounds(VoxelPos pos) {
         int dx = Math.Abs(pos.X - _origin.X);
         int dy = Math.Abs(pos.Y - _origin.Y);
         int dz = Math.Abs(pos.Z - _origin.Z);
@@ -120,17 +109,14 @@ public class WorldVoxelCache : IWorldVoxelCache
     }
 
     /// <inheritdoc/>
-    public void SetCableConductor(VoxelPos pos)
-    {
+    public void SetCableConductor(VoxelPos pos) {
         _octree.Set(pos, CacheVoxelState.CableConductor);
         _cableConductors.Add(pos);
     }
 
     /// <inheritdoc/>
-    public void ClearCableConductors()
-    {
-        foreach (var pos in _cableConductors)
-        {
+    public void ClearCableConductors() {
+        foreach (var pos in _cableConductors) {
             _octree.Set(pos, CacheVoxelState.Empty);
         }
         _cableConductors.Clear();
@@ -144,24 +130,20 @@ public class WorldVoxelCache : IWorldVoxelCache
     /// <param name="startPos">Position to start flood-fill from (should be adjacent to existing cable).</param>
     /// <param name="maxDistance">Maximum Manhattan distance to flood-fill.</param>
     /// <returns>Number of voxels converted.</returns>
-    public int MarkConnectedConductorAsCable(VoxelPos startPos, int maxDistance = 4)
-    {
+    public int MarkConnectedConductorAsCable(VoxelPos startPos, int maxDistance = 4) {
         int converted = 0;
         var visited = new HashSet<VoxelPos>();
         var queue = new Queue<VoxelPos>();
 
         // Find initial conductor neighbors to start flood-fill
-        foreach (var dir in VoxelDirectionExtensions.All)
-        {
+        foreach (var dir in VoxelDirectionExtensions.All) {
             var neighbor = startPos.Neighbor(dir);
-            if (_octree.Get(neighbor) == CacheVoxelState.PreExistingConductor)
-            {
+            if (_octree.Get(neighbor) == CacheVoxelState.PreExistingConductor) {
                 queue.Enqueue(neighbor);
             }
         }
 
-        while (queue.Count > 0)
-        {
+        while (queue.Count > 0) {
             var pos = queue.Dequeue();
 
             if (visited.Contains(pos))
@@ -174,18 +156,15 @@ public class WorldVoxelCache : IWorldVoxelCache
                 continue;
 
             // Convert PreExistingConductor to CableConductor
-            if (_octree.Get(pos) == CacheVoxelState.PreExistingConductor)
-            {
+            if (_octree.Get(pos) == CacheVoxelState.PreExistingConductor) {
                 _octree.Set(pos, CacheVoxelState.CableConductor);
                 _cableConductors.Add(pos);
                 converted++;
 
                 // Add neighbors to queue
-                foreach (var dir in VoxelDirectionExtensions.All)
-                {
+                foreach (var dir in VoxelDirectionExtensions.All) {
                     var neighbor = pos.Neighbor(dir);
-                    if (!visited.Contains(neighbor))
-                    {
+                    if (!visited.Contains(neighbor)) {
                         queue.Enqueue(neighbor);
                     }
                 }
@@ -196,21 +175,17 @@ public class WorldVoxelCache : IWorldVoxelCache
     }
 
     /// <inheritdoc/>
-    public int DistanceToInsulation(VoxelPos pos, int maxDistance)
-    {
+    public int DistanceToInsulation(VoxelPos pos, int maxDistance) {
         // Expanding search by Manhattan distance
-        for (int d = 1; d <= maxDistance; d++)
-        {
+        for (int d = 1; d <= maxDistance; d++) {
             // Check all positions at Manhattan distance d
-            for (int dx = -d; dx <= d; dx++)
-            {
-                for (int dy = -(d - Math.Abs(dx)); dy <= d - Math.Abs(dx); dy++)
-                {
+            for (int dx = -d; dx <= d; dx++) {
+                for (int dy = -(d - Math.Abs(dx)); dy <= d - Math.Abs(dx); dy++) {
                     int remainingDist = d - Math.Abs(dx) - Math.Abs(dy);
                     // Two possible dz values for this Manhattan distance (positive and negative)
-                    foreach (int dz in new[] { remainingDist, -remainingDist })
-                    {
-                        if (remainingDist == 0 && dz != 0) continue; // Avoid duplicate at dz=0
+                    foreach (int dz in new[] { remainingDist, -remainingDist }) {
+                        if (remainingDist == 0 && dz != 0)
+                            continue; // Avoid duplicate at dz=0
                         var checkPos = pos.Offset(dx, dy, dz);
                         if (_octree.Get(checkPos) == CacheVoxelState.Insulation)
                             return d;
@@ -224,18 +199,14 @@ public class WorldVoxelCache : IWorldVoxelCache
     /// <summary>
     /// Rebuilds the entire cache from the world.
     /// </summary>
-    public void RebuildCache()
-    {
+    public void RebuildCache() {
         _octree.Clear();
         _cableConductors.Clear();
 
         // Iterate all blocks in the cache radius
-        for (int bz = -_radius; bz <= _radius; bz++)
-        {
-            for (int by = -_radius; by <= _radius; by++)
-            {
-                for (int bx = -_radius; bx <= _radius; bx++)
-                {
+        for (int bz = -_radius; bz <= _radius; bz++) {
+            for (int by = -_radius; by <= _radius; by++) {
+                for (int bx = -_radius; bx <= _radius; bx++) {
                     var blockPos = _centerBlock.AddCopy(bx, by, bz);
                     ProcessBlock(blockPos);
                 }
@@ -246,27 +217,23 @@ public class WorldVoxelCache : IWorldVoxelCache
     /// <summary>
     /// Processes a single block and adds its voxels to the cache.
     /// </summary>
-    private void ProcessBlock(VSBlockPos blockPos)
-    {
+    private void ProcessBlock(VSBlockPos blockPos) {
         var block = _blockAccessor.GetBlock(blockPos);
         var be = _blockAccessor.GetBlockEntity(blockPos);
 
         // Air or replaceable blocks → all Empty (default, nothing to set)
-        if (block.BlockId == 0 || block.Replaceable >= 6000)
-        {
+        if (block.BlockId == 0 || block.Replaceable >= 6000) {
             return;
         }
 
         // Circuit block → conductors become PreExistingConductor, non-conductors → Insulation, unfilled → Empty
-        if (be is BlockEntityCircuit circuit)
-        {
+        if (be is BlockEntityCircuit circuit) {
             ProcessCircuitBlock(blockPos, circuit);
             return;
         }
 
         // Non-circuit microblock → filled voxels become Insulation, unfilled → Unroutable
-        if (be is BlockEntityMicroBlock microblock)
-        {
+        if (be is BlockEntityMicroBlock microblock) {
             ProcessMicroBlock(blockPos, microblock);
             return;
         }
@@ -280,8 +247,7 @@ public class WorldVoxelCache : IWorldVoxelCache
     /// Processes a circuit block. Conductors → PreExistingConductor, non-conductors → Insulation.
     /// Unfilled areas remain Empty (can be occupied by cable).
     /// </summary>
-    private void ProcessCircuitBlock(VSBlockPos blockPos, BlockEntityCircuit circuit)
-    {
+    private void ProcessCircuitBlock(VSBlockPos blockPos, BlockEntityCircuit circuit) {
         if (circuit.VoxelCuboids == null)
             return;
 
@@ -289,8 +255,7 @@ public class WorldVoxelCache : IWorldVoxelCache
         int baseY = blockPos.Y * 16;
         int baseZ = blockPos.Z * 16;
 
-        foreach (var cuboid in circuit.VoxelCuboids)
-        {
+        foreach (var cuboid in circuit.VoxelCuboids) {
             BlockEntityMicroBlock.FromUint(cuboid,
                 out int x0, out int y0, out int z0,
                 out int x1, out int y1, out int z1,
@@ -298,19 +263,15 @@ public class WorldVoxelCache : IWorldVoxelCache
 
             // Check if this cuboid is a conductor
             bool isConductor = false;
-            if (circuit.BlockIds != null && matIdx < circuit.BlockIds.Length)
-            {
+            if (circuit.BlockIds != null && matIdx < circuit.BlockIds.Length) {
                 isConductor = BlockEntityCircuit.IsConductor(circuit.BlockIds[matIdx]);
             }
 
             var state = isConductor ? CacheVoxelState.PreExistingConductor : CacheVoxelState.Insulation;
 
-            for (int z = z0; z < z1; z++)
-            {
-                for (int y = y0; y < y1; y++)
-                {
-                    for (int x = x0; x < x1; x++)
-                    {
+            for (int z = z0; z < z1; z++) {
+                for (int y = y0; y < y1; y++) {
+                    for (int x = x0; x < x1; x++) {
                         var pos = new VoxelPos(baseX + x, baseY + y, baseZ + z);
                         _octree.Set(pos, state);
                     }
@@ -322,8 +283,7 @@ public class WorldVoxelCache : IWorldVoxelCache
     /// <summary>
     /// Processes a non-circuit microblock. Filled → Insulation, unfilled → Unroutable.
     /// </summary>
-    private void ProcessMicroBlock(VSBlockPos blockPos, BlockEntityMicroBlock microblock)
-    {
+    private void ProcessMicroBlock(VSBlockPos blockPos, BlockEntityMicroBlock microblock) {
         if (microblock.VoxelCuboids == null)
             return;
 
@@ -332,12 +292,9 @@ public class WorldVoxelCache : IWorldVoxelCache
         int baseZ = blockPos.Z * 16;
 
         // First mark all voxels as Unroutable (can't route through this block)
-        for (int z = 0; z < 16; z++)
-        {
-            for (int y = 0; y < 16; y++)
-            {
-                for (int x = 0; x < 16; x++)
-                {
+        for (int z = 0; z < 16; z++) {
+            for (int y = 0; y < 16; y++) {
+                for (int x = 0; x < 16; x++) {
                     var pos = new VoxelPos(baseX + x, baseY + y, baseZ + z);
                     _octree.Set(pos, CacheVoxelState.Unroutable);
                 }
@@ -345,19 +302,15 @@ public class WorldVoxelCache : IWorldVoxelCache
         }
 
         // Then mark filled voxels as Insulation
-        foreach (var cuboid in microblock.VoxelCuboids)
-        {
+        foreach (var cuboid in microblock.VoxelCuboids) {
             BlockEntityMicroBlock.FromUint(cuboid,
                 out int x0, out int y0, out int z0,
                 out int x1, out int y1, out int z1,
                 out int _);
 
-            for (int z = z0; z < z1; z++)
-            {
-                for (int y = y0; y < y1; y++)
-                {
-                    for (int x = x0; x < x1; x++)
-                    {
+            for (int z = z0; z < z1; z++) {
+                for (int y = y0; y < y1; y++) {
+                    for (int x = x0; x < x1; x++) {
                         var pos = new VoxelPos(baseX + x, baseY + y, baseZ + z);
                         _octree.Set(pos, CacheVoxelState.Insulation);
                     }
@@ -369,8 +322,7 @@ public class WorldVoxelCache : IWorldVoxelCache
     /// <summary>
     /// Processes a regular solid block. All voxels become Insulation.
     /// </summary>
-    private void ProcessSolidBlock(VSBlockPos blockPos, Block block)
-    {
+    private void ProcessSolidBlock(VSBlockPos blockPos, Block block) {
         int baseX = blockPos.X * 16;
         int baseY = blockPos.Y * 16;
         int baseZ = blockPos.Z * 16;
@@ -378,12 +330,9 @@ public class WorldVoxelCache : IWorldVoxelCache
         // For now, treat all non-air, non-replaceable, non-microblock blocks as fully solid
         // This includes stairs, fences, etc. - they become 16x16x16 Insulation blocks
         // Future enhancement: use collision boxes for more accurate representation
-        for (int z = 0; z < 16; z++)
-        {
-            for (int y = 0; y < 16; y++)
-            {
-                for (int x = 0; x < 16; x++)
-                {
+        for (int z = 0; z < 16; z++) {
+            for (int y = 0; y < 16; y++) {
+                for (int x = 0; x < 16; x++) {
                     var pos = new VoxelPos(baseX + x, baseY + y, baseZ + z);
                     _octree.Set(pos, CacheVoxelState.Insulation);
                 }

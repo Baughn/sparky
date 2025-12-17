@@ -4,8 +4,7 @@ namespace Sparky.MNA.Api.Limits;
 /// Types of limits that can be set on simulation components.
 /// Organized by domain for future extensibility.
 /// </summary>
-public enum LimitKind
-{
+public enum LimitKind {
     // Electrical domain
     /// <summary>Current exceeds threshold (signed comparison).</summary>
     OverCurrent,

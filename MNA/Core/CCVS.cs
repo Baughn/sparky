@@ -1,7 +1,6 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA.Core
-{
+namespace Sparky.MNA.Core {
     /// <summary>
     /// Current-Controlled Voltage Source (CCVS).
     /// Output voltage is proportional to input current:
@@ -13,8 +12,7 @@ namespace Sparky.MNA.Core
     ///   - Row k1: current sensing (zero-volt constraint at input)
     ///   - Row k2: output voltage constraint
     /// </summary>
-    public class CCVS : Component
-    {
+    public class CCVS : Component {
         public Node ControlPos { get; }
         public Node ControlNeg { get; }
 
@@ -56,8 +54,7 @@ namespace Sparky.MNA.Core
             Transresistance = transresistance;
         }
 
-        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
-        {
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0) {
             if (MatrixIndex == -1)
                 return;
 

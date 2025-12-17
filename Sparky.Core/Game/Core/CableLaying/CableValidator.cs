@@ -6,8 +6,7 @@ namespace Sparky.Game.Core.CableLaying;
 /// Test utility for validating acceptance criteria on generated cable paths.
 /// Call this in EVERY cable-related test to ensure path quality.
 /// </summary>
-public static class CableValidator
-{
+public static class CableValidator {
     /// <summary>
     /// Validates all acceptance criteria for a cable path.
     /// Throws descriptive exceptions on validation failure.
@@ -19,8 +18,7 @@ public static class CableValidator
     public static void ValidatePath(
         IReadOnlyList<VoxelPos> path,
         CrossSection crossSection,
-        IWorldVoxelCache cache)
-    {
+        IWorldVoxelCache cache) {
         if (path.Count == 0)
             return; // Empty path is valid (NoProgress result)
 
@@ -37,15 +35,11 @@ public static class CableValidator
     /// </summary>
     private static void ValidateNoConductorAdjacency(
         IReadOnlyList<VoxelPos> path,
-        IWorldVoxelCache cache)
-    {
-        foreach (var pos in path)
-        {
-            foreach (var dir in VoxelDirectionExtensions.All)
-            {
+        IWorldVoxelCache cache) {
+        foreach (var pos in path) {
+            foreach (var dir in VoxelDirectionExtensions.All) {
                 var neighbor = pos.Neighbor(dir);
-                if (cache.GetState(neighbor) == CacheVoxelState.PreExistingConductor)
-                {
+                if (cache.GetState(neighbor) == CacheVoxelState.PreExistingConductor) {
                     throw new CableValidationException(
                         $"Conductor adjacency violation: cable voxel {pos} is adjacent to " +
                         $"PreExistingConductor at {neighbor}");
@@ -61,33 +55,27 @@ public static class CableValidator
     private static void ValidateSupportAdjacency(
         IReadOnlyList<VoxelPos> path,
         HashSet<VoxelPos> pathSet,
-        IWorldVoxelCache cache)
-    {
-        foreach (var pos in path)
-        {
+        IWorldVoxelCache cache) {
+        foreach (var pos in path) {
             bool hasSupport = false;
 
-            foreach (var dir in VoxelDirectionExtensions.All)
-            {
+            foreach (var dir in VoxelDirectionExtensions.All) {
                 var neighbor = pos.Neighbor(dir);
 
                 // Support from insulation
-                if (cache.GetState(neighbor) == CacheVoxelState.Insulation)
-                {
+                if (cache.GetState(neighbor) == CacheVoxelState.Insulation) {
                     hasSupport = true;
                     break;
                 }
 
                 // Support from another cable voxel
-                if (pathSet.Contains(neighbor))
-                {
+                if (pathSet.Contains(neighbor)) {
                     hasSupport = true;
                     break;
                 }
             }
 
-            if (!hasSupport)
-            {
+            if (!hasSupport) {
                 throw new CableValidationException(
                     $"Support adjacency violation: cable voxel {pos} has no adjacent " +
                     $"Insulation or other cable voxel");
@@ -103,16 +91,13 @@ public static class CableValidator
     private static void ValidateWallProximity(
         IReadOnlyList<VoxelPos> path,
         CrossSection crossSection,
-        IWorldVoxelCache cache)
-    {
+        IWorldVoxelCache cache) {
         int maxAllowedDistance = 2 * crossSection.Height;
 
-        foreach (var pos in path)
-        {
+        foreach (var pos in path) {
             int minDist = FindDistanceToInsulation(pos, cache, maxAllowedDistance + 1);
 
-            if (minDist > maxAllowedDistance)
-            {
+            if (minDist > maxAllowedDistance) {
                 throw new CableValidationException(
                     $"Wall proximity violation: cable voxel {pos} is {minDist} voxels " +
                     $"from nearest insulation (max allowed: {maxAllowedDistance} for " +
@@ -124,22 +109,19 @@ public static class CableValidator
     /// <summary>
     /// Finds the distance to the nearest insulation voxel.
     /// </summary>
-    private static int FindDistanceToInsulation(VoxelPos pos, IWorldVoxelCache cache, int maxSearch)
-    {
+    private static int FindDistanceToInsulation(VoxelPos pos, IWorldVoxelCache cache, int maxSearch) {
         // BFS to find nearest insulation
         var visited = new HashSet<VoxelPos> { pos };
         var queue = new Queue<(VoxelPos Pos, int Dist)>();
         queue.Enqueue((pos, 0));
 
-        while (queue.Count > 0)
-        {
+        while (queue.Count > 0) {
             var (current, dist) = queue.Dequeue();
 
             if (dist >= maxSearch)
                 return maxSearch;
 
-            foreach (var dir in VoxelDirectionExtensions.All)
-            {
+            foreach (var dir in VoxelDirectionExtensions.All) {
                 var neighbor = current.Neighbor(dir);
 
                 if (visited.Contains(neighbor))
@@ -162,8 +144,7 @@ public static class CableValidator
     /// </summary>
     private static void ValidateMinimumTurnDistance(
         IReadOnlyList<VoxelPos> path,
-        CrossSection crossSection)
-    {
+        CrossSection crossSection) {
         if (path.Count < 3)
             return; // Can't have turns with < 3 voxels
 
@@ -173,11 +154,9 @@ public static class CableValidator
         // This is approximate - we look for direction changes in the path skeleton
         var turns = FindTurns(path);
 
-        for (int i = 1; i < turns.Count; i++)
-        {
+        for (int i = 1; i < turns.Count; i++) {
             int distance = turns[i] - turns[i - 1];
-            if (distance < minTurnDistance)
-            {
+            if (distance < minTurnDistance) {
                 throw new CableValidationException(
                     $"Minimum turn distance violation: turns at indices {turns[i - 1]} and " +
                     $"{turns[i]} are {distance} voxels apart (minimum: {minTurnDistance} for " +
@@ -190,8 +169,7 @@ public static class CableValidator
     /// Finds turn positions in the path by detecting direction changes.
     /// Returns indices in the path where turns occur.
     /// </summary>
-    private static List<int> FindTurns(IReadOnlyList<VoxelPos> path)
-    {
+    private static List<int> FindTurns(IReadOnlyList<VoxelPos> path) {
         var turns = new List<int>();
 
         if (path.Count < 3)
@@ -203,14 +181,12 @@ public static class CableValidator
 
         VoxelDirection? lastDir = null;
 
-        for (int i = 1; i < path.Count; i++)
-        {
+        for (int i = 1; i < path.Count; i++) {
             var dir = GetDirection(path[i - 1], path[i]);
             if (dir == null)
                 continue; // Not adjacent, skip
 
-            if (lastDir.HasValue && dir != lastDir && dir != lastDir.Value.Opposite())
-            {
+            if (lastDir.HasValue && dir != lastDir && dir != lastDir.Value.Opposite()) {
                 // This is a 90° turn
                 turns.Add(i - 1);
             }
@@ -224,8 +200,7 @@ public static class CableValidator
     /// <summary>
     /// Gets the direction from one voxel to an adjacent voxel, or null if not adjacent.
     /// </summary>
-    private static VoxelDirection? GetDirection(VoxelPos from, VoxelPos to)
-    {
+    private static VoxelDirection? GetDirection(VoxelPos from, VoxelPos to) {
         int dx = to.X - from.X;
         int dy = to.Y - from.Y;
         int dz = to.Z - from.Z;
@@ -234,12 +209,18 @@ public static class CableValidator
         if (Math.Abs(dx) + Math.Abs(dy) + Math.Abs(dz) != 1)
             return null;
 
-        if (dx == 1) return VoxelDirection.XPos;
-        if (dx == -1) return VoxelDirection.XNeg;
-        if (dy == 1) return VoxelDirection.YPos;
-        if (dy == -1) return VoxelDirection.YNeg;
-        if (dz == 1) return VoxelDirection.ZPos;
-        if (dz == -1) return VoxelDirection.ZNeg;
+        if (dx == 1)
+            return VoxelDirection.XPos;
+        if (dx == -1)
+            return VoxelDirection.XNeg;
+        if (dy == 1)
+            return VoxelDirection.YPos;
+        if (dy == -1)
+            return VoxelDirection.YNeg;
+        if (dz == 1)
+            return VoxelDirection.ZPos;
+        if (dz == -1)
+            return VoxelDirection.ZNeg;
 
         return null;
     }
@@ -254,21 +235,18 @@ public static class CableValidator
     /// <exception cref="CableValidationException">Thrown when a prism doesn't match the cross-section.</exception>
     public static void ValidatePrismDimensions(
         IEnumerable<(BlockPos Block, Prism Prism)> prisms,
-        CrossSection crossSection)
-    {
+        CrossSection crossSection) {
         int width = crossSection.Width;
         int height = crossSection.Height;
         var expectedDims = new[] { Math.Min(width, height), Math.Max(width, height) };
 
-        foreach (var (block, prism) in prisms)
-        {
+        foreach (var (block, prism) in prisms) {
             // Get the three dimensions sorted
             var dims = new[] { prism.SizeX, prism.SizeY, prism.SizeZ }.Order().ToArray();
 
             // The two smallest dimensions should match the cross-section
             // (the largest is the length along the cable direction)
-            if (dims[0] != expectedDims[0] || dims[1] != expectedDims[1])
-            {
+            if (dims[0] != expectedDims[0] || dims[1] != expectedDims[1]) {
                 throw new CableValidationException(
                     $"Prism dimension violation: prism at block {block} has size " +
                     $"{prism.SizeX}×{prism.SizeY}×{prism.SizeZ}, but cross-section is " +
@@ -286,21 +264,17 @@ public static class CableValidator
     /// <exception cref="CableValidationException">Thrown when contact areas don't match.</exception>
     public static void ValidatePrismContactAreas(
         IReadOnlyList<(BlockPos Block, Prism Prism)> prisms,
-        CrossSection crossSection)
-    {
+        CrossSection crossSection) {
         int expectedArea = crossSection.Width * crossSection.Height;
 
         // Check all pairs of prisms for contact
-        for (int i = 0; i < prisms.Count; i++)
-        {
-            for (int j = i + 1; j < prisms.Count; j++)
-            {
+        for (int i = 0; i < prisms.Count; i++) {
+            for (int j = i + 1; j < prisms.Count; j++) {
                 int area = TopologyBuilder.CalculateContactArea(
                     prisms[i].Prism, prisms[j].Prism,
                     prisms[i].Block, prisms[j].Block);
 
-                if (area > 0 && area != expectedArea)
-                {
+                if (area > 0 && area != expectedArea) {
                     throw new CableValidationException(
                         $"Contact area violation: prisms at blocks {prisms[i].Block} and " +
                         $"{prisms[j].Block} have contact area {area}, but expected {expectedArea} " +
@@ -314,7 +288,6 @@ public static class CableValidator
 /// <summary>
 /// Exception thrown when cable validation fails.
 /// </summary>
-public class CableValidationException : Exception
-{
+public class CableValidationException : Exception {
     public CableValidationException(string message) : base(message) { }
 }

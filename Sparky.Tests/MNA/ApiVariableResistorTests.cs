@@ -5,13 +5,11 @@ using Sparky.Tests.TestHelpers;
 namespace Sparky.Tests.MNA;
 
 [TestFixture]
-public class ApiVariableResistorTests
-{
+public class ApiVariableResistorTests {
     private SimulationManager _sim = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _sim = new SimulationManager();
         _sim.EnableLineOptimization = true;
     }
@@ -19,8 +17,7 @@ public class ApiVariableResistorTests
     #region Variable Resistor Skips Optimization
 
     [Test]
-    public void VariableResistor_InChain_SkipsLineOptimization()
-    {
+    public void VariableResistor_InChain_SkipsLineOptimization() {
         // 10V -- R1(10) -- N1 -- R2_var(10) -- N2 -- R3(10) -- GND
         // With R2 as variable, N1 and N2 should NOT be optimized
         var nPos = _sim.CreateNode();
@@ -47,8 +44,7 @@ public class ApiVariableResistorTests
     }
 
     [Test]
-    public void VariableResistor_UpdateUsesFastPath()
-    {
+    public void VariableResistor_UpdateUsesFastPath() {
         // Variable resistor should update without triggering rebuild
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -69,8 +65,7 @@ public class ApiVariableResistorTests
     }
 
     [Test]
-    public void RegularResistor_InChain_StillOptimizes()
-    {
+    public void RegularResistor_InChain_StillOptimizes() {
         // 10V -- R1(10) -- N1 -- R2(10) -- N2 -- R3(10) -- GND
         // All regular resistors - N1 should be optimized
         var nPos = _sim.CreateNode();
@@ -94,8 +89,7 @@ public class ApiVariableResistorTests
     }
 
     [Test]
-    public void MixedChain_VariableResistorBreaksChain()
-    {
+    public void MixedChain_VariableResistorBreaksChain() {
         // 10V -- R1 -- N1 -- R2 -- N2 -- R3_var -- N3 -- R4 -- N4 -- R5 -- GND
         // R3 is variable, so:
         // - N1, N2 could be optimized (chain R1-R2)
@@ -131,8 +125,7 @@ public class ApiVariableResistorTests
     #region Variable Resistor Default Behavior
 
     [Test]
-    public void AddResistor_DefaultIsNotVariable()
-    {
+    public void AddResistor_DefaultIsNotVariable() {
         // Default should be non-variable (optimizable)
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -150,8 +143,7 @@ public class ApiVariableResistorTests
     }
 
     [Test]
-    public void VariableResistor_ExplicitFalse_StillOptimizes()
-    {
+    public void VariableResistor_ExplicitFalse_StillOptimizes() {
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
@@ -171,8 +163,7 @@ public class ApiVariableResistorTests
     #region Variable Resistor Circuit Behavior
 
     [Test]
-    public void VariableResistor_SimulatesCorrectly()
-    {
+    public void VariableResistor_SimulatesCorrectly() {
         // Simple voltage divider with variable resistor
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();

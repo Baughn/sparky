@@ -7,8 +7,7 @@ namespace Sparky.Game.Core;
 /// <summary>
 /// Type of electrical component.
 /// </summary>
-public enum ComponentType
-{
+public enum ComponentType {
     Ground,
     Battery,
     Resistor,
@@ -21,8 +20,7 @@ public enum ComponentType
 /// <summary>
 /// Strongly-typed identifier for components.
 /// </summary>
-public readonly record struct ComponentId(Guid Value)
-{
+public readonly record struct ComponentId(Guid Value) {
     public static ComponentId New() => new(Guid.NewGuid());
     public bool IsValid => Value != Guid.Empty;
 }
@@ -38,8 +36,7 @@ public readonly record struct ComponentId(Guid Value)
 /// Component bodies don't participate in voxel connectivity - only terminals do.
 /// This allows components to have insulating bodies that prevent internal shorts.
 /// </remarks>
-public abstract class Component
-{
+public abstract class Component {
     /// <summary>
     /// Unique identifier for this component instance.
     /// </summary>
@@ -60,8 +57,7 @@ public abstract class Component
     /// </summary>
     public abstract IReadOnlyList<TerminalRegion> Terminals { get; }
 
-    protected Component(VoxelPos origin)
-    {
+    protected Component(VoxelPos origin) {
         Id = ComponentId.New();
         Origin = origin;
     }
@@ -90,10 +86,8 @@ public abstract class Component
     /// <summary>
     /// Returns the terminal region with the given name, or null if not found.
     /// </summary>
-    public TerminalRegion? GetTerminal(string name)
-    {
-        foreach (var terminal in Terminals)
-        {
+    public TerminalRegion? GetTerminal(string name) {
+        foreach (var terminal in Terminals) {
             if (terminal.Name == name)
                 return terminal;
         }
@@ -109,7 +103,6 @@ public readonly record struct ComponentVisualState(
     float CurrentNormalized = 0f,
     float PowerNormalized = 0f,
     float Temperature = 20f
-)
-{
+) {
     public static ComponentVisualState Default => new();
 }

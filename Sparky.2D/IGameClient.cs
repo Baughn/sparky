@@ -9,8 +9,7 @@ namespace Sparky.TwoD;
 /// The client receives render commands from the server and
 /// sends input events based on user interaction.
 /// </remarks>
-public interface IGameClient
-{
+public interface IGameClient {
     /// <summary>
     /// Handles a render command from the server.
     /// </summary>
@@ -19,8 +18,7 @@ public interface IGameClient
     /// <summary>
     /// Handles multiple render commands.
     /// </summary>
-    void HandleCommands(IEnumerable<RenderCommand> commands)
-    {
+    void HandleCommands(IEnumerable<RenderCommand> commands) {
         foreach (var cmd in commands)
             HandleCommand(cmd);
     }

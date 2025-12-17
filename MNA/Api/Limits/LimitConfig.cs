@@ -3,8 +3,7 @@ namespace Sparky.MNA.Api.Limits;
 /// <summary>
 /// Configuration for a component limit.
 /// </summary>
-public readonly record struct LimitConfig
-{
+public readonly record struct LimitConfig {
     /// <summary>
     /// The threshold value that triggers the limit.
     /// Comparison is signed (value > threshold triggers).

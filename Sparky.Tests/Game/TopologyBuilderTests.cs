@@ -9,21 +9,18 @@ using Sparky.MNA.Api;
 namespace Sparky.Tests.Game;
 
 [TestFixture]
-public class TopologyBuilderTests
-{
+public class TopologyBuilderTests {
     private TopologyBuilder _builder = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _builder = new TopologyBuilder();
     }
 
     #region FindConductorRegions Tests
 
     [Test]
-    public void FindConductorRegions_EmptyGrid_ReturnsEmpty()
-    {
+    public void FindConductorRegions_EmptyGrid_ReturnsEmpty() {
         var grid = new VoxelGrid();
 
         var regions = _builder.FindConductorRegions(grid);
@@ -32,8 +29,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void FindConductorRegions_SingleConductor_ReturnsOneRegion()
-    {
+    public void FindConductorRegions_SingleConductor_ReturnsOneRegion() {
         var grid = new VoxelGrid();
         grid.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor);
 
@@ -43,8 +39,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void FindConductorRegions_AdjacentConductors_SameRegion()
-    {
+    public void FindConductorRegions_AdjacentConductors_SameRegion() {
         var grid = new VoxelGrid();
         var pos1 = new VoxelPos(0, 0, 0);
         var pos2 = new VoxelPos(1, 0, 0);
@@ -58,8 +53,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void FindConductorRegions_DiagonalConductors_DifferentRegions()
-    {
+    public void FindConductorRegions_DiagonalConductors_DifferentRegions() {
         var grid = new VoxelGrid();
         var pos1 = new VoxelPos(0, 0, 0);
         var pos2 = new VoxelPos(1, 1, 0);  // Diagonal - not adjacent
@@ -72,8 +66,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void FindConductorRegions_SeparatedByInsulator_DifferentRegions()
-    {
+    public void FindConductorRegions_SeparatedByInsulator_DifferentRegions() {
         var grid = new VoxelGrid();
         // Conductor - Insulator - Conductor
         grid.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor);
@@ -86,8 +79,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void FindConductorRegions_LShapedConductor_OneRegion()
-    {
+    public void FindConductorRegions_LShapedConductor_OneRegion() {
         var grid = new VoxelGrid();
         // L-shaped conductor:
         // X
@@ -108,8 +100,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void FindConductorRegions_3DConnectivity_OneRegion()
-    {
+    public void FindConductorRegions_3DConnectivity_OneRegion() {
         var grid = new VoxelGrid();
         // Conductors connected in 3D space
         grid.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor);
@@ -124,18 +115,14 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void FindConductorRegions_CrossBlockCable_OneRegion()
-    {
+    public void FindConductorRegions_CrossBlockCable_OneRegion() {
         var grid = new VoxelGrid();
 
         // 4x4 cable spanning 3 blocks along Z (48 voxels long)
         // This tests cross-block prism connectivity
-        for (int z = 0; z < 48; z++)
-        {
-            for (int y = 0; y < 4; y++)
-            {
-                for (int x = 0; x < 4; x++)
-                {
+        for (int z = 0; z < 48; z++) {
+            for (int y = 0; y < 4; y++) {
+                for (int x = 0; x < 4; x++) {
                     grid.SetVoxel(new VoxelPos(x, y, z), VoxelType.Conductor);
                 }
             }
@@ -155,8 +142,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void FindConductorRegions_TwoPrismsSameBlock_Connected()
-    {
+    public void FindConductorRegions_TwoPrismsSameBlock_Connected() {
         var grid = new VoxelGrid();
 
         // Two separate prisms that touch within the same block
@@ -177,8 +163,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void FindConductorRegions_DisjointPrisms_SeparateRegions()
-    {
+    public void FindConductorRegions_DisjointPrisms_SeparateRegions() {
         var grid = new VoxelGrid();
 
         // Two prisms with a gap between them
@@ -198,8 +183,7 @@ public class TopologyBuilderTests
     #region BuildTopology Integration Tests
 
     [Test]
-    public void BuildTopology_SimpleResistorCircuit_CreatesCorrectNodes()
-    {
+    public void BuildTopology_SimpleResistorCircuit_CreatesCorrectNodes() {
         // Simple circuit: Ground - Wire - Resistor - Wire - Battery+
         //                                            |
         //                                         Battery-
@@ -234,8 +218,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void BuildTopology_TwoResistorsInSeries_CorrectVoltageDivider()
-    {
+    public void BuildTopology_TwoResistorsInSeries_CorrectVoltageDivider() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -266,14 +249,12 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void BuildTopology_ConnectedWireRegion_SharesNode()
-    {
+    public void BuildTopology_ConnectedWireRegion_SharesNode() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
         // Wire of 5 connected conductor voxels
-        for (int x = 0; x < 5; x++)
-        {
+        for (int x = 0; x < 5; x++) {
             grid.SetVoxel(new VoxelPos(x, 0, 0), VoxelType.Conductor);
         }
 
@@ -283,15 +264,13 @@ public class TopologyBuilderTests
 
         // All 5 voxels should share the same region
         var region = regions[new VoxelPos(0, 0, 0)];
-        for (int x = 1; x < 5; x++)
-        {
+        for (int x = 1; x < 5; x++) {
             Assert.That(regions[new VoxelPos(x, 0, 0)], Is.SameAs(region));
         }
     }
 
     [Test]
-    public void BuildTopology_GroundComponent_SetsNodeToGround()
-    {
+    public void BuildTopology_GroundComponent_SetsNodeToGround() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -307,8 +286,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void BuildTopology_ComponentWithUnconnectedTerminal_CreatesIsolatedNode()
-    {
+    public void BuildTopology_ComponentWithUnconnectedTerminal_CreatesIsolatedNode() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -327,8 +305,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void BuildTopology_MultipleGroundComponents_AllShareGroundNode()
-    {
+    public void BuildTopology_MultipleGroundComponents_AllShareGroundNode() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -354,8 +331,7 @@ public class TopologyBuilderTests
     #region Component Visual State Tests
 
     [Test]
-    public void ResistorComponent_ComputeVisualState_ReturnsCorrectValues()
-    {
+    public void ResistorComponent_ComputeVisualState_ReturnsCorrectValues() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -382,8 +358,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void BatteryComponent_ComputeVisualState_ReturnsCorrectValues()
-    {
+    public void BatteryComponent_ComputeVisualState_ReturnsCorrectValues() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -412,8 +387,7 @@ public class TopologyBuilderTests
     #region Inter-Region Resistor Tests
 
     [Test]
-    public void WirePrism_DoesNotMergeWithTerminals()
-    {
+    public void WirePrism_DoesNotMergeWithTerminals() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -459,8 +433,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void AdjacentConductors_MergeWhenNoResistivesBetween()
-    {
+    public void AdjacentConductors_MergeWhenNoResistivesBetween() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -479,8 +452,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void CoalescedWirePrism_SingleRegionWithTwoResistors()
-    {
+    public void CoalescedWirePrism_SingleRegionWithTwoResistors() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -532,8 +504,7 @@ public class TopologyBuilderTests
     [TestCase(BuildMethod.FloodFill, true)]
     [TestCase(BuildMethod.InterpolatedSlices, false)]
     [TestCase(BuildMethod.InterpolatedSlices, true)]
-    public void LargeWire_ConsistentTopology_RegardlessOfBuildOrder(BuildMethod method, bool withTimesteps)
-    {
+    public void LargeWire_ConsistentTopology_RegardlessOfBuildOrder(BuildMethod method, bool withTimesteps) {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -558,8 +529,7 @@ public class TopologyBuilderTests
             $"Line optimization should merge most wire nodes, only optimized {stats.OptimizedNodeCount}");
     }
 
-    private static IEnumerable<VoxelPos> GetLargeWirePositions()
-    {
+    private static IEnumerable<VoxelPos> GetLargeWirePositions() {
         // Terminal A: single voxel at center of Z=0 face
         yield return new VoxelPos(1, 1, 0);
 
@@ -575,12 +545,10 @@ public class TopologyBuilderTests
                 yield return new VoxelPos(x, y, 191);
     }
 
-    private void BuildWire(VoxelGrid grid, BuildMethod method, ISimulation sim, bool withTimesteps)
-    {
+    private void BuildWire(VoxelGrid grid, BuildMethod method, ISimulation sim, bool withTimesteps) {
         var positions = GetLargeWirePositions().ToList();
 
-        switch (method)
-        {
+        switch (method) {
             case BuildMethod.Randomized:
                 var rng = new Random(42); // Fixed seed for reproducibility
                 positions = positions.OrderBy(_ => rng.Next()).ToList();
@@ -595,14 +563,12 @@ public class TopologyBuilderTests
         }
 
         int count = 0;
-        foreach (var pos in positions)
-        {
+        foreach (var pos in positions) {
             var isTerminal = pos.Z == 0 || pos.Z == 191;
             grid.SetVoxel(pos, isTerminal ? VoxelType.Conductor : VoxelType.ResistiveConductor);
             count++;
 
-            if (withTimesteps && count % 100 == 0)
-            {
+            if (withTimesteps && count % 100 == 0) {
                 // Rebuild topology and step every 100 voxels (not every single one)
                 _builder.BuildTopology(grid, [], sim);
                 sim.Step(0.001);
@@ -622,8 +588,7 @@ public class TopologyBuilderTests
     /// 3. Step after local change is fast
     /// </summary>
     [Test]
-    public void UShapedWire_LargeScale_OptimizesAndRemainsResponsive()
-    {
+    public void UShapedWire_LargeScale_OptimizesAndRemainsResponsive() {
         const int legLength = 10000;  // Each leg is 3x3x10000
         const int legSpacing = 10;    // Horizontal distance between legs
 
@@ -708,13 +673,13 @@ public class TopologyBuilderTests
         // The change only affects one block, so prism rebuild is local
         sw.Restart();
         _builder.BuildTopology(grid, [battery], sim);
-	sw.Stop();
+        sw.Stop();
         var rebuildTime = sw.Elapsed.TotalMilliseconds;
 
-	sw.Restart();
-	for (int t = 0; t < 10; t++) {
-          sim.Step(0.1);
-	}
+        sw.Restart();
+        for (int t = 0; t < 10; t++) {
+            sim.Step(0.1);
+        }
         sw.Stop();
         var stepTime = sw.Elapsed.TotalMilliseconds;
 
@@ -742,8 +707,7 @@ public class TopologyBuilderTests
     #region Incremental Update Edge Cases
 
     [Test]
-    public void IncrementalUpdate_RegionSplit_RemoveMiddleVoxel_CreatesTwoRegions()
-    {
+    public void IncrementalUpdate_RegionSplit_RemoveMiddleVoxel_CreatesTwoRegions() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -775,8 +739,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void IncrementalUpdate_RegionMerge_AddConnectingVoxel_CreatesOneRegion()
-    {
+    public void IncrementalUpdate_RegionMerge_AddConnectingVoxel_CreatesOneRegion() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -811,16 +774,14 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void IncrementalUpdate_CrossBlockSplit_RemoveMiddleVoxel_CreatesTwoRegions()
-    {
+    public void IncrementalUpdate_CrossBlockSplit_RemoveMiddleVoxel_CreatesTwoRegions() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
         // Create a wire spanning 3 blocks along Z axis
         // Block 0: z=0-15, Block 1: z=16-31, Block 2: z=32-47
         // Wire goes from z=14 to z=34 (spanning all 3 blocks)
-        for (int z = 14; z <= 34; z++)
-        {
+        for (int z = 14; z <= 34; z++) {
             grid.SetVoxel(new VoxelPos(0, 0, z), VoxelType.Conductor);
         }
 
@@ -849,21 +810,18 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void IncrementalUpdate_CrossBlockMerge_AddConnectingVoxel_CreatesOneRegion()
-    {
+    public void IncrementalUpdate_CrossBlockMerge_AddConnectingVoxel_CreatesOneRegion() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
         // Create two separate wire segments in different blocks
         // Segment 1: z=14-15 (in block 0)
-        for (int z = 14; z <= 15; z++)
-        {
+        for (int z = 14; z <= 15; z++) {
             grid.SetVoxel(new VoxelPos(0, 0, z), VoxelType.Conductor);
         }
 
         // Segment 2: z=17-20 (in block 1) - gap at z=16 (block boundary)
-        for (int z = 17; z <= 20; z++)
-        {
+        for (int z = 17; z <= 20; z++) {
             grid.SetVoxel(new VoxelPos(0, 0, z), VoxelType.Conductor);
         }
 
@@ -890,8 +848,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void IncrementalUpdate_ResistiveSplit_RemoveMiddle_PreservesResistiveProperties()
-    {
+    public void IncrementalUpdate_ResistiveSplit_RemoveMiddle_PreservesResistiveProperties() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -942,8 +899,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void IncrementalUpdate_ConsistencyWithFullRebuild_SingleVoxelChange()
-    {
+    public void IncrementalUpdate_ConsistencyWithFullRebuild_SingleVoxelChange() {
         var grid = new VoxelGrid();
         var sim1 = new SimulationManager();
         var sim2 = new SimulationManager();
@@ -951,8 +907,7 @@ public class TopologyBuilderTests
         var builder2 = new TopologyBuilder();
 
         // Create initial wire
-        for (int x = 0; x < 10; x++)
-        {
+        for (int x = 0; x < 10; x++) {
             grid.SetVoxel(new VoxelPos(x, 0, 0), VoxelType.Conductor);
         }
 
@@ -978,8 +933,7 @@ public class TopologyBuilderTests
             $"Incremental ({uniqueRegions1}) and full rebuild ({uniqueRegions2}) should have same region count");
 
         // Verify all voxels are present
-        for (int x = 0; x <= 10; x++)
-        {
+        for (int x = 0; x <= 10; x++) {
             var pos = new VoxelPos(x, 0, 0);
             Assert.That(regions1.ContainsKey(pos), Is.True,
                 $"Incremental result should contain voxel at {pos}");
@@ -989,8 +943,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void IncrementalUpdate_ConsistencyWithFullRebuild_RemoveVoxel()
-    {
+    public void IncrementalUpdate_ConsistencyWithFullRebuild_RemoveVoxel() {
         var grid = new VoxelGrid();
         var sim1 = new SimulationManager();
         var sim2 = new SimulationManager();
@@ -998,8 +951,7 @@ public class TopologyBuilderTests
         var builder2 = new TopologyBuilder();
 
         // Create initial wire
-        for (int x = 0; x < 10; x++)
-        {
+        for (int x = 0; x < 10; x++) {
             grid.SetVoxel(new VoxelPos(x, 0, 0), VoxelType.Conductor);
         }
 
@@ -1035,8 +987,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void IncrementalUpdate_MultipleSequentialChanges_MaintainsCorrectness()
-    {
+    public void IncrementalUpdate_MultipleSequentialChanges_MaintainsCorrectness() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
 
@@ -1060,8 +1011,7 @@ public class TopologyBuilderTests
         Assert.That(regions.Values.Distinct().Count(), Is.EqualTo(2), "Step 3: Should have 2 regions");
 
         // Connect them
-        for (int x = 2; x < 10; x++)
-        {
+        for (int x = 2; x < 10; x++) {
             grid.SetVoxel(new VoxelPos(x, 0, 0), VoxelType.Conductor);
         }
         regions = _builder.BuildTopology(grid, [], sim);
@@ -1074,8 +1024,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void IncrementalUpdate_AdjacentResistors_NoStaleIdsAfterPartialRebuild()
-    {
+    public void IncrementalUpdate_AdjacentResistors_NoStaleIdsAfterPartialRebuild() {
         // This test reproduces a bug where AdjacentResistors contains stale resistor IDs
         // after an incremental update removes resistors connecting affected and non-affected regions.
         //
@@ -1097,8 +1046,7 @@ public class TopologyBuilderTests
 
         // Create a chain of resistive voxels spanning blocks 0, 1, and 2
         // x=0-15 in block 0, x=16-31 in block 1, x=32-47 in block 2
-        for (int x = 0; x <= 35; x++)
-        {
+        for (int x = 0; x <= 35; x++) {
             grid.SetVoxel(new VoxelPos(x, 0, 0), VoxelType.ResistiveConductor);
         }
 
@@ -1112,8 +1060,7 @@ public class TopologyBuilderTests
             "Boundary region should have adjacent resistors initially");
 
         // Verify all resistors in AdjacentResistors are valid before the update
-        foreach (var rid in boundaryRegion.AdjacentResistors)
-        {
+        foreach (var rid in boundaryRegion.AdjacentResistors) {
             Assert.That(sim.ResistorExists(rid), Is.True,
                 $"Initial: Resistor {rid} in AdjacentResistors should exist in simulation");
         }
@@ -1131,8 +1078,7 @@ public class TopologyBuilderTests
 
         // This is the critical test: ALL resistor IDs in AdjacentResistors should be valid
         // The bug causes stale resistor IDs to remain in AdjacentResistors
-        foreach (var rid in boundaryRegion.AdjacentResistors)
-        {
+        foreach (var rid in boundaryRegion.AdjacentResistors) {
             Assert.That(sim.ResistorExists(rid), Is.True,
                 $"After incremental update: Resistor {rid} in AdjacentResistors should exist in simulation");
 
@@ -1143,8 +1089,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void CrossBlockAdjacentWires_CreateInterRegionResistors()
-    {
+    public void CrossBlockAdjacentWires_CreateInterRegionResistors() {
         // This test targets the exact bug scenario from regression test 1.jsonl:
         // Two adjacent wire cells at a block boundary should be connected by an inter-region resistor.
         // Without this resistor, they would have different voltages.
@@ -1188,8 +1133,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void CrossBlockAdjacentWires_IncrementalUpdate_CreateInterRegionResistors()
-    {
+    public void CrossBlockAdjacentWires_IncrementalUpdate_CreateInterRegionResistors() {
         // Test that cross-block resistors are created when wires are added incrementally
         // This tests the incremental update path rather than full rebuild
 
@@ -1234,8 +1178,7 @@ public class TopologyBuilderTests
     }
 
     [Test]
-    public void CrossBlockWireChain_IncrementalUpdate_AfterPriorBuilds()
-    {
+    public void CrossBlockWireChain_IncrementalUpdate_AfterPriorBuilds() {
         // This test mimics the regression test scenario:
         // 1. Build with some voxels
         // 2. Add more voxels (some spanning block boundary) and rebuild
@@ -1246,16 +1189,14 @@ public class TopologyBuilderTests
         var sim = new SimulationManager();
 
         // Phase 1: Build initial topology with some wires (not crossing block boundary)
-        for (int z = 6; z <= 13; z++)
-        {
+        for (int z = 6; z <= 13; z++) {
             grid.SetVoxel(new VoxelPos(11, 0, z), VoxelType.ResistiveConductor);
         }
         var regions = _builder.BuildTopology(grid, [], sim);
         Assert.That(regions.Count, Is.EqualTo(8), "Phase 1: Should have 8 regions");
 
         // Phase 2: Add wires that span the block boundary (z=15 and z=16)
-        for (int z = 14; z <= 17; z++)
-        {
+        for (int z = 14; z <= 17; z++) {
             grid.SetVoxel(new VoxelPos(11, 0, z), VoxelType.ResistiveConductor);
         }
         regions = _builder.BuildTopology(grid, [], sim);
@@ -1282,8 +1223,7 @@ public class TopologyBuilderTests
             "Wires at z=15 and z=16 should share exactly one resistor");
 
         // Phase 3: Add more wires elsewhere and rebuild again
-        for (int x = 9; x <= 14; x++)
-        {
+        for (int x = 9; x <= 14; x++) {
             grid.SetVoxel(new VoxelPos(x, 0, 15), VoxelType.ResistiveConductor);
         }
         regions = _builder.BuildTopology(grid, [], sim);

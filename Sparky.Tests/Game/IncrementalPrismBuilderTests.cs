@@ -5,28 +5,24 @@ using System.Linq;
 namespace Sparky.Tests.Game;
 
 [TestFixture]
-public class IncrementalPrismBuilderTests
-{
+public class IncrementalPrismBuilderTests {
     private IncrementalPrismBuilder _builder = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _builder = new IncrementalPrismBuilder();
     }
 
     #region Basic Operations
 
     [Test]
-    public void NewBuilder_IsEmpty()
-    {
+    public void NewBuilder_IsEmpty() {
         Assert.That(_builder.VoxelCount, Is.EqualTo(0));
         Assert.That(_builder.PrismCount, Is.EqualTo(0));
     }
 
     [Test]
-    public void SetVoxel_SingleVoxel_CanBeRetrieved()
-    {
+    public void SetVoxel_SingleVoxel_CanBeRetrieved() {
         var pos = new VoxelPos(5, 5, 5);
         _builder.SetVoxel(pos, VoxelType.Conductor, Material.Copper);
 
@@ -38,8 +34,7 @@ public class IncrementalPrismBuilderTests
     }
 
     [Test]
-    public void SetVoxel_Air_RemovesVoxel()
-    {
+    public void SetVoxel_Air_RemovesVoxel() {
         var pos = new VoxelPos(5, 5, 5);
         _builder.SetVoxel(pos, VoxelType.Conductor, Material.Copper);
 
@@ -50,8 +45,7 @@ public class IncrementalPrismBuilderTests
     }
 
     [Test]
-    public void GetVoxel_EmptyPosition_ReturnsAir()
-    {
+    public void GetVoxel_EmptyPosition_ReturnsAir() {
         var (type, material) = _builder.GetVoxel(new VoxelPos(99, 99, 99));
 
         Assert.That(type, Is.EqualTo(VoxelType.Air));
@@ -63,8 +57,7 @@ public class IncrementalPrismBuilderTests
     #region Prism Building
 
     [Test]
-    public void GetAllPrisms_SingleVoxel_ReturnsSinglePrism()
-    {
+    public void GetAllPrisms_SingleVoxel_ReturnsSinglePrism() {
         _builder.SetVoxel(new VoxelPos(5, 5, 5), VoxelType.Conductor, Material.Copper);
 
         var prisms = _builder.GetAllPrisms().ToList();
@@ -76,8 +69,7 @@ public class IncrementalPrismBuilderTests
     }
 
     [Test]
-    public void GetAllPrisms_AdjacentVoxels_CoalescesIntoPrism()
-    {
+    public void GetAllPrisms_AdjacentVoxels_CoalescesIntoPrism() {
         // Create a 2x1x1 line
         _builder.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor, Material.Copper);
         _builder.SetVoxel(new VoxelPos(1, 0, 0), VoxelType.Conductor, Material.Copper);
@@ -89,8 +81,7 @@ public class IncrementalPrismBuilderTests
     }
 
     [Test]
-    public void GetAllPrisms_DifferentMaterials_SeparatePrisms()
-    {
+    public void GetAllPrisms_DifferentMaterials_SeparatePrisms() {
         _builder.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor, Material.Copper);
         _builder.SetVoxel(new VoxelPos(1, 0, 0), VoxelType.Conductor, Material.Lead);
 
@@ -100,8 +91,7 @@ public class IncrementalPrismBuilderTests
     }
 
     [Test]
-    public void GetAllPrisms_DifferentTypes_SeparatePrisms()
-    {
+    public void GetAllPrisms_DifferentTypes_SeparatePrisms() {
         _builder.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor, Material.Copper);
         _builder.SetVoxel(new VoxelPos(1, 0, 0), VoxelType.Insulator, null);
 
@@ -111,8 +101,7 @@ public class IncrementalPrismBuilderTests
     }
 
     [Test]
-    public void GetAllPrisms_LargeCube_CoalescesEfficiently()
-    {
+    public void GetAllPrisms_LargeCube_CoalescesEfficiently() {
         // Fill a 4x4x4 cube
         for (int z = 0; z < 4; z++)
             for (int y = 0; y < 4; y++)
@@ -132,8 +121,7 @@ public class IncrementalPrismBuilderTests
     #region Cross-Block Prisms
 
     [Test]
-    public void GetAllPrisms_CrossBlockVoxels_ReturnsSeparatePrisms()
-    {
+    public void GetAllPrisms_CrossBlockVoxels_ReturnsSeparatePrisms() {
         // Voxels in different blocks
         _builder.SetVoxel(new VoxelPos(15, 0, 0), VoxelType.Conductor, Material.Copper);  // Block (0,0,0)
         _builder.SetVoxel(new VoxelPos(16, 0, 0), VoxelType.Conductor, Material.Copper);  // Block (1,0,0)
@@ -149,8 +137,7 @@ public class IncrementalPrismBuilderTests
     #region Caching and Invalidation
 
     [Test]
-    public void GetAllPrisms_CalledTwice_ReturnsSameResults()
-    {
+    public void GetAllPrisms_CalledTwice_ReturnsSameResults() {
         _builder.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor, Material.Copper);
 
         var prisms1 = _builder.GetAllPrisms().ToList();
@@ -160,8 +147,7 @@ public class IncrementalPrismBuilderTests
     }
 
     [Test]
-    public void SetVoxel_AfterGetAllPrisms_InvalidatesCache()
-    {
+    public void SetVoxel_AfterGetAllPrisms_InvalidatesCache() {
         _builder.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor, Material.Copper);
         var prisms1 = _builder.GetAllPrisms().ToList();
 
@@ -174,8 +160,7 @@ public class IncrementalPrismBuilderTests
     }
 
     [Test]
-    public void SetVoxel_DifferentBlock_OnlyInvalidatesAffectedBlock()
-    {
+    public void SetVoxel_DifferentBlock_OnlyInvalidatesAffectedBlock() {
         // Set voxels in two different blocks
         _builder.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor, Material.Copper);   // Block (0,0,0)
         _builder.SetVoxel(new VoxelPos(20, 0, 0), VoxelType.Conductor, Material.Copper);  // Block (1,0,0)
@@ -196,8 +181,7 @@ public class IncrementalPrismBuilderTests
     #region Batch Operations
 
     [Test]
-    public void SetVoxels_Batch_SetsAllVoxels()
-    {
+    public void SetVoxels_Batch_SetsAllVoxels() {
         var voxels = new[]
         {
             (new VoxelPos(0, 0, 0), VoxelType.Conductor, (Material?)Material.Copper),
@@ -218,8 +202,7 @@ public class IncrementalPrismBuilderTests
     #region Large Wire Test
 
     [Test]
-    public void LargeWire_MatchesExpectedVoxelCount()
-    {
+    public void LargeWire_MatchesExpectedVoxelCount() {
         // Same as benchmark: 3x3x192 wire
         for (int z = 0; z < 192; z++)
             for (int y = 0; y < 3; y++)
@@ -230,8 +213,7 @@ public class IncrementalPrismBuilderTests
     }
 
     [Test]
-    public void LargeWire_HasReasonablePrismCount()
-    {
+    public void LargeWire_HasReasonablePrismCount() {
         // 3x3x192 wire spans multiple blocks
         for (int z = 0; z < 192; z++)
             for (int y = 0; y < 3; y++)
@@ -250,8 +232,7 @@ public class IncrementalPrismBuilderTests
     #region Clear
 
     [Test]
-    public void Clear_RemovesAllVoxelsAndPrisms()
-    {
+    public void Clear_RemovesAllVoxelsAndPrisms() {
         _builder.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor, Material.Copper);
         _builder.SetVoxel(new VoxelPos(20, 0, 0), VoxelType.Conductor, Material.Copper);
 
@@ -267,8 +248,7 @@ public class IncrementalPrismBuilderTests
     #region Negative Coordinates
 
     [Test]
-    public void SetVoxel_NegativeCoordinates_Works()
-    {
+    public void SetVoxel_NegativeCoordinates_Works() {
         var pos = new VoxelPos(-10, -20, -30);
         _builder.SetVoxel(pos, VoxelType.Conductor, Material.Copper);
 
@@ -277,8 +257,7 @@ public class IncrementalPrismBuilderTests
     }
 
     [Test]
-    public void GetAllPrisms_NegativeCoordinates_ReturnsCorrectBlockPos()
-    {
+    public void GetAllPrisms_NegativeCoordinates_ReturnsCorrectBlockPos() {
         _builder.SetVoxel(new VoxelPos(-10, -10, -10), VoxelType.Conductor, Material.Copper);
 
         var prisms = _builder.GetAllPrisms().ToList();

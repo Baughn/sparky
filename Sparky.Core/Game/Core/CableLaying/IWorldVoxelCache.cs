@@ -4,8 +4,7 @@ namespace Sparky.Game.Core.CableLaying;
 /// Interface for the world voxel cache used by the cable pathfinder.
 /// Provides efficient access to voxel states in a region around a start point.
 /// </summary>
-public interface IWorldVoxelCache
-{
+public interface IWorldVoxelCache {
     /// <summary>
     /// Gets the state of a single voxel.
     /// </summary>

@@ -17,8 +17,7 @@ namespace Sparky.VSIntegration.Preview;
 /// ModSystem managing preview state synchronization between server and all clients.
 /// Server tracks all players' previews and broadcasts to clients.
 /// </summary>
-public class VoxelPreviewSystem : ModSystem
-{
+public class VoxelPreviewSystem : ModSystem {
     private const string ChannelName = "sparky-preview";
 
     // Server state
@@ -33,8 +32,7 @@ public class VoxelPreviewSystem : ModSystem
     private long _clientTickListenerId;
     private PreviewState? _lastSentState;
 
-    public override void StartServerSide(ICoreServerAPI api)
-    {
+    public override void StartServerSide(ICoreServerAPI api) {
         _sapi = api;
 
         _serverChannel = api.Network.RegisterChannel(ChannelName)
@@ -53,8 +51,7 @@ public class VoxelPreviewSystem : ModSystem
         api.Logger.Debug("[Sparky] VoxelPreviewSystem server initialized");
     }
 
-    public override void StartClientSide(ICoreClientAPI api)
-    {
+    public override void StartClientSide(ICoreClientAPI api) {
         _capi = api;
 
         _renderer = new VoxelPreviewRenderer(api);
@@ -74,10 +71,8 @@ public class VoxelPreviewSystem : ModSystem
 
     #region Server Side
 
-    private void OnClientPreviewUpdate(IServerPlayer player, PreviewUpdateRequest request)
-    {
-        var state = new PreviewState
-        {
+    private void OnClientPreviewUpdate(IServerPlayer player, PreviewUpdateRequest request) {
+        var state = new PreviewState {
             PlayerUid = player.PlayerUID,
             Voxels = request.Voxels
         };
@@ -85,24 +80,20 @@ public class VoxelPreviewSystem : ModSystem
         _playerPreviews[player.PlayerUID] = state;
     }
 
-    private void OnServerTick(float dt)
-    {
-        if (_sapi == null || _serverChannel == null) return;
+    private void OnServerTick(float dt) {
+        if (_sapi == null || _serverChannel == null)
+            return;
 
         // Broadcast all preview states to all clients
-        foreach (var state in _playerPreviews.Values)
-        {
+        foreach (var state in _playerPreviews.Values) {
             _serverChannel.BroadcastPacket(state);
         }
     }
 
-    private void OnPlayerDisconnect(IServerPlayer player)
-    {
-        if (_playerPreviews.Remove(player.PlayerUID))
-        {
+    private void OnPlayerDisconnect(IServerPlayer player) {
+        if (_playerPreviews.Remove(player.PlayerUID)) {
             // Broadcast empty state to clear preview on all clients
-            _serverChannel?.BroadcastPacket(new PreviewState
-            {
+            _serverChannel?.BroadcastPacket(new PreviewState {
                 PlayerUid = player.PlayerUID,
                 Voxels = new()
             });
@@ -120,8 +111,7 @@ public class VoxelPreviewSystem : ModSystem
         Material.Iron
     };
 
-    private void OnVoxelPlacementRequest(IServerPlayer player, VoxelPlacementRequest request)
-    {
+    private void OnVoxelPlacementRequest(IServerPlayer player, VoxelPlacementRequest request) {
         if (_sapi == null || request.Voxels.Count == 0)
             return;
 
@@ -145,8 +135,7 @@ public class VoxelPreviewSystem : ModSystem
         // Group voxels by block position
         var voxelsByBlock = new Dictionary<(int X, int Y, int Z), List<(int LocalX, int LocalY, int LocalZ, Material Material)>>();
 
-        foreach (var voxel in request.Voxels)
-        {
+        foreach (var voxel in request.Voxels) {
             // Handle negative coordinates properly for block position
             var blockX = voxel.X >= 0 ? voxel.X / 16 : (voxel.X - 15) / 16;
             var blockY = voxel.Y >= 0 ? voxel.Y / 16 : (voxel.Y - 15) / 16;
@@ -160,8 +149,7 @@ public class VoxelPreviewSystem : ModSystem
                 : Material.Copper;
 
             var blockKey = (blockX, blockY, blockZ);
-            if (!voxelsByBlock.TryGetValue(blockKey, out var list))
-            {
+            if (!voxelsByBlock.TryGetValue(blockKey, out var list)) {
                 list = new List<(int, int, int, Material)>();
                 voxelsByBlock[blockKey] = list;
             }
@@ -169,29 +157,23 @@ public class VoxelPreviewSystem : ModSystem
         }
 
         // Process each block
-        foreach (var (blockKey, voxels) in voxelsByBlock)
-        {
+        foreach (var (blockKey, voxels) in voxelsByBlock) {
             var blockPos = new Vintagestory.API.MathTools.BlockPos(blockKey.X, blockKey.Y, blockKey.Z);
             var be = GetOrCreateCircuitBlock(_sapi.World, blockPos);
             if (be == null)
                 continue;
 
-            if (request.IsRemoval)
-            {
+            if (request.IsRemoval) {
                 // Remove voxels
-                foreach (var (localX, localY, localZ, _) in voxels)
-                {
+                foreach (var (localX, localY, localZ, _) in voxels) {
                     be.RemoveVoxel(localX, localY, localZ);
                 }
 
                 // If block is now empty, remove it
-                if (be.VoxelCuboids == null || be.VoxelCuboids.Count == 0)
-                {
+                if (be.VoxelCuboids == null || be.VoxelCuboids.Count == 0) {
                     _sapi.World.BlockAccessor.SetBlock(0, blockPos);
                 }
-            }
-            else
-            {
+            } else {
                 // Place voxels using batch method for efficiency
                 be.SetConductorVoxelsBatch(voxels.Select(v => (v.LocalX, v.LocalY, v.LocalZ, v.Material)));
             }
@@ -202,20 +184,16 @@ public class VoxelPreviewSystem : ModSystem
     /// Gets an existing circuit block entity, or creates a new circuit block if the position is replaceable.
     /// Returns null if the position is occupied by a non-circuit, non-replaceable block.
     /// </summary>
-    private BlockEntityCircuit? GetOrCreateCircuitBlock(IWorldAccessor world, Vintagestory.API.MathTools.BlockPos pos)
-    {
+    private BlockEntityCircuit? GetOrCreateCircuitBlock(IWorldAccessor world, Vintagestory.API.MathTools.BlockPos pos) {
         var block = world.BlockAccessor.GetBlock(pos);
 
-        if (block is BlockCircuit)
-        {
+        if (block is BlockCircuit) {
             return world.BlockAccessor.GetBlockEntity(pos) as BlockEntityCircuit;
         }
 
-        if (block.Replaceable >= 6000)
-        {
+        if (block.Replaceable >= 6000) {
             var circuitBlock = world.GetBlock(new AssetLocation("sparky:circuitblock"));
-            if (circuitBlock == null)
-            {
+            if (circuitBlock == null) {
                 _sapi?.Logger.Warning("[Sparky] Could not find sparky:circuitblock");
                 return null;
             }
@@ -235,10 +213,8 @@ public class VoxelPreviewSystem : ModSystem
     /// Sends a voxel placement request to the server.
     /// Call this from ItemWireTool to place or remove voxels.
     /// </summary>
-    public void SendVoxelPlacement(VoxelPlacementRequest request)
-    {
-        if (_clientChannel == null)
-        {
+    public void SendVoxelPlacement(VoxelPlacementRequest request) {
+        if (_clientChannel == null) {
             _capi?.Logger.Warning("[Sparky] Cannot send placement: client channel not initialized");
             return;
         }
@@ -246,9 +222,9 @@ public class VoxelPreviewSystem : ModSystem
         _clientChannel.SendPacket(request);
     }
 
-    private void OnPreviewReceived(PreviewState state)
-    {
-        if (_renderer == null) return;
+    private void OnPreviewReceived(PreviewState state) {
+        if (_renderer == null)
+            return;
 
         if (state.Voxels.Count == 0)
             _renderer.ClearPlayerPreview(state.PlayerUid);
@@ -256,33 +232,31 @@ public class VoxelPreviewSystem : ModSystem
             _renderer.SetPlayerPreview(state.PlayerUid, state.Voxels);
     }
 
-    private void OnClientTick(float dt)
-    {
-        if (_capi == null || _clientChannel == null) return;
+    private void OnClientTick(float dt) {
+        if (_capi == null || _clientChannel == null)
+            return;
 
         var player = _capi.World.Player;
-        if (player == null) return;
+        if (player == null)
+            return;
 
         // Check if player is holding wire tool
         var slot = player.InventoryManager?.ActiveHotbarSlot;
-        if (slot?.Itemstack?.Item is not ItemWireTool wireTool)
-        {
+        if (slot?.Itemstack?.Item is not ItemWireTool wireTool) {
             SendPreviewUpdate(new List<PreviewVoxel>());
             return;
         }
 
         // Check if looking at a block
         var blockSel = player.CurrentBlockSelection;
-        if (blockSel == null)
-        {
+        if (blockSel == null) {
             SendPreviewUpdate(new List<PreviewVoxel>());
             return;
         }
 
         // Calculate target voxel position
         var targetVoxel = CalculateTargetVoxel(blockSel);
-        if (targetVoxel == null)
-        {
+        if (targetVoxel == null) {
             SendPreviewUpdate(new List<PreviewVoxel>());
             return;
         }
@@ -295,33 +269,25 @@ public class VoxelPreviewSystem : ModSystem
         var faceDir = BlockFaceToVoxelDirection(blockSel.Face);
 
         List<PreviewVoxel> voxels;
-        if (mode.IsCableMode())
-        {
+        if (mode.IsCableMode()) {
             var crossSection = mode.GetCrossSection();
-            if (crossSection == null)
-            {
+            if (crossSection == null) {
                 voxels = BuildSingleVoxelPreview(material, targetVoxel.Value);
-            }
-            else
-            {
+            } else {
                 // Get or create per-player cable state from ModSystem
                 var modSystem = _capi.ModLoader.GetModSystem<SparkyModSystem>();
                 var cableState = modSystem.GetOrCreateCableState(player.PlayerUID, crossSection.Value);
                 voxels = BuildCablePreview(cableState, mode, material, targetVoxel.Value, faceDir, _capi.World.BlockAccessor);
             }
-        }
-        else
-        {
+        } else {
             voxels = BuildSingleVoxelPreview(material, targetVoxel.Value);
         }
 
         SendPreviewUpdate(voxels);
     }
 
-    private static VoxelDirection BlockFaceToVoxelDirection(Vintagestory.API.MathTools.BlockFacing face)
-    {
-        return face.Index switch
-        {
+    private static VoxelDirection BlockFaceToVoxelDirection(Vintagestory.API.MathTools.BlockFacing face) {
+        return face.Index switch {
             0 => VoxelDirection.ZNeg, // North
             1 => VoxelDirection.XPos, // East
             2 => VoxelDirection.ZPos, // South
@@ -332,8 +298,7 @@ public class VoxelPreviewSystem : ModSystem
         };
     }
 
-    private List<PreviewVoxel> BuildSingleVoxelPreview(Material material, (int X, int Y, int Z) target)
-    {
+    private List<PreviewVoxel> BuildSingleVoxelPreview(Material material, (int X, int Y, int Z) target) {
         var color = VoxelPreviewMesh.GetMaterialColor(material, 128);
 
         return new List<PreviewVoxel>
@@ -348,8 +313,7 @@ public class VoxelPreviewSystem : ModSystem
         Material material,
         (int X, int Y, int Z) target,
         VoxelDirection faceDir,
-        IBlockAccessor blockAccessor)
-    {
+        IBlockAccessor blockAccessor) {
         var targetPos = new VoxelPos(target.X, target.Y, target.Z);
 
         // Poll for completed pathfinding
@@ -357,8 +321,7 @@ public class VoxelPreviewSystem : ModSystem
 
         // Spammy: _capi?.Logger.Debug($"[Sparky Preview] BuildCablePreview: phase={cableState.CurrentPhase}, hasPath={cableState.CurrentPath != null}");
 
-        switch (cableState.CurrentPhase)
-        {
+        switch (cableState.CurrentPhase) {
             case CableLayingState.Phase.Idle:
                 // Show cross-section preview at snapped positions (where cable would actually start)
                 var snappedPositions = cableState.GetSnappedStartPositions(targetPos, blockAccessor);
@@ -387,60 +350,51 @@ public class VoxelPreviewSystem : ModSystem
     /// <summary>
     /// Builds a preview from a list of voxel positions.
     /// </summary>
-    private static List<PreviewVoxel> BuildPositionsPreview(IReadOnlyList<VoxelPos> positions, Material material)
-    {
+    private static List<PreviewVoxel> BuildPositionsPreview(IReadOnlyList<VoxelPos> positions, Material material) {
         var color = VoxelPreviewMesh.GetMaterialColor(material, 128);
         var voxels = new List<PreviewVoxel>(positions.Count);
-        foreach (var pos in positions)
-        {
+        foreach (var pos in positions) {
             voxels.Add(new PreviewVoxel(pos.X, pos.Y, pos.Z, color));
         }
         return voxels;
     }
 
-    private List<PreviewVoxel> BuildPathPreview(PathResult path, Material material)
-    {
+    private List<PreviewVoxel> BuildPathPreview(PathResult path, Material material) {
         var voxels = new List<PreviewVoxel>();
 
         // Color based on path result type
-        var color = path.Type switch
-        {
+        var color = path.Type switch {
             PathResultType.Complete => GetCompletePathColor(material),   // Green tint
             PathResultType.Partial => GetPartialPathColor(material),     // Yellow tint
             PathResultType.NoProgress => GetNoProgressColor(),           // Red
             _ => VoxelPreviewMesh.GetMaterialColor(material, 128)
         };
 
-        foreach (var pos in path.Path)
-        {
+        foreach (var pos in path.Path) {
             voxels.Add(new PreviewVoxel(pos.X, pos.Y, pos.Z, color));
         }
 
         return voxels;
     }
 
-    private static int GetCompletePathColor(Material material)
-    {
+    private static int GetCompletePathColor(Material material) {
         // Green tint - mix material color with green
         var baseColor = VoxelPreviewMesh.GetMaterialColor(material, 160);
         return TintColor(baseColor, 0.5f, 1.0f, 0.5f);
     }
 
-    private static int GetPartialPathColor(Material material)
-    {
+    private static int GetPartialPathColor(Material material) {
         // Yellow tint - mix material color with yellow
         var baseColor = VoxelPreviewMesh.GetMaterialColor(material, 160);
         return TintColor(baseColor, 1.0f, 1.0f, 0.3f);
     }
 
-    private static int GetNoProgressColor()
-    {
+    private static int GetNoProgressColor() {
         // Pure red
         return (160 << 24) | (255 << 16) | (50 << 8) | 50;
     }
 
-    private static int TintColor(int argb, float rMult, float gMult, float bMult)
-    {
+    private static int TintColor(int argb, float rMult, float gMult, float bMult) {
         int a = (argb >> 24) & 0xFF;
         int r = Math.Min(255, (int)(((argb >> 16) & 0xFF) * rMult));
         int g = Math.Min(255, (int)(((argb >> 8) & 0xFF) * gMult));
@@ -448,14 +402,13 @@ public class VoxelPreviewSystem : ModSystem
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
-    private void SendPreviewUpdate(List<PreviewVoxel> voxels)
-    {
-        if (_clientChannel == null) return;
+    private void SendPreviewUpdate(List<PreviewVoxel> voxels) {
+        if (_clientChannel == null)
+            return;
 
         // Only send if changed
         if (_lastSentState != null &&
-            VoxelsEqual(_lastSentState.Voxels, voxels))
-        {
+            VoxelsEqual(_lastSentState.Voxels, voxels)) {
             return;
         }
 
@@ -465,19 +418,17 @@ public class VoxelPreviewSystem : ModSystem
         _lastSentState = new PreviewState { Voxels = voxels };
     }
 
-    private static bool VoxelsEqual(List<PreviewVoxel> a, List<PreviewVoxel> b)
-    {
-        if (a.Count != b.Count) return false;
-        for (int i = 0; i < a.Count; i++)
-        {
+    private static bool VoxelsEqual(List<PreviewVoxel> a, List<PreviewVoxel> b) {
+        if (a.Count != b.Count)
+            return false;
+        for (int i = 0; i < a.Count; i++) {
             if (a[i].X != b[i].X || a[i].Y != b[i].Y || a[i].Z != b[i].Z || a[i].Rgba != b[i].Rgba)
                 return false;
         }
         return true;
     }
 
-    private (int X, int Y, int Z)? CalculateTargetVoxel(BlockSelection blockSel)
-    {
+    private (int X, int Y, int Z)? CalculateTargetVoxel(BlockSelection blockSel) {
         var hitPos = blockSel.HitPosition;
         var face = blockSel.Face;
 
@@ -501,18 +452,14 @@ public class VoxelPreviewSystem : ModSystem
 
     #endregion
 
-    public override void Dispose()
-    {
-        if (_sapi != null)
-        {
+    public override void Dispose() {
+        if (_sapi != null) {
             _sapi.Event.PlayerDisconnect -= OnPlayerDisconnect;
         }
 
-        if (_capi != null)
-        {
+        if (_capi != null) {
             _capi.Event.UnregisterGameTickListener(_clientTickListenerId);
-            if (_renderer != null)
-            {
+            if (_renderer != null) {
                 _capi.Event.UnregisterRenderer(_renderer, EnumRenderStage.OIT);
                 _renderer.Dispose();
             }

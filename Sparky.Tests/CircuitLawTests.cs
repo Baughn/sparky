@@ -4,14 +4,11 @@ using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
+namespace Sparky.Tests {
     [TestFixture]
-    public class CircuitLawTests
-    {
+    public class CircuitLawTests {
         [Test]
-        public void TestKCL()
-        {
+        public void TestKCL() {
             // Verify KCL at a central node.
             // Source -> R1 -> Node 1 -> R2 -> Ground
             //                        -> R3 -> Ground
@@ -46,8 +43,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestKVL()
-        {
+        public void TestKVL() {
             // Verify KVL around a loop.
             // Source -> R1 -> R2 -> R3 -> Ground
             // V_source = V_R1 + V_R2 + V_R3
@@ -73,8 +69,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestPowerConservation()
-        {
+        public void TestPowerConservation() {
             // Total Power Generated = Total Power Consumed
             // Source (10V) -> R (100) -> Ground
             // Power Gen = V * I = 10 * (10/100) = 1W

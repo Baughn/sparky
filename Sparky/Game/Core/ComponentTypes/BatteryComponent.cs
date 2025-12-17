@@ -11,8 +11,7 @@ namespace Sparky.Game.Core.ComponentTypes;
 /// A battery has two terminal regions: "negative" and "positive".
 /// The MNA voltage source maintains a fixed voltage difference between them.
 /// </remarks>
-public class BatteryComponent : Component
-{
+public class BatteryComponent : Component {
     private readonly TerminalRegion _negative;
     private readonly TerminalRegion _positive;
 
@@ -39,8 +38,7 @@ public class BatteryComponent : Component
         IEnumerable<VoxelPos> negativeVoxels,
         IEnumerable<VoxelPos> positiveVoxels,
         double voltage)
-        : base(origin)
-    {
+        : base(origin) {
         _negative = new TerminalRegion("negative", negativeVoxels);
         _positive = new TerminalRegion("positive", positiveVoxels);
         Terminals = [_negative, _positive];
@@ -51,14 +49,12 @@ public class BatteryComponent : Component
     /// Creates a battery with single-voxel terminals.
     /// </summary>
     public BatteryComponent(VoxelPos negativeVoxel, VoxelPos positiveVoxel, double voltage)
-        : this(negativeVoxel, [negativeVoxel], [positiveVoxel], voltage)
-    {
+        : this(negativeVoxel, [negativeVoxel], [positiveVoxel], voltage) {
     }
 
     public override void CreateMnaComponents(
         ISimulation sim,
-        IReadOnlyDictionary<string, NodeId> terminalNodes)
-    {
+        IReadOnlyDictionary<string, NodeId> terminalNodes) {
         if (!terminalNodes.TryGetValue("negative", out var negNode))
             throw new InvalidOperationException("Battery missing negative terminal node");
         if (!terminalNodes.TryGetValue("positive", out var posNode))
@@ -68,17 +64,14 @@ public class BatteryComponent : Component
         _voltageSourceId = sim.AddVoltageSource(posNode, negNode, Voltage);
     }
 
-    public override void RemoveMnaComponents(ISimulation sim)
-    {
-        if (_voltageSourceId.HasValue)
-        {
+    public override void RemoveMnaComponents(ISimulation sim) {
+        if (_voltageSourceId.HasValue) {
             sim.RemoveVoltageSource(_voltageSourceId.Value);
             _voltageSourceId = null;
         }
     }
 
-    public override ComponentVisualState ComputeVisualState(ISimulation sim)
-    {
+    public override ComponentVisualState ComputeVisualState(ISimulation sim) {
         if (!_voltageSourceId.HasValue)
             return ComponentVisualState.Default;
 
@@ -100,10 +93,8 @@ public class BatteryComponent : Component
     /// <summary>
     /// Updates the voltage in the MNA simulation (fast path, no topology rebuild).
     /// </summary>
-    public void UpdateMnaValue(ISimulation sim)
-    {
-        if (_voltageSourceId.HasValue)
-        {
+    public void UpdateMnaValue(ISimulation sim) {
+        if (_voltageSourceId.HasValue) {
             sim.UpdateVoltageSource(_voltageSourceId.Value, Voltage);
         }
     }

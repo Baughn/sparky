@@ -4,11 +4,9 @@ using Sparky.Game.Core;
 namespace Sparky.Tests.Game;
 
 [TestFixture]
-public class PrismTests
-{
+public class PrismTests {
     [Test]
-    public void Prism_Contains_WorksCorrectly()
-    {
+    public void Prism_Contains_WorksCorrectly() {
         var prism = new Prism(2, 3, 4, 5, 6, 7, VoxelType.Conductor);
 
         // Inside
@@ -28,16 +26,14 @@ public class PrismTests
     }
 
     [Test]
-    public void Prism_Volume_CalculatesCorrectly()
-    {
+    public void Prism_Volume_CalculatesCorrectly() {
         var prism = new Prism(0, 0, 0, 4, 4, 16, VoxelType.Conductor);
 
         Assert.That(prism.Volume, Is.EqualTo(256));
     }
 
     [Test]
-    public void Prism_SingleVoxel_HasVolumeOne()
-    {
+    public void Prism_SingleVoxel_HasVolumeOne() {
         var prism = Prism.SingleVoxel(5, 5, 5, VoxelType.Conductor, Material.Copper);
 
         Assert.That(prism.Volume, Is.EqualTo(1));
@@ -48,11 +44,9 @@ public class PrismTests
 }
 
 [TestFixture]
-public class BlockVoxelDataCoalescingTests
-{
+public class BlockVoxelDataCoalescingTests {
     [Test]
-    public void SingleVoxel_CreatesSinglePrism()
-    {
+    public void SingleVoxel_CreatesSinglePrism() {
         var block = new BlockVoxelData();
         var voxels = new (VoxelType, Material?)[4096];
         voxels[0] = (VoxelType.Conductor, Material.Copper);
@@ -64,14 +58,12 @@ public class BlockVoxelDataCoalescingTests
     }
 
     [Test]
-    public void StraightLineX_CoalescesToSinglePrism()
-    {
+    public void StraightLineX_CoalescesToSinglePrism() {
         var block = new BlockVoxelData();
         var voxels = new (VoxelType, Material?)[4096];
 
         // 10 voxels in a row along X
-        for (int x = 0; x < 10; x++)
-        {
+        for (int x = 0; x < 10; x++) {
             voxels[x] = (VoxelType.Conductor, Material.Copper);
         }
 
@@ -84,18 +76,14 @@ public class BlockVoxelDataCoalescingTests
     }
 
     [Test]
-    public void SolidBlock_CoalescesToSinglePrism()
-    {
+    public void SolidBlock_CoalescesToSinglePrism() {
         var block = new BlockVoxelData();
         var voxels = new (VoxelType, Material?)[4096];
 
         // 4x4x4 solid block
-        for (int z = 0; z < 4; z++)
-        {
-            for (int y = 0; y < 4; y++)
-            {
-                for (int x = 0; x < 4; x++)
-                {
+        for (int z = 0; z < 4; z++) {
+            for (int y = 0; y < 4; y++) {
+                for (int x = 0; x < 4; x++) {
                     voxels[x + y * 16 + z * 256] = (VoxelType.Conductor, Material.Copper);
                 }
             }
@@ -108,20 +96,17 @@ public class BlockVoxelDataCoalescingTests
     }
 
     [Test]
-    public void DifferentMaterials_CreateSeparatePrisms()
-    {
+    public void DifferentMaterials_CreateSeparatePrisms() {
         var block = new BlockVoxelData();
         var voxels = new (VoxelType, Material?)[4096];
 
         // Copper voxels at x=0-4
-        for (int x = 0; x < 5; x++)
-        {
+        for (int x = 0; x < 5; x++) {
             voxels[x] = (VoxelType.Conductor, Material.Copper);
         }
 
         // Lead voxels at x=5-9
-        for (int x = 5; x < 10; x++)
-        {
+        for (int x = 5; x < 10; x++) {
             voxels[x] = (VoxelType.Conductor, Material.Lead);
         }
 
@@ -131,14 +116,12 @@ public class BlockVoxelDataCoalescingTests
     }
 
     [Test]
-    public void SideTap_SplitsPrism()
-    {
+    public void SideTap_SplitsPrism() {
         var block = new BlockVoxelData();
         var voxels = new (VoxelType, Material?)[4096];
 
         // Horizontal wire along X (y=0, z=0)
-        for (int x = 0; x < 10; x++)
-        {
+        for (int x = 0; x < 10; x++) {
             voxels[x] = (VoxelType.Conductor, Material.Copper);
         }
 
@@ -157,20 +140,17 @@ public class BlockVoxelDataCoalescingTests
     }
 
     [Test]
-    public void TJunction_CreatesSeparatePrisms()
-    {
+    public void TJunction_CreatesSeparatePrisms() {
         var block = new BlockVoxelData();
         var voxels = new (VoxelType, Material?)[4096];
 
         // Horizontal wire along X
-        for (int x = 0; x < 10; x++)
-        {
+        for (int x = 0; x < 10; x++) {
             voxels[x + 5 * 16] = (VoxelType.Conductor, Material.Copper);  // y=5, z=0
         }
 
         // Vertical wire along Y at x=5
-        for (int y = 0; y < 10; y++)
-        {
+        for (int y = 0; y < 10; y++) {
             voxels[5 + y * 16] = (VoxelType.Conductor, Material.Copper);  // x=5, z=0
         }
 
@@ -181,8 +161,7 @@ public class BlockVoxelDataCoalescingTests
 
         // Total voxels should be preserved
         int totalVolume = 0;
-        foreach (var prism in block.Prisms)
-        {
+        foreach (var prism in block.Prisms) {
             totalVolume += prism.Volume;
         }
         // 10 + 10 - 1 (overlap at center) = 19 unique voxels
@@ -190,8 +169,7 @@ public class BlockVoxelDataCoalescingTests
     }
 
     [Test]
-    public void Insulator_SeparateFromConductor()
-    {
+    public void Insulator_SeparateFromConductor() {
         var block = new BlockVoxelData();
         var voxels = new (VoxelType, Material?)[4096];
 
@@ -209,16 +187,13 @@ public class BlockVoxelDataCoalescingTests
     }
 
     [Test]
-    public void ExpandToVoxels_RoundTrips()
-    {
+    public void ExpandToVoxels_RoundTrips() {
         var block = new BlockVoxelData();
         var original = new (VoxelType, Material?)[4096];
 
         // Create a complex pattern
-        for (int x = 0; x < 4; x++)
-        {
-            for (int y = 0; y < 4; y++)
-            {
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 4; y++) {
                 original[x + y * 16] = (VoxelType.Conductor, Material.Copper);
             }
         }
@@ -229,8 +204,7 @@ public class BlockVoxelDataCoalescingTests
         var expanded = block.ExpandToVoxels();
 
         // Verify all voxels match
-        for (int i = 0; i < 4096; i++)
-        {
+        for (int i = 0; i < 4096; i++) {
             Assert.That(expanded[i].Item1, Is.EqualTo(original[i].Item1),
                 $"Type mismatch at index {i}");
             Assert.That(expanded[i].Item2, Is.EqualTo(original[i].Item2),
@@ -240,20 +214,15 @@ public class BlockVoxelDataCoalescingTests
 }
 
 [TestFixture]
-public class VoxelGridPrismTests
-{
+public class VoxelGridPrismTests {
     [Test]
-    public void VoxelGrid_StraightCable_MinimalPrisms()
-    {
+    public void VoxelGrid_StraightCable_MinimalPrisms() {
         var grid = new VoxelGrid();
 
         // 4x4x16 cable in one block
-        for (int z = 0; z < 16; z++)
-        {
-            for (int y = 0; y < 4; y++)
-            {
-                for (int x = 0; x < 4; x++)
-                {
+        for (int z = 0; z < 16; z++) {
+            for (int y = 0; y < 4; y++) {
+                for (int x = 0; x < 4; x++) {
                     grid.SetVoxel(new VoxelPos(x, y, z), VoxelType.Conductor);
                 }
             }
@@ -267,17 +236,13 @@ public class VoxelGridPrismTests
     }
 
     [Test]
-    public void VoxelGrid_CrossBlockCable_MultiplePrisms()
-    {
+    public void VoxelGrid_CrossBlockCable_MultiplePrisms() {
         var grid = new VoxelGrid();
 
         // 4x4 cable spanning 3 blocks along Z (48 voxels long)
-        for (int z = 0; z < 48; z++)
-        {
-            for (int y = 0; y < 4; y++)
-            {
-                for (int x = 0; x < 4; x++)
-                {
+        for (int z = 0; z < 48; z++) {
+            for (int y = 0; y < 4; y++) {
+                for (int x = 0; x < 4; x++) {
                     grid.SetVoxel(new VoxelPos(x, y, z), VoxelType.Conductor);
                 }
             }
@@ -291,8 +256,7 @@ public class VoxelGridPrismTests
     }
 
     [Test]
-    public void VoxelGrid_GetAllPrisms_ReturnsAllPrisms()
-    {
+    public void VoxelGrid_GetAllPrisms_ReturnsAllPrisms() {
         var grid = new VoxelGrid();
 
         // Create voxels in 2 blocks

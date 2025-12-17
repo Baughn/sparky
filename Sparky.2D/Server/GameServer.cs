@@ -16,8 +16,7 @@ namespace Sparky.TwoD.Server;
 /// The 2D grid maps to the XZ plane at Y=0 in voxel space.
 /// Components are placed on the grid and connected via conductor voxels.
 /// </remarks>
-public class GameServer : IGameServer
-{
+public class GameServer : IGameServer {
     private readonly int _width;
     private readonly int _height;
 
@@ -44,16 +43,13 @@ public class GameServer : IGameServer
     public int Width => _width;
     public int Height => _height;
 
-    public GameServer(int width = 32, int height = 32)
-    {
+    public GameServer(int width = 32, int height = 32) {
         _width = width;
         _height = height;
     }
 
-    public void HandleInput(InputEvent input)
-    {
-        switch (input)
-        {
+    public void HandleInput(InputEvent input) {
+        switch (input) {
             case PlaceComponent place:
                 PlaceCell(place.Pos, place.Type, place.Rotation);
                 break;
@@ -76,13 +72,11 @@ public class GameServer : IGameServer
         }
     }
 
-    private void ToggleSwitch(GridPos pos)
-    {
+    private void ToggleSwitch(GridPos pos) {
         if (!_cells.TryGetValue(pos, out var cell))
             return;
 
-        if (cell.Component is SwitchComponent sw)
-        {
+        if (cell.Component is SwitchComponent sw) {
             sw.Toggle(_simulation);
             // Mark all cells dirty - switch toggle affects entire circuit's currents
             MarkAllCellsDirty();
@@ -93,28 +87,23 @@ public class GameServer : IGameServer
     /// Marks all cells as dirty for visual update.
     /// Used when simulation state changes affect the entire circuit (e.g., switch toggle).
     /// </summary>
-    private void MarkAllCellsDirty()
-    {
-        foreach (var pos in _cells.Keys)
-        {
+    private void MarkAllCellsDirty() {
+        foreach (var pos in _cells.Keys) {
             _dirtyCells.Add(pos);
         }
     }
 
-    private void SetComponentValue(GridPos pos, double value)
-    {
+    private void SetComponentValue(GridPos pos, double value) {
         if (!_cells.TryGetValue(pos, out var cell))
             return;
 
         // Handle non-origin cells by redirecting to origin
-        if (cell.OriginCell.HasValue)
-        {
+        if (cell.OriginCell.HasValue) {
             SetComponentValue(cell.OriginCell.Value, value);
             return;
         }
 
-        switch (cell.Component)
-        {
+        switch (cell.Component) {
             case BatteryComponent battery:
                 battery.Voltage = value;
                 battery.UpdateMnaValue(_simulation);
@@ -131,14 +120,12 @@ public class GameServer : IGameServer
         }
     }
 
-    private void PlaceCell(GridPos pos, CellType type, int rotation)
-    {
+    private void PlaceCell(GridPos pos, CellType type, int rotation) {
         if (pos.X < 0 || pos.X >= _width || pos.Y < 0 || pos.Y >= _height)
             return;
 
         // Remove existing cell first
-        if (_cells.ContainsKey(pos))
-        {
+        if (_cells.ContainsKey(pos)) {
             RemoveCell(pos);
         }
 
@@ -153,8 +140,7 @@ public class GameServer : IGameServer
         _cells[pos] = cell;
 
         // Place voxels and component based on type
-        switch (type)
-        {
+        switch (type) {
             case CellType.Wire:
                 _voxelGrid.SetVoxel(voxelPos, VoxelType.ResistiveConductor);
                 break;
@@ -176,8 +162,10 @@ public class GameServer : IGameServer
                     terminalBGridPosSw.X < 0 || terminalBGridPosSw.X >= _width || terminalBGridPosSw.Y < 0 || terminalBGridPosSw.Y >= _height)
                     return;
 
-                if (_cells.ContainsKey(bodyGridPosSw)) RemoveCell(bodyGridPosSw);
-                if (_cells.ContainsKey(terminalBGridPosSw)) RemoveCell(terminalBGridPosSw);
+                if (_cells.ContainsKey(bodyGridPosSw))
+                    RemoveCell(bodyGridPosSw);
+                if (_cells.ContainsKey(terminalBGridPosSw))
+                    RemoveCell(terminalBGridPosSw);
 
                 // Voxel positions
                 var terminalAVoxelSw = voxelPos;
@@ -208,8 +196,10 @@ public class GameServer : IGameServer
                     positiveGridPos.X < 0 || positiveGridPos.X >= _width || positiveGridPos.Y < 0 || positiveGridPos.Y >= _height)
                     return;
 
-                if (_cells.ContainsKey(bodyGridPosB)) RemoveCell(bodyGridPosB);
-                if (_cells.ContainsKey(positiveGridPos)) RemoveCell(positiveGridPos);
+                if (_cells.ContainsKey(bodyGridPosB))
+                    RemoveCell(bodyGridPosB);
+                if (_cells.ContainsKey(positiveGridPos))
+                    RemoveCell(positiveGridPos);
 
                 // Voxel positions
                 var negativeVoxel = voxelPos;
@@ -240,8 +230,10 @@ public class GameServer : IGameServer
                     terminalBGridPos.X < 0 || terminalBGridPos.X >= _width || terminalBGridPos.Y < 0 || terminalBGridPos.Y >= _height)
                     return;
 
-                if (_cells.ContainsKey(bodyGridPosR)) RemoveCell(bodyGridPosR);
-                if (_cells.ContainsKey(terminalBGridPos)) RemoveCell(terminalBGridPos);
+                if (_cells.ContainsKey(bodyGridPosR))
+                    RemoveCell(bodyGridPosR);
+                if (_cells.ContainsKey(terminalBGridPos))
+                    RemoveCell(terminalBGridPos);
 
                 // Voxel positions
                 var terminalAVoxel = voxelPos;
@@ -267,14 +259,12 @@ public class GameServer : IGameServer
         _dirtyCells.Add(pos);
     }
 
-    private void RemoveCell(GridPos pos)
-    {
+    private void RemoveCell(GridPos pos) {
         if (!_cells.TryGetValue(pos, out var cell))
             return;
 
         // If this is a non-origin cell, redirect to remove the origin instead
-        if (cell.OriginCell.HasValue)
-        {
+        if (cell.OriginCell.HasValue) {
             RemoveCell(cell.OriginCell.Value);
             return;
         }
@@ -282,15 +272,13 @@ public class GameServer : IGameServer
         var voxelPos = GridToVoxel(pos);
 
         // Remove component
-        if (cell.Component != null)
-        {
+        if (cell.Component != null) {
             cell.Component.RemoveMnaComponents(_simulation);
             _components.Remove(cell.Component);
         }
 
         // Remove voxels and cells based on type
-        switch (cell.Type)
-        {
+        switch (cell.Type) {
             case CellType.Wire:
             case CellType.Ground:
                 _voxelGrid.SetVoxel(voxelPos, VoxelType.Air);
@@ -308,13 +296,11 @@ public class GameServer : IGameServer
                 var bodyGridPos = GetTerminalGridPos(pos, cell.Rotation, 1);
                 var farTerminalGridPos = GetTerminalGridPos(pos, cell.Rotation, 2);
 
-                if (_cells.ContainsKey(bodyGridPos))
-                {
+                if (_cells.ContainsKey(bodyGridPos)) {
                     _cells.Remove(bodyGridPos);
                     _dirtyCells.Add(bodyGridPos);
                 }
-                if (_cells.ContainsKey(farTerminalGridPos))
-                {
+                if (_cells.ContainsKey(farTerminalGridPos)) {
                     _cells.Remove(farTerminalGridPos);
                     _dirtyCells.Add(farTerminalGridPos);
                 }
@@ -326,17 +312,14 @@ public class GameServer : IGameServer
         _dirtyCells.Add(pos);
     }
 
-    public IEnumerable<RenderCommand> Tick(float dt)
-    {
+    public IEnumerable<RenderCommand> Tick(float dt) {
         // Rebuild topology if dirty
-        if (_topologyDirty)
-        {
+        if (_topologyDirty) {
             _regions = _topologyBuilder.BuildTopology(_voxelGrid, _components, _simulation);
             _topologyDirty = false;
 
             // Mark all cells dirty for visual update
-            foreach (var pos in _cells.Keys)
-            {
+            foreach (var pos in _cells.Keys) {
                 _dirtyCells.Add(pos);
             }
         }
@@ -347,15 +330,11 @@ public class GameServer : IGameServer
 
         // Generate render commands for dirty cells
         var commands = new List<RenderCommand>();
-        foreach (var pos in _dirtyCells)
-        {
-            if (_cells.TryGetValue(pos, out var cell))
-            {
+        foreach (var pos in _dirtyCells) {
+            if (_cells.TryGetValue(pos, out var cell)) {
                 var state = ComputeVisualState(pos, cell);
                 commands.Add(new SetCell(pos, cell.Type, cell.Rotation, state));
-            }
-            else
-            {
+            } else {
                 commands.Add(new ClearCell(pos));
             }
         }
@@ -364,22 +343,18 @@ public class GameServer : IGameServer
         return commands;
     }
 
-    public IEnumerable<RenderCommand> GetFullState()
-    {
+    public IEnumerable<RenderCommand> GetFullState() {
         yield return new SetGridSize(_width, _height);
 
-        foreach (var (pos, cell) in _cells)
-        {
+        foreach (var (pos, cell) in _cells) {
             var state = ComputeVisualState(pos, cell);
             yield return new SetCell(pos, cell.Type, cell.Rotation, state);
         }
     }
 
-    private CellVisualState ComputeVisualState(GridPos pos, CellData cell)
-    {
+    private CellVisualState ComputeVisualState(GridPos pos, CellData cell) {
         // Body cells are insulators - no voltage display
-        if (cell.Type == CellType.BatteryBody || cell.Type == CellType.ResistorBody || cell.Type == CellType.SwitchBody)
-        {
+        if (cell.Type == CellType.BatteryBody || cell.Type == CellType.ResistorBody || cell.Type == CellType.SwitchBody) {
             return CellVisualState.Default;
         }
 
@@ -387,24 +362,20 @@ public class GameServer : IGameServer
 
         // Get voltage at this cell's position
         float voltage = 0f;
-        if (_regions.TryGetValue(voxelPos, out var region))
-        {
+        if (_regions.TryGetValue(voxelPos, out var region)) {
             voltage = (float)(_simulation.GetVoltage(region.NodeId) / 10.0); // Normalize to 10V
         }
 
         // Get component - either directly on this cell or via OriginCell for far terminals
         Component? component = cell.Component;
-        if (component == null && cell.OriginCell.HasValue)
-        {
+        if (component == null && cell.OriginCell.HasValue) {
             // Far terminal cell - look up the origin's component
-            if (_cells.TryGetValue(cell.OriginCell.Value, out var originCell))
-            {
+            if (_cells.TryGetValue(cell.OriginCell.Value, out var originCell)) {
                 component = originCell.Component;
             }
         }
 
-        if (component != null)
-        {
+        if (component != null) {
             var compState = component.ComputeVisualState(_simulation);
 
             // Special handling for switch to include closed state
@@ -419,23 +390,18 @@ public class GameServer : IGameServer
         }
 
         // Wire cells - get current from adjacent resistors or nearby components
-        if (cell.Type == CellType.Wire)
-        {
+        if (cell.Type == CellType.Wire) {
             float current = 0f;
 
             // Try to get current from inter-wire resistors first
-            if (_regions.TryGetValue(voxelPos, out var wireRegion) && wireRegion.AdjacentResistors.Count > 0)
-            {
+            if (_regions.TryGetValue(voxelPos, out var wireRegion) && wireRegion.AdjacentResistors.Count > 0) {
                 // Use max current (all should be ~equal in series, but handles end-of-chain case)
                 double maxCurrent = 0;
-                foreach (var rid in wireRegion.AdjacentResistors)
-                {
+                foreach (var rid in wireRegion.AdjacentResistors) {
                     maxCurrent = Math.Max(maxCurrent, Math.Abs(_simulation.GetResistorCurrent(rid)));
                 }
                 current = (float)maxCurrent;
-            }
-            else
-            {
+            } else {
                 // No inter-wire resistors - wire is merged with a terminal
                 // Look at adjacent cells for a component to get current from
                 current = GetCurrentFromAdjacentComponent(pos);
@@ -451,28 +417,23 @@ public class GameServer : IGameServer
     /// Gets current from an adjacent component terminal when a wire has no inter-wire resistors.
     /// This handles wires that are merged with terminal regions.
     /// </summary>
-    private float GetCurrentFromAdjacentComponent(GridPos wirePos)
-    {
+    private float GetCurrentFromAdjacentComponent(GridPos wirePos) {
         // Check all 4 adjacent cells for components
         var adjacentOffsets = new[] { (1, 0), (-1, 0), (0, 1), (0, -1) };
-        foreach (var (dx, dy) in adjacentOffsets)
-        {
+        foreach (var (dx, dy) in adjacentOffsets) {
             var adjPos = new GridPos(wirePos.X + dx, wirePos.Y + dy);
             if (!_cells.TryGetValue(adjPos, out var adjCell))
                 continue;
 
             // Get component - either directly on this cell or via OriginCell for far terminals
             Component? component = adjCell.Component;
-            if (component == null && adjCell.OriginCell.HasValue)
-            {
-                if (_cells.TryGetValue(adjCell.OriginCell.Value, out var originCell))
-                {
+            if (component == null && adjCell.OriginCell.HasValue) {
+                if (_cells.TryGetValue(adjCell.OriginCell.Value, out var originCell)) {
                     component = originCell.Component;
                 }
             }
 
-            if (component != null)
-            {
+            if (component != null) {
                 var compState = component.ComputeVisualState(_simulation);
                 if (compState.CurrentNormalized != 0)
                     return compState.CurrentNormalized;
@@ -484,8 +445,7 @@ public class GameServer : IGameServer
     /// <summary>
     /// Converts 2D grid position to 3D voxel position (XZ plane at Y=0).
     /// </summary>
-    private static VoxelPos GridToVoxel(GridPos pos)
-    {
+    private static VoxelPos GridToVoxel(GridPos pos) {
         return new VoxelPos(pos.X, 0, pos.Y);
     }
 
@@ -496,10 +456,8 @@ public class GameServer : IGameServer
     /// <param name="origin">Starting position.</param>
     /// <param name="rotation">Rotation (0-3).</param>
     /// <param name="distance">Distance in cells (default 1).</param>
-    private static VoxelPos GetTerminalPos(VoxelPos origin, int rotation, int distance = 1)
-    {
-        return (rotation % 4) switch
-        {
+    private static VoxelPos GetTerminalPos(VoxelPos origin, int rotation, int distance = 1) {
+        return (rotation % 4) switch {
             0 => new VoxelPos(origin.X + distance, origin.Y, origin.Z),
             1 => new VoxelPos(origin.X, origin.Y, origin.Z + distance),
             2 => new VoxelPos(origin.X - distance, origin.Y, origin.Z),
@@ -512,10 +470,8 @@ public class GameServer : IGameServer
     /// Gets a grid position at a given distance based on rotation.
     /// Rotation: 0=+X, 1=+Y(grid), 2=-X, 3=-Y(grid)
     /// </summary>
-    private static GridPos GetTerminalGridPos(GridPos origin, int rotation, int distance = 1)
-    {
-        return (rotation % 4) switch
-        {
+    private static GridPos GetTerminalGridPos(GridPos origin, int rotation, int distance = 1) {
+        return (rotation % 4) switch {
             0 => new GridPos(origin.X + distance, origin.Y),
             1 => new GridPos(origin.X, origin.Y + distance),
             2 => new GridPos(origin.X - distance, origin.Y),
@@ -527,8 +483,7 @@ public class GameServer : IGameServer
     /// <summary>
     /// Internal cell data storage.
     /// </summary>
-    private class CellData
-    {
+    private class CellData {
         public CellType Type { get; }
         public int Rotation { get; }
         public Component? Component { get; set; }
@@ -539,8 +494,7 @@ public class GameServer : IGameServer
         /// </summary>
         public GridPos? OriginCell { get; }
 
-        public CellData(CellType type, int rotation, GridPos? originCell = null)
-        {
+        public CellData(CellType type, int rotation, GridPos? originCell = null) {
             Type = type;
             Rotation = rotation;
             OriginCell = originCell;

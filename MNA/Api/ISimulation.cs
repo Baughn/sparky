@@ -18,8 +18,7 @@ public readonly record struct SimulationStats(
 /// Thread safety: All methods must be called from a single thread,
 /// except Step() which may be called from a worker thread after all modifications are complete.
 /// </summary>
-public interface ISimulation
-{
+public interface ISimulation {
     // Ground
     /// <summary>The ground node (always NodeId(0), voltage = 0V).</summary>
     NodeId Ground { get; }

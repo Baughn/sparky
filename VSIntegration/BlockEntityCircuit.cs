@@ -17,8 +17,7 @@ namespace Sparky.VSIntegration;
 /// Circuit block entity that extends VS's microblock system with electrical simulation.
 /// Inherits voxel storage and mesh generation from BlockEntityMicroBlock.
 /// </summary>
-public class BlockEntityCircuit : BlockEntityMicroBlock
-{
+public class BlockEntityCircuit : BlockEntityMicroBlock {
     /// <summary>
     /// Network ID assigned by CircuitNetworkManager.
     /// </summary>
@@ -34,67 +33,57 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
     /// Registers a VS block as a conductor material.
     /// Call during mod initialization after blocks are loaded.
     /// </summary>
-    public static void RegisterConductor(int blockId, Material material)
-    {
+    public static void RegisterConductor(int blockId, Material material) {
         BlockIdToMaterial[blockId] = material;
     }
 
     /// <summary>
     /// Clears all conductor registrations. Call on mod unload.
     /// </summary>
-    public static void ClearConductorRegistrations()
-    {
+    public static void ClearConductorRegistrations() {
         BlockIdToMaterial.Clear();
     }
 
     /// <summary>
     /// Gets whether a VS block ID is a registered conductor.
     /// </summary>
-    public static bool IsConductor(int blockId)
-    {
+    public static bool IsConductor(int blockId) {
         return BlockIdToMaterial.ContainsKey(blockId);
     }
 
     /// <summary>
     /// Gets the conductor material for a VS block ID, or null if not a conductor.
     /// </summary>
-    public static Material? GetConductorMaterial(int blockId)
-    {
+    public static Material? GetConductorMaterial(int blockId) {
         return BlockIdToMaterial.TryGetValue(blockId, out var mat) ? mat : null;
     }
 
     #region Lifecycle
 
-    public override void Initialize(ICoreAPI api)
-    {
+    public override void Initialize(ICoreAPI api) {
         base.Initialize(api);
 
-        if (api.Side == EnumAppSide.Server)
-        {
+        if (api.Side == EnumAppSide.Server) {
             // Register with network manager
             var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
             modSystem?.NetworkManager?.RegisterBlock(Pos, this);
         }
     }
 
-    public override void OnBlockRemoved()
-    {
+    public override void OnBlockRemoved() {
         base.OnBlockRemoved();
 
-        if (Api?.Side == EnumAppSide.Server)
-        {
+        if (Api?.Side == EnumAppSide.Server) {
             // Unregister from network manager
             var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
             modSystem?.NetworkManager?.UnregisterBlock(Pos);
         }
     }
 
-    public override void OnBlockUnloaded()
-    {
+    public override void OnBlockUnloaded() {
         base.OnBlockUnloaded();
 
-        if (Api?.Side == EnumAppSide.Server)
-        {
+        if (Api?.Side == EnumAppSide.Server) {
             // Notify network manager of chunk unload
             var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
             modSystem?.NetworkManager?.OnBlockUnloaded(Pos);
@@ -105,23 +94,19 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
 
     #region Serialization
 
-    public override void ToTreeAttributes(ITreeAttribute tree)
-    {
+    public override void ToTreeAttributes(ITreeAttribute tree) {
         base.ToTreeAttributes(tree);
 
-        if (NetworkId != Guid.Empty)
-        {
+        if (NetworkId != Guid.Empty) {
             tree.SetBytes("networkId", NetworkId.ToByteArray());
         }
     }
 
-    public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
-    {
+    public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve) {
         base.FromTreeAttributes(tree, worldAccessForResolve);
 
         var netIdBytes = tree.GetBytes("networkId");
-        if (netIdBytes != null && netIdBytes.Length == 16)
-        {
+        if (netIdBytes != null && netIdBytes.Length == 16) {
             NetworkId = new Guid(netIdBytes);
         }
     }
@@ -135,17 +120,14 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
     /// because it only updates the mesh and notifies the network once at the end.
     /// </summary>
     /// <param name="voxels">Local coordinates (0-15 each axis) and material for each voxel.</param>
-    public void SetConductorVoxelsBatch(IEnumerable<(int X, int Y, int Z, Material Material)> voxels)
-    {
+    public void SetConductorVoxelsBatch(IEnumerable<(int X, int Y, int Z, Material Material)> voxels) {
         // Group voxels by material for efficient block ID lookup
         var voxelsByMaterial = new Dictionary<Material, List<(int X, int Y, int Z)>>();
-        foreach (var (x, y, z, material) in voxels)
-        {
+        foreach (var (x, y, z, material) in voxels) {
             if (x < 0 || x > 15 || y < 0 || y > 15 || z < 0 || z > 15)
                 continue;
 
-            if (!voxelsByMaterial.TryGetValue(material, out var list))
-            {
+            if (!voxelsByMaterial.TryGetValue(material, out var list)) {
                 list = new List<(int X, int Y, int Z)>();
                 voxelsByMaterial[material] = list;
             }
@@ -154,21 +136,17 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
 
         bool anyChanged = false;
 
-        foreach (var (material, positions) in voxelsByMaterial)
-        {
+        foreach (var (material, positions) in voxelsByMaterial) {
             // Find the block ID for this material
             int blockId = -1;
-            foreach (var kvp in BlockIdToMaterial)
-            {
-                if (kvp.Value == material)
-                {
+            foreach (var kvp in BlockIdToMaterial) {
+                if (kvp.Value == material) {
                     blockId = kvp.Key;
                     break;
                 }
             }
 
-            if (blockId < 0)
-            {
+            if (blockId < 0) {
                 Api?.Logger.Warning($"[Sparky] No block registered for material {material.Name}");
                 continue;
             }
@@ -177,25 +155,21 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
             byte materialIndex = GetOrAddMaterialIndex(blockId);
 
             // Set all voxels for this material
-            foreach (var (x, y, z) in positions)
-            {
-                if (SetVoxel(new Vec3i(x, y, z), true, materialIndex, 1))
-                {
+            foreach (var (x, y, z) in positions) {
+                if (SetVoxel(new Vec3i(x, y, z), true, materialIndex, 1)) {
                     anyChanged = true;
                 }
             }
         }
 
-        if (anyChanged && Api != null)
-        {
+        if (anyChanged && Api != null) {
             // Single update for all voxels
             MarkMeshDirty();
             RegenSelectionBoxes(Api.World, null);
             MarkDirty(true);
 
             // Single notification to network manager
-            if (Api.Side == EnumAppSide.Server)
-            {
+            if (Api.Side == EnumAppSide.Server) {
                 var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
                 modSystem?.NetworkManager?.OnBlockVoxelsChangedBatch(Pos);
             }
@@ -205,24 +179,20 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
     /// <summary>
     /// Sets a single conductor voxel at the given local coordinates (0-15 each axis).
     /// </summary>
-    public void SetConductorVoxel(int x, int y, int z, Material material)
-    {
+    public void SetConductorVoxel(int x, int y, int z, Material material) {
         if (x < 0 || x > 15 || y < 0 || y > 15 || z < 0 || z > 15)
             throw new ArgumentOutOfRangeException("Voxel coordinates must be 0-15");
 
         // Find the block ID for this material
         int blockId = -1;
-        foreach (var kvp in BlockIdToMaterial)
-        {
-            if (kvp.Value == material)
-            {
+        foreach (var kvp in BlockIdToMaterial) {
+            if (kvp.Value == material) {
                 blockId = kvp.Key;
                 break;
             }
         }
 
-        if (blockId < 0)
-        {
+        if (blockId < 0) {
             Api?.Logger.Warning($"[Sparky] No block registered for material {material.Name}");
             return;
         }
@@ -233,8 +203,7 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
         // Set the voxel using inherited method
         bool changed = SetVoxel(new Vec3i(x, y, z), true, materialIndex, 1);
 
-        if (changed)
-        {
+        if (changed) {
             // Mark mesh dirty for re-render and regenerate selection boxes
             MarkMeshDirty();
             RegenSelectionBoxes(Api.World, null);
@@ -242,8 +211,7 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
         }
 
         // Notify network manager on server side
-        if (Api?.Side == EnumAppSide.Server)
-        {
+        if (Api?.Side == EnumAppSide.Server) {
             var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
             modSystem?.NetworkManager?.OnBlockVoxelChanged(Pos, x, y, z, VoxelType.Conductor, material);
         }
@@ -252,16 +220,14 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
     /// <summary>
     /// Removes a voxel at the given local coordinates.
     /// </summary>
-    public void RemoveVoxel(int x, int y, int z)
-    {
+    public void RemoveVoxel(int x, int y, int z) {
         if (x < 0 || x > 15 || y < 0 || y > 15 || z < 0 || z > 15)
             return;
 
         // Clear the voxel using inherited method
         bool changed = SetVoxel(new Vec3i(x, y, z), false, 0, 1);
 
-        if (changed)
-        {
+        if (changed) {
             // Mark mesh dirty for re-render and regenerate selection boxes
             MarkMeshDirty();
             RegenSelectionBoxes(Api.World, null);
@@ -269,8 +235,7 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
         }
 
         // Notify network manager on server side
-        if (Api?.Side == EnumAppSide.Server)
-        {
+        if (Api?.Side == EnumAppSide.Server) {
             var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
             modSystem?.NetworkManager?.OnBlockVoxelChanged(Pos, x, y, z, VoxelType.Air, null);
         }
@@ -279,19 +244,15 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
     /// <summary>
     /// Gets the conductor material at the given local coordinates, or null if air/insulator.
     /// </summary>
-    public Material? GetConductorAt(int x, int y, int z)
-    {
+    public Material? GetConductorAt(int x, int y, int z) {
         if (x < 0 || x > 15 || y < 0 || y > 15 || z < 0 || z > 15)
             return null;
 
         // Find the voxel in our cuboids
-        foreach (var cuboid in VoxelCuboids)
-        {
+        foreach (var cuboid in VoxelCuboids) {
             FromUint(cuboid, out int x0, out int y0, out int z0, out int x1, out int y1, out int z1, out int matIdx);
-            if (x >= x0 && x < x1 && y >= y0 && y < y1 && z >= z0 && z < z1)
-            {
-                if (BlockIds != null && matIdx < BlockIds.Length)
-                {
+            if (x >= x0 && x < x1 && y >= y0 && y < y1 && z >= z0 && z < z1) {
+                if (BlockIds != null && matIdx < BlockIds.Length) {
                     return GetConductorMaterial(BlockIds[matIdx]);
                 }
             }
@@ -303,23 +264,19 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
     /// <summary>
     /// Gets or adds a material index for the given block ID.
     /// </summary>
-    private byte GetOrAddMaterialIndex(int blockId)
-    {
-        if (BlockIds == null)
-        {
+    private byte GetOrAddMaterialIndex(int blockId) {
+        if (BlockIds == null) {
             BlockIds = new int[] { blockId };
             return 0;
         }
 
-        for (int i = 0; i < BlockIds.Length; i++)
-        {
+        for (int i = 0; i < BlockIds.Length; i++) {
             if (BlockIds[i] == blockId)
                 return (byte)i;
         }
 
         // Add new material
-        if (BlockIds.Length >= 255)
-        {
+        if (BlockIds.Length >= 255) {
             Api?.Logger.Warning("[Sparky] Material palette full, reusing last index");
             return 254;
         }
@@ -338,19 +295,16 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
     /// <summary>
     /// Exports all conductor voxels to a VoxelGrid at the correct world positions.
     /// </summary>
-    public void ExportToVoxelGrid(VoxelGrid grid, SparkyBlockPos sparkyBlockPos)
-    {
+    public void ExportToVoxelGrid(VoxelGrid grid, SparkyBlockPos sparkyBlockPos) {
         if (VoxelCuboids == null || BlockIds == null)
             return;
 
-        foreach (var cuboid in VoxelCuboids)
-        {
+        foreach (var cuboid in VoxelCuboids) {
             FromUint(cuboid, out int x0, out int y0, out int z0, out int x1, out int y1, out int z1, out int matIdx);
 
             // Get the material for this cuboid
             Material? material = null;
-            if (matIdx < BlockIds.Length)
-            {
+            if (matIdx < BlockIds.Length) {
                 material = GetConductorMaterial(BlockIds[matIdx]);
             }
 
@@ -359,12 +313,9 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
                 continue;
 
             // Export all voxels in this cuboid
-            for (int y = y0; y < y1; y++)
-            {
-                for (int z = z0; z < z1; z++)
-                {
-                    for (int x = x0; x < x1; x++)
-                    {
+            for (int y = y0; y < y1; y++) {
+                for (int z = z0; z < z1; z++) {
+                    for (int x = x0; x < x1; x++) {
                         var voxelPos = VoxelPos.FromBlockLocal(sparkyBlockPos, x, y, z);
                         grid.SetVoxel(voxelPos, material);
                     }
@@ -376,8 +327,7 @@ public class BlockEntityCircuit : BlockEntityMicroBlock
     /// <summary>
     /// Converts a VS BlockPos to a Sparky BlockPos.
     /// </summary>
-    public static SparkyBlockPos ToSparkyBlockPos(BlockPos vsPos)
-    {
+    public static SparkyBlockPos ToSparkyBlockPos(BlockPos vsPos) {
         return new SparkyBlockPos(vsPos.X, vsPos.Y, vsPos.Z);
     }
 

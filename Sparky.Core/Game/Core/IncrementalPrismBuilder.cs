@@ -5,8 +5,7 @@ namespace Sparky.Game.Core;
 /// <summary>
 /// The voxel data type stored in the octree: type + optional material.
 /// </summary>
-public readonly record struct VoxelData(VoxelType Type, Material? Material)
-{
+public readonly record struct VoxelData(VoxelType Type, Material? Material) {
     /// <summary>Air voxel (default value for octree).</summary>
     public static readonly VoxelData Air = new(VoxelType.Air, null);
 }
@@ -23,8 +22,7 @@ public readonly record struct VoxelData(VoxelType Type, Material? Material)
 /// This replaces the expand-modify-rebuild cycle that allocated 4096-element
 /// arrays on every SetVoxel call.
 /// </remarks>
-public class IncrementalPrismBuilder
-{
+public class IncrementalPrismBuilder {
     private readonly SparseVoxelOctree<VoxelData> _svo = new(VoxelData.Air);
     private readonly Dictionary<BlockPos, List<Prism>> _prismCache = new();
     private readonly HashSet<BlockPos> _dirtyBlocks = new();
@@ -58,14 +56,12 @@ public class IncrementalPrismBuilder
     /// <summary>
     /// Sets a voxel at the given position.
     /// </summary>
-    public void SetVoxel(VoxelPos pos, VoxelType type, Material? material)
-    {
+    public void SetVoxel(VoxelPos pos, VoxelType type, Material? material) {
         var oldData = _svo.Get(pos);
 
         // Skip if no change
         if (oldData.Type == type && (type == VoxelType.Air ||
-            ReferenceEquals(oldData.Material, material)))
-        {
+            ReferenceEquals(oldData.Material, material))) {
             return;
         }
 
@@ -79,10 +75,8 @@ public class IncrementalPrismBuilder
     /// <summary>
     /// Sets multiple voxels in a batch.
     /// </summary>
-    public void SetVoxels(IEnumerable<(VoxelPos Pos, VoxelType Type, Material? Material)> voxels)
-    {
-        foreach (var (pos, type, material) in voxels)
-        {
+    public void SetVoxels(IEnumerable<(VoxelPos Pos, VoxelType Type, Material? Material)> voxels) {
+        foreach (var (pos, type, material) in voxels) {
             _svo.Set(pos, new VoxelData(type, material));
             _version++;
             InvalidateBlock(pos.Block);
@@ -92,8 +86,7 @@ public class IncrementalPrismBuilder
     /// <summary>
     /// Gets the voxel data at the given position.
     /// </summary>
-    public (VoxelType Type, Material? Material) GetVoxel(VoxelPos pos)
-    {
+    public (VoxelType Type, Material? Material) GetVoxel(VoxelPos pos) {
         var data = _svo.Get(pos);
         return (data.Type, data.Material);
     }
@@ -101,31 +94,26 @@ public class IncrementalPrismBuilder
     /// <summary>
     /// Gets the voxel type at the given position.
     /// </summary>
-    public VoxelType GetVoxelType(VoxelPos pos)
-    {
+    public VoxelType GetVoxelType(VoxelPos pos) {
         return _svo.Get(pos).Type;
     }
 
     /// <summary>
     /// Gets the material at the given position.
     /// </summary>
-    public Material? GetMaterial(VoxelPos pos)
-    {
+    public Material? GetMaterial(VoxelPos pos) {
         return _svo.Get(pos).Material;
     }
 
     /// <summary>
     /// Returns all prisms in all blocks.
     /// </summary>
-    public IEnumerable<(BlockPos Block, Prism Prism)> GetAllPrisms()
-    {
+    public IEnumerable<(BlockPos Block, Prism Prism)> GetAllPrisms() {
         // Rebuild any dirty blocks
         RebuildDirtyBlocks();
 
-        foreach (var (block, prisms) in _prismCache)
-        {
-            foreach (var prism in prisms)
-            {
+        foreach (var (block, prisms) in _prismCache) {
+            foreach (var prism in prisms) {
                 yield return (block, prism);
             }
         }
@@ -134,17 +122,14 @@ public class IncrementalPrismBuilder
     /// <summary>
     /// Gets prisms in a specific block.
     /// </summary>
-    public IEnumerable<Prism> GetPrismsInBlock(BlockPos block)
-    {
+    public IEnumerable<Prism> GetPrismsInBlock(BlockPos block) {
         // Rebuild if dirty
-        if (_dirtyBlocks.Contains(block))
-        {
+        if (_dirtyBlocks.Contains(block)) {
             RebuildBlock(block);
             _dirtyBlocks.Remove(block);
         }
 
-        if (_prismCache.TryGetValue(block, out var prisms))
-        {
+        if (_prismCache.TryGetValue(block, out var prisms)) {
             return prisms;
         }
         return [];
@@ -158,10 +143,8 @@ public class IncrementalPrismBuilder
     /// Use this for incremental topology updates to get the old state before rebuild.
     /// Returns empty if block has no cached prisms (either empty or never built).
     /// </remarks>
-    public IReadOnlyList<Prism> GetCachedPrisms(BlockPos block)
-    {
-        if (_prismCache.TryGetValue(block, out var prisms))
-        {
+    public IReadOnlyList<Prism> GetCachedPrisms(BlockPos block) {
+        if (_prismCache.TryGetValue(block, out var prisms)) {
             return prisms;
         }
         return [];
@@ -176,13 +159,11 @@ public class IncrementalPrismBuilder
     /// Use this for incremental topology updates. The block is removed from dirty set.
     /// If the block was not dirty, returns (current prisms, current prisms).
     /// </remarks>
-    public (IReadOnlyList<Prism> OldPrisms, IReadOnlyList<Prism> NewPrisms) RebuildBlockIncremental(BlockPos block)
-    {
+    public (IReadOnlyList<Prism> OldPrisms, IReadOnlyList<Prism> NewPrisms) RebuildBlockIncremental(BlockPos block) {
         // Get old prisms (may be empty)
         var oldPrisms = GetCachedPrisms(block);
 
-        if (!_dirtyBlocks.Contains(block))
-        {
+        if (!_dirtyBlocks.Contains(block)) {
             // Not dirty - return current state as both old and new
             return (oldPrisms, oldPrisms);
         }
@@ -200,14 +181,11 @@ public class IncrementalPrismBuilder
     /// <summary>
     /// Gets the total number of prisms across all blocks.
     /// </summary>
-    public int PrismCount
-    {
-        get
-        {
+    public int PrismCount {
+        get {
             RebuildDirtyBlocks();
             int count = 0;
-            foreach (var prisms in _prismCache.Values)
-            {
+            foreach (var prisms in _prismCache.Values) {
                 count += prisms.Count;
             }
             return count;
@@ -217,10 +195,8 @@ public class IncrementalPrismBuilder
     /// <summary>
     /// Gets the number of blocks with voxels.
     /// </summary>
-    public int BlockCount
-    {
-        get
-        {
+    public int BlockCount {
+        get {
             RebuildDirtyBlocks();
             return _prismCache.Count;
         }
@@ -229,8 +205,7 @@ public class IncrementalPrismBuilder
     /// <summary>
     /// Clears all voxels and cached prisms.
     /// </summary>
-    public void Clear()
-    {
+    public void Clear() {
         _svo.Clear();
         _prismCache.Clear();
         _dirtyBlocks.Clear();
@@ -239,33 +214,27 @@ public class IncrementalPrismBuilder
     /// <summary>
     /// Returns all non-Air voxels.
     /// </summary>
-    public IEnumerable<(VoxelPos Pos, VoxelType Type, Material? Material)> GetAllVoxels()
-    {
-        foreach (var (pos, data) in _svo.GetAllVoxels())
-        {
+    public IEnumerable<(VoxelPos Pos, VoxelType Type, Material? Material)> GetAllVoxels() {
+        foreach (var (pos, data) in _svo.GetAllVoxels()) {
             yield return (pos, data.Type, data.Material);
         }
     }
 
-    private void InvalidateBlock(BlockPos block)
-    {
+    private void InvalidateBlock(BlockPos block) {
         _dirtyBlocks.Add(block);
     }
 
-    private void RebuildDirtyBlocks()
-    {
+    private void RebuildDirtyBlocks() {
         if (_dirtyBlocks.Count == 0)
             return;
 
-        foreach (var block in _dirtyBlocks)
-        {
+        foreach (var block in _dirtyBlocks) {
             RebuildBlock(block);
         }
         _dirtyBlocks.Clear();
     }
 
-    private void RebuildBlock(BlockPos block)
-    {
+    private void RebuildBlock(BlockPos block) {
         // Extract voxels for this block from the SVO
         var voxels = new (VoxelType Type, Material? Material)[4096];
         bool hasAnyVoxels = false;
@@ -275,12 +244,9 @@ public class IncrementalPrismBuilder
         int baseY = block.Y * 16;
         int baseZ = block.Z * 16;
 
-        for (int z = 0; z < 16; z++)
-        {
-            for (int y = 0; y < 16; y++)
-            {
-                for (int x = 0; x < 16; x++)
-                {
+        for (int z = 0; z < 16; z++) {
+            for (int y = 0; y < 16; y++) {
+                for (int x = 0; x < 16; x++) {
                     var pos = new VoxelPos(baseX + x, baseY + y, baseZ + z);
                     var data = _svo.Get(pos);
                     voxels[x + y * 16 + z * 256] = (data.Type, data.Material);
@@ -290,8 +256,7 @@ public class IncrementalPrismBuilder
             }
         }
 
-        if (!hasAnyVoxels)
-        {
+        if (!hasAnyVoxels) {
             _prismCache.Remove(block);
             return;
         }
@@ -304,8 +269,7 @@ public class IncrementalPrismBuilder
     /// <summary>
     /// Builds prisms from a 16x16x16 voxel array using greedy meshing.
     /// </summary>
-    private static List<Prism> BuildPrismsFromVoxels((VoxelType Type, Material? Material)[] voxels)
-    {
+    private static List<Prism> BuildPrismsFromVoxels((VoxelType Type, Material? Material)[] voxels) {
         var prisms = new List<Prism>();
         var claimed = new bool[4096];
 
@@ -321,14 +285,10 @@ public class IncrementalPrismBuilder
         (VoxelType Type, Material? Material)[] voxels,
         bool[] claimed,
         List<Prism> prisms,
-        VoxelType targetType)
-    {
-        for (int z = 0; z < 16; z++)
-        {
-            for (int y = 0; y < 16; y++)
-            {
-                for (int x = 0; x < 16; x++)
-                {
+        VoxelType targetType) {
+        for (int z = 0; z < 16; z++) {
+            for (int y = 0; y < 16; y++) {
+                for (int x = 0; x < 16; x++) {
                     int idx = x + y * 16 + z * 256;
                     if (claimed[idx])
                         continue;
@@ -348,36 +308,29 @@ public class IncrementalPrismBuilder
         (VoxelType Type, Material? Material)[] voxels,
         bool[] claimed,
         int startX, int startY, int startZ,
-        VoxelType type, Material? material)
-    {
+        VoxelType type, Material? material) {
         // Grow in +X direction first
         int endX = startX + 1;
-        while (endX < 16 && CanExtendX(voxels, claimed, startX, endX, startY, startY + 1, startZ, startZ + 1, type, material))
-        {
+        while (endX < 16 && CanExtendX(voxels, claimed, startX, endX, startY, startY + 1, startZ, startZ + 1, type, material)) {
             endX++;
         }
 
         // Grow in +Y direction
         int endY = startY + 1;
-        while (endY < 16 && CanExtendY(voxels, claimed, startX, endX, startY, endY, startZ, startZ + 1, type, material))
-        {
+        while (endY < 16 && CanExtendY(voxels, claimed, startX, endX, startY, endY, startZ, startZ + 1, type, material)) {
             endY++;
         }
 
         // Grow in +Z direction
         int endZ = startZ + 1;
-        while (endZ < 16 && CanExtendZ(voxels, claimed, startX, endX, startY, endY, startZ, endZ, type, material))
-        {
+        while (endZ < 16 && CanExtendZ(voxels, claimed, startX, endX, startY, endY, startZ, endZ, type, material)) {
             endZ++;
         }
 
         // Mark claimed
-        for (int z = startZ; z < endZ; z++)
-        {
-            for (int y = startY; y < endY; y++)
-            {
-                for (int x = startX; x < endX; x++)
-                {
+        for (int z = startZ; z < endZ; z++) {
+            for (int y = startY; y < endY; y++) {
+                for (int x = startX; x < endX; x++) {
                     claimed[x + y * 16 + z * 256] = true;
                 }
             }
@@ -392,12 +345,9 @@ public class IncrementalPrismBuilder
     private static bool CanExtendX(
         (VoxelType Type, Material? Material)[] voxels, bool[] claimed,
         int startX, int newX, int startY, int endY, int startZ, int endZ,
-        VoxelType type, Material? material)
-    {
-        for (int z = startZ; z < endZ; z++)
-        {
-            for (int y = startY; y < endY; y++)
-            {
+        VoxelType type, Material? material) {
+        for (int z = startZ; z < endZ; z++) {
+            for (int y = startY; y < endY; y++) {
                 int idx = newX + y * 16 + z * 256;
                 if (claimed[idx])
                     return false;
@@ -413,12 +363,9 @@ public class IncrementalPrismBuilder
     private static bool CanExtendY(
         (VoxelType Type, Material? Material)[] voxels, bool[] claimed,
         int startX, int endX, int startY, int newY, int startZ, int endZ,
-        VoxelType type, Material? material)
-    {
-        for (int z = startZ; z < endZ; z++)
-        {
-            for (int x = startX; x < endX; x++)
-            {
+        VoxelType type, Material? material) {
+        for (int z = startZ; z < endZ; z++) {
+            for (int x = startX; x < endX; x++) {
                 int idx = x + newY * 16 + z * 256;
                 if (claimed[idx])
                     return false;
@@ -434,12 +381,9 @@ public class IncrementalPrismBuilder
     private static bool CanExtendZ(
         (VoxelType Type, Material? Material)[] voxels, bool[] claimed,
         int startX, int endX, int startY, int endY, int startZ, int newZ,
-        VoxelType type, Material? material)
-    {
-        for (int y = startY; y < endY; y++)
-        {
-            for (int x = startX; x < endX; x++)
-            {
+        VoxelType type, Material? material) {
+        for (int y = startY; y < endY; y++) {
+            for (int x = startX; x < endX; x++) {
                 int idx = x + y * 16 + newZ * 256;
                 if (claimed[idx])
                     return false;

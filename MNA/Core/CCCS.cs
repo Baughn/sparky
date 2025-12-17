@@ -1,7 +1,6 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA.Core
-{
+namespace Sparky.MNA.Core {
     /// <summary>
     /// Current-Controlled Current Source (CCCS).
     /// Output current is proportional to input current:
@@ -11,8 +10,7 @@ namespace Sparky.MNA.Core
     /// The output is an ideal current source.
     /// Uses one auxiliary equation to sense input current.
     /// </summary>
-    public class CCCS : Component
-    {
+    public class CCCS : Component {
         public Node ControlPos { get; }
         public Node ControlNeg { get; }
 
@@ -47,8 +45,7 @@ namespace Sparky.MNA.Core
             Gain = gain;
         }
 
-        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
-        {
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0) {
             if (MatrixIndex == -1)
                 return;
 

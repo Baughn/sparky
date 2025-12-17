@@ -13,8 +13,7 @@ namespace Sparky;
 /// <summary>
 /// Sparky mod - electrical circuit simulation for Vintage Story
 /// </summary>
-public class SparkyModSystem : ModSystem
-{
+public class SparkyModSystem : ModSystem {
     private const string CHANNEL_NAME = "sparky";
 
     /// <summary>
@@ -33,8 +32,7 @@ public class SparkyModSystem : ModSystem
     /// <summary>
     /// Gets the cable laying state for a player, or null if none exists.
     /// </summary>
-    public CableLayingState? GetCableState(string playerUid)
-    {
+    public CableLayingState? GetCableState(string playerUid) {
         _playerCableStates.TryGetValue(playerUid, out var state);
         return state;
     }
@@ -42,10 +40,8 @@ public class SparkyModSystem : ModSystem
     /// <summary>
     /// Gets or creates a cable laying state for a player with the specified cross-section.
     /// </summary>
-    public CableLayingState GetOrCreateCableState(string playerUid, CrossSection crossSection)
-    {
-        if (!_playerCableStates.TryGetValue(playerUid, out var state))
-        {
+    public CableLayingState GetOrCreateCableState(string playerUid, CrossSection crossSection) {
+        if (!_playerCableStates.TryGetValue(playerUid, out var state)) {
             state = new CableLayingState(crossSection);
             _playerCableStates[playerUid] = state;
         }
@@ -55,10 +51,8 @@ public class SparkyModSystem : ModSystem
     /// <summary>
     /// Clears the cable laying state for a player.
     /// </summary>
-    public void ClearCableState(string playerUid)
-    {
-        if (_playerCableStates.TryGetValue(playerUid, out var state))
-        {
+    public void ClearCableState(string playerUid) {
+        if (_playerCableStates.TryGetValue(playerUid, out var state)) {
             state.Cancel();
             _playerCableStates.Remove(playerUid);
         }
@@ -67,8 +61,7 @@ public class SparkyModSystem : ModSystem
     /// <summary>
     /// Called on both client and server during initialization.
     /// </summary>
-    public override void Start(ICoreAPI api)
-    {
+    public override void Start(ICoreAPI api) {
         base.Start(api);
 
         // Register block class
@@ -86,8 +79,7 @@ public class SparkyModSystem : ModSystem
     /// <summary>
     /// Called after all assets are loaded. Register conductor blocks here.
     /// </summary>
-    public override void AssetsFinalize(ICoreAPI api)
-    {
+    public override void AssetsFinalize(ICoreAPI api) {
         base.AssetsFinalize(api);
 
         // Register conductor blocks as Sparky materials
@@ -97,8 +89,7 @@ public class SparkyModSystem : ModSystem
     /// <summary>
     /// Registers conductor blocks with the circuit simulation system.
     /// </summary>
-    private void RegisterConductorBlocks(ICoreAPI api)
-    {
+    private void RegisterConductorBlocks(ICoreAPI api) {
         // Clear any previous registrations
         BlockEntityCircuit.ClearConductorRegistrations();
 
@@ -111,16 +102,12 @@ public class SparkyModSystem : ModSystem
             ("sparky:conductor-iron", Material.Iron)
         };
 
-        foreach (var (code, material) in conductorMap)
-        {
+        foreach (var (code, material) in conductorMap) {
             var block = api.World.GetBlock(new AssetLocation(code));
-            if (block != null)
-            {
+            if (block != null) {
                 BlockEntityCircuit.RegisterConductor(block.BlockId, material);
                 api.Logger.Debug($"[Sparky] Registered conductor: {code} -> {material.Name}");
-            }
-            else
-            {
+            } else {
                 api.Logger.Warning($"[Sparky] Conductor block not found: {code}");
             }
         }
@@ -131,8 +118,7 @@ public class SparkyModSystem : ModSystem
     /// <summary>
     /// Called on the server during initialization.
     /// </summary>
-    public override void StartServerSide(ICoreServerAPI api)
-    {
+    public override void StartServerSide(ICoreServerAPI api) {
         base.StartServerSide(api);
 
         // Initialize network manager
@@ -148,8 +134,7 @@ public class SparkyModSystem : ModSystem
     /// <summary>
     /// Called on the client during initialization.
     /// </summary>
-    public override void StartClientSide(ICoreClientAPI api)
-    {
+    public override void StartClientSide(ICoreClientAPI api) {
         base.StartClientSide(api);
         _capi = api;
 
@@ -170,12 +155,13 @@ public class SparkyModSystem : ModSystem
         api.Logger.Notification("[Sparky] Client-side initialization complete");
     }
 
-    private bool OnWireToolModeKey(KeyCombination comb)
-    {
-        if (_capi == null) return false;
+    private bool OnWireToolModeKey(KeyCombination comb) {
+        if (_capi == null)
+            return false;
 
         var player = _capi.World.Player;
-        if (player == null) return false;
+        if (player == null)
+            return false;
 
         // Only show menu when holding wire tool
         var slot = player.InventoryManager?.ActiveHotbarSlot;
@@ -183,14 +169,12 @@ public class SparkyModSystem : ModSystem
             return false;
 
         // Toggle dialog
-        if (_modeDialog?.IsOpened() == true)
-        {
+        if (_modeDialog?.IsOpened() == true) {
             _modeDialog.TryClose();
             return true;
         }
 
-        _modeDialog = new WireToolModeDialog(_capi, mode =>
-        {
+        _modeDialog = new WireToolModeDialog(_capi, mode => {
             wireTool.SetMode(slot, mode, player);
             _capi.ShowChatMessage($"Wire tool mode: {mode.GetDisplayName()}");
         });
@@ -201,8 +185,7 @@ public class SparkyModSystem : ModSystem
     /// <summary>
     /// Called when the mod is being unloaded.
     /// </summary>
-    public override void Dispose()
-    {
+    public override void Dispose() {
         NetworkManager?.Shutdown();
         NetworkManager = null;
 

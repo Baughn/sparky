@@ -8,21 +8,18 @@ namespace Sparky.Tests.MNA;
 /// These tests ensure the API properly rejects or handles invalid floating-point values.
 /// </summary>
 [TestFixture]
-public class ParameterValidationEdgeCaseTests
-{
+public class ParameterValidationEdgeCaseTests {
     private SimulationManager _sim = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _sim = new SimulationManager();
     }
 
     #region Resistor NaN/Infinity Tests
 
     [Test]
-    public void AddResistor_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void AddResistor_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -34,8 +31,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void AddResistor_WithPositiveInfinity_ThrowsInvalidParameterException()
-    {
+    public void AddResistor_WithPositiveInfinity_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -47,8 +43,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void AddResistor_WithNegativeInfinity_ThrowsInvalidParameterException()
-    {
+    public void AddResistor_WithNegativeInfinity_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -60,8 +55,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void UpdateResistor_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void UpdateResistor_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
         var rId = _sim.AddResistor(n1, n2, 100.0);
@@ -78,8 +72,7 @@ public class ParameterValidationEdgeCaseTests
     #region Capacitor NaN/Infinity Tests
 
     [Test]
-    public void AddCapacitor_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void AddCapacitor_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -91,8 +84,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void AddCapacitor_WithPositiveInfinity_ThrowsInvalidParameterException()
-    {
+    public void AddCapacitor_WithPositiveInfinity_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -104,8 +96,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void AddCapacitor_WithZero_ThrowsInvalidParameterException()
-    {
+    public void AddCapacitor_WithZero_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -119,8 +110,7 @@ public class ParameterValidationEdgeCaseTests
     #region Inductor NaN/Infinity Tests
 
     [Test]
-    public void AddInductor_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void AddInductor_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -132,8 +122,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void AddInductor_WithPositiveInfinity_ThrowsInvalidParameterException()
-    {
+    public void AddInductor_WithPositiveInfinity_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -145,8 +134,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void AddInductor_WithZero_ThrowsInvalidParameterException()
-    {
+    public void AddInductor_WithZero_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -160,8 +148,7 @@ public class ParameterValidationEdgeCaseTests
     #region Voltage Source NaN/Infinity Tests
 
     [Test]
-    public void AddVoltageSource_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void AddVoltageSource_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
@@ -172,8 +159,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void AddVoltageSource_WithPositiveInfinity_ThrowsInvalidParameterException()
-    {
+    public void AddVoltageSource_WithPositiveInfinity_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
@@ -184,8 +170,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void UpdateVoltageSource_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void UpdateVoltageSource_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var vsId = _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
         _sim.AddResistor(n1, _sim.Ground, 100.0);
@@ -202,8 +187,7 @@ public class ParameterValidationEdgeCaseTests
     #region Current Source NaN/Infinity Tests
 
     [Test]
-    public void AddCurrentSource_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void AddCurrentSource_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
@@ -214,8 +198,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void AddCurrentSource_WithPositiveInfinity_ThrowsInvalidParameterException()
-    {
+    public void AddCurrentSource_WithPositiveInfinity_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
 
         var ex = Assert.Throws<InvalidParameterException>(() =>
@@ -230,8 +213,7 @@ public class ParameterValidationEdgeCaseTests
     #region Transformer NaN/Infinity Tests
 
     [Test]
-    public void AddTransformer_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void AddTransformer_WithNaN_ThrowsInvalidParameterException() {
         var p1 = _sim.CreateNode();
         var p2 = _sim.CreateNode();
         var s1 = _sim.CreateNode();
@@ -245,8 +227,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void AddTransformer_WithPositiveInfinity_ThrowsInvalidParameterException()
-    {
+    public void AddTransformer_WithPositiveInfinity_ThrowsInvalidParameterException() {
         var p1 = _sim.CreateNode();
         var p2 = _sim.CreateNode();
         var s1 = _sim.CreateNode();
@@ -264,8 +245,7 @@ public class ParameterValidationEdgeCaseTests
     #region Controlled Source NaN/Infinity Tests
 
     [Test]
-    public void AddVCVS_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void AddVCVS_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -277,8 +257,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void AddVCCS_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void AddVCCS_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -290,8 +269,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void AddCCVS_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void AddCCVS_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -303,8 +281,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void AddCCCS_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void AddCCCS_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -320,8 +297,7 @@ public class ParameterValidationEdgeCaseTests
     #region Step Time NaN/Infinity Tests
 
     [Test]
-    public void Step_WithNaN_ThrowsArgumentException()
-    {
+    public void Step_WithNaN_ThrowsArgumentException() {
         var n1 = _sim.CreateNode();
         _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
         _sim.AddResistor(n1, _sim.Ground, 100.0);
@@ -330,8 +306,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void Step_WithNegativeTime_ThrowsArgumentException()
-    {
+    public void Step_WithNegativeTime_ThrowsArgumentException() {
         var n1 = _sim.CreateNode();
         _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
         _sim.AddResistor(n1, _sim.Ground, 100.0);
@@ -340,8 +315,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void Step_WithPositiveInfinity_ThrowsArgumentException()
-    {
+    public void Step_WithPositiveInfinity_ThrowsArgumentException() {
         var n1 = _sim.CreateNode();
         _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
         _sim.AddResistor(n1, _sim.Ground, 100.0);
@@ -354,8 +328,7 @@ public class ParameterValidationEdgeCaseTests
     #region Initial Condition Edge Cases
 
     [Test]
-    public void SetCapacitorVoltage_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void SetCapacitorVoltage_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var cId = _sim.AddCapacitor(n1, _sim.Ground, 1e-6);
 
@@ -367,8 +340,7 @@ public class ParameterValidationEdgeCaseTests
     }
 
     [Test]
-    public void SetInductorCurrent_WithNaN_ThrowsInvalidParameterException()
-    {
+    public void SetInductorCurrent_WithNaN_ThrowsInvalidParameterException() {
         var n1 = _sim.CreateNode();
         var lId = _sim.AddInductor(n1, _sim.Ground, 1e-3);
 

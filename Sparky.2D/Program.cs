@@ -25,21 +25,18 @@ Console.WriteLine();
 // Main loop
 var lastTime = DateTime.UtcNow;
 long tick = 0;
-var jsonOptions = new JsonSerializerOptions
-{
+var jsonOptions = new JsonSerializerOptions {
     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     Converters = { new JsonStringEnumConverter() }
 };
 
-while (!client.ShouldClose)
-{
+while (!client.ShouldClose) {
     var now = DateTime.UtcNow;
     var dt = (float)(now - lastTime).TotalSeconds;
     lastTime = now;
 
     // Poll client input and log to stdout
-    foreach (var input in client.PollInput())
-    {
+    foreach (var input in client.PollInput()) {
         Console.WriteLine(JsonSerializer.Serialize(new { tick, @event = input }, jsonOptions));
         server.HandleInput(input);
     }

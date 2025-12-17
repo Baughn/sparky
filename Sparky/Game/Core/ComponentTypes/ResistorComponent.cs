@@ -11,8 +11,7 @@ namespace Sparky.Game.Core.ComponentTypes;
 /// A resistor has two terminal regions: "a" and "b".
 /// Current flows through the resistor proportional to voltage difference (Ohm's law).
 /// </remarks>
-public class ResistorComponent : Component
-{
+public class ResistorComponent : Component {
     private readonly TerminalRegion _terminalA;
     private readonly TerminalRegion _terminalB;
 
@@ -39,8 +38,7 @@ public class ResistorComponent : Component
         IEnumerable<VoxelPos> terminalAVoxels,
         IEnumerable<VoxelPos> terminalBVoxels,
         double resistance)
-        : base(origin)
-    {
+        : base(origin) {
         _terminalA = new TerminalRegion("a", terminalAVoxels);
         _terminalB = new TerminalRegion("b", terminalBVoxels);
         Terminals = [_terminalA, _terminalB];
@@ -51,14 +49,12 @@ public class ResistorComponent : Component
     /// Creates a resistor with single-voxel terminals.
     /// </summary>
     public ResistorComponent(VoxelPos terminalA, VoxelPos terminalB, double resistance)
-        : this(terminalA, [terminalA], [terminalB], resistance)
-    {
+        : this(terminalA, [terminalA], [terminalB], resistance) {
     }
 
     public override void CreateMnaComponents(
         ISimulation sim,
-        IReadOnlyDictionary<string, NodeId> terminalNodes)
-    {
+        IReadOnlyDictionary<string, NodeId> terminalNodes) {
         if (!terminalNodes.TryGetValue("a", out var nodeA))
             throw new InvalidOperationException("Resistor missing terminal A node");
         if (!terminalNodes.TryGetValue("b", out var nodeB))
@@ -67,17 +63,14 @@ public class ResistorComponent : Component
         _resistorId = sim.AddResistor(nodeA, nodeB, Resistance);
     }
 
-    public override void RemoveMnaComponents(ISimulation sim)
-    {
-        if (_resistorId.HasValue)
-        {
+    public override void RemoveMnaComponents(ISimulation sim) {
+        if (_resistorId.HasValue) {
             sim.RemoveResistor(_resistorId.Value);
             _resistorId = null;
         }
     }
 
-    public override ComponentVisualState ComputeVisualState(ISimulation sim)
-    {
+    public override ComponentVisualState ComputeVisualState(ISimulation sim) {
         if (!_resistorId.HasValue)
             return ComponentVisualState.Default;
 
@@ -100,10 +93,8 @@ public class ResistorComponent : Component
     /// <summary>
     /// Updates the resistance in the MNA simulation (fast path, no topology rebuild).
     /// </summary>
-    public void UpdateMnaValue(ISimulation sim)
-    {
-        if (_resistorId.HasValue)
-        {
+    public void UpdateMnaValue(ISimulation sim) {
+        if (_resistorId.HasValue) {
             sim.UpdateResistor(_resistorId.Value, Resistance);
         }
     }

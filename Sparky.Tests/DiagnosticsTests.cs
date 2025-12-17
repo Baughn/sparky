@@ -1,22 +1,18 @@
 using NUnit.Framework;
 using Sparky.MNA.Api;
 
-namespace Sparky.Tests
-{
+namespace Sparky.Tests {
     [TestFixture]
-    public class DiagnosticsTests
-    {
+    public class DiagnosticsTests {
         private SimulationManager _sim = null!;
 
         [SetUp]
-        public void SetUp()
-        {
+        public void SetUp() {
             _sim = new SimulationManager();
         }
 
         [Test]
-        public void GetStats_ReturnsCorrectPartitionCount()
-        {
+        public void GetStats_ReturnsCorrectPartitionCount() {
             // Create two disconnected circuits
             var n1 = _sim.CreateNode();
             _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
@@ -34,8 +30,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void GetStats_ReturnsCorrectPhysicalNodeCount()
-        {
+        public void GetStats_ReturnsCorrectPhysicalNodeCount() {
             // Simple divider: 2 physical nodes (plus ground)
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
@@ -54,8 +49,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void GetStats_ReturnsCorrectOptimizedNodeCount()
-        {
+        public void GetStats_ReturnsCorrectOptimizedNodeCount() {
             // Chain of resistors: middle nodes get optimized
             // 10V -- R -- n1 -- R -- n2 -- R -- GND
             _sim.EnableLineOptimization = true;
@@ -77,8 +71,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void GetStats_TotalIterations_SumsPartitions()
-        {
+        public void GetStats_TotalIterations_SumsPartitions() {
             // Simple linear circuit should have 1 iteration per partition
             var n1 = _sim.CreateNode();
             _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
@@ -91,8 +84,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void PartitionCount_TwoDisconnectedCircuits_ReturnsTwo()
-        {
+        public void PartitionCount_TwoDisconnectedCircuits_ReturnsTwo() {
             // Circuit 1
             var n1 = _sim.CreateNode();
             _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
@@ -109,8 +101,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void PartitionCount_AfterClear_ReturnsZero()
-        {
+        public void PartitionCount_AfterClear_ReturnsZero() {
             var n1 = _sim.CreateNode();
             _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
             _sim.AddResistor(n1, _sim.Ground, 100.0);
@@ -123,8 +114,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void LastIterations_LinearCircuit_ReturnsOne()
-        {
+        public void LastIterations_LinearCircuit_ReturnsOne() {
             // Linear circuit (no diodes): exactly 1 Newton iteration
             var n1 = _sim.CreateNode();
             _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
@@ -138,8 +128,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void LastIterations_WithDiode_ReturnsMultiple()
-        {
+        public void LastIterations_WithDiode_ReturnsMultiple() {
             // Nonlinear circuit with diode requires Newton iterations
             var n1 = _sim.CreateNode();
             _sim.AddVoltageSource(n1, _sim.Ground, 5.0);

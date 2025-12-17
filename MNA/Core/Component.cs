@@ -1,9 +1,7 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA.Core
-{
-    public abstract class Component
-    {
+namespace Sparky.MNA.Core {
+    public abstract class Component {
         public Node Node1 { get; }
         public Node Node2 { get; }
 
@@ -26,8 +24,7 @@ namespace Sparky.MNA.Core
         // Assigned index in the matrix (if HasExtraEquation is true)
         public int MatrixIndex { get; set; } = -1;
 
-        protected Component(Node node1, Node node2)
-        {
+        protected Component(Node node1, Node node2) {
             Node1 = node1;
             Node2 = node2;
         }
@@ -55,8 +52,7 @@ namespace Sparky.MNA.Core
         /// </summary>
         /// <param name="x">Solution vector containing node voltages and branch currents</param>
         /// <param name="dt">Time step in seconds</param>
-        public virtual void AccumulateEnergy(double[] x, double dt)
-        {
+        public virtual void AccumulateEnergy(double[] x, double dt) {
             // Default: no energy tracking (e.g., wires, VCVS, etc.)
             EnergyDelta = 0;
         }

@@ -4,8 +4,7 @@ namespace Sparky.VSIntegration.PlayerState;
 /// Keys for per-player server-synced state.
 /// Add new members as more state types are needed.
 /// </summary>
-public enum PlayerStateKey
-{
+public enum PlayerStateKey {
     WireToolMode = 0,
     // Future: SelectedMaterial, CableLayingPhase, etc.
 }

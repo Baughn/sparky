@@ -3,8 +3,7 @@ namespace Sparky.MNA.Api.Limits;
 /// <summary>
 /// Event data fired when a component limit is exceeded or cleared.
 /// </summary>
-public readonly record struct LimitEvent
-{
+public readonly record struct LimitEvent {
     /// <summary>The component that triggered the event.</summary>
     public required ComponentRef Component { get; init; }
 

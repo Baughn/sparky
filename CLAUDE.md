@@ -72,7 +72,7 @@ When fixing bugs, always make a regression test first.
 ## Code Style
 
 - C# .NET 8.0, nullable enabled, LangVersion latest
-- 4-space indents, braces on new lines
+- 4-space indents, braces on same line (K&R style)
 - PascalCase types/methods/properties, camelCase locals/parameters
 - Keep solver math well-commented; align terminology with `MNA.md`
 

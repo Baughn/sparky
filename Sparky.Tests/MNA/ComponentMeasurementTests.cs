@@ -10,21 +10,18 @@ namespace Sparky.Tests.MNA;
 /// and similar measurement APIs return correct values.
 /// </summary>
 [TestFixture]
-public class ComponentMeasurementTests
-{
+public class ComponentMeasurementTests {
     private SimulationManager _sim = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _sim = new SimulationManager();
     }
 
     #region Resistor Current Tests
 
     [Test]
-    public void GetResistorCurrent_SimpleDivider_ReturnsCorrectCurrent()
-    {
+    public void GetResistorCurrent_SimpleDivider_ReturnsCorrectCurrent() {
         // 10V -- R1(100) -- n1 -- R2(100) -- GND
         // Total resistance = 200 Ohm, Current = 10V / 200 = 0.05A
         var nPos = _sim.CreateNode();
@@ -42,8 +39,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetResistorCurrent_ParallelResistors_SplitsCurrent()
-    {
+    public void GetResistorCurrent_ParallelResistors_SplitsCurrent() {
         // 10V -- n1 -- R1(100) -- GND
         //            \-- R2(100) -- GND
         // Each resistor has 10V/100 = 0.1A
@@ -60,8 +56,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetResistorCurrent_CurrentPolarity_MatchesNodeOrder()
-    {
+    public void GetResistorCurrent_CurrentPolarity_MatchesNodeOrder() {
         // Current flows from higher to lower potential
         // 10V at nPos, 0V at ground => positive current from nPos to ground
         var nPos = _sim.CreateNode();
@@ -78,8 +73,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetResistorCurrent_ReversePolarity_NegativeCurrent()
-    {
+    public void GetResistorCurrent_ReversePolarity_NegativeCurrent() {
         // If we define resistor from ground to nPos, current should be negative
         var nPos = _sim.CreateNode();
 
@@ -97,8 +91,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetResistorCurrent_NoExcitation_ZeroCurrent()
-    {
+    public void GetResistorCurrent_NoExcitation_ZeroCurrent() {
         // Resistor with no voltage source
         var n1 = _sim.CreateNode();
 
@@ -114,8 +107,7 @@ public class ComponentMeasurementTests
     #region Resistor Power Tests
 
     [Test]
-    public void GetResistorPower_SimpleDivider_ReturnsCorrectPower()
-    {
+    public void GetResistorPower_SimpleDivider_ReturnsCorrectPower() {
         // 10V -- R1(100) -- n1 -- R2(100) -- GND
         // Current = 0.05A, Power in R1 = I^2 * R = 0.0025 * 100 = 0.25W
         var nPos = _sim.CreateNode();
@@ -133,8 +125,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetResistorPower_HighCurrent_HighPower()
-    {
+    public void GetResistorPower_HighCurrent_HighPower() {
         // 10V -- R(10) -- GND
         // I = 1A, P = 1^2 * 10 = 10W
         var nPos = _sim.CreateNode();
@@ -148,8 +139,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetResistorPower_AlwaysPositive_RegardlessOfPolarity()
-    {
+    public void GetResistorPower_AlwaysPositive_RegardlessOfPolarity() {
         // Power dissipation is always positive regardless of current direction
         var nPos = _sim.CreateNode();
 
@@ -164,8 +154,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetResistorPower_TotalPower_EqualsSourcePower()
-    {
+    public void GetResistorPower_TotalPower_EqualsSourcePower() {
         // Power conservation: total power dissipated = power from source
         // 10V -- R1(100) -- R2(100) -- GND
         // Total P = V^2 / R_total = 100 / 200 = 0.5W
@@ -189,8 +178,7 @@ public class ComponentMeasurementTests
     #region Capacitor Current Tests
 
     [Test]
-    public void GetCapacitorCurrent_Charging_PositiveCurrent()
-    {
+    public void GetCapacitorCurrent_Charging_PositiveCurrent() {
         // RC charging circuit: current should be positive initially
         // 10V -- R(1000) -- n1 -- C(1uF) -- GND
         var nPos = _sim.CreateNode();
@@ -208,8 +196,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetCapacitorCurrent_SteadyState_ZeroCurrent()
-    {
+    public void GetCapacitorCurrent_SteadyState_ZeroCurrent() {
         // After many time constants, capacitor should have near-zero current
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -220,8 +207,7 @@ public class ComponentMeasurementTests
 
         // tau = R * C = 1000 * 1e-6 = 1ms
         // After 5*tau (5ms), capacitor is essentially fully charged
-        for (int i = 0; i < 50; i++)
-        {
+        for (int i = 0; i < 50; i++) {
             _sim.Step(1e-4); // 0.1ms per step, 50 steps = 5ms
         }
 
@@ -230,8 +216,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetCapacitorCurrent_CurrentSourceCharging_ConstantCurrent()
-    {
+    public void GetCapacitorCurrent_CurrentSourceCharging_ConstantCurrent() {
         // I -- C -- GND: constant current charges capacitor
         var n1 = _sim.CreateNode();
 
@@ -246,8 +231,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetCapacitorCurrent_DCOnly_ZeroCurrent()
-    {
+    public void GetCapacitorCurrent_DCOnly_ZeroCurrent() {
         // With dt=0 (DC analysis), capacitor is open circuit
         var n1 = _sim.CreateNode();
 
@@ -265,8 +249,7 @@ public class ComponentMeasurementTests
     #region Voltage Source Current Tests
 
     [Test]
-    public void GetVoltageSourceCurrent_LoadedSource_ReturnsCorrectCurrent()
-    {
+    public void GetVoltageSourceCurrent_LoadedSource_ReturnsCorrectCurrent() {
         // 10V -- R(100) -- GND
         // Current from source = 0.1A
         var nPos = _sim.CreateNode();
@@ -282,8 +265,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetVoltageSourceCurrent_MultipleLoads_SumsCurrent()
-    {
+    public void GetVoltageSourceCurrent_MultipleLoads_SumsCurrent() {
         // 10V with two 100 Ohm resistors in parallel
         // Total current = 10/100 + 10/100 = 0.2A
         var nPos = _sim.CreateNode();
@@ -303,8 +285,7 @@ public class ComponentMeasurementTests
     #region Inductor Current Tests
 
     [Test]
-    public void GetInductorCurrent_Charging_PositiveCurrent()
-    {
+    public void GetInductorCurrent_Charging_PositiveCurrent() {
         // RL charging circuit: current should build up over time
         // 10V -- R(100) -- n1 -- L(0.1H) -- GND
         var nPos = _sim.CreateNode();
@@ -323,8 +304,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetInductorCurrent_SteadyState_MaxCurrent()
-    {
+    public void GetInductorCurrent_SteadyState_MaxCurrent() {
         // After many time constants, inductor current reaches V/R
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -335,8 +315,7 @@ public class ComponentMeasurementTests
 
         // tau = L/R = 0.1/100 = 1ms
         // After 5*tau (5ms), inductor is essentially fully energized
-        for (int i = 0; i < 50; i++)
-        {
+        for (int i = 0; i < 50; i++) {
             _sim.Step(0.0001); // 0.1ms per step, 50 steps = 5ms
         }
 
@@ -346,8 +325,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetInductorCurrent_DCOnly_ShortCircuit()
-    {
+    public void GetInductorCurrent_DCOnly_ShortCircuit() {
         // With dt=0 (DC analysis), inductor is a short circuit
         // Current = V/R_tiny (very large)
         var n1 = _sim.CreateNode();
@@ -367,8 +345,7 @@ public class ComponentMeasurementTests
     }
 
     [Test]
-    public void GetInductorCurrent_InvalidId_ThrowsInvalidComponentException()
-    {
+    public void GetInductorCurrent_InvalidId_ThrowsInvalidComponentException() {
         var invalidId = new InductorId(999);
 
         Assert.Throws<InvalidComponentException>(() => _sim.GetInductorCurrent(invalidId));
@@ -379,24 +356,21 @@ public class ComponentMeasurementTests
     #region Invalid Component ID Tests
 
     [Test]
-    public void GetResistorCurrent_InvalidId_ThrowsInvalidComponentException()
-    {
+    public void GetResistorCurrent_InvalidId_ThrowsInvalidComponentException() {
         var invalidId = new ResistorId(999);
 
         Assert.Throws<InvalidComponentException>(() => _sim.GetResistorCurrent(invalidId));
     }
 
     [Test]
-    public void GetResistorPower_InvalidId_ThrowsInvalidComponentException()
-    {
+    public void GetResistorPower_InvalidId_ThrowsInvalidComponentException() {
         var invalidId = new ResistorId(999);
 
         Assert.Throws<InvalidComponentException>(() => _sim.GetResistorPower(invalidId));
     }
 
     [Test]
-    public void GetCapacitorCurrent_InvalidId_ThrowsInvalidComponentException()
-    {
+    public void GetCapacitorCurrent_InvalidId_ThrowsInvalidComponentException() {
         var invalidId = new CapacitorId(999);
 
         Assert.Throws<InvalidComponentException>(() => _sim.GetCapacitorCurrent(invalidId));

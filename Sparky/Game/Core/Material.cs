@@ -8,8 +8,7 @@ namespace Sparky.Game.Core;
 /// - Copper: 1mΩ/voxel → 100 voxel wire = 0.1Ω
 /// - Lead: 10mΩ/voxel → Same wire = 1Ω (useful for fuses)
 /// </remarks>
-public sealed class Material
-{
+public sealed class Material {
     /// <summary>
     /// The display name of the material.
     /// </summary>
@@ -24,8 +23,7 @@ public sealed class Material
     /// </remarks>
     public double Resistivity { get; }
 
-    private Material(string name, double resistivity)
-    {
+    private Material(string name, double resistivity) {
         Name = name;
         Resistivity = resistivity;
     }

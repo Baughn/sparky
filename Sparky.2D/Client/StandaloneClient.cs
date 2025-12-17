@@ -13,8 +13,7 @@ namespace Sparky.TwoD.Client;
 /// Uses a GTK window with a DrawingArea for Cairo rendering.
 /// This matches the Cairo API used by Vintage Story for 2D GUI elements.
 /// </remarks>
-public class StandaloneClient : IGameClient, IDisposable
-{
+public class StandaloneClient : IGameClient, IDisposable {
     // macOS native APIs for window activation (GTK's Present() doesn't work reliably on macOS)
     [DllImport("/usr/lib/libobjc.dylib", EntryPoint = "objc_getClass")]
     private static extern IntPtr objc_getClass(string className);
@@ -28,10 +27,8 @@ public class StandaloneClient : IGameClient, IDisposable
     [DllImport("/usr/lib/libobjc.dylib", EntryPoint = "objc_msgSend")]
     private static extern void objc_msgSend_bool(IntPtr receiver, IntPtr selector, bool arg);
 
-    private static void BringAppToFront()
-    {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
+    private static void BringAppToFront() {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
             var nsApp = objc_getClass("NSApplication");
             var sharedApp = sel_registerName("sharedApplication");
             var activate = sel_registerName("activateIgnoringOtherApps:");
@@ -71,8 +68,7 @@ public class StandaloneClient : IGameClient, IDisposable
 
     public bool ShouldClose { get; private set; }
 
-    public StandaloneClient()
-    {
+    public StandaloneClient() {
         Application.Init();
 
         _window = new Window("Sparky 2D - Circuit Editor");
@@ -97,10 +93,8 @@ public class StandaloneClient : IGameClient, IDisposable
         BringAppToFront();
     }
 
-    public void HandleCommand(RenderCommand command)
-    {
-        switch (command)
-        {
+    public void HandleCommand(RenderCommand command) {
+        switch (command) {
             case SetGridSize size:
                 _gridWidth = size.Width;
                 _gridHeight = size.Height;
@@ -122,34 +116,28 @@ public class StandaloneClient : IGameClient, IDisposable
         }
     }
 
-    public void HandleCommands(IEnumerable<RenderCommand> commands)
-    {
+    public void HandleCommands(IEnumerable<RenderCommand> commands) {
         foreach (var cmd in commands)
             HandleCommand(cmd);
     }
 
-    public IEnumerable<InputEvent> PollInput()
-    {
+    public IEnumerable<InputEvent> PollInput() {
         // Process GTK events
-        while (Application.EventsPending())
-        {
+        while (Application.EventsPending()) {
             Application.RunIteration();
         }
 
         // Return queued input events
-        while (_pendingInput.Count > 0)
-        {
+        while (_pendingInput.Count > 0) {
             yield return _pendingInput.Dequeue();
         }
     }
 
-    public void Render()
-    {
+    public void Render() {
         _drawingArea.QueueDraw();
     }
 
-    private void OnDraw(object o, DrawnArgs args)
-    {
+    private void OnDraw(object o, DrawnArgs args) {
         var ctx = args.Cr;
 
         // Clear background
@@ -160,8 +148,7 @@ public class StandaloneClient : IGameClient, IDisposable
         DrawGrid(ctx);
 
         // Draw cells
-        foreach (var (pos, data) in _cells)
-        {
+        foreach (var (pos, data) in _cells) {
             DrawCell(ctx, pos, data);
         }
 
@@ -175,19 +162,16 @@ public class StandaloneClient : IGameClient, IDisposable
         DrawHoverTooltip(ctx);
     }
 
-    private void DrawGrid(Context ctx)
-    {
+    private void DrawGrid(Context ctx) {
         ctx.SetSourceRGB(0.3, 0.3, 0.3);
         ctx.LineWidth = 0.5;
 
-        for (int x = 0; x <= _gridWidth; x++)
-        {
+        for (int x = 0; x <= _gridWidth; x++) {
             ctx.MoveTo(Padding + x * CellSize, Padding);
             ctx.LineTo(Padding + x * CellSize, Padding + _gridHeight * CellSize);
         }
 
-        for (int y = 0; y <= _gridHeight; y++)
-        {
+        for (int y = 0; y <= _gridHeight; y++) {
             ctx.MoveTo(Padding, Padding + y * CellSize);
             ctx.LineTo(Padding + _gridWidth * CellSize, Padding + y * CellSize);
         }
@@ -195,8 +179,7 @@ public class StandaloneClient : IGameClient, IDisposable
         ctx.Stroke();
     }
 
-    private void DrawCell(Context ctx, GridPos pos, CellRenderData data)
-    {
+    private void DrawCell(Context ctx, GridPos pos, CellRenderData data) {
         var x = Padding + pos.X * CellSize;
         var y = Padding + pos.Y * CellSize;
 
@@ -209,19 +192,18 @@ public class StandaloneClient : IGameClient, IDisposable
         var heat = data.State.PowerNormalized;
 
         // Switch expression ensures compile error if new CellType is added without handling
-        System.Action draw = data.Type switch
-        {
-            CellType.Empty => () => { },
+        System.Action draw = data.Type switch {
+            CellType.Empty => () => { }
+            ,
 
-            CellType.Wire => () =>
-            {
+            CellType.Wire => () => {
                 ctx.SetSourceRGB(r * 0.8, g * 0.8, b * 0.8);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
                 ctx.Fill();
-            },
+            }
+            ,
 
-            CellType.Ground => () =>
-            {
+            CellType.Ground => () => {
                 ctx.SetSourceRGB(0.2, 0.8, 0.2);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
                 ctx.Fill();
@@ -231,10 +213,10 @@ public class StandaloneClient : IGameClient, IDisposable
                 ctx.MoveTo(x + CellSize / 2, y + 4);
                 ctx.LineTo(x + CellSize / 2, y + CellSize - 4);
                 ctx.Stroke();
-            },
+            }
+            ,
 
-            CellType.Battery => () =>
-            {
+            CellType.Battery => () => {
                 // Yellow for battery negative terminal (origin)
                 ctx.SetSourceRGB(0.9, 0.9, 0.2);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
@@ -245,18 +227,18 @@ public class StandaloneClient : IGameClient, IDisposable
                 ctx.MoveTo(x + 4, y + CellSize / 2);
                 ctx.LineTo(x + CellSize - 4, y + CellSize / 2);
                 ctx.Stroke();
-            },
+            }
+            ,
 
-            CellType.BatteryBody => () =>
-            {
+            CellType.BatteryBody => () => {
                 // Dark gray for battery body (insulator)
                 ctx.SetSourceRGB(0.4, 0.4, 0.3);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
                 ctx.Fill();
-            },
+            }
+            ,
 
-            CellType.BatteryPositive => () =>
-            {
+            CellType.BatteryPositive => () => {
                 // Yellow for battery positive terminal (far end)
                 ctx.SetSourceRGB(0.9, 0.9, 0.2);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
@@ -269,10 +251,10 @@ public class StandaloneClient : IGameClient, IDisposable
                 ctx.MoveTo(x + 4, y + CellSize / 2);
                 ctx.LineTo(x + CellSize - 4, y + CellSize / 2);
                 ctx.Stroke();
-            },
+            }
+            ,
 
-            CellType.Resistor => () =>
-            {
+            CellType.Resistor => () => {
                 // Color by heat (power dissipation)
                 ctx.SetSourceRGB(0.5 + heat * 0.5, 0.3 * (1 - heat), 0.1);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
@@ -286,26 +268,26 @@ public class StandaloneClient : IGameClient, IDisposable
                 ctx.LineTo(x + 6, y + CellSize - 6);
                 ctx.ClosePath();
                 ctx.Stroke();
-            },
+            }
+            ,
 
-            CellType.ResistorBody => () =>
-            {
+            CellType.ResistorBody => () => {
                 // Darker brown for resistor body (insulator)
                 ctx.SetSourceRGB(0.4, 0.25, 0.1);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
                 ctx.Fill();
-            },
+            }
+            ,
 
-            CellType.ResistorTerminalB => () =>
-            {
+            CellType.ResistorTerminalB => () => {
                 // Same heat-based coloring as origin terminal
                 ctx.SetSourceRGB(0.5 + heat * 0.5, 0.3 * (1 - heat), 0.1);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
                 ctx.Fill();
-            },
+            }
+            ,
 
-            CellType.Switch => () =>
-            {
+            CellType.Switch => () => {
                 // Gray background with voltage-based tint
                 ctx.SetSourceRGB(0.4 + r * 0.2, 0.4 + g * 0.2, 0.4 + b * 0.2);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
@@ -315,15 +297,12 @@ public class StandaloneClient : IGameClient, IDisposable
                 ctx.SetSourceRGB(0, 0, 0);
                 ctx.LineWidth = 2;
 
-                if (data.State.SwitchClosed)
-                {
+                if (data.State.SwitchClosed) {
                     // Closed: horizontal line (conductor)
                     ctx.MoveTo(x + 4, y + CellSize / 2);
                     ctx.LineTo(x + CellSize - 4, y + CellSize / 2);
                     ctx.Stroke();
-                }
-                else
-                {
+                } else {
                     // Open: angled line (broken circuit)
                     ctx.MoveTo(x + 4, y + CellSize / 2);
                     ctx.LineTo(x + CellSize / 2 - 2, y + CellSize / 3);
@@ -335,41 +314,39 @@ public class StandaloneClient : IGameClient, IDisposable
                     ctx.LineTo(x + CellSize - 4, y + CellSize / 2);
                     ctx.Stroke();
                 }
-            },
+            }
+            ,
 
-            CellType.SwitchBody => () =>
-            {
+            CellType.SwitchBody => () => {
                 // Gray body (insulator)
                 ctx.SetSourceRGB(0.35, 0.35, 0.35);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
                 ctx.Fill();
-            },
+            }
+            ,
 
-            CellType.SwitchTerminalB => () =>
-            {
+            CellType.SwitchTerminalB => () => {
                 // Same as Switch origin - gray with voltage tint
                 ctx.SetSourceRGB(0.4 + r * 0.2, 0.4 + g * 0.2, 0.4 + b * 0.2);
                 ctx.Rectangle(x + 2, y + 2, CellSize - 4, CellSize - 4);
                 ctx.Fill();
-            },
+            }
+            ,
         };
 
         draw();
     }
 
-    private void DrawToolbar(Context ctx)
-    {
+    private void DrawToolbar(Context ctx) {
         var tools = new[] { CellType.Wire, CellType.Battery, CellType.Resistor, CellType.Switch, CellType.Ground, CellType.Empty };
         var toolNames = new[] { "Wire [1]", "Battery [2]", "Resistor [3]", "Switch [4]", "Ground [5]", "Eraser [6]" };
         var y = Padding + _gridHeight * CellSize + 20;
 
-        for (int i = 0; i < tools.Length; i++)
-        {
+        for (int i = 0; i < tools.Length; i++) {
             var x = Padding + i * 90;
 
             // Highlight selected tool (only if not in debug mode)
-            if (!_debugMode && tools[i] == _selectedTool)
-            {
+            if (!_debugMode && tools[i] == _selectedTool) {
                 ctx.SetSourceRGB(0.4, 0.4, 0.6);
                 ctx.Rectangle(x - 2, y - 2, 84, 24);
                 ctx.Fill();
@@ -382,8 +359,7 @@ public class StandaloneClient : IGameClient, IDisposable
 
         // Debug tool
         var debugX = Padding + 6 * 90;
-        if (_debugMode)
-        {
+        if (_debugMode) {
             ctx.SetSourceRGB(0.6, 0.4, 0.4);  // Reddish highlight for debug
             ctx.Rectangle(debugX - 2, y - 2, 84, 24);
             ctx.Fill();
@@ -397,8 +373,7 @@ public class StandaloneClient : IGameClient, IDisposable
         ctx.ShowText($"Rot: {_rotation * 90}° [R]");
     }
 
-    private void DrawHoverTooltip(Context ctx)
-    {
+    private void DrawHoverTooltip(Context ctx) {
         if (_hoveredCell == null)
             return;
 
@@ -446,8 +421,7 @@ public class StandaloneClient : IGameClient, IDisposable
 
         // Draw tooltip text
         ctx.SetSourceRGB(0.9, 0.9, 0.9);
-        for (int i = 0; i < lines.Length; i++)
-        {
+        for (int i = 0; i < lines.Length; i++) {
             ctx.MoveTo(tooltipX + 5, tooltipY + 15 + i * 14);
             ctx.ShowText(lines[i]);
         }
@@ -459,10 +433,8 @@ public class StandaloneClient : IGameClient, IDisposable
         ctx.Stroke();
     }
 
-    private void OnKeyPress(object o, KeyPressEventArgs args)
-    {
-        switch (args.Event.Key)
-        {
+    private void OnKeyPress(object o, KeyPressEventArgs args) {
+        switch (args.Event.Key) {
             case Gdk.Key.Key_1:
                 _selectedTool = CellType.Wire;
                 _debugMode = false;
@@ -501,8 +473,7 @@ public class StandaloneClient : IGameClient, IDisposable
         }
     }
 
-    private void OnButtonPress(object o, ButtonPressEventArgs args)
-    {
+    private void OnButtonPress(object o, ButtonPressEventArgs args) {
         var gridX = (int)((args.Event.X - Padding) / CellSize);
         var gridY = (int)((args.Event.Y - Padding) / CellSize);
 
@@ -513,18 +484,13 @@ public class StandaloneClient : IGameClient, IDisposable
 
         if (args.Event.Button == 1) // Left click - place, erase, or debug
         {
-            if (_debugMode)
-            {
+            if (_debugMode) {
                 // Debug tool: output cell state to stdout
                 OutputCellDebugInfo(pos);
-            }
-            else if (_selectedTool == CellType.Empty)
-            {
+            } else if (_selectedTool == CellType.Empty) {
                 // Eraser tool: remove component
                 _pendingInput.Enqueue(new RemoveComponent(pos));
-            }
-            else if (_selectedTool == CellType.Wire)
-            {
+            } else if (_selectedTool == CellType.Wire) {
                 // Start wire drag
                 _isDragging = true;
                 _dragStart = pos;
@@ -532,20 +498,16 @@ public class StandaloneClient : IGameClient, IDisposable
                 _dragPath.Clear();
                 _dragPath.Add(pos);
                 _drawingArea.QueueDraw();
-            }
-            else
-            {
+            } else {
                 // Non-wire: immediate placement
                 _pendingInput.Enqueue(new PlaceComponent(pos, _selectedTool, _rotation));
             }
-        }
-        else if (args.Event.Button == 3) // Right click - edit/toggle
-        {
+        } else if (args.Event.Button == 3) // Right click - edit/toggle
+          {
             if (!_cells.TryGetValue(pos, out var cell))
                 return;
 
-            switch (cell.Type)
-            {
+            switch (cell.Type) {
                 case CellType.Switch:
                 case CellType.SwitchBody:
                 case CellType.SwitchTerminalB:
@@ -565,8 +527,7 @@ public class StandaloneClient : IGameClient, IDisposable
         }
     }
 
-    private void ShowEditDialog(GridPos pos, string title, string label, double defaultValue, double min, double max, bool logarithmic)
-    {
+    private void ShowEditDialog(GridPos pos, string title, string label, double defaultValue, double min, double max, bool logarithmic) {
         var dialog = new Dialog($"Edit {title}", _window, DialogFlags.Modal,
             "Cancel", ResponseType.Cancel, "OK", ResponseType.Ok);
 
@@ -576,8 +537,7 @@ public class StandaloneClient : IGameClient, IDisposable
         Entry entry;
         HScale? scale = null;
 
-        if (logarithmic)
-        {
+        if (logarithmic) {
             // Logarithmic scale: slider maps log10(min)..log10(max)
             var adj = new Adjustment(
                 Math.Log10(defaultValue),
@@ -589,17 +549,14 @@ public class StandaloneClient : IGameClient, IDisposable
 
             scale.ValueChanged += (s, e) =>
                 entry.Text = Math.Pow(10, scale.Value).ToString("G3");
-            entry.Changed += (s, e) =>
-            {
+            entry.Changed += (s, e) => {
                 if (double.TryParse(entry.Text, out var v) && v > 0)
                     scale.Value = Math.Log10(Math.Clamp(v, min, max));
             };
 
             hbox.PackStart(scale, true, true, 5);
             hbox.PackStart(entry, false, false, 5);
-        }
-        else
-        {
+        } else {
             entry = new Entry(defaultValue.ToString("F2")) { WidthRequest = 100 };
             hbox.PackStart(entry, false, false, 5);
         }
@@ -607,25 +564,19 @@ public class StandaloneClient : IGameClient, IDisposable
         dialog.ContentArea.PackStart(hbox, false, false, 10);
         dialog.ShowAll();
 
-        if (dialog.Run() == (int)ResponseType.Ok)
-        {
-            if (double.TryParse(entry.Text, out var newValue) && newValue > 0)
-            {
+        if (dialog.Run() == (int)ResponseType.Ok) {
+            if (double.TryParse(entry.Text, out var newValue) && newValue > 0) {
                 _pendingInput.Enqueue(new SetComponentValue(pos, newValue));
             }
         }
         dialog.Destroy();
     }
 
-    private void OnButtonRelease(object o, ButtonReleaseEventArgs args)
-    {
-        if (args.Event.Button == 1 && _isDragging)
-        {
+    private void OnButtonRelease(object o, ButtonReleaseEventArgs args) {
+        if (args.Event.Button == 1 && _isDragging) {
             // Finalize wire drag - place wires on all valid positions
-            foreach (var pos in _dragPath)
-            {
-                if (IsValidPlacement(pos))
-                {
+            foreach (var pos in _dragPath) {
+                if (IsValidPlacement(pos)) {
                     _pendingInput.Enqueue(new PlaceComponent(pos, CellType.Wire, 0));
                 }
             }
@@ -639,8 +590,7 @@ public class StandaloneClient : IGameClient, IDisposable
         }
     }
 
-    private void OnMotionNotify(object o, MotionNotifyEventArgs args)
-    {
+    private void OnMotionNotify(object o, MotionNotifyEventArgs args) {
         var gridX = (int)((args.Event.X - Padding) / CellSize);
         var gridY = (int)((args.Event.Y - Padding) / CellSize);
 
@@ -651,25 +601,21 @@ public class StandaloneClient : IGameClient, IDisposable
         var currentPos = new GridPos(gridX, gridY);
 
         // Update hover state
-        if (_hoveredCell != currentPos)
-        {
+        if (_hoveredCell != currentPos) {
             _hoveredCell = currentPos;
         }
 
         // Update drag path if dragging wire
-        if (_isDragging && _dragStart.HasValue)
-        {
+        if (_isDragging && _dragStart.HasValue) {
             UpdateDragPath(_dragStart.Value, currentPos);
         }
 
         _drawingArea.QueueDraw();
     }
 
-    private void UpdateDragPath(GridPos start, GridPos current)
-    {
+    private void UpdateDragPath(GridPos start, GridPos current) {
         // Determine direction on first significant movement
-        if (_dragHorizontalFirst == null)
-        {
+        if (_dragHorizontalFirst == null) {
             int dx = Math.Abs(current.X - start.X);
             int dy = Math.Abs(current.Y - start.Y);
             if (dx > 0 || dy > 0)
@@ -679,44 +625,33 @@ public class StandaloneClient : IGameClient, IDisposable
         _dragPath.Clear();
         bool horizFirst = _dragHorizontalFirst ?? true;
 
-        if (horizFirst)
-        {
+        if (horizFirst) {
             // Horizontal then vertical
             int dx = Math.Sign(current.X - start.X);
-            if (dx != 0)
-            {
+            if (dx != 0) {
                 for (int x = start.X; x != current.X; x += dx)
                     _dragPath.Add(new GridPos(x, start.Y));
             }
             int dy = Math.Sign(current.Y - start.Y);
-            if (dy != 0)
-            {
+            if (dy != 0) {
                 for (int y = start.Y; y != current.Y + dy; y += dy)
                     _dragPath.Add(new GridPos(current.X, y));
-            }
-            else
-            {
+            } else {
                 // No vertical movement, just add the endpoint
                 _dragPath.Add(new GridPos(current.X, start.Y));
             }
-        }
-        else
-        {
+        } else {
             // Vertical then horizontal
             int dy = Math.Sign(current.Y - start.Y);
-            if (dy != 0)
-            {
+            if (dy != 0) {
                 for (int y = start.Y; y != current.Y; y += dy)
                     _dragPath.Add(new GridPos(start.X, y));
             }
             int dx = Math.Sign(current.X - start.X);
-            if (dx != 0)
-            {
+            if (dx != 0) {
                 for (int x = start.X; x != current.X + dx; x += dx)
                     _dragPath.Add(new GridPos(x, current.Y));
-            }
-            else
-            {
+            } else {
                 // No horizontal movement, just add the endpoint
                 _dragPath.Add(new GridPos(start.X, current.Y));
             }
@@ -727,23 +662,17 @@ public class StandaloneClient : IGameClient, IDisposable
             _dragPath.Add(start);
     }
 
-    private void DrawGhostPreview(Context ctx)
-    {
-        if (_isDragging && _selectedTool == CellType.Wire)
-        {
+    private void DrawGhostPreview(Context ctx) {
+        if (_isDragging && _selectedTool == CellType.Wire) {
             // Draw wire path preview
-            foreach (var pos in _dragPath)
-            {
+            foreach (var pos in _dragPath) {
                 bool valid = IsValidPlacement(pos);
                 DrawGhostCell(ctx, pos, CellType.Wire, valid);
             }
-        }
-        else if (_hoveredCell.HasValue && !_isDragging)
-        {
+        } else if (_hoveredCell.HasValue && !_isDragging) {
             // Draw component preview at hover position
             var cells = ComponentTemplates.GetCells(_selectedTool, _rotation);
-            foreach (var (offset, cellType) in cells)
-            {
+            foreach (var (offset, cellType) in cells) {
                 var pos = new GridPos(_hoveredCell.Value.X + offset.X,
                                        _hoveredCell.Value.Y + offset.Y);
                 bool valid = IsValidPlacement(pos);
@@ -752,8 +681,7 @@ public class StandaloneClient : IGameClient, IDisposable
         }
     }
 
-    private bool IsValidPlacement(GridPos pos)
-    {
+    private bool IsValidPlacement(GridPos pos) {
         // Check bounds
         if (pos.X < 0 || pos.X >= _gridWidth || pos.Y < 0 || pos.Y >= _gridHeight)
             return false;
@@ -761,19 +689,15 @@ public class StandaloneClient : IGameClient, IDisposable
         return !_cells.ContainsKey(pos);
     }
 
-    private void DrawGhostCell(Context ctx, GridPos pos, CellType type, bool valid)
-    {
+    private void DrawGhostCell(Context ctx, GridPos pos, CellType type, bool valid) {
         var x = Padding + pos.X * CellSize;
         var y = Padding + pos.Y * CellSize;
 
         // Draw background fill
-        if (valid)
-        {
+        if (valid) {
             // Green-tinted translucent for valid placement
             ctx.SetSourceRGBA(0.2, 0.8, 0.2, 0.4);
-        }
-        else
-        {
+        } else {
             // Red-tinted translucent for invalid placement
             ctx.SetSourceRGBA(0.9, 0.2, 0.2, 0.4);
         }
@@ -784,8 +708,7 @@ public class StandaloneClient : IGameClient, IDisposable
         ctx.SetSourceRGBA(0.9, 0.9, 0.9, 0.5);
         ctx.LineWidth = 1;
 
-        switch (type)
-        {
+        switch (type) {
             case CellType.Battery:
                 // - symbol
                 ctx.MoveTo(x + 4, y + CellSize / 2);
@@ -836,30 +759,25 @@ public class StandaloneClient : IGameClient, IDisposable
         }
     }
 
-    private void OutputCellDebugInfo(GridPos pos)
-    {
+    private void OutputCellDebugInfo(GridPos pos) {
         var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-        if (_cells.TryGetValue(pos, out var cell))
-        {
+        if (_cells.TryGetValue(pos, out var cell)) {
             // Only include switchClosed for Switch cells
             object state = cell.Type == CellType.Switch
-                ? new
-                {
+                ? new {
                     voltage = cell.State.VoltageNormalized,
                     current = cell.State.CurrentNormalized,
                     power = cell.State.PowerNormalized,
                     switchClosed = cell.State.SwitchClosed
                 }
-                : new
-                {
+                : new {
                     voltage = cell.State.VoltageNormalized,
                     current = cell.State.CurrentNormalized,
                     power = cell.State.PowerNormalized
                 };
 
-            var debugInfo = new
-            {
+            var debugInfo = new {
                 debug = "cell",
                 pos = new { x = pos.X, y = pos.Y },
                 type = cell.Type.ToString(),
@@ -867,11 +785,8 @@ public class StandaloneClient : IGameClient, IDisposable
                 state
             };
             Console.WriteLine(JsonSerializer.Serialize(debugInfo, jsonOptions));
-        }
-        else
-        {
-            var debugInfo = new
-            {
+        } else {
+            var debugInfo = new {
                 debug = "cell",
                 pos = new { x = pos.X, y = pos.Y },
                 type = "Empty",
@@ -882,8 +797,7 @@ public class StandaloneClient : IGameClient, IDisposable
         }
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
         _window.Dispose();
     }
 

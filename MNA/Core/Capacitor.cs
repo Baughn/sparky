@@ -1,9 +1,7 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA.Core
-{
-    public class Capacitor : Component
-    {
+namespace Sparky.MNA.Core {
+    public class Capacitor : Component {
         public double Capacitance { get; set; }
 
         // State for transient analysis - exposed for state preservation during rebuilds
@@ -18,13 +16,11 @@ namespace Sparky.MNA.Core
         public override bool RequiresPerStepRestamp => true;
 
         public Capacitor(Node node1, Node node2, double capacitance)
-            : base(node1, node2)
-        {
+            : base(node1, node2) {
             Capacitance = capacitance;
         }
 
-        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt)
-        {
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt) {
             // DC Steady State: Capacitor is an open circuit (G = 0, I = 0)
             if (dt <= 0)
                 return;
@@ -63,8 +59,7 @@ namespace Sparky.MNA.Core
             int n2 = Node2.Id;
 
             // Stamp Conductance
-            if (n1 != 0)
-            {
+            if (n1 != 0) {
                 A.At(n1, n1, gEq);
                 if (n2 != 0)
                     A.At(n1, n2, -gEq);
@@ -73,8 +68,7 @@ namespace Sparky.MNA.Core
                 Z[n1] += iEq;
             }
 
-            if (n2 != 0)
-            {
+            if (n2 != 0) {
                 A.At(n2, n2, gEq);
                 if (n1 != 0)
                     A.At(n2, n1, -gEq);
@@ -94,28 +88,23 @@ namespace Sparky.MNA.Core
         // We need a separate UpdateState(vectorX) method.
 
         // Update state after solve
-        public override void UpdateState(double[] x, double dt)
-        {
+        public override void UpdateState(double[] x, double dt) {
             double v1 = (Node1.Id == 0) ? 0 : x[Node1.Id];
             double v2 = (Node2.Id == 0) ? 0 : x[Node2.Id];
             double newVoltage = v1 - v2;
 
             // Compute current: I = C * dV/dt
             // For DC (dt <= 0), capacitor is open circuit, so current is 0
-            if (dt > 0)
-            {
+            if (dt > 0) {
                 Current = Capacitance * (newVoltage - VoltageAcross) / dt;
-            }
-            else
-            {
+            } else {
                 Current = 0;
             }
 
             VoltageAcross = newVoltage;
         }
 
-        public override void AccumulateEnergy(double[] x, double dt)
-        {
+        public override void AccumulateEnergy(double[] x, double dt) {
             // P = V × I (positive = absorbing/charging, negative = discharging)
             // Current is computed in UpdateState(), which runs before AccumulateEnergy
             double power = VoltageAcross * Current;

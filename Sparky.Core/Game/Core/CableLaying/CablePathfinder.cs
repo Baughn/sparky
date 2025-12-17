@@ -10,8 +10,7 @@ namespace Sparky.Game.Core.CableLaying;
 /// - Returns partial paths when goal is unreachable
 /// - Marks path voxels in cache for support chain validation
 /// </remarks>
-public class CablePathfinder
-{
+public class CablePathfinder {
     private readonly IWorldVoxelCache _cache;
     private readonly CrossSection _crossSection;
 
@@ -35,8 +34,7 @@ public class CablePathfinder
     /// </summary>
     public static Action<string>? Log { get; set; }
 
-    public CablePathfinder(IWorldVoxelCache cache, CrossSection crossSection)
-    {
+    public CablePathfinder(IWorldVoxelCache cache, CrossSection crossSection) {
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _crossSection = crossSection;
     }
@@ -47,8 +45,7 @@ public class CablePathfinder
     /// <param name="startPositions">The starting voxel positions (the cable cross-section).</param>
     /// <param name="goal">Goal voxel position.</param>
     /// <returns>PathResult with the best path found, starting with the exact input positions.</returns>
-    public PathResult FindPath(IReadOnlyList<VoxelPos> startPositions, VoxelPos goal)
-    {
+    public PathResult FindPath(IReadOnlyList<VoxelPos> startPositions, VoxelPos goal) {
         if (startPositions.Count == 0)
             return PathResult.NoProgress(new VoxelPos(0, 0, 0), goal);
 
@@ -58,16 +55,14 @@ public class CablePathfinder
         _cache.ClearCableConductors();
 
         // Early exit if goal is way outside pathfinding bounds (no point searching)
-        if (!_cache.IsInPathfindingBounds(goal))
-        {
+        if (!_cache.IsInPathfindingBounds(goal)) {
             Log?.Invoke($"[Pathfinder] Goal outside pathfinding bounds, returning NoProgress");
             return PathResult.NoProgress(anchor, goal);
         }
 
         // Find all configurations that match the positions
         var configs = InferAllConfigurations(startPositions);
-        if (configs.Count == 0)
-        {
+        if (configs.Count == 0) {
             Log?.Invoke($"[Pathfinder] Could not infer any configuration from positions, returning NoProgress");
             return PathResult.NoProgress(anchor, goal);
         }
@@ -85,11 +80,9 @@ public class CablePathfinder
 
         // Try all matching configurations as start nodes (validates and marks positions)
         int validStarts = 0;
-        foreach (var (direction, orientation) in configs)
-        {
+        foreach (var (direction, orientation) in configs) {
             var (success, _) = TryPlaceCrossSection(anchor, direction, isStart: true);
-            if (success)
-            {
+            if (success) {
                 var startNode = new SearchNode(anchor, direction, orientation, 0);
                 openSet.Enqueue(startNode, Heuristic(anchor, goal));
                 gScore[startNode] = 0;
@@ -99,8 +92,7 @@ public class CablePathfinder
 
         Log?.Invoke($"[Pathfinder] Tried {configs.Count} configs, {validStarts} valid starts");
 
-        if (validStarts == 0)
-        {
+        if (validStarts == 0) {
             Log?.Invoke($"[Pathfinder] NoProgress: no valid start positions");
             return PathResult.NoProgress(anchor, goal);
         }
@@ -110,14 +102,12 @@ public class CablePathfinder
         int neighborsRejectedByPlacement = 0;
         int neighborsAccepted = 0;
 
-        while (openSet.Count > 0)
-        {
+        while (openSet.Count > 0) {
             var current = openSet.Dequeue();
             iterations++;
 
             // Prevent runaway searches
-            if (iterations > MaxIterations)
-            {
+            if (iterations > MaxIterations) {
                 Log?.Invoke($"[Pathfinder] Hit iteration limit ({MaxIterations}), returning best partial");
                 break;
             }
@@ -131,41 +121,35 @@ public class CablePathfinder
             float currentG = gScore.GetValueOrDefault(current, float.MaxValue);
 
             if (distToGoal < bestDistance ||
-                (distToGoal == bestDistance && currentG < bestGScore))
-            {
+                (distToGoal == bestDistance && currentG < bestGScore)) {
                 bestDistance = distToGoal;
                 bestGScore = currentG;
                 bestNode = current;
             }
 
             // Check if we've reached the goal
-            if (IsAtGoal(current.Position, goal))
-            {
+            if (IsAtGoal(current.Position, goal)) {
                 var path = ReconstructPath(cameFrom, current);
                 Log?.Invoke($"[Pathfinder] Complete: iterations={iterations}, pathLength={path.Count}, visited={visited.Count}");
                 return PathResult.Complete(path, goal);
             }
 
             // Check bounds
-            if (!_cache.IsInPathfindingBounds(current.Position))
-            {
+            if (!_cache.IsInPathfindingBounds(current.Position)) {
                 // Spammy: Log?.Invoke($"[Pathfinder] Node {current.Position} outside bounds, skipping");
                 continue;
             }
 
             // Generate neighbors
-            foreach (var neighbor in GetNeighbors(current))
-            {
-                if (visited.Contains(neighbor))
-                {
+            foreach (var neighbor in GetNeighbors(current)) {
+                if (visited.Contains(neighbor)) {
                     neighborsRejectedByVisited++;
                     continue;
                 }
 
                 // Try to place cross-section at neighbor position
                 var (canPlace, distToInsulation) = CanPlaceCrossSection(neighbor.Position, neighbor.Direction, neighbor.Orientation);
-                if (!canPlace)
-                {
+                if (!canPlace) {
                     neighborsRejectedByPlacement++;
                     continue;
                 }
@@ -178,8 +162,7 @@ public class CablePathfinder
                 if (neighbor.Direction != current.Direction)
                     tentativeG += TurnPenalty;
 
-                if (tentativeG < gScore.GetValueOrDefault(neighbor, float.MaxValue))
-                {
+                if (tentativeG < gScore.GetValueOrDefault(neighbor, float.MaxValue)) {
                     cameFrom[neighbor] = current;
                     gScore[neighbor] = tentativeG;
                     float f = tentativeG + Heuristic(neighbor.Position, goal);
@@ -191,8 +174,7 @@ public class CablePathfinder
         Log?.Invoke($"[Pathfinder] Search exhausted: iterations={iterations}, visited={visited.Count}, accepted={neighborsAccepted}, rejectedVisited={neighborsRejectedByVisited}, rejectedPlacement={neighborsRejectedByPlacement}");
 
         // No complete path found - return best partial
-        if (bestNode.HasValue && bestDistance < ManhattanDistance(anchor, goal))
-        {
+        if (bestNode.HasValue && bestDistance < ManhattanDistance(anchor, goal)) {
             // Reconstruct path to best node
             _cache.ClearCableConductors();
             var path = ReconstructPathAndMark(cameFrom, bestNode.Value);
@@ -210,8 +192,7 @@ public class CablePathfinder
     /// For larger cross-sections, typically only one or two configurations match.
     /// </summary>
     private List<(VoxelDirection Direction, CrossSectionOrientation Orientation)> InferAllConfigurations(
-        IReadOnlyList<VoxelPos> positions)
-    {
+        IReadOnlyList<VoxelPos> positions) {
         var result = new List<(VoxelDirection, CrossSectionOrientation)>();
 
         if (positions.Count == 0)
@@ -220,10 +201,8 @@ public class CablePathfinder
         var positionSet = positions.ToHashSet();
         var anchor = positions[0];
 
-        foreach (var dir in VoxelDirectionExtensions.All)
-        {
-            foreach (var orient in new[] { CrossSectionOrientation.Flat, CrossSectionOrientation.Upright })
-            {
+        foreach (var dir in VoxelDirectionExtensions.All) {
+            foreach (var orient in new[] { CrossSectionOrientation.Flat, CrossSectionOrientation.Upright }) {
                 var generated = _crossSection.GetVoxelPositions(anchor, dir, orient).ToHashSet();
                 if (generated.SetEquals(positionSet))
                     result.Add((dir, orient));
@@ -236,8 +215,7 @@ public class CablePathfinder
     /// <summary>
     /// Checks if the current position is at or covers the goal.
     /// </summary>
-    private bool IsAtGoal(VoxelPos current, VoxelPos goal)
-    {
+    private bool IsAtGoal(VoxelPos current, VoxelPos goal) {
         // For simplicity, check if goal is within one voxel of current
         // A more sophisticated check would verify the cross-section covers the goal
         return ManhattanDistance(current, goal) <= 1;
@@ -246,12 +224,10 @@ public class CablePathfinder
     /// <summary>
     /// Gets valid neighbor nodes from the current node.
     /// </summary>
-    private IEnumerable<SearchNode> GetNeighbors(SearchNode current)
-    {
+    private IEnumerable<SearchNode> GetNeighbors(SearchNode current) {
         int minTurnDist = _crossSection.MinTurnDistance;
 
-        foreach (var dir in VoxelDirectionExtensions.All)
-        {
+        foreach (var dir in VoxelDirectionExtensions.All) {
             // Never allow 180° turns
             if (dir == current.Direction.Opposite())
                 continue;
@@ -279,13 +255,11 @@ public class CablePathfinder
     /// Returns validity and minimum distance to insulation for cost calculation.
     /// </summary>
     /// <returns>Tuple of (valid, minDistanceToInsulation). Distance is 1 if adjacent.</returns>
-    private (bool Valid, int MinDistance) CanPlaceCrossSection(VoxelPos anchor, VoxelDirection direction, CrossSectionOrientation orientation)
-    {
+    private (bool Valid, int MinDistance) CanPlaceCrossSection(VoxelPos anchor, VoxelDirection direction, CrossSectionOrientation orientation) {
         int maxDist = 2 * _crossSection.Height;
         int minDistance = int.MaxValue;
 
-        foreach (var pos in _crossSection.GetVoxelPositions(anchor, direction, orientation))
-        {
+        foreach (var pos in _crossSection.GetVoxelPositions(anchor, direction, orientation)) {
             var state = _cache.GetState(pos);
 
             // Must be empty (can occupy)
@@ -317,26 +291,22 @@ public class CablePathfinder
     /// Start positions require adjacent insulation (distance 1) for stability.
     /// </summary>
     /// <returns>Success flag and the orientation used.</returns>
-    private (bool Success, CrossSectionOrientation Orientation) TryPlaceCrossSection(VoxelPos anchor, VoxelDirection direction, bool isStart)
-    {
+    private (bool Success, CrossSectionOrientation Orientation) TryPlaceCrossSection(VoxelPos anchor, VoxelDirection direction, bool isStart) {
         var orientation = DetermineOrientation(anchor, direction);
         var positions = _crossSection.GetVoxelPositions(anchor, direction, orientation).ToList();
         int maxDist = 2 * _crossSection.Height;
         int minDistance = int.MaxValue;
 
         // First pass: validate
-        foreach (var pos in positions)
-        {
+        foreach (var pos in positions) {
             var state = _cache.GetState(pos);
 
-            if (state != CacheVoxelState.Empty && state != CacheVoxelState.CableConductor)
-            {
+            if (state != CacheVoxelState.Empty && state != CacheVoxelState.CableConductor) {
                 Log?.Invoke($"[Pathfinder] TryPlace FAIL: pos={pos} state={state} (need Empty/CableConductor)");
                 return (false, orientation);
             }
 
-            if (_cache.AnyCardinalNeighbor(pos, CacheVoxelState.PreExistingConductor))
-            {
+            if (_cache.AnyCardinalNeighbor(pos, CacheVoxelState.PreExistingConductor)) {
                 Log?.Invoke($"[Pathfinder] TryPlace FAIL: pos={pos} adjacent to PreExistingConductor");
                 return (false, orientation);
             }
@@ -350,22 +320,19 @@ public class CablePathfinder
         }
 
         // For start, require adjacent insulation (distance 1) - no starting from corners
-        if (isStart && !positions.Any(p => _cache.AnyCardinalNeighbor(p, CacheVoxelState.Insulation)))
-        {
+        if (isStart && !positions.Any(p => _cache.AnyCardinalNeighbor(p, CacheVoxelState.Insulation))) {
             Log?.Invoke($"[Pathfinder] TryPlace FAIL: isStart but no adjacent insulation. minDist={minDistance}");
             return (false, orientation);
         }
 
         // Must have support within extended range
-        if (minDistance > maxDist)
-        {
+        if (minDistance > maxDist) {
             Log?.Invoke($"[Pathfinder] TryPlace FAIL: no support within range. minDist={minDistance}, maxDist={maxDist}");
             return (false, orientation);
         }
 
         // Second pass: mark
-        foreach (var pos in positions)
-        {
+        foreach (var pos in positions) {
             _cache.SetCableConductor(pos);
         }
 
@@ -376,8 +343,7 @@ public class CablePathfinder
     /// Determines the best orientation for the cross-section based on nearby insulation.
     /// Implements the "lay flat" rule: larger dimension aligns with nearest wall.
     /// </summary>
-    private CrossSectionOrientation DetermineOrientation(VoxelPos anchor, VoxelDirection direction)
-    {
+    private CrossSectionOrientation DetermineOrientation(VoxelPos anchor, VoxelDirection direction) {
         if (_crossSection.IsSquare)
             return CrossSectionOrientation.Flat; // Doesn't matter for square
 
@@ -392,13 +358,10 @@ public class CablePathfinder
         // Flat: Width on first axis, Height on second
         // Upright: Height on first axis, Width on second
 
-        if (distFirst <= distSecond)
-        {
+        if (distFirst <= distSecond) {
             // Insulation closer on first axis - put width there (perpendicular)
             return CrossSectionOrientation.Flat;
-        }
-        else
-        {
+        } else {
             // Insulation closer on second axis - put width there
             return CrossSectionOrientation.Upright;
         }
@@ -407,14 +370,11 @@ public class CablePathfinder
     /// <summary>
     /// Finds distance to nearest insulation along an axis.
     /// </summary>
-    private int DistanceToInsulation(VoxelPos pos, int axis)
-    {
+    private int DistanceToInsulation(VoxelPos pos, int axis) {
         int maxCheck = _crossSection.Height + 2; // Don't search too far
 
-        for (int dist = 1; dist <= maxCheck; dist++)
-        {
-            var checkPos = axis switch
-            {
+        for (int dist = 1; dist <= maxCheck; dist++) {
+            var checkPos = axis switch {
                 0 => pos.Offset(dist, 0, 0),
                 1 => pos.Offset(0, dist, 0),
                 _ => pos.Offset(0, 0, dist)
@@ -423,8 +383,7 @@ public class CablePathfinder
             if (_cache.GetState(checkPos) == CacheVoxelState.Insulation)
                 return dist;
 
-            checkPos = axis switch
-            {
+            checkPos = axis switch {
                 0 => pos.Offset(-dist, 0, 0),
                 1 => pos.Offset(0, -dist, 0),
                 _ => pos.Offset(0, 0, -dist)
@@ -440,16 +399,13 @@ public class CablePathfinder
     /// <summary>
     /// Reconstructs the path from start to the given node.
     /// </summary>
-    private List<VoxelPos> ReconstructPath(Dictionary<SearchNode, SearchNode> cameFrom, SearchNode end)
-    {
+    private List<VoxelPos> ReconstructPath(Dictionary<SearchNode, SearchNode> cameFrom, SearchNode end) {
         var path = new List<VoxelPos>();
         var current = end;
 
-        while (true)
-        {
+        while (true) {
             // Use the orientation stored in the SearchNode (computed during search for continuity)
-            foreach (var pos in _crossSection.GetVoxelPositions(current.Position, current.Direction, current.Orientation))
-            {
+            foreach (var pos in _crossSection.GetVoxelPositions(current.Position, current.Direction, current.Orientation)) {
                 if (!path.Contains(pos))
                     path.Add(pos);
             }
@@ -458,8 +414,7 @@ public class CablePathfinder
                 break;
 
             // At turns, add corner voxels to ensure W×H connectivity with both segments
-            if (current.Direction != prev.Direction)
-            {
+            if (current.Direction != prev.Direction) {
                 AddCornerVoxels(path, prev, current);
             }
 
@@ -473,8 +428,7 @@ public class CablePathfinder
     /// Adds corner voxels at a turn to ensure proper W×H connectivity.
     /// Fills the bounding box of the incoming and outgoing cross-sections.
     /// </summary>
-    private void AddCornerVoxels(List<VoxelPos> path, SearchNode incoming, SearchNode outgoing)
-    {
+    private void AddCornerVoxels(List<VoxelPos> path, SearchNode incoming, SearchNode outgoing) {
         // Get the voxels for both cross-sections at the turn point
         var incomingVoxels = _crossSection.GetVoxelPositions(
             incoming.Position, incoming.Direction, incoming.Orientation).ToList();
@@ -492,12 +446,9 @@ public class CablePathfinder
         int maxZ = allVoxels.Max(v => v.Z);
 
         // Fill the bounding box (creates a solid corner block)
-        for (int x = minX; x <= maxX; x++)
-        {
-            for (int y = minY; y <= maxY; y++)
-            {
-                for (int z = minZ; z <= maxZ; z++)
-                {
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
                     var pos = new VoxelPos(x, y, z);
                     if (!path.Contains(pos))
                         path.Add(pos);
@@ -509,11 +460,9 @@ public class CablePathfinder
     /// <summary>
     /// Reconstructs the path and marks voxels as CableConductor in cache.
     /// </summary>
-    private List<VoxelPos> ReconstructPathAndMark(Dictionary<SearchNode, SearchNode> cameFrom, SearchNode end)
-    {
+    private List<VoxelPos> ReconstructPathAndMark(Dictionary<SearchNode, SearchNode> cameFrom, SearchNode end) {
         var path = ReconstructPath(cameFrom, end);
-        foreach (var pos in path)
-        {
+        foreach (var pos in path) {
             _cache.SetCableConductor(pos);
         }
         return path;
@@ -541,8 +490,7 @@ public class CablePathfinder
     private CrossSectionOrientation GetOrientationAfterTurn(
         VoxelDirection oldDir,
         CrossSectionOrientation oldOrient,
-        VoxelDirection newDir)
-    {
+        VoxelDirection newDir) {
         if (_crossSection.IsSquare)
             return CrossSectionOrientation.Flat; // Doesn't matter for square
 
@@ -567,16 +515,13 @@ public class CablePathfinder
 
         // For new direction with Flat: first axis has Width, second has Height
         // For new direction with Upright: first axis has Height, second has Width
-        if (newSharedIsFirst)
-        {
+        if (newSharedIsFirst) {
             // Shared axis is the first perpendicular axis of new direction
             // Flat → Width on first, Upright → Height on first
             return (oldDimOnShared == _crossSection.Width)
                 ? CrossSectionOrientation.Flat
                 : CrossSectionOrientation.Upright;
-        }
-        else
-        {
+        } else {
             // Shared axis is the second perpendicular axis of new direction
             // Flat → Height on second, Upright → Width on second
             return (oldDimOnShared == _crossSection.Height)

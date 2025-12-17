@@ -2,13 +2,10 @@ using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
-    public class DiodeTests
-    {
+namespace Sparky.Tests {
+    public class DiodeTests {
         [Test]
-        public void TestDiodeForwardBias()
-        {
+        public void TestDiodeForwardBias() {
             // 10V Source -> Resistor (1k) -> Node 1 -> Diode -> Ground
             // Expected: Node 1 approx 0.6V - 0.8V (Diode drop)
 
@@ -29,8 +26,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestDiodeReverseBias()
-        {
+        public void TestDiodeReverseBias() {
             // -10V Source -> Resistor (1k) -> Node 1 -> Diode -> Ground
             // Expected: Node 1 approx -10V (Diode is open circuit)
 

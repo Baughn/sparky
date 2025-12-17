@@ -3,14 +3,11 @@ using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
+namespace Sparky.Tests {
     [TestFixture]
-    public class ScenarioTests
-    {
+    public class ScenarioTests {
         [Test]
-        public void TestTheGenerator_VoltageSag()
-        {
+        public void TestTheGenerator_VoltageSag() {
             // "The Generator": Voltage Source with Internal Resistance.
             // As load current increases, terminal voltage should drop.
 
@@ -41,8 +38,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestTheBattery_ChargeDischarge()
-        {
+        public void TestTheBattery_ChargeDischarge() {
             // "The Battery": Capacitor charging and discharging.
             // Source -> Switch (Resistor) -> Capacitor
 
@@ -68,8 +64,7 @@ namespace Sparky.Tests
 
             // 1. Charge
             // Increase time to ensure full charge (10 tau = 100ms)
-            for (int i = 0; i < 100; i++)
-            {
+            for (int i = 0; i < 100; i++) {
                 circuit.Solve(dt);
             }
             // Should be fully charged
@@ -86,8 +81,7 @@ namespace Sparky.Tests
             // Assuming it's settable for now based on typical patterns, if not I'll fix it.
 
             // Increase discharge time to ensure full discharge (was 50, now 100)
-            for (int i = 0; i < 100; i++)
-            {
+            for (int i = 0; i < 100; i++) {
                 circuit.Solve(dt);
             }
 
@@ -96,8 +90,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestTheRectifier_ACtoDC()
-        {
+        public void TestTheRectifier_ACtoDC() {
             // AC Source -> Diode -> Capacitor -> Load
 
             var circuit = new Circuit();
@@ -119,14 +112,12 @@ namespace Sparky.Tests
             double minVoltage = 100;
 
             // Run for 3 cycles (3 * 20ms = 60ms)
-            for (double t = 0; t < 0.06; t += dt)
-            {
+            for (double t = 0; t < 0.06; t += dt) {
                 src.Voltage = amplitude * Math.Sin(2 * Math.PI * freq * t);
                 circuit.Solve(dt);
 
                 // Start recording after first cycle to let it settle
-                if (t > 0.02)
-                {
+                if (t > 0.02) {
                     maxVoltage = Math.Max(maxVoltage, nRect.Voltage);
                     minVoltage = Math.Min(minVoltage, nRect.Voltage);
                 }
@@ -146,8 +137,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestOffGridCottage()
-        {
+        public void TestOffGridCottage() {
             // "The Off-Grid Cottage"
             // Diesel Gen (100V, 1 Ohm) -> Switch -> Main Bus
             // Wind Turbine (480V AC) -> Transformer (4:1) -> Diode -> Main Bus

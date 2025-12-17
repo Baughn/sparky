@@ -6,12 +6,9 @@ using Sparky.Game.Core;
 using Sparky.MNA.Api;
 using Sparky.MNA.Core;
 
-namespace Sparky.Benchmarks
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
+namespace Sparky.Benchmarks {
+    public class Program {
+        public static void Main(string[] args) {
             var config = ManualConfig
                 .Create(DefaultConfig.Instance)
                 .WithOption(ConfigOptions.JoinSummary, true)
@@ -22,8 +19,7 @@ namespace Sparky.Benchmarks
     }
 
     [MemoryDiagnoser]
-    public class CircuitBenchmarks
-    {
+    public class CircuitBenchmarks {
         private Circuit? _dcLadder;
         private Circuit? _nonLinearDc;
         private Circuit? _rcTransient;
@@ -33,8 +29,7 @@ namespace Sparky.Benchmarks
         private const int RcSteps = 200;
 
         [GlobalSetup]
-        public void GlobalSetup()
-        {
+        public void GlobalSetup() {
             _dcLadder = BuildResistorLadder(sections: 200, resistance: 1000.0, sourceVoltage: 10.0);
             _nonLinearDc = BuildDiodeClipper();
             _dcLadderDynamic = BuildResistorLadder(
@@ -45,41 +40,34 @@ namespace Sparky.Benchmarks
         }
 
         [Benchmark(Description = "Linear DC solve: 200-resistor ladder")]
-        public void SolveDcLadder()
-        {
+        public void SolveDcLadder() {
             _dcLadder!.Solve(0);
         }
 
         [Benchmark(Description = "Transient RC: 200 steps")]
-        public void SolveRcTransientSteps()
-        {
+        public void SolveRcTransientSteps() {
             _rcTransient = BuildRcTransient();
-            for (int i = 0; i < RcSteps; i++)
-            {
+            for (int i = 0; i < RcSteps; i++) {
                 _rcTransient!.Solve(RcDt);
             }
         }
 
         [Benchmark(Description = "Linear DC sweep: 200-resistor ladder, varying source")]
-        public void SolveDcLadderDynamicRhs()
-        {
+        public void SolveDcLadderDynamicRhs() {
             var source = (VoltageSource)_dcLadderDynamic!.Components[0];
-            for (int i = 0; i < 100; i++)
-            {
+            for (int i = 0; i < 100; i++) {
                 source.Voltage = i % 2 == 0 ? 10.0 : 5.0;
                 _dcLadderDynamic.Solve(0);
             }
         }
 
         [Benchmark(Description = "Non-linear DC: diode clipper")]
-        public void SolveDiodeClipper()
-        {
+        public void SolveDiodeClipper() {
             _nonLinearDc!.Solve(0);
         }
 
         [Benchmark(Description = "Microgrid transient: gen + PV + battery + load steps")]
-        public void SolveMicrogridTransient()
-        {
+        public void SolveMicrogridTransient() {
             var circuit = new Circuit();
             var ground = circuit.Ground;
             var bus = circuit.AddNode();
@@ -110,21 +98,15 @@ namespace Sparky.Benchmarks
             double time = 0.0;
             int steps = 2000; // 2 seconds simulated
 
-            for (int i = 0; i < steps; i++)
-            {
+            for (int i = 0; i < steps; i++) {
                 time += dt;
 
                 // Generator ramps up, then sags slightly later in the run
-                if (time < 0.5)
-                {
+                if (time < 0.5) {
                     generator.Voltage = Lerp(0.0, 230.0, time / 0.5);
-                }
-                else if (time < 1.5)
-                {
+                } else if (time < 1.5) {
                     generator.Voltage = 230.0;
-                }
-                else
-                {
+                } else {
                     generator.Voltage = 190.0;
                 }
 
@@ -144,8 +126,7 @@ namespace Sparky.Benchmarks
         }
 
         [Benchmark(Description = "Transformer + bridge rectifier + cap filter")]
-        public void SolveTransformerRectifier()
-        {
+        public void SolveTransformerRectifier() {
             var circuit = new Circuit();
             var ground = circuit.Ground;
 
@@ -176,8 +157,7 @@ namespace Sparky.Benchmarks
             double amplitude = 325.0; // ~230 Vrms peak
             double freq = 50.0;
 
-            for (int i = 0; i < steps; i++)
-            {
+            for (int i = 0; i < steps; i++) {
                 time += dt;
                 source.Voltage = amplitude * Math.Sin(2 * Math.PI * freq * time);
                 circuit.Solve(dt);
@@ -185,8 +165,7 @@ namespace Sparky.Benchmarks
         }
 
         [Benchmark(Description = "Boost-style converter with PWM switch")]
-        public void SolvePwmBoostConverter()
-        {
+        public void SolvePwmBoostConverter() {
             var circuit = new Circuit();
             var ground = circuit.Ground;
 
@@ -214,8 +193,7 @@ namespace Sparky.Benchmarks
             double onR = 0.02;
             double offR = 1e9;
 
-            for (int i = 0; i < steps; i++)
-            {
+            for (int i = 0; i < steps; i++) {
                 time += dt;
                 double duty = 0.25 + 0.45 * Math.Min(time / runtime, 1.0); // ramp duty 25% -> 70%
                 double phase = time % period;
@@ -230,8 +208,7 @@ namespace Sparky.Benchmarks
             int sections,
             double resistance,
             double sourceVoltage
-        )
-        {
+        ) {
             var circuit = new Circuit();
             var ground = circuit.Ground;
             var top = circuit.AddNode();
@@ -240,8 +217,7 @@ namespace Sparky.Benchmarks
 
             var pL = top;
             var pR = top;
-            for (int i = 0; i < sections; i++)
-            {
+            for (int i = 0; i < sections; i++) {
                 var nL = circuit.AddNode();
                 var nR = circuit.AddNode();
                 circuit.AddComponent(new Resistor(pL, nL, resistance));
@@ -258,8 +234,7 @@ namespace Sparky.Benchmarks
             return circuit;
         }
 
-        private static Circuit BuildRcTransient()
-        {
+        private static Circuit BuildRcTransient() {
             var circuit = new Circuit();
             var ground = circuit.Ground;
             var nSource = circuit.AddNode();
@@ -272,8 +247,7 @@ namespace Sparky.Benchmarks
             return circuit;
         }
 
-        private static Circuit BuildDiodeClipper()
-        {
+        private static Circuit BuildDiodeClipper() {
             var circuit = new Circuit();
             var ground = circuit.Ground;
             var nSource = circuit.AddNode();
@@ -290,51 +264,44 @@ namespace Sparky.Benchmarks
     }
 
     [MemoryDiagnoser]
-    public class TopologyBuilderBenchmarks
-    {
+    public class TopologyBuilderBenchmarks {
         private VoxelGrid _gridFloodFill = null!;
         private VoxelGrid _gridRandomized = null!;
         private TopologyBuilder _builder = null!;
 
         [GlobalSetup]
-        public void GlobalSetup()
-        {
+        public void GlobalSetup() {
             _builder = new TopologyBuilder();
             _gridFloodFill = BuildLargeWire(BuildMethod.FloodFill);
             _gridRandomized = BuildLargeWire(BuildMethod.Randomized);
         }
 
         [Benchmark(Description = "Large wire: build grid (flood-fill order)")]
-        public VoxelGrid BuildGridFloodFill()
-        {
+        public VoxelGrid BuildGridFloodFill() {
             return BuildLargeWire(BuildMethod.FloodFill);
         }
 
         [Benchmark(Description = "Large wire: build grid (randomized order)")]
-        public VoxelGrid BuildGridRandomized()
-        {
+        public VoxelGrid BuildGridRandomized() {
             return BuildLargeWire(BuildMethod.Randomized);
         }
 
         [Benchmark(Description = "Large wire: find regions (flood-fill grid)")]
-        public int FindRegionsFloodFill()
-        {
+        public int FindRegionsFloodFill() {
             var sim = new SimulationManager();
             var regions = _builder.BuildTopology(_gridFloodFill, [], sim);
             return regions.Count;
         }
 
         [Benchmark(Description = "Large wire: find regions (randomized grid)")]
-        public int FindRegionsRandomized()
-        {
+        public int FindRegionsRandomized() {
             var sim = new SimulationManager();
             var regions = _builder.BuildTopology(_gridRandomized, [], sim);
             return regions.Count;
         }
 
         [Benchmark(Description = "Large wire: full solve with line optimization")]
-        public double FullSolveWithOptimization()
-        {
+        public double FullSolveWithOptimization() {
             var sim = new SimulationManager();
             sim.EnableLineOptimization = true;
             _builder.BuildTopology(_gridFloodFill, [], sim);
@@ -344,19 +311,16 @@ namespace Sparky.Benchmarks
 
         private enum BuildMethod { FloodFill, Randomized }
 
-        private static VoxelGrid BuildLargeWire(BuildMethod method)
-        {
+        private static VoxelGrid BuildLargeWire(BuildMethod method) {
             var grid = new VoxelGrid();
             var positions = GetLargeWirePositions().ToList();
 
-            if (method == BuildMethod.Randomized)
-            {
+            if (method == BuildMethod.Randomized) {
                 var rng = new Random(42);
                 positions = positions.OrderBy(_ => rng.Next()).ToList();
             }
 
-            foreach (var pos in positions)
-            {
+            foreach (var pos in positions) {
                 var isTerminal = pos.Z == 0 || pos.Z == 191;
                 grid.SetVoxel(pos, isTerminal ? VoxelType.Conductor : VoxelType.ResistiveConductor);
             }
@@ -364,8 +328,7 @@ namespace Sparky.Benchmarks
             return grid;
         }
 
-        private static IEnumerable<VoxelPos> GetLargeWirePositions()
-        {
+        private static IEnumerable<VoxelPos> GetLargeWirePositions() {
             // Terminal A: single voxel at center of Z=0 face
             yield return new VoxelPos(1, 1, 0);
 

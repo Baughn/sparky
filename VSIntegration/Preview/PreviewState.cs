@@ -8,8 +8,7 @@ namespace Sparky.VSIntegration.Preview;
 /// Sent from server to all clients to sync preview visibility.
 /// </summary>
 [ProtoContract]
-public class PreviewState
-{
+public class PreviewState {
     /// <summary>
     /// The player UID whose preview this represents.
     /// </summary>
@@ -27,8 +26,7 @@ public class PreviewState
 /// A single voxel in a preview, with position and color.
 /// </summary>
 [ProtoContract]
-public struct PreviewVoxel
-{
+public struct PreviewVoxel {
     /// <summary>
     /// Global voxel X coordinate.
     /// </summary>
@@ -53,8 +51,7 @@ public struct PreviewVoxel
     [ProtoMember(4)]
     public int Rgba { get; set; }
 
-    public PreviewVoxel(int x, int y, int z, int rgba)
-    {
+    public PreviewVoxel(int x, int y, int z, int rgba) {
         X = x;
         Y = y;
         Z = z;
@@ -66,8 +63,7 @@ public struct PreviewVoxel
 /// Message sent from client to server when preview changes.
 /// </summary>
 [ProtoContract]
-public class PreviewUpdateRequest
-{
+public class PreviewUpdateRequest {
     /// <summary>
     /// The voxels to preview. Empty = clear.
     /// </summary>
@@ -80,8 +76,7 @@ public class PreviewUpdateRequest
 /// Used for both single voxel operations and cable paths.
 /// </summary>
 [ProtoContract]
-public class VoxelPlacementRequest
-{
+public class VoxelPlacementRequest {
     /// <summary>
     /// The voxels to place or remove.
     /// </summary>
@@ -99,8 +94,7 @@ public class VoxelPlacementRequest
 /// A single voxel to place, with position and material.
 /// </summary>
 [ProtoContract]
-public struct VoxelPlacement
-{
+public struct VoxelPlacement {
     /// <summary>
     /// Global voxel X coordinate.
     /// </summary>
@@ -125,8 +119,7 @@ public struct VoxelPlacement
     [ProtoMember(4)]
     public int MaterialIndex { get; set; }
 
-    public VoxelPlacement(int x, int y, int z, int materialIndex = 0)
-    {
+    public VoxelPlacement(int x, int y, int z, int materialIndex = 0) {
         X = x;
         Y = y;
         Z = z;

@@ -5,10 +5,8 @@ using CSparse.Double;
 using CSparse.Double.Factorization;
 using CSparse.Storage;
 
-namespace Sparky.MNA.Core
-{
-    public class Circuit
-    {
+namespace Sparky.MNA.Core {
+    public class Circuit {
         public List<Node> Nodes { get; } = new List<Node>();
         public List<Component> Components { get; } = new List<Component>();
 
@@ -47,23 +45,20 @@ namespace Sparky.MNA.Core
         public double ConvergenceTolerance { get; set; } = DefaultTolerance;
         public int MaxIterations { get; set; } = DefaultMaxIterations;
 
-        public Circuit()
-        {
+        public Circuit() {
             // Ground node is always index 0
             Nodes.Add(new Node(0));
         }
 
         public Node Ground => Nodes[0];
 
-        public Node AddNode()
-        {
+        public Node AddNode() {
             var node = new Node(Nodes.Count);
             Nodes.Add(node);
             return node;
         }
 
-        public void AddComponent(Component component)
-        {
+        public void AddComponent(Component component) {
             Components.Add(component);
             _dirty = true;
             if (component.RequiresIteration)
@@ -72,29 +67,24 @@ namespace Sparky.MNA.Core
                 _requiresPerStepRestamp = true;
         }
 
-        public bool RemoveComponent(Component component)
-        {
+        public bool RemoveComponent(Component component) {
             bool removed = Components.Remove(component);
-            if (removed)
-            {
+            if (removed) {
                 _dirty = true;
             }
             return removed;
         }
 
-        public void BuildSystem()
-        {
+        public void BuildSystem() {
             int nodeCount = Nodes.Count;
             int extraEqCount = 0;
             _requiresIteration = false;
             _requiresPerStepRestamp = false;
 
             // Assign indices for extra equations
-            foreach (var component in Components)
-            {
+            foreach (var component in Components) {
                 int eqCount = component.ExtraEquationCount;
-                if (eqCount > 0)
-                {
+                if (eqCount > 0) {
                     component.MatrixIndex = nodeCount + extraEqCount;
                     extraEqCount += eqCount;
                 }
@@ -114,8 +104,7 @@ namespace Sparky.MNA.Core
             _vectorZ = new double[size];
             _vectorX = new double[size];
 
-            foreach (var component in Components)
-            {
+            foreach (var component in Components) {
                 component.Stamp(_matrixA, _vectorZ);
             }
 
@@ -126,8 +115,7 @@ namespace Sparky.MNA.Core
             _stampVersion++;
         }
 
-        public void Solve(double dt)
-        {
+        public void Solve(double dt) {
             if (_dirty)
                 BuildSystem();
 
@@ -140,11 +128,9 @@ namespace Sparky.MNA.Core
                 && _vectorX != null
                 && _lastStampVersion == _stampVersion
                 && dt.Equals(_lastDt)
-            )
-            {
+            ) {
                 // Ensure node voltages reflect latest solution
-                for (int i = 0; i < Nodes.Count; i++)
-                {
+                for (int i = 0; i < Nodes.Count; i++) {
                     Nodes[i].Voltage = _vectorX[i];
                 }
                 LastIterations = 0;
@@ -165,8 +151,7 @@ namespace Sparky.MNA.Core
             double lastStep = double.NaN;
 
             int iterCount = 0;
-            for (int iter = 0; iter < maxIterations; iter++)
-            {
+            for (int iter = 0; iter < maxIterations; iter++) {
                 iterCount = iter + 1;
                 // 1. Clear Z vector (sources need to re-stamp)
                 if (_vectorZ != null)
@@ -175,8 +160,7 @@ namespace Sparky.MNA.Core
                 // 2. Stamp components (update A and Z)
                 _matrixA?.Clear();
                 // Only invalidate cached structures when they are actually stale.
-                if (_requiresIteration || _requiresPerStepRestamp)
-                {
+                if (_requiresIteration || _requiresPerStepRestamp) {
                     _compressedA = null;
                     _cachedLu = null;
                 }
@@ -185,32 +169,26 @@ namespace Sparky.MNA.Core
                 AnchorGround();
                 ApplyGmin();
 
-                if (_matrixA != null && _vectorZ != null)
-                {
-                    foreach (var component in Components)
-                    {
+                if (_matrixA != null && _vectorZ != null) {
+                    foreach (var component in Components) {
                         component.Stamp(_matrixA, _vectorZ, dt);
                     }
                 }
 
                 // 3. Solve Ax = z
-                if (_matrixA != null && _vectorZ != null)
-                {
+                if (_matrixA != null && _vectorZ != null) {
                     _vectorX = SolveLinearSystem(_matrixA, _vectorZ);
                 }
 
                 // 4. Check convergence and Update State
-                if (_vectorX != null)
-                {
+                if (_vectorX != null) {
                     double stepNorm = double.PositiveInfinity;
-                    if (iter > 0 && xPrev != null)
-                    {
+                    if (iter > 0 && xPrev != null) {
                         stepNorm = InfinityNormDifference(_vectorX, xPrev);
                     }
 
                     double residualNorm = double.PositiveInfinity;
-                    if (_compressedA != null && _vectorZ != null)
-                    {
+                    if (_compressedA != null && _vectorZ != null) {
                         residualNorm = ComputeResidualInfinity(_compressedA, _vectorX, _vectorZ);
                     }
 
@@ -221,16 +199,13 @@ namespace Sparky.MNA.Core
                     lastStep = stepNorm;
                     lastResidual = residualNorm;
 
-                    if (!_requiresIteration)
-                    {
+                    if (!_requiresIteration) {
                         converged = true;
-                    }
-                    else if (
-                        iter > 0
-                        && stepNorm < scaledStepTol
-                        && residualNorm < scaledResidualTol
-                    )
-                    {
+                    } else if (
+                          iter > 0
+                          && stepNorm < scaledStepTol
+                          && residualNorm < scaledResidualTol
+                      ) {
                         converged = true;
                     }
 
@@ -239,14 +214,12 @@ namespace Sparky.MNA.Core
                         Array.Copy(_vectorX, xPrev, _vectorX.Length);
 
                     // Update nodes with new voltages
-                    for (int i = 0; i < Nodes.Count; i++)
-                    {
+                    for (int i = 0; i < Nodes.Count; i++) {
                         Nodes[i].Voltage = _vectorX[i];
                     }
 
                     // Update component operating points (for non-linear convergence)
-                    foreach (var component in Components)
-                    {
+                    foreach (var component in Components) {
                         component.UpdateOperatingPoint(_vectorX);
                     }
 
@@ -256,23 +229,19 @@ namespace Sparky.MNA.Core
             }
 
             LastIterations = iterCount;
-            if (!converged)
-            {
+            if (!converged) {
                 throw new InvalidOperationException(
                     $"Circuit solve did not converge within the maximum iterations. Residual={lastResidual}, Step={lastStep}"
                 );
             }
 
             // 5. Finalize Step: Update component states for next time step
-            if (_vectorX != null)
-            {
-                foreach (var component in Components)
-                {
+            if (_vectorX != null) {
+                foreach (var component in Components) {
                     component.UpdateState(_vectorX, dt);
 
                     // Populate Current properties from solution vector
-                    switch (component)
-                    {
+                    switch (component) {
                         case VoltageSource vs when vs.MatrixIndex >= 0:
                             vs.Current = _vectorX[vs.MatrixIndex];
                             break;
@@ -294,8 +263,7 @@ namespace Sparky.MNA.Core
                 }
 
                 // 6. Accumulate energy for all components (after state update so currents are available)
-                foreach (var component in Components)
-                {
+                foreach (var component in Components) {
                     component.AccumulateEnergy(_vectorX, dt);
                 }
             }
@@ -304,8 +272,7 @@ namespace Sparky.MNA.Core
             _lastStampVersion = _stampVersion;
         }
 
-        private void AnchorGround()
-        {
+        private void AnchorGround() {
             if (_matrixA == null || _vectorZ == null)
                 return;
 
@@ -313,65 +280,54 @@ namespace Sparky.MNA.Core
             _vectorZ[0] = 0.0;
         }
 
-        private void ApplyGmin()
-        {
+        private void ApplyGmin() {
             // Add a tiny shunt to ground on every non-ground node to avoid singular matrices
             if (_matrixA == null)
                 return;
 
             const double gmin = 1e-12;
-            for (int i = 1; i < Nodes.Count; i++)
-            {
+            for (int i = 1; i < Nodes.Count; i++) {
                 _matrixA.At(i, i, gmin);
             }
         }
 
-        private double[] SolveLinearSystem(CoordinateStorage<double> matrixA, double[] vectorZ)
-        {
-            if (_compressedA == null)
-            {
+        private double[] SolveLinearSystem(CoordinateStorage<double> matrixA, double[] vectorZ) {
+            if (_compressedA == null) {
                 _compressedA = ToCompressed(matrixA);
             }
 
             bool useDense = ShouldUseDense(matrixA);
             LastUsedDenseSolver = useDense;
-            if (useDense)
-            {
+            if (useDense) {
                 return SolveDense(matrixA, vectorZ);
             }
 
             return SolveSparse(vectorZ);
         }
 
-        private double[] SolveSparse(double[] vectorZ)
-        {
-            if (_compressedA == null)
-            {
+        private double[] SolveSparse(double[] vectorZ) {
+            if (_compressedA == null) {
                 throw new InvalidOperationException(
                     "Compressed matrix not available for sparse solve."
                 );
             }
 
             var lu = _cachedLu;
-            if (lu == null)
-            {
+            if (lu == null) {
                 lu = SparseLU.Create(_compressedA, ColumnOrdering.Natural, 1.0);
-                if (lu == null)
-                {
+                if (lu == null) {
                     throw new InvalidOperationException(
                         "Circuit solve failed: LU factorization did not succeed."
                     );
                 }
 
                 // Cache factorization only for linear static circuits (no iteration, no per-step restamp).
-                if (!_requiresIteration && !_requiresPerStepRestamp)
-                {
+                if (!_requiresIteration && !_requiresPerStepRestamp) {
                     _cachedLu = lu;
                 }
             }
 
-            if (_vectorX == null || _vectorX.Length != vectorZ.Length)
-            {
+            if (_vectorX == null || _vectorX.Length != vectorZ.Length) {
                 _vectorX = new double[vectorZ.Length];
             }
 
@@ -379,86 +335,72 @@ namespace Sparky.MNA.Core
             return _vectorX;
         }
 
-        private double[] SolveDense(CoordinateStorage<double> matrixA, double[] vectorZ)
-        {
+        private double[] SolveDense(CoordinateStorage<double> matrixA, double[] vectorZ) {
             int n = matrixA.RowCount;
             double[,] dense = GetDenseBuffer(n);
 
             // Build dense matrix from coordinate storage (accumulate duplicates).
             Array.Clear(dense, 0, dense.Length);
-            for (int k = 0; k < matrixA.NonZerosCount; k++)
-            {
+            for (int k = 0; k < matrixA.NonZerosCount; k++) {
                 int row = matrixA.RowIndices[k];
                 int col = matrixA.ColumnIndices[k];
                 dense[row, col] += matrixA.Values[k];
             }
 
             // Prepare RHS
-            if (_vectorX == null || _vectorX.Length != vectorZ.Length)
-            {
+            if (_vectorX == null || _vectorX.Length != vectorZ.Length) {
                 _vectorX = new double[vectorZ.Length];
             }
             var rhs = GetDenseRhsBuffer(n);
             Array.Copy(vectorZ, rhs, n);
 
             // In-place LU with partial pivoting (Doolittle).
-            for (int k = 0; k < n; k++)
-            {
+            for (int k = 0; k < n; k++) {
                 // Pivot search
                 int pivotRow = k;
                 double pivotVal = Math.Abs(dense[k, k]);
-                for (int i = k + 1; i < n; i++)
-                {
+                for (int i = k + 1; i < n; i++) {
                     double val = Math.Abs(dense[i, k]);
-                    if (val > pivotVal)
-                    {
+                    if (val > pivotVal) {
                         pivotVal = val;
                         pivotRow = i;
                     }
                 }
 
-                if (pivotVal < 1e-15)
-                {
+                if (pivotVal < 1e-15) {
                     throw new InvalidOperationException(
                         "Circuit solve failed: matrix is singular in dense solve."
                     );
                 }
 
-                if (pivotRow != k)
-                {
+                if (pivotRow != k) {
                     SwapRows(dense, k, pivotRow);
                     (rhs[k], rhs[pivotRow]) = (rhs[pivotRow], rhs[k]);
                 }
 
                 double akk = dense[k, k];
-                for (int i = k + 1; i < n; i++)
-                {
+                for (int i = k + 1; i < n; i++) {
                     double lik = dense[i, k] / akk;
                     dense[i, k] = lik;
-                    for (int j = k + 1; j < n; j++)
-                    {
+                    for (int j = k + 1; j < n; j++) {
                         dense[i, j] -= lik * dense[k, j];
                     }
                 }
             }
 
             // Forward substitution Ly = b
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 double sum = rhs[i];
-                for (int j = 0; j < i; j++)
-                {
+                for (int j = 0; j < i; j++) {
                     sum -= dense[i, j] * rhs[j];
                 }
                 rhs[i] = sum;
             }
 
             // Back substitution Ux = y
-            for (int i = n - 1; i >= 0; i--)
-            {
+            for (int i = n - 1; i >= 0; i--) {
                 double sum = rhs[i];
-                for (int j = i + 1; j < n; j++)
-                {
+                for (int j = i + 1; j < n; j++) {
                     sum -= dense[i, j] * _vectorX[j];
                 }
                 _vectorX[i] = sum / dense[i, i];
@@ -467,8 +409,7 @@ namespace Sparky.MNA.Core
             return _vectorX;
         }
 
-        private static bool ShouldUseDense(CoordinateStorage<double> matrixA)
-        {
+        private static bool ShouldUseDense(CoordinateStorage<double> matrixA) {
             int n = matrixA.RowCount;
             if (n <= DenseSizeThreshold)
                 return true;
@@ -481,37 +422,31 @@ namespace Sparky.MNA.Core
             CoordinateStorage<double> storage
         ) => SparseMatrix.OfIndexed(storage, false);
 
-        private double[] GetDenseRhsBuffer(int size)
-        {
-            if (_denseRhs == null || _denseRhs.Length != size)
-            {
+        private double[] GetDenseRhsBuffer(int size) {
+            if (_denseRhs == null || _denseRhs.Length != size) {
                 _denseRhs = new double[size];
             }
 
             return _denseRhs;
         }
 
-        private double[,] GetDenseBuffer(int size)
-        {
+        private double[,] GetDenseBuffer(int size) {
             if (
                 _denseMatrix == null
                 || _denseMatrix.GetLength(0) != size
                 || _denseMatrix.GetLength(1) != size
-            )
-            {
+            ) {
                 _denseMatrix = new double[size, size];
             }
 
             return _denseMatrix;
         }
 
-        private static void SwapRows(double[,] matrix, int rowA, int rowB)
-        {
+        private static void SwapRows(double[,] matrix, int rowA, int rowB) {
             if (rowA == rowB)
                 return;
             int n = matrix.GetLength(1);
-            for (int j = 0; j < n; j++)
-            {
+            for (int j = 0; j < n; j++) {
                 (matrix[rowA, j], matrix[rowB, j]) = (matrix[rowB, j], matrix[rowA, j]);
             }
         }
@@ -520,16 +455,13 @@ namespace Sparky.MNA.Core
             CompressedColumnStorage<double> matrixA,
             double[] x,
             double[] z
-        )
-        {
-            if (_workResidual == null || _workResidual.Length != z.Length)
-            {
+        ) {
+            if (_workResidual == null || _workResidual.Length != z.Length) {
                 _workResidual = new double[z.Length];
             }
 
             Multiply(matrixA, x, _workResidual);
-            for (int i = 0; i < z.Length; i++)
-            {
+            for (int i = 0; i < z.Length; i++) {
                 _workResidual[i] -= z[i];
             }
 
@@ -540,29 +472,24 @@ namespace Sparky.MNA.Core
             CompressedColumnStorage<double> matrixA,
             double[] x,
             double[] result
-        )
-        {
+        ) {
             Array.Fill(result, 0.0);
-            for (int col = 0; col < matrixA.ColumnCount; col++)
-            {
+            for (int col = 0; col < matrixA.ColumnCount; col++) {
                 double xj = x[col];
                 if (xj == 0)
                     continue;
 
                 int start = matrixA.ColumnPointers[col];
                 int end = matrixA.ColumnPointers[col + 1];
-                for (int idx = start; idx < end; idx++)
-                {
+                for (int idx = start; idx < end; idx++) {
                     result[matrixA.RowIndices[idx]] += matrixA.Values[idx] * xj;
                 }
             }
         }
 
-        private static double InfinityNorm(double[] vector)
-        {
+        private static double InfinityNorm(double[] vector) {
             double max = 0.0;
-            for (int i = 0; i < vector.Length; i++)
-            {
+            for (int i = 0; i < vector.Length; i++) {
                 double val = Math.Abs(vector[i]);
                 if (val > max)
                     max = val;
@@ -571,12 +498,10 @@ namespace Sparky.MNA.Core
             return max;
         }
 
-        private static double InfinityNormDifference(double[] current, double[] previous)
-        {
+        private static double InfinityNormDifference(double[] current, double[] previous) {
             double max = 0.0;
             int len = Math.Min(current.Length, previous.Length);
-            for (int i = 0; i < len; i++)
-            {
+            for (int i = 0; i < len; i++) {
                 double val = Math.Abs(current[i] - previous[i]);
                 if (val > max)
                     max = val;

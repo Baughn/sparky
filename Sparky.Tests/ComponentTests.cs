@@ -3,14 +3,11 @@ using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
+namespace Sparky.Tests {
     [TestFixture]
-    public class ComponentTests
-    {
+    public class ComponentTests {
         [Test]
-        public void TestResistorsInSeries()
-        {
+        public void TestResistorsInSeries() {
             // 10V -> R1 (100) -> R2 (100) -> Ground
             // Total R = 200. I = 10/200 = 0.05A.
             // V_mid = 10 - 0.05*100 = 5V.
@@ -30,8 +27,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestVoltageSourceRhsUpdatesAreNotCached()
-        {
+        public void TestVoltageSourceRhsUpdatesAreNotCached() {
             var circuit = new Circuit();
             var n1 = circuit.AddNode();
             var ground = circuit.Ground;
@@ -49,8 +45,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestResistorsInParallel()
-        {
+        public void TestResistorsInParallel() {
             // 10V -> Node 1 -> R1 (100) -> Ground
             //               -> R2 (100) -> Ground
             // Req = 50. I_total = 10/50 = 0.2A.
@@ -76,8 +71,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestCapacitorDCBlocking()
-        {
+        public void TestCapacitorDCBlocking() {
             // DC Source -> Resistor -> Capacitor -> Ground
             // Steady state: Capacitor is open circuit. No current flows.
             // V_cap = V_source.
@@ -100,8 +94,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void ChangingResistorBetweenSolvesUpdatesVoltages()
-        {
+        public void ChangingResistorBetweenSolvesUpdatesVoltages() {
             // Voltage divider 10V -> R1(10) -> mid -> R2(10|30) -> GND
             // Expect 5V with 10/10, then 7.5V after switching R2 to 30.
 
@@ -132,8 +125,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestInductorDCShort()
-        {
+        public void TestInductorDCShort() {
             // DC Source -> Resistor -> Inductor -> Ground
             // Steady state: Inductor is short circuit.
             // V_node_above_inductor = 0 (connected to ground via short).
@@ -156,8 +148,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void ChangingCapacitanceBetweenSolvesAffectsBehavior()
-        {
+        public void ChangingCapacitanceBetweenSolvesAffectsBehavior() {
             // RC circuit: V -> R(1k) -> C(1uF|10uF) -> GND
             // Larger C means slower charging. After same time, smaller C should be closer to final voltage.
 
@@ -205,8 +196,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void ChangingInductanceBetweenSolvesAffectsBehavior()
-        {
+        public void ChangingInductanceBetweenSolvesAffectsBehavior() {
             // RL circuit: V -> R(1k) -> L(1mH|10mH) -> GND
             // Larger L means slower current rise.
 
@@ -236,8 +226,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void VoltageSourceCurrentReadback()
-        {
+        public void VoltageSourceCurrentReadback() {
             // Simple circuit: V(10V) -> R(100) -> GND
             // I = V/R = 10/100 = 0.1A
 
@@ -258,8 +247,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TransformerCurrentReadback()
-        {
+        public void TransformerCurrentReadback() {
             // Transformer with ratio 2:1 (Ns/Np = 0.5)
             // Primary: V(10V) -> p1, p2 -> GND
             // Secondary: s1 -> R(100) -> s2 -> GND
@@ -296,8 +284,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void ChangingTransformerRatioAffectsOutput()
-        {
+        public void ChangingTransformerRatioAffectsOutput() {
             // Simplified transformer test: verify ratio affects voltage relationship
             // Transformer ratio n = Ns/Np. Voltage relationship: Vs = Vp * n
 

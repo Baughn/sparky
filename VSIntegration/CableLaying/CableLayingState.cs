@@ -12,13 +12,11 @@ namespace Sparky.VSIntegration.CableLaying;
 /// State machine for cable laying workflow.
 /// Tracks the two-click process: select start, then select end to place cable.
 /// </summary>
-public class CableLayingState
-{
+public class CableLayingState {
     /// <summary>
     /// Current phase of cable laying.
     /// </summary>
-    public enum Phase
-    {
+    public enum Phase {
         /// <summary>Waiting for first click to select start position.</summary>
         Idle,
         /// <summary>Start selected, waiting for end position or path computation.</summary>
@@ -51,8 +49,7 @@ public class CableLayingState
     /// <summary>
     /// Creates a new cable laying state for the given cross-section.
     /// </summary>
-    public CableLayingState(CrossSection crossSection)
-    {
+    public CableLayingState(CrossSection crossSection) {
         _crossSection = crossSection;
     }
 
@@ -74,8 +71,7 @@ public class CableLayingState
     /// </summary>
     /// <param name="clickedPos">The voxel position the player clicked.</param>
     /// <param name="blockAccessor">Block accessor for building the cache.</param>
-    public void SelectStart(VoxelPos clickedPos, IBlockAccessor blockAccessor)
-    {
+    public void SelectStart(VoxelPos clickedPos, IBlockAccessor blockAccessor) {
         // Build cache centered on clicked position
         var centerBlock = new VSBlockPos(
             clickedPos.X / 16,
@@ -89,8 +85,7 @@ public class CableLayingState
 
         // If snapping to existing cable, mark connected cable voxels as "our cable"
         // so pathfinder doesn't reject adjacency to them
-        if (IsAdjacentToPreExistingConductor(positions))
-        {
+        if (IsAdjacentToPreExistingConductor(positions)) {
             _cache.MarkConnectedConductorAsCable(positions[0], maxDistance: 4);
         }
 
@@ -102,12 +97,11 @@ public class CableLayingState
     /// <summary>
     /// Checks if any of the positions are adjacent to pre-existing conductor.
     /// </summary>
-    private bool IsAdjacentToPreExistingConductor(IReadOnlyList<VoxelPos> positions)
-    {
-        if (_cache == null) return false;
+    private bool IsAdjacentToPreExistingConductor(IReadOnlyList<VoxelPos> positions) {
+        if (_cache == null)
+            return false;
 
-        foreach (var pos in positions)
-        {
+        foreach (var pos in positions) {
             if (_cache.AnyCardinalNeighbor(pos, CacheVoxelState.PreExistingConductor))
                 return true;
         }
@@ -124,11 +118,9 @@ public class CableLayingState
     /// <returns>The voxel positions where the cable would start.</returns>
     public IReadOnlyList<VoxelPos> GetSnappedStartPositions(
         VoxelPos clickedPos,
-        IBlockAccessor blockAccessor)
-    {
+        IBlockAccessor blockAccessor) {
         // Return cached result if position hasn't moved
-        if (_lastSnapQueryPos.HasValue && clickedPos == _lastSnapQueryPos.Value && _cachedSnappedPositions != null)
-        {
+        if (_lastSnapQueryPos.HasValue && clickedPos == _lastSnapQueryPos.Value && _cachedSnappedPositions != null) {
             return _cachedSnappedPositions;
         }
 
@@ -153,8 +145,7 @@ public class CableLayingState
     /// Call this when the player's cursor moves.
     /// </summary>
     /// <param name="goal">The target voxel position.</param>
-    public void UpdateGoal(VoxelPos goal)
-    {
+    public void UpdateGoal(VoxelPos goal) {
         // Allow updates in both StartSelected and PathReady phases
         if (_currentPhase == Phase.Idle || _startPositions == null || _pathfinder == null)
             return;
@@ -164,8 +155,7 @@ public class CableLayingState
             return;
 
         // Start background pathfinding (only if not already running)
-        lock (_pathfindLock)
-        {
+        lock (_pathfindLock) {
             // Don't start new task if one is still running - wait for it to complete
             if (_pendingPathfind != null && !_pendingPathfind.IsCompleted)
                 return;
@@ -183,32 +173,25 @@ public class CableLayingState
     /// Call this each tick to poll for results.
     /// </summary>
     /// <returns>True if a new path result is available.</returns>
-    public bool TryUpdatePath()
-    {
-        lock (_pathfindLock)
-        {
+    public bool TryUpdatePath() {
+        lock (_pathfindLock) {
             if (_pendingPathfind == null)
                 return false;
 
             if (!_pendingPathfind.IsCompleted)
                 return false;
 
-            try
-            {
+            try {
                 var result = _pendingPathfind.Result;
                 _currentPath = result;
                 _currentPhase = result.Type != PathResultType.NoProgress
                     ? Phase.PathReady
                     : Phase.StartSelected;
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 // Log the actual error instead of silently swallowing
                 Log?.Invoke($"[CableLayingState] Pathfinding failed: {ex.Message}");
                 _currentPath = null;
-            }
-            finally
-            {
+            } finally {
                 _pendingPathfind = null;
             }
 
@@ -219,8 +202,7 @@ public class CableLayingState
     /// <summary>
     /// Resets the state machine to idle.
     /// </summary>
-    public void Cancel()
-    {
+    public void Cancel() {
         _currentPhase = Phase.Idle;
         _startPositions = null;
         _cache = null;

@@ -10,16 +10,14 @@ namespace Sparky.Game.Core;
 /// <item><description>Z: South (+) / North (-)</description></item>
 /// </list>
 /// </summary>
-public readonly record struct BlockPos(int X, int Y, int Z)
-{
+public readonly record struct BlockPos(int X, int Y, int Z) {
     /// <summary>The origin (0, 0, 0).</summary>
     public static BlockPos Zero => new(0, 0, 0);
 
     /// <summary>
     /// Returns the neighboring block position in the given direction.
     /// </summary>
-    public BlockPos Neighbor(BlockFacing facing)
-    {
+    public BlockPos Neighbor(BlockFacing facing) {
         var (dx, dy, dz) = facing.Normal();
         return new BlockPos(X + dx, Y + dy, Z + dz);
     }

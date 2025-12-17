@@ -4,21 +4,18 @@ using Sparky.MNA.Api;
 namespace Sparky.Tests.MNA;
 
 [TestFixture]
-public class ApiInitialConditionsTests
-{
+public class ApiInitialConditionsTests {
     private SimulationManager _sim = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _sim = new SimulationManager();
     }
 
     #region Capacitor Initial Conditions
 
     [Test]
-    public void SetCapacitorVoltage_BeforeFirstStep_SetsInitialState()
-    {
+    public void SetCapacitorVoltage_BeforeFirstStep_SetsInitialState() {
         // Pre-charged capacitor in RC circuit
         // 10V -- R(1000) -- N1 -- C(1e-6) -- GND
         // Set capacitor to 5V initially
@@ -41,8 +38,7 @@ public class ApiInitialConditionsTests
     }
 
     [Test]
-    public void SetCapacitorVoltage_BetweenSteps_UpdatesState()
-    {
+    public void SetCapacitorVoltage_BetweenSteps_UpdatesState() {
         var nSrc = _sim.CreateNode();
         var n1 = _sim.CreateNode();
 
@@ -65,16 +61,14 @@ public class ApiInitialConditionsTests
     }
 
     [Test]
-    public void SetCapacitorVoltage_InvalidId_ThrowsException()
-    {
+    public void SetCapacitorVoltage_InvalidId_ThrowsException() {
         Assert.Throws<InvalidComponentException>(() =>
             _sim.SetCapacitorVoltage(new CapacitorId(999), 5.0)
         );
     }
 
     [Test]
-    public void SetCapacitorVoltage_PreChargedDischarge_StartsFromSetVoltage()
-    {
+    public void SetCapacitorVoltage_PreChargedDischarge_StartsFromSetVoltage() {
         // Capacitor connected only to resistor (no source) - should discharge
         // N1 -- R(1000) -- N2 -- C(1e-6) -- GND
         var n1 = _sim.CreateNode();
@@ -101,8 +95,7 @@ public class ApiInitialConditionsTests
     #region Inductor Initial Conditions
 
     [Test]
-    public void SetInductorCurrent_BeforeFirstStep_SetsInitialState()
-    {
+    public void SetInductorCurrent_BeforeFirstStep_SetsInitialState() {
         // Inductor with initial current in RL circuit
         // 10V -- R(100) -- N1 -- L(0.01) -- GND
         var nSrc = _sim.CreateNode();
@@ -127,8 +120,7 @@ public class ApiInitialConditionsTests
     }
 
     [Test]
-    public void SetInductorCurrent_BetweenSteps_UpdatesState()
-    {
+    public void SetInductorCurrent_BetweenSteps_UpdatesState() {
         var nSrc = _sim.CreateNode();
         var n1 = _sim.CreateNode();
 
@@ -152,8 +144,7 @@ public class ApiInitialConditionsTests
     }
 
     [Test]
-    public void SetInductorCurrent_InvalidId_ThrowsException()
-    {
+    public void SetInductorCurrent_InvalidId_ThrowsException() {
         Assert.Throws<InvalidComponentException>(() =>
             _sim.SetInductorCurrent(new InductorId(999), 0.1)
         );
@@ -164,8 +155,7 @@ public class ApiInitialConditionsTests
     #region State Preservation
 
     [Test]
-    public void SetCapacitorVoltage_PreservesAcrossTopologyChange()
-    {
+    public void SetCapacitorVoltage_PreservesAcrossTopologyChange() {
         var nSrc = _sim.CreateNode();
         var n1 = _sim.CreateNode();
 

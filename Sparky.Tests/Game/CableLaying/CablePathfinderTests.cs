@@ -5,14 +5,12 @@ using Sparky.Game.Core.CableLaying;
 namespace Sparky.Tests.Game.CableLaying;
 
 [TestFixture]
-public class CablePathfinderTests
-{
+public class CablePathfinderTests {
     private MockWorldVoxelCache _cache = null!;
     private VoxelPos _origin;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _origin = new VoxelPos(50, 50, 50);
         _cache = new MockWorldVoxelCache(_origin);
     }
@@ -20,8 +18,7 @@ public class CablePathfinderTests
     #region CrossSection Tests
 
     [Test]
-    public void CrossSection_IsSquare_CorrectForAllSizes()
-    {
+    public void CrossSection_IsSquare_CorrectForAllSizes() {
         Assert.That(CrossSection.Size1x1.IsSquare, Is.True);
         Assert.That(CrossSection.Size1x2.IsSquare, Is.False);
         Assert.That(CrossSection.Size2x2.IsSquare, Is.True);
@@ -30,8 +27,7 @@ public class CablePathfinderTests
     }
 
     [Test]
-    public void CrossSection_GetVoxelPositions_1x1_ReturnsSingleVoxel()
-    {
+    public void CrossSection_GetVoxelPositions_1x1_ReturnsSingleVoxel() {
         var anchor = new VoxelPos(10, 10, 10);
         var positions = CrossSection.Size1x1
             .GetVoxelPositions(anchor, VoxelDirection.XPos, CrossSectionOrientation.Flat)
@@ -42,8 +38,7 @@ public class CablePathfinderTests
     }
 
     [Test]
-    public void CrossSection_GetVoxelPositions_2x3_Returns6Voxels()
-    {
+    public void CrossSection_GetVoxelPositions_2x3_Returns6Voxels() {
         var anchor = new VoxelPos(10, 10, 10);
         var positions = CrossSection.Size2x3
             .GetVoxelPositions(anchor, VoxelDirection.XPos, CrossSectionOrientation.Flat)
@@ -57,8 +52,7 @@ public class CablePathfinderTests
     #region Straight Line Path Tests
 
     [Test]
-    public void FindPath_StraightLine_XAxis_1x1()
-    {
+    public void FindPath_StraightLine_XAxis_1x1() {
         // Create a floor for support
         CreateFloor(45, 40, 60, 40, 60); // Y=45, X=40-60, Z=40-60
 
@@ -74,8 +68,7 @@ public class CablePathfinderTests
     }
 
     [Test]
-    public void FindPath_StraightLine_YAxis_1x1()
-    {
+    public void FindPath_StraightLine_YAxis_1x1() {
         // Create a wall for support
         CreateWall(45, 40, 60, 40, 60, axis: 0); // X=45, Y=40-60, Z=40-60
 
@@ -90,8 +83,7 @@ public class CablePathfinderTests
     }
 
     [Test]
-    public void FindPath_StraightLine_ZAxis_1x1()
-    {
+    public void FindPath_StraightLine_ZAxis_1x1() {
         // Create a floor for support
         CreateFloor(45, 40, 60, 40, 60);
 
@@ -110,8 +102,7 @@ public class CablePathfinderTests
     #region Turn Tests
 
     [Test]
-    public void FindPath_SingleCorner_1x1_Succeeds()
-    {
+    public void FindPath_SingleCorner_1x1_Succeeds() {
         // Create L-shaped floor
         CreateFloor(45, 45, 55, 45, 55); // Main floor
         CreateFloor(45, 55, 65, 45, 55); // Extension
@@ -127,8 +118,7 @@ public class CablePathfinderTests
     }
 
     [Test]
-    public void FindPath_TurnRejected_WhenUnderMinDistance_2x2()
-    {
+    public void FindPath_TurnRejected_WhenUnderMinDistance_2x2() {
         // Create floor
         CreateFloor(45, 40, 60, 40, 60);
 
@@ -147,8 +137,7 @@ public class CablePathfinderTests
     }
 
     [Test]
-    public void FindPath_TurnAllowed_WhenOverMinDistance_2x2()
-    {
+    public void FindPath_TurnAllowed_WhenOverMinDistance_2x2() {
         // Create L-shaped floor large enough for 2x2 cable
         CreateFloor(45, 40, 60, 40, 60);
 
@@ -164,8 +153,7 @@ public class CablePathfinderTests
     }
 
     [Test]
-    public void FindPath_180DegreeTurn_NeverGenerated()
-    {
+    public void FindPath_180DegreeTurn_NeverGenerated() {
         // Create a corridor that might tempt a 180° turn
         CreateFloor(45, 45, 55, 48, 52); // Narrow corridor
 
@@ -188,8 +176,7 @@ public class CablePathfinderTests
     #region Obstacle Tests
 
     [Test]
-    public void FindPath_AroundObstacle_Succeeds()
-    {
+    public void FindPath_AroundObstacle_Succeeds() {
         // Create floor with obstacle in middle
         CreateFloor(45, 40, 60, 40, 60);
         CreateObstacle(48, 55, 46, 50, 48, 52); // Block in the middle
@@ -205,8 +192,7 @@ public class CablePathfinderTests
     }
 
     [Test]
-    public void FindPath_ThroughNarrowGap_ExactWidth()
-    {
+    public void FindPath_ThroughNarrowGap_ExactWidth() {
         // Create floor with gap exactly 2 voxels wide (z=49-50)
         CreateFloor(45, 40, 60, 40, 60);
         CreateObstacle(48, 55, 46, 50, 40, 48); // Left wall up to z=48
@@ -228,8 +214,7 @@ public class CablePathfinderTests
     #region Blocked Path Tests
 
     [Test]
-    public void FindPath_CompletelyBlocked_ReturnsNoProgress()
-    {
+    public void FindPath_CompletelyBlocked_ReturnsNoProgress() {
         // Create enclosed space with no way out
         CreateFloor(45, 48, 52, 48, 52);
         CreateObstacle(46, 55, 46, 55, 47, 53); // Walls all around
@@ -245,8 +230,7 @@ public class CablePathfinderTests
     }
 
     [Test]
-    public void FindPath_PartialPath_WhenGoalUnreachable()
-    {
+    public void FindPath_PartialPath_WhenGoalUnreachable() {
         // Create floor that doesn't extend to goal
         CreateFloor(45, 40, 55, 40, 60);
 
@@ -257,8 +241,7 @@ public class CablePathfinderTests
         var result = pathfinder.FindPath(GetStartPositions(start, CrossSection.Size1x1), goal);
 
         Assert.That(result.Type, Is.EqualTo(PathResultType.Partial).Or.EqualTo(PathResultType.NoProgress));
-        if (result.Type == PathResultType.Partial)
-        {
+        if (result.Type == PathResultType.Partial) {
             // Partial should get closer than start
             Assert.That(result.DistanceToGoal, Is.LessThan(ManhattanDistance(start, goal)));
         }
@@ -270,8 +253,7 @@ public class CablePathfinderTests
     #region Initial Direction Tests
 
     [Test]
-    public void FindPath_WithInitialDirection_RespectsConstraint()
-    {
+    public void FindPath_WithInitialDirection_RespectsConstraint() {
         // Create floor
         CreateFloor(45, 40, 60, 40, 60);
 
@@ -287,8 +269,7 @@ public class CablePathfinderTests
     }
 
     [Test]
-    public void FindPath_UnconstrainedStart_ChoosesBestDirection()
-    {
+    public void FindPath_UnconstrainedStart_ChoosesBestDirection() {
         // Create floor
         CreateFloor(45, 40, 60, 40, 60);
 
@@ -308,8 +289,7 @@ public class CablePathfinderTests
     #region Support Validation Tests
 
     [Test]
-    public void FindPath_RequiresSupport_CannotFloatInAir()
-    {
+    public void FindPath_RequiresSupport_CannotFloatInAir() {
         // No floor - just empty space
         var start = new VoxelPos(50, 50, 50);
         var goal = new VoxelPos(55, 50, 50);
@@ -322,8 +302,7 @@ public class CablePathfinderTests
     }
 
     [Test]
-    public void FindPath_AvoidsPreExistingConductors()
-    {
+    public void FindPath_AvoidsPreExistingConductors() {
         // Create floor with conductor nearby
         CreateFloor(45, 40, 60, 40, 60);
         _cache.SetState(new VoxelPos(50, 46, 51), CacheVoxelState.PreExistingConductor);
@@ -335,12 +314,10 @@ public class CablePathfinderTests
         var result = pathfinder.FindPath(GetStartPositions(start, CrossSection.Size1x1), goal);
 
         // Path should exist but avoid z=50 near x=50
-        if (result.Type == PathResultType.Complete)
-        {
+        if (result.Type == PathResultType.Complete) {
             // Verify no path voxel is adjacent to the conductor
             var conductor = new VoxelPos(50, 46, 51);
-            foreach (var pos in result.Path)
-            {
+            foreach (var pos in result.Path) {
                 Assert.That(ManhattanDistance(pos, conductor), Is.GreaterThan(1),
                     $"Path voxel {pos} is adjacent to conductor at {conductor}");
             }
@@ -353,8 +330,7 @@ public class CablePathfinderTests
     #region Different Cross-Section Sizes
 
     [Test]
-    public void FindPath_2x3CrossSection_StraightLine()
-    {
+    public void FindPath_2x3CrossSection_StraightLine() {
         // Create wide floor for 2x3 cable
         CreateFloor(45, 40, 60, 40, 60);
 
@@ -371,8 +347,7 @@ public class CablePathfinderTests
     }
 
     [Test]
-    public void FindPath_3x5CrossSection_RequiresWideSpace()
-    {
+    public void FindPath_3x5CrossSection_RequiresWideSpace() {
         // Create extra wide floor for 3x5 cable
         CreateFloor(45, 30, 70, 30, 70);
 
@@ -396,8 +371,7 @@ public class CablePathfinderTests
     /// for a path that should be ~16-20 voxels.
     /// </summary>
     [Test]
-    public void FindPath_CubeSurface_AllFacePairs_EfficientRouting()
-    {
+    public void FindPath_CubeSurface_AllFacePairs_EfficientRouting() {
         const int cubeSize = 16;
         var cubeOrigin = new VoxelPos(42, 42, 42); // Cube from (42,42,42) to (57,57,57)
 
@@ -406,8 +380,7 @@ public class CablePathfinderTests
 
         // Face center positions (1 voxel outside each face, at face center)
         var center = cubeSize / 2; // 8
-        var faceCenters = new Dictionary<string, VoxelPos>
-        {
+        var faceCenters = new Dictionary<string, VoxelPos> {
             ["XNeg"] = new(cubeOrigin.X - 1, cubeOrigin.Y + center, cubeOrigin.Z + center),
             ["XPos"] = new(cubeOrigin.X + cubeSize, cubeOrigin.Y + center, cubeOrigin.Z + center),
             ["YNeg"] = new(cubeOrigin.X + center, cubeOrigin.Y - 1, cubeOrigin.Z + center),
@@ -426,10 +399,8 @@ public class CablePathfinderTests
         var faceNames = faceCenters.Keys.ToList();
         var failures = new List<string>();
 
-        for (int i = 0; i < faceNames.Count; i++)
-        {
-            for (int j = i + 1; j < faceNames.Count; j++)
-            {
+        for (int i = 0; i < faceNames.Count; i++) {
+            for (int j = i + 1; j < faceNames.Count; j++) {
                 var face1 = faceNames[i];
                 var face2 = faceNames[j];
                 var start = faceCenters[face1];
@@ -442,24 +413,19 @@ public class CablePathfinderTests
                 var result = pathfinder.FindPath(GetStartPositions(start, CrossSection.Size1x1), goal);
 
                 // Validate path
-                if (result.Type == PathResultType.NoProgress)
-                {
+                if (result.Type == PathResultType.NoProgress) {
                     failures.Add($"{face1}->{face2}: NoProgress (start={start}, goal={goal})");
                     continue;
                 }
 
-                try
-                {
+                try {
                     ValidatePath(result, CrossSection.Size1x1);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     failures.Add($"{face1}->{face2}: Validation failed - {ex.Message}");
                     continue;
                 }
 
-                if (result.Path.Count > expectedMaxPath)
-                {
+                if (result.Path.Count > expectedMaxPath) {
                     failures.Add($"{face1}->{face2}: Path too long - got {result.Path.Count}, expected <= {expectedMaxPath}");
                 }
 
@@ -468,8 +434,7 @@ public class CablePathfinderTests
             }
         }
 
-        if (failures.Count > 0)
-        {
+        if (failures.Count > 0) {
             Assert.Fail($"Cube routing failures:\n{string.Join("\n", failures)}");
         }
     }
@@ -478,8 +443,7 @@ public class CablePathfinderTests
     /// Tests a specific case: routing from XNeg face to YNeg face (adjacent faces).
     /// </summary>
     [Test]
-    public void FindPath_CubeSurface_AdjacentFaces_XNegToYNeg()
-    {
+    public void FindPath_CubeSurface_AdjacentFaces_XNegToYNeg() {
         const int cubeSize = 16;
         var cubeOrigin = new VoxelPos(42, 42, 42);
         CreateCube(cubeOrigin, cubeSize);
@@ -500,12 +464,10 @@ public class CablePathfinderTests
         // Print logs for debugging
         Console.WriteLine($"Start: {start}, Goal: {goal}");
         Console.WriteLine($"Result: {result.Type}, Path count: {result.Path.Count}");
-        if (result.Type == PathResultType.Partial)
-        {
+        if (result.Type == PathResultType.Partial) {
             Console.WriteLine($"End position: {result.EndPosition}, Distance to goal: {result.DistanceToGoal}");
         }
-        foreach (var log in logs.TakeLast(20))
-        {
+        foreach (var log in logs.TakeLast(20)) {
             Console.WriteLine(log);
         }
 
@@ -518,8 +480,7 @@ public class CablePathfinderTests
             $"Path too long: got {result.Path.Count} voxels, expected <= {expectedMaxPath}");
     }
 
-    private static bool AreOppositeFaces(string face1, string face2)
-    {
+    private static bool AreOppositeFaces(string face1, string face2) {
         return (face1 == "XNeg" && face2 == "XPos") ||
                (face1 == "XPos" && face2 == "XNeg") ||
                (face1 == "YNeg" && face2 == "YPos") ||
@@ -528,14 +489,10 @@ public class CablePathfinderTests
                (face1 == "ZPos" && face2 == "ZNeg");
     }
 
-    private void CreateCube(VoxelPos origin, int size)
-    {
-        for (int x = 0; x < size; x++)
-        {
-            for (int y = 0; y < size; y++)
-            {
-                for (int z = 0; z < size; z++)
-                {
+    private void CreateCube(VoxelPos origin, int size) {
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
                     _cache.SetState(new VoxelPos(origin.X + x, origin.Y + y, origin.Z + z),
                         CacheVoxelState.Insulation);
                 }
@@ -553,32 +510,24 @@ public class CablePathfinderTests
     private static IReadOnlyList<VoxelPos> GetStartPositions(
         VoxelPos anchor,
         CrossSection crossSection,
-        VoxelDirection direction = VoxelDirection.XPos)
-    {
+        VoxelDirection direction = VoxelDirection.XPos) {
         return crossSection.GetVoxelPositions(anchor, direction, CrossSectionOrientation.Flat).ToList();
     }
 
     /// <summary>Creates a floor (insulation) at Y level.</summary>
-    private void CreateFloor(int y, int xMin, int xMax, int zMin, int zMax)
-    {
-        for (int x = xMin; x <= xMax; x++)
-        {
-            for (int z = zMin; z <= zMax; z++)
-            {
+    private void CreateFloor(int y, int xMin, int xMax, int zMin, int zMax) {
+        for (int x = xMin; x <= xMax; x++) {
+            for (int z = zMin; z <= zMax; z++) {
                 _cache.SetState(new VoxelPos(x, y, z), CacheVoxelState.Insulation);
             }
         }
     }
 
     /// <summary>Creates a wall (insulation) perpendicular to an axis.</summary>
-    private void CreateWall(int fixedCoord, int aMin, int aMax, int bMin, int bMax, int axis)
-    {
-        for (int a = aMin; a <= aMax; a++)
-        {
-            for (int b = bMin; b <= bMax; b++)
-            {
-                var pos = axis switch
-                {
+    private void CreateWall(int fixedCoord, int aMin, int aMax, int bMin, int bMax, int axis) {
+        for (int a = aMin; a <= aMax; a++) {
+            for (int b = bMin; b <= bMax; b++) {
+                var pos = axis switch {
                     0 => new VoxelPos(fixedCoord, a, b), // X fixed
                     1 => new VoxelPos(a, fixedCoord, b), // Y fixed
                     _ => new VoxelPos(a, b, fixedCoord)  // Z fixed
@@ -589,14 +538,10 @@ public class CablePathfinderTests
     }
 
     /// <summary>Creates a solid obstacle (insulation block).</summary>
-    private void CreateObstacle(int xMin, int xMax, int yMin, int yMax, int zMin, int zMax)
-    {
-        for (int x = xMin; x <= xMax; x++)
-        {
-            for (int y = yMin; y <= yMax; y++)
-            {
-                for (int z = zMin; z <= zMax; z++)
-                {
+    private void CreateObstacle(int xMin, int xMax, int yMin, int yMax, int zMin, int zMax) {
+        for (int x = xMin; x <= xMax; x++) {
+            for (int y = yMin; y <= yMax; y++) {
+                for (int z = zMin; z <= zMax; z++) {
                     _cache.SetState(new VoxelPos(x, y, z), CacheVoxelState.Insulation);
                 }
             }
@@ -610,8 +555,7 @@ public class CablePathfinderTests
     /// Validates a path result using CableValidator.
     /// Only validates Complete and Partial paths (NoProgress has no path to validate).
     /// </summary>
-    private void ValidatePath(PathResult result, CrossSection crossSection)
-    {
+    private void ValidatePath(PathResult result, CrossSection crossSection) {
         if (result.Type == PathResultType.NoProgress)
             return; // Empty path, nothing to validate
 

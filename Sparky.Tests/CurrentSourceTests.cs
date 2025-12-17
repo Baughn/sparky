@@ -2,22 +2,18 @@ using NUnit.Framework;
 using Sparky.MNA.Api;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
+namespace Sparky.Tests {
     [TestFixture]
-    public class CurrentSourceTests
-    {
+    public class CurrentSourceTests {
         private SimulationManager _sim = null!;
 
         [SetUp]
-        public void SetUp()
-        {
+        public void SetUp() {
             _sim = new SimulationManager();
         }
 
         [Test]
-        public void CurrentSource_SetsNodeVoltage()
-        {
+        public void CurrentSource_SetsNodeVoltage() {
             // Current source (1A) through resistor (10 ohm) to ground
             // V = I * R = 1 * 10 = 10V
             var n1 = _sim.CreateNode();
@@ -31,8 +27,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void CurrentSource_Polarity_PositiveCurrentFlowsInToOut()
-        {
+        public void CurrentSource_Polarity_PositiveCurrentFlowsInToOut() {
             // Current flows from nodeIn to nodeOut
             // nodeIn is lower potential, nodeOut is higher when driving into a resistor
             var n1 = _sim.CreateNode();
@@ -48,8 +43,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void CurrentSource_MultipleInParallel_CurrentsAdd()
-        {
+        public void CurrentSource_MultipleInParallel_CurrentsAdd() {
             // Two 1A current sources in parallel = 2A total
             // Through 10 ohm resistor: V = 2 * 10 = 20V
             var n1 = _sim.CreateNode();
@@ -64,8 +58,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void CurrentSource_WithCapacitor_ChargesLinearly()
-        {
+        public void CurrentSource_WithCapacitor_ChargesLinearly() {
             // I = C * dV/dt => dV = I * dt / C
             // With I = 1A, C = 1F, dt = 0.1s: dV = 1 * 0.1 / 1 = 0.1V per step
             var n1 = _sim.CreateNode();
@@ -86,8 +79,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void CurrentSource_ZeroCurrent_NoEffect()
-        {
+        public void CurrentSource_ZeroCurrent_NoEffect() {
             // 0A current source should not affect circuit
             var n1 = _sim.CreateNode();
 
@@ -100,8 +92,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void CurrentSource_Update_AffectsNextStep()
-        {
+        public void CurrentSource_Update_AffectsNextStep() {
             // Start with 1A, change to 2A, verify voltage doubles
             var n1 = _sim.CreateNode();
 

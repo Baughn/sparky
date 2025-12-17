@@ -5,8 +5,7 @@ namespace Sparky.MNA.Utilities;
 /// <summary>
 /// PWM voltage source: V = VHigh when (t % period) &lt; DutyCycle × period, else VLow.
 /// </summary>
-public class PwmVoltageSource : TimeVaryingSource
-{
+public class PwmVoltageSource : TimeVaryingSource {
     /// <summary>The underlying voltage source ID.</summary>
     public VoltageSourceId Id { get; }
 
@@ -41,8 +40,7 @@ public class PwmVoltageSource : TimeVaryingSource
         double frequency,
         double dutyCycle
     )
-        : base(sim)
-    {
+        : base(sim) {
         VHigh = vHigh;
         VLow = vLow;
         Frequency = frequency;
@@ -54,8 +52,7 @@ public class PwmVoltageSource : TimeVaryingSource
     }
 
     /// <inheritdoc />
-    public override double GetValue(double time)
-    {
+    public override double GetValue(double time) {
         if (Frequency <= 0)
             return VHigh; // Degenerate case: always high
 
@@ -67,15 +64,13 @@ public class PwmVoltageSource : TimeVaryingSource
     }
 
     /// <inheritdoc />
-    public override void Update()
-    {
+    public override void Update() {
         double value = GetValue(Sim.SimulationTime);
         Sim.UpdateVoltageSource(Id, value);
     }
 
     /// <inheritdoc />
-    public override void Remove()
-    {
+    public override void Remove() {
         Sim.RemoveVoltageSource(Id);
     }
 

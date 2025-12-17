@@ -3,8 +3,7 @@ namespace Sparky.TwoD.Protocol;
 /// <summary>
 /// Types of cells that can be placed on the 2D grid.
 /// </summary>
-public enum CellType
-{
+public enum CellType {
     /// <summary>Empty cell (air).</summary>
     Empty,
 
@@ -57,7 +56,6 @@ public readonly record struct CellVisualState(
 
     /// <summary>For switches: true if closed, false if open.</summary>
     bool SwitchClosed = false
-)
-{
+) {
     public static readonly CellVisualState Default = new(0, 0, 0, false);
 }

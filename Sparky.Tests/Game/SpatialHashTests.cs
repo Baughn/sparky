@@ -6,28 +6,24 @@ using System.Linq;
 namespace Sparky.Tests.Game;
 
 [TestFixture]
-public class SpatialHashTests
-{
+public class SpatialHashTests {
     private SpatialHash<string> _hash = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _hash = new SpatialHash<string>(16);
     }
 
     #region Basic Operations
 
     [Test]
-    public void NewHash_IsEmpty()
-    {
+    public void NewHash_IsEmpty() {
         Assert.That(_hash.Count, Is.EqualTo(0));
         Assert.That(_hash.CellCount, Is.EqualTo(0));
     }
 
     [Test]
-    public void Add_SinglePoint_CanBeQueried()
-    {
+    public void Add_SinglePoint_CanBeQueried() {
         var pos = new VoxelPos(5, 5, 5);
         _hash.Add("item1", pos);
 
@@ -38,8 +34,7 @@ public class SpatialHashTests
     }
 
     [Test]
-    public void Add_Region_CanBeQueried()
-    {
+    public void Add_Region_CanBeQueried() {
         var min = new VoxelPos(0, 0, 0);
         var max = new VoxelPos(10, 10, 10);
         _hash.Add("item1", min, max);
@@ -56,8 +51,7 @@ public class SpatialHashTests
     }
 
     [Test]
-    public void Query_EmptyPosition_ReturnsEmpty()
-    {
+    public void Query_EmptyPosition_ReturnsEmpty() {
         _hash.Add("item1", new VoxelPos(100, 100, 100));
 
         var results = _hash.Query(new VoxelPos(0, 0, 0)).ToList();
@@ -66,8 +60,7 @@ public class SpatialHashTests
     }
 
     [Test]
-    public void Remove_Item_NoLongerQueried()
-    {
+    public void Remove_Item_NoLongerQueried() {
         var pos = new VoxelPos(5, 5, 5);
         _hash.Add("item1", pos);
 
@@ -79,16 +72,14 @@ public class SpatialHashTests
     }
 
     [Test]
-    public void Remove_NonexistentItem_ReturnsFalse()
-    {
+    public void Remove_NonexistentItem_ReturnsFalse() {
         var result = _hash.Remove("nonexistent");
 
         Assert.That(result, Is.False);
     }
 
     [Test]
-    public void Add_DuplicateItem_Throws()
-    {
+    public void Add_DuplicateItem_Throws() {
         _hash.Add("item1", new VoxelPos(0, 0, 0));
 
         Assert.Throws<ArgumentException>(() =>
@@ -100,8 +91,7 @@ public class SpatialHashTests
     #region Cross-Cell Items
 
     [Test]
-    public void Add_CrossCellItem_QueryableFromAllCells()
-    {
+    public void Add_CrossCellItem_QueryableFromAllCells() {
         // Item spans from cell (0,0,0) to cell (1,0,0)
         var min = new VoxelPos(8, 0, 0);   // In cell 0
         var max = new VoxelPos(24, 0, 0);  // In cell 1
@@ -120,8 +110,7 @@ public class SpatialHashTests
     }
 
     [Test]
-    public void Add_LargeItem_SpansManyCells()
-    {
+    public void Add_LargeItem_SpansManyCells() {
         // Item spans 3x3x3 cells
         var min = new VoxelPos(0, 0, 0);
         var max = new VoxelPos(47, 47, 47);  // Spans cells 0-2 in each dimension
@@ -135,8 +124,7 @@ public class SpatialHashTests
     #region Multiple Items
 
     [Test]
-    public void Query_MultipleItemsInSameCell_ReturnsAll()
-    {
+    public void Query_MultipleItemsInSameCell_ReturnsAll() {
         _hash.Add("item1", new VoxelPos(5, 5, 5));
         _hash.Add("item2", new VoxelPos(6, 6, 6));
         _hash.Add("item3", new VoxelPos(7, 7, 7));
@@ -150,8 +138,7 @@ public class SpatialHashTests
     }
 
     [Test]
-    public void QueryDistinct_CrossCellItem_ReturnedOnce()
-    {
+    public void QueryDistinct_CrossCellItem_ReturnedOnce() {
         // Item spans 2 cells
         _hash.Add("crossItem", new VoxelPos(8, 0, 0), new VoxelPos(24, 0, 0));
 
@@ -169,8 +156,7 @@ public class SpatialHashTests
     #region Negative Coordinates
 
     [Test]
-    public void Add_NegativeCoordinates_Works()
-    {
+    public void Add_NegativeCoordinates_Works() {
         var pos = new VoxelPos(-10, -20, -30);
         _hash.Add("negItem", pos);
 
@@ -180,8 +166,7 @@ public class SpatialHashTests
     }
 
     [Test]
-    public void Add_CrossingZero_Works()
-    {
+    public void Add_CrossingZero_Works() {
         // Item spans from negative to positive
         var min = new VoxelPos(-10, -10, -10);
         var max = new VoxelPos(10, 10, 10);
@@ -201,8 +186,7 @@ public class SpatialHashTests
     #region Update
 
     [Test]
-    public void Update_MovesItemToDifferentCell()
-    {
+    public void Update_MovesItemToDifferentCell() {
         _hash.Add("item1", new VoxelPos(5, 5, 5));
 
         _hash.Update("item1", new VoxelPos(100, 100, 100), new VoxelPos(100, 100, 100));
@@ -221,8 +205,7 @@ public class SpatialHashTests
     #region GetAll and Clear
 
     [Test]
-    public void GetAll_ReturnsAllItems()
-    {
+    public void GetAll_ReturnsAllItems() {
         _hash.Add("item1", new VoxelPos(0, 0, 0));
         _hash.Add("item2", new VoxelPos(100, 100, 100));
         _hash.Add("item3", new VoxelPos(-50, -50, -50));
@@ -236,8 +219,7 @@ public class SpatialHashTests
     }
 
     [Test]
-    public void Clear_RemovesAllItems()
-    {
+    public void Clear_RemovesAllItems() {
         _hash.Add("item1", new VoxelPos(0, 0, 0));
         _hash.Add("item2", new VoxelPos(100, 100, 100));
 
@@ -248,8 +230,7 @@ public class SpatialHashTests
     }
 
     [Test]
-    public void Contains_ExistingItem_ReturnsTrue()
-    {
+    public void Contains_ExistingItem_ReturnsTrue() {
         _hash.Add("item1", new VoxelPos(0, 0, 0));
 
         Assert.That(_hash.Contains("item1"), Is.True);
@@ -261,8 +242,7 @@ public class SpatialHashTests
     #region Constructor Validation
 
     [Test]
-    public void Constructor_NonPowerOfTwo_Throws()
-    {
+    public void Constructor_NonPowerOfTwo_Throws() {
         Assert.Throws<ArgumentException>(() => new SpatialHash<string>(15));
         Assert.Throws<ArgumentException>(() => new SpatialHash<string>(17));
         Assert.Throws<ArgumentException>(() => new SpatialHash<string>(0));
@@ -270,8 +250,7 @@ public class SpatialHashTests
     }
 
     [Test]
-    public void Constructor_PowersOfTwo_Works()
-    {
+    public void Constructor_PowersOfTwo_Works() {
         Assert.DoesNotThrow(() => new SpatialHash<string>(1));
         Assert.DoesNotThrow(() => new SpatialHash<string>(2));
         Assert.DoesNotThrow(() => new SpatialHash<string>(4));

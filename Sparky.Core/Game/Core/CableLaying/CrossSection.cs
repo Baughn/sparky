@@ -5,8 +5,7 @@ namespace Sparky.Game.Core.CableLaying;
 /// </summary>
 /// <param name="Width">The width of the cross-section (smaller or equal dimension).</param>
 /// <param name="Height">The height of the cross-section (larger or equal dimension).</param>
-public readonly record struct CrossSection(int Width, int Height)
-{
+public readonly record struct CrossSection(int Width, int Height) {
     /// <summary>Gets the cross-sectional area (Width × Height).</summary>
     public int Area => Width * Height;
 
@@ -47,8 +46,7 @@ public readonly record struct CrossSection(int Width, int Height)
 /// - Flat: Width(2) along Y, Height(3) along Z → cable is 2 tall, 3 wide
 /// - Upright: Width(2) along Z, Height(3) along Y → cable is 3 tall, 2 wide
 /// </remarks>
-public enum CrossSectionOrientation
-{
+public enum CrossSectionOrientation {
     /// <summary>
     /// Width along the "first" perpendicular axis, Height along the "second".
     /// For +X/-X travel: Width=Y, Height=Z
@@ -69,16 +67,13 @@ public enum CrossSectionOrientation
 /// <summary>
 /// Extension methods for cross-section orientation calculations.
 /// </summary>
-public static class CrossSectionExtensions
-{
+public static class CrossSectionExtensions {
     /// <summary>
     /// Gets the two axes perpendicular to the given travel direction.
     /// Returns (first axis, second axis) where axes are 0=X, 1=Y, 2=Z.
     /// </summary>
-    public static (int First, int Second) GetPerpendicularAxes(this VoxelDirection direction)
-    {
-        return direction switch
-        {
+    public static (int First, int Second) GetPerpendicularAxes(this VoxelDirection direction) {
+        return direction switch {
             VoxelDirection.XPos or VoxelDirection.XNeg => (1, 2), // Y, Z
             VoxelDirection.YPos or VoxelDirection.YNeg => (0, 2), // X, Z
             VoxelDirection.ZPos or VoxelDirection.ZNeg => (0, 1), // X, Y
@@ -96,21 +91,17 @@ public static class CrossSectionExtensions
     public static int[] GetAxisSizes(
         this CrossSection crossSection,
         VoxelDirection direction,
-        CrossSectionOrientation orientation)
-    {
+        CrossSectionOrientation orientation) {
         var sizes = new int[3];
         var (first, second) = direction.GetPerpendicularAxes();
         int travelAxis = direction.Axis();
 
         sizes[travelAxis] = 1; // Always 1 voxel thick in travel direction
 
-        if (orientation == CrossSectionOrientation.Flat)
-        {
+        if (orientation == CrossSectionOrientation.Flat) {
             sizes[first] = crossSection.Width;
             sizes[second] = crossSection.Height;
-        }
-        else
-        {
+        } else {
             sizes[first] = crossSection.Height;
             sizes[second] = crossSection.Width;
         }
@@ -126,16 +117,12 @@ public static class CrossSectionExtensions
         this CrossSection crossSection,
         VoxelPos anchor,
         VoxelDirection direction,
-        CrossSectionOrientation orientation)
-    {
+        CrossSectionOrientation orientation) {
         var sizes = crossSection.GetAxisSizes(direction, orientation);
 
-        for (int dz = 0; dz < sizes[2]; dz++)
-        {
-            for (int dy = 0; dy < sizes[1]; dy++)
-            {
-                for (int dx = 0; dx < sizes[0]; dx++)
-                {
+        for (int dz = 0; dz < sizes[2]; dz++) {
+            for (int dy = 0; dy < sizes[1]; dy++) {
+                for (int dx = 0; dx < sizes[0]; dx++) {
                     yield return anchor.Offset(dx, dy, dz);
                 }
             }

@@ -21,12 +21,10 @@ namespace Sparky.MNA.Utilities;
 /// </code>
 /// </example>
 /// </summary>
-public abstract class TimeVaryingSource
-{
+public abstract class TimeVaryingSource {
     protected readonly ISimulation Sim;
 
-    protected TimeVaryingSource(ISimulation sim)
-    {
+    protected TimeVaryingSource(ISimulation sim) {
         Sim = sim;
     }
 

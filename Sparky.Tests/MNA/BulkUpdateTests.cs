@@ -3,24 +3,20 @@ using NUnit.Framework;
 using Sparky.MNA.Api;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests.MNA
-{
+namespace Sparky.Tests.MNA {
     [TestFixture]
-    public class BulkUpdateTests
-    {
+    public class BulkUpdateTests {
         private SimulationManager _sim = null!;
 
         [SetUp]
-        public void SetUp()
-        {
+        public void SetUp() {
             _sim = new SimulationManager();
         }
 
         #region Deferred Rebuild Tests
 
         [Test]
-        public void BulkUpdate_DefersRebuild_UntilDispose()
-        {
+        public void BulkUpdate_DefersRebuild_UntilDispose() {
             // Create initial circuit and step to establish baseline
             var n1 = _sim.CreateNode();
             _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
@@ -29,8 +25,7 @@ namespace Sparky.Tests.MNA
 
             var initialPartitionCount = _sim.PartitionCount;
 
-            using (_sim.BeginBulkUpdate())
-            {
+            using (_sim.BeginBulkUpdate()) {
                 // Add a second disconnected circuit
                 var n2 = _sim.CreateNode();
                 _sim.AddVoltageSource(n2, _sim.Ground, 5.0);
@@ -47,15 +42,13 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void BulkUpdate_MultipleChanges_SingleRebuild()
-        {
+        public void BulkUpdate_MultipleChanges_SingleRebuild() {
             // This test verifies efficiency - multiple changes in one scope
             // should result in correct final state
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
-            using (_sim.BeginBulkUpdate())
-            {
+            using (_sim.BeginBulkUpdate()) {
                 _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
                 _sim.AddResistor(n1, n2, 100.0);
                 _sim.AddResistor(n2, _sim.Ground, 100.0);
@@ -73,17 +66,14 @@ namespace Sparky.Tests.MNA
         #region Nested Scope Tests
 
         [Test]
-        public void BulkUpdate_Nested_OnlyRebuildsOnOuterDispose()
-        {
+        public void BulkUpdate_Nested_OnlyRebuildsOnOuterDispose() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
-            using (_sim.BeginBulkUpdate())
-            {
+            using (_sim.BeginBulkUpdate()) {
                 _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
 
-                using (_sim.BeginBulkUpdate())
-                {
+                using (_sim.BeginBulkUpdate()) {
                     _sim.AddResistor(n1, n2, 100.0);
 
                     // Step should still be blocked in inner scope
@@ -106,8 +96,7 @@ namespace Sparky.Tests.MNA
         #region Dispose Safety Tests
 
         [Test]
-        public void BulkUpdate_DisposedTwice_NoError()
-        {
+        public void BulkUpdate_DisposedTwice_NoError() {
             var scope = _sim.BeginBulkUpdate();
             scope.Dispose();
 
@@ -116,20 +105,15 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void BulkUpdate_WithException_StillDisposes()
-        {
+        public void BulkUpdate_WithException_StillDisposes() {
             var n1 = _sim.CreateNode();
 
-            try
-            {
-                using (_sim.BeginBulkUpdate())
-                {
+            try {
+                using (_sim.BeginBulkUpdate()) {
                     _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
                     throw new InvalidOperationException("Simulated error");
                 }
-            }
-            catch (InvalidOperationException)
-            {
+            } catch (InvalidOperationException) {
                 // Expected
             }
 
@@ -144,13 +128,11 @@ namespace Sparky.Tests.MNA
         #region Post-Update Operation Tests
 
         [Test]
-        public void BulkUpdate_StepAfterDispose_Works()
-        {
+        public void BulkUpdate_StepAfterDispose_Works() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
-            using (_sim.BeginBulkUpdate())
-            {
+            using (_sim.BeginBulkUpdate()) {
                 _sim.AddVoltageSource(n1, _sim.Ground, 10.0);
                 _sim.AddResistor(n1, n2, 100.0);
                 _sim.AddResistor(n2, _sim.Ground, 100.0);
@@ -177,8 +159,7 @@ namespace Sparky.Tests.MNA
         #region State Preservation Tests
 
         [Test]
-        public void TopologyChange_PreservesCapacitorState()
-        {
+        public void TopologyChange_PreservesCapacitorState() {
             // Charge a capacitor, then add a resistor (causing rebuild)
             // The capacitor voltage should be preserved
             var nSrc = _sim.CreateNode();
@@ -218,8 +199,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void TopologyChange_PreservesInductorState()
-        {
+        public void TopologyChange_PreservesInductorState() {
             // Build up current in an inductor, then add a component (causing rebuild)
             // The inductor current should be preserved
             var nSrc = _sim.CreateNode();

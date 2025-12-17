@@ -4,11 +4,9 @@ using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
+namespace Sparky.Tests {
     // Test helper component that intentionally prevents Newton from converging
-    internal class TogglingConductance : Component
-    {
+    internal class TogglingConductance : Component {
         private double _g = 1.0;
 
         public TogglingConductance(Node n1, Node n2)
@@ -16,23 +14,20 @@ namespace Sparky.Tests
 
         public override bool RequiresIteration => true;
 
-        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
-        {
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0) {
             // Flip sign every iteration so the operating point oscillates
             _g = -_g;
 
             int n1 = Node1.Id;
             int n2 = Node2.Id;
 
-            if (n1 != 0)
-            {
+            if (n1 != 0) {
                 A.At(n1, n1, _g);
                 if (n2 != 0)
                     A.At(n1, n2, -_g);
             }
 
-            if (n2 != 0)
-            {
+            if (n2 != 0) {
                 A.At(n2, n2, _g);
                 if (n1 != 0)
                     A.At(n2, n1, -_g);
@@ -41,11 +36,9 @@ namespace Sparky.Tests
     }
 
     [TestFixture]
-    public class SolverRobustnessTests
-    {
+    public class SolverRobustnessTests {
         [Test]
-        public void SolveAnchorsGroundAndAvoidsSingularMatrix()
-        {
+        public void SolveAnchorsGroundAndAvoidsSingularMatrix() {
             var circuit = new Circuit();
             var n1 = circuit.AddNode();
             var ground = circuit.Ground;
@@ -59,8 +52,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void NewtonIterationThrowsOnNonConvergence()
-        {
+        public void NewtonIterationThrowsOnNonConvergence() {
             var circuit = new Circuit();
             var n1 = circuit.AddNode();
             var ground = circuit.Ground;
@@ -73,8 +65,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void FloatingNetworkStillSolvesWithGminAnchoring()
-        {
+        public void FloatingNetworkStillSolvesWithGminAnchoring() {
             // No explicit path to ground: only gmin should keep the matrix well-conditioned.
             var circuit = new Circuit();
             var n1 = circuit.AddNode();

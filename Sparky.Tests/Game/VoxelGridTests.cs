@@ -4,11 +4,9 @@ using Sparky.Game.Core;
 namespace Sparky.Tests.Game;
 
 [TestFixture]
-public class VoxelPosTests
-{
+public class VoxelPosTests {
     [Test]
-    public void Zero_ReturnsOrigin()
-    {
+    public void Zero_ReturnsOrigin() {
         var pos = VoxelPos.Zero;
 
         Assert.That(pos.X, Is.EqualTo(0));
@@ -17,8 +15,7 @@ public class VoxelPosTests
     }
 
     [Test]
-    public void Block_PositiveCoordinates_ReturnsCorrectBlock()
-    {
+    public void Block_PositiveCoordinates_ReturnsCorrectBlock() {
         // Voxel (17, 32, 8) is in block (1, 2, 0)
         var pos = new VoxelPos(17, 32, 8);
 
@@ -28,8 +25,7 @@ public class VoxelPosTests
     }
 
     [Test]
-    public void Block_NegativeCoordinates_ReturnsCorrectBlock()
-    {
+    public void Block_NegativeCoordinates_ReturnsCorrectBlock() {
         // Voxel (-1, -16, -17) is in block (-1, -1, -2)
         var pos = new VoxelPos(-1, -16, -17);
 
@@ -39,8 +35,7 @@ public class VoxelPosTests
     }
 
     [Test]
-    public void Local_ReturnsLocalOffset()
-    {
+    public void Local_ReturnsLocalOffset() {
         var pos = new VoxelPos(17, 32, 8);
         var local = pos.Local;
 
@@ -50,8 +45,7 @@ public class VoxelPosTests
     }
 
     [Test]
-    public void FromBlockLocal_CreatesCorrectVoxelPos()
-    {
+    public void FromBlockLocal_CreatesCorrectVoxelPos() {
         var block = new BlockPos(2, 3, 4);
         var pos = VoxelPos.FromBlockLocal(block, 5, 6, 7);
 
@@ -61,8 +55,7 @@ public class VoxelPosTests
     }
 
     [Test]
-    public void Neighbor_ReturnsAdjacentPosition()
-    {
+    public void Neighbor_ReturnsAdjacentPosition() {
         var pos = new VoxelPos(10, 10, 10);
 
         Assert.That(pos.Neighbor(VoxelDirection.XPos), Is.EqualTo(new VoxelPos(11, 10, 10)));
@@ -75,19 +68,16 @@ public class VoxelPosTests
 }
 
 [TestFixture]
-public class VoxelGridTests
-{
+public class VoxelGridTests {
     [Test]
-    public void NewGrid_IsEmpty()
-    {
+    public void NewGrid_IsEmpty() {
         var grid = new VoxelGrid();
 
         Assert.That(grid.VoxelCount, Is.EqualTo(0));
     }
 
     [Test]
-    public void SetVoxel_Conductor_IncreasesCount()
-    {
+    public void SetVoxel_Conductor_IncreasesCount() {
         var grid = new VoxelGrid();
 
         grid.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor);
@@ -96,8 +86,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void SetVoxel_Air_RemovesVoxel()
-    {
+    public void SetVoxel_Air_RemovesVoxel() {
         var grid = new VoxelGrid();
         var pos = new VoxelPos(0, 0, 0);
         grid.SetVoxel(pos, VoxelType.Conductor);
@@ -108,8 +97,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void GetVoxelType_EmptyPosition_ReturnsAir()
-    {
+    public void GetVoxelType_EmptyPosition_ReturnsAir() {
         var grid = new VoxelGrid();
 
         var type = grid.GetVoxelType(new VoxelPos(99, 99, 99));
@@ -118,8 +106,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void GetVoxelType_SetPosition_ReturnsCorrectType()
-    {
+    public void GetVoxelType_SetPosition_ReturnsCorrectType() {
         var grid = new VoxelGrid();
         var pos = new VoxelPos(5, 5, 5);
         grid.SetVoxel(pos, VoxelType.Insulator);
@@ -130,8 +117,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void IsConductor_ConductorVoxel_ReturnsTrue()
-    {
+    public void IsConductor_ConductorVoxel_ReturnsTrue() {
         var grid = new VoxelGrid();
         var pos = new VoxelPos(0, 0, 0);
         grid.SetVoxel(pos, VoxelType.Conductor);
@@ -140,8 +126,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void IsConductor_InsulatorVoxel_ReturnsFalse()
-    {
+    public void IsConductor_InsulatorVoxel_ReturnsFalse() {
         var grid = new VoxelGrid();
         var pos = new VoxelPos(0, 0, 0);
         grid.SetVoxel(pos, VoxelType.Insulator);
@@ -150,8 +135,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void GetAdjacentConductors_ReturnsOnlyConductorNeighbors()
-    {
+    public void GetAdjacentConductors_ReturnsOnlyConductorNeighbors() {
         var grid = new VoxelGrid();
         var center = new VoxelPos(5, 5, 5);
 
@@ -169,8 +153,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void GetAllConductors_ReturnsOnlyConductors()
-    {
+    public void GetAllConductors_ReturnsOnlyConductors() {
         var grid = new VoxelGrid();
         grid.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor);
         grid.SetVoxel(new VoxelPos(1, 0, 0), VoxelType.Insulator);
@@ -184,8 +167,7 @@ public class VoxelGridTests
     #region Material Tests
 
     [Test]
-    public void SetVoxel_WithMaterial_StoresMaterial()
-    {
+    public void SetVoxel_WithMaterial_StoresMaterial() {
         var grid = new VoxelGrid();
         var pos = new VoxelPos(0, 0, 0);
 
@@ -196,8 +178,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void SetVoxel_ConductorWithoutMaterial_DefaultsToCopper()
-    {
+    public void SetVoxel_ConductorWithoutMaterial_DefaultsToCopper() {
         var grid = new VoxelGrid();
         var pos = new VoxelPos(0, 0, 0);
 
@@ -207,8 +188,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void GetMaterial_ReturnsCorrectMaterial()
-    {
+    public void GetMaterial_ReturnsCorrectMaterial() {
         var grid = new VoxelGrid();
         var pos1 = new VoxelPos(0, 0, 0);
         var pos2 = new VoxelPos(1, 0, 0);
@@ -224,8 +204,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void GetMaterial_AirVoxel_ReturnsNull()
-    {
+    public void GetMaterial_AirVoxel_ReturnsNull() {
         var grid = new VoxelGrid();
         var pos = new VoxelPos(99, 99, 99);  // Never set
 
@@ -233,8 +212,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void GetMaterial_InsulatorVoxel_ReturnsNull()
-    {
+    public void GetMaterial_InsulatorVoxel_ReturnsNull() {
         var grid = new VoxelGrid();
         var pos = new VoxelPos(0, 0, 0);
         grid.SetVoxel(pos, VoxelType.Insulator);
@@ -243,8 +221,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void Material_PredefinedValues_HaveCorrectResistivity()
-    {
+    public void Material_PredefinedValues_HaveCorrectResistivity() {
         // Verify the predefined materials have expected resistivity ratios
         Assert.That(Material.Copper.Resistivity, Is.EqualTo(0.001));
         Assert.That(Material.Lead.Resistivity, Is.EqualTo(0.01));   // 10x copper
@@ -257,8 +234,7 @@ public class VoxelGridTests
     #region ResistiveConductor Prism Tests
 
     [Test]
-    public void ResistiveConductor_AdjacentVoxels_AreCoalesced()
-    {
+    public void ResistiveConductor_AdjacentVoxels_AreCoalesced() {
         // ResistiveConductor voxels SHOULD be coalesced for storage efficiency
         // (topology handles them specially - each prism gets its own node)
         var grid = new VoxelGrid();
@@ -281,8 +257,7 @@ public class VoxelGridTests
     }
 
     [Test]
-    public void Conductor_AdjacentVoxels_AreCoalesced()
-    {
+    public void Conductor_AdjacentVoxels_AreCoalesced() {
         // Regular Conductor voxels SHOULD be coalesced for storage efficiency
         var grid = new VoxelGrid();
 

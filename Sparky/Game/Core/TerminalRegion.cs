@@ -10,8 +10,7 @@ namespace Sparky.Game.Core;
 /// For example, a battery has "positive" and "negative" terminal regions.
 /// All conductor voxels in a terminal region are connected (same MNA node).
 /// </remarks>
-public class TerminalRegion
-{
+public class TerminalRegion {
     private readonly HashSet<VoxelPos> _voxels;
 
     /// <summary>
@@ -29,8 +28,7 @@ public class TerminalRegion
     /// </summary>
     /// <param name="name">The terminal name.</param>
     /// <param name="voxels">The conductor voxels forming this terminal.</param>
-    public TerminalRegion(string name, IEnumerable<VoxelPos> voxels)
-    {
+    public TerminalRegion(string name, IEnumerable<VoxelPos> voxels) {
         Name = name;
         _voxels = new HashSet<VoxelPos>(voxels);
     }
@@ -39,19 +37,15 @@ public class TerminalRegion
     /// Creates a terminal region with a single voxel.
     /// </summary>
     public TerminalRegion(string name, VoxelPos voxel)
-        : this(name, [voxel])
-    {
+        : this(name, [voxel]) {
     }
 
     /// <summary>
     /// Returns true if any voxel in this terminal is adjacent to the given position.
     /// </summary>
-    public bool IsAdjacentTo(VoxelPos pos)
-    {
-        foreach (var dir in VoxelDirectionExtensions.All)
-        {
-            if (_voxels.Contains(pos.Neighbor(dir)))
-            {
+    public bool IsAdjacentTo(VoxelPos pos) {
+        foreach (var dir in VoxelDirectionExtensions.All) {
+            if (_voxels.Contains(pos.Neighbor(dir))) {
                 return true;
             }
         }

@@ -4,8 +4,7 @@ namespace Sparky.Tests.TestHelpers;
 /// Centralized tolerance constants for test assertions.
 /// Use these instead of hardcoded tolerances for consistency and easy tuning.
 /// </summary>
-public static class Tolerances
-{
+public static class Tolerances {
     /// <summary>
     /// Default tolerance for voltage comparisons (1 μV).
     /// Use for steady-state DC voltage assertions.

@@ -6,8 +6,7 @@ namespace Sparky.Game.Core;
 /// Which face of a block (6 possibilities).
 /// Follows Vintage Story conventions: Y is vertical (up/down).
 /// </summary>
-public enum BlockFacing
-{
+public enum BlockFacing {
     /// <summary>Negative Z direction.</summary>
     North = 0,
 
@@ -30,8 +29,7 @@ public enum BlockFacing
 /// <summary>
 /// Extension methods for <see cref="BlockFacing"/>.
 /// </summary>
-public static class BlockFacingExtensions
-{
+public static class BlockFacingExtensions {
     private static readonly BlockFacing[] Opposites =
     {
         BlockFacing.South, // North -> South
@@ -61,8 +59,7 @@ public static class BlockFacingExtensions
     /// Returns the normal vector as (dx, dy, dz) integers.
     /// </summary>
     public static (int dx, int dy, int dz) Normal(this BlockFacing facing) =>
-        facing switch
-        {
+        facing switch {
             BlockFacing.North => (0, 0, -1),
             BlockFacing.East => (1, 0, 0),
             BlockFacing.South => (0, 0, 1),

@@ -11,8 +11,7 @@ namespace Sparky.VSIntegration.Preview;
 /// <summary>
 /// Utilities for building preview meshes from voxel positions.
 /// </summary>
-public static class VoxelPreviewMesh
-{
+public static class VoxelPreviewMesh {
     /// <summary>
     /// Size of one voxel in block units (1/16th of a block).
     /// </summary>
@@ -31,8 +30,7 @@ public static class VoxelPreviewMesh
     /// </summary>
     /// <param name="voxels">The voxels to render with their colors.</param>
     /// <returns>A MeshData ready for upload, or null if no voxels.</returns>
-    public static MeshData? BuildVoxelMesh(IReadOnlyList<PreviewVoxel> voxels)
-    {
+    public static MeshData? BuildVoxelMesh(IReadOnlyList<PreviewVoxel> voxels) {
         if (voxels.Count == 0)
             return null;
 
@@ -49,17 +47,14 @@ public static class VoxelPreviewMesh
         // Create the output mesh with UVs, RGBA, and Flags
         var mesh = new MeshData(24 * voxels.Count, 36 * voxels.Count, withUv: true, withRgba: true, withFlags: true);
 
-        foreach (var voxel in voxels)
-        {
+        foreach (var voxel in voxels) {
             AddVoxelToMesh(mesh, voxel, voxelSet, minX, minY, minZ);
         }
 
         // Ensure Flags array is properly initialized (required for rendering)
         // Flag value 1 << 8 = 256 is a common default
-        if (mesh.Flags != null)
-        {
-            for (int i = 0; i < mesh.VerticesCount; i++)
-            {
+        if (mesh.Flags != null) {
+            for (int i = 0; i < mesh.VerticesCount; i++) {
                 mesh.Flags[i] = 1 << 8;
             }
         }
@@ -75,8 +70,7 @@ public static class VoxelPreviewMesh
         MeshData mesh,
         PreviewVoxel voxel,
         HashSet<(int X, int Y, int Z)> voxelSet,
-        int originX, int originY, int originZ)
-    {
+        int originX, int originY, int originZ) {
         // Position relative to mesh origin (for camera-relative rendering)
         float relX = (voxel.X - originX) * VoxelSize;
         float relY = (voxel.Y - originY) * VoxelSize;
@@ -94,8 +88,7 @@ public static class VoxelPreviewMesh
             (BlockFacing.DOWN, 0, -1, 0, 0.45f),
         };
 
-        foreach (var (face, dx, dy, dz, shading) in faces)
-        {
+        foreach (var (face, dx, dy, dz, shading) in faces) {
             // Skip face if neighbor exists in preview set
             if (voxelSet.Contains((voxel.X + dx, voxel.Y + dy, voxel.Z + dz)))
                 continue;
@@ -112,8 +105,7 @@ public static class VoxelPreviewMesh
         BlockFacing face,
         float x, float y, float z,
         int argbColor,
-        float shading)
-    {
+        float shading) {
         int baseVertex = mesh.VerticesCount;
 
         // Get face vertices from CubeMeshUtil (these are in -1 to 1 range, centered)
@@ -128,8 +120,7 @@ public static class VoxelPreviewMesh
         // Voxel center offset (half voxel size)
         float halfVoxel = VoxelSize * 0.5f;
 
-        for (int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             // Get vertex position from cube template (-1 to 1 range)
             float vx = CubeMeshUtil.CubeVertices[vertexOffset + i * 3 + 0];
             float vy = CubeMeshUtil.CubeVertices[vertexOffset + i * 3 + 1];
@@ -160,8 +151,7 @@ public static class VoxelPreviewMesh
     /// Applies shading multiplier to RGB channels while preserving alpha.
     /// Input/output in VS ARGB format (same as ColorUtil.ToRgba).
     /// </summary>
-    private static int ApplyShading(int argbColor, float shading)
-    {
+    private static int ApplyShading(int argbColor, float shading) {
         int a = (argbColor >> 24) & 0xFF;
         int r = (int)(((argbColor >> 16) & 0xFF) * shading);
         int g = (int)(((argbColor >> 8) & 0xFF) * shading);
@@ -176,11 +166,9 @@ public static class VoxelPreviewMesh
     /// <param name="material">The conductor material.</param>
     /// <param name="alpha">Alpha value 0-255.</param>
     /// <returns>Color in VS ARGB format (same as ColorUtil.ToRgba).</returns>
-    public static int GetMaterialColor(Material material, byte alpha = 128)
-    {
+    public static int GetMaterialColor(Material material, byte alpha = 128) {
         // Get RGB values for material
-        var (r, g, b) = material.Name switch
-        {
+        var (r, g, b) = material.Name switch {
             "Copper" => (0xB8, 0x73, 0x33),
             "Gold" => (0xFF, 0xD7, 0x00),
             "Lead" => (0x5C, 0x62, 0x74),
@@ -195,8 +183,7 @@ public static class VoxelPreviewMesh
     /// <summary>
     /// Converts a global voxel position to world coordinates (block corner).
     /// </summary>
-    public static Vec3d VoxelToWorld(int voxelX, int voxelY, int voxelZ)
-    {
+    public static Vec3d VoxelToWorld(int voxelX, int voxelY, int voxelZ) {
         return new Vec3d(
             voxelX * VoxelSize,
             voxelY * VoxelSize,
@@ -208,8 +195,7 @@ public static class VoxelPreviewMesh
     /// Computes the mesh origin (minimum corner) for a set of voxels.
     /// Used for camera-relative rendering.
     /// </summary>
-    public static Vec3d ComputeMeshOrigin(IReadOnlyList<PreviewVoxel> voxels)
-    {
+    public static Vec3d ComputeMeshOrigin(IReadOnlyList<PreviewVoxel> voxels) {
         if (voxels.Count == 0)
             return new Vec3d(0, 0, 0);
 

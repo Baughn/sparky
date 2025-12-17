@@ -1,12 +1,9 @@
-namespace Sparky.MNA.Core
-{
-    public class Node
-    {
+namespace Sparky.MNA.Core {
+    public class Node {
         public int Id { get; }
         public double Voltage { get; set; }
 
-        public Node(int id)
-        {
+        public Node(int id) {
             Id = id;
         }
     }

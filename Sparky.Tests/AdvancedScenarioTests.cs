@@ -3,22 +3,18 @@ using NUnit.Framework;
 using Sparky.MNA.Api;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
+namespace Sparky.Tests {
     [TestFixture]
-    public class AdvancedScenarioTests
-    {
+    public class AdvancedScenarioTests {
         private SimulationManager _sim = null!;
 
         [SetUp]
-        public void SetUp()
-        {
+        public void SetUp() {
             _sim = new SimulationManager();
         }
 
         [Test]
-        public void FullWaveBridgeRectifier_ProducesDC()
-        {
+        public void FullWaveBridgeRectifier_ProducesDC() {
             // Full-wave bridge rectifier with 4 diodes
             // AC input simulated by stepping voltage source between +10V and -10V
             //
@@ -60,12 +56,10 @@ namespace Sparky.Tests
             int totalSteps = 0;
 
             // Simulate several "cycles" by alternating the source voltage
-            for (int cycle = 0; cycle < 4; cycle++)
-            {
+            for (int cycle = 0; cycle < 4; cycle++) {
                 // Positive half-cycle
                 _sim.UpdateVoltageSource(srcId, 10.0);
-                for (int i = 0; i < 10; i++)
-                {
+                for (int i = 0; i < 10; i++) {
                     _sim.Step(dt);
                     double vOut = _sim.GetVoltage(nOutPos) - _sim.GetVoltage(nOutNeg);
                     if (vOut > 0)
@@ -75,8 +69,7 @@ namespace Sparky.Tests
 
                 // Negative half-cycle
                 _sim.UpdateVoltageSource(srcId, -10.0);
-                for (int i = 0; i < 10; i++)
-                {
+                for (int i = 0; i < 10; i++) {
                     _sim.Step(dt);
                     double vOut = _sim.GetVoltage(nOutPos) - _sim.GetVoltage(nOutNeg);
                     if (vOut > 0)
@@ -105,8 +98,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void LCOscillator_Oscillates()
-        {
+        public void LCOscillator_Oscillates() {
             // LC tank circuit: energy oscillates between inductor and capacitor
             // f = 1 / (2 * pi * sqrt(L * C))
             // With L = 1mH, C = 1uF: period = 2*pi*sqrt(1e-3 * 1e-6) = ~6.28ms
@@ -152,8 +144,7 @@ namespace Sparky.Tests
             int zeroCrossings = 0;
             double prevVoltage = nCap.Voltage;
 
-            for (int i = 0; i < steps; i++)
-            {
+            for (int i = 0; i < steps; i++) {
                 circuit.Solve(dt);
                 double v = nCap.Voltage;
 
@@ -161,8 +152,7 @@ namespace Sparky.Tests
                 minVoltage = Math.Min(minVoltage, v);
 
                 // Count zero crossings (sign changes)
-                if ((prevVoltage > 0 && v <= 0) || (prevVoltage < 0 && v >= 0))
-                {
+                if ((prevVoltage > 0 && v <= 0) || (prevVoltage < 0 && v >= 0)) {
                     zeroCrossings++;
                 }
                 prevVoltage = v;
@@ -181,8 +171,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void RLCResonance_PeaksAtNaturalFrequency()
-        {
+        public void RLCResonance_PeaksAtNaturalFrequency() {
             // Series RLC circuit with step input
             // Natural frequency: w0 = 1 / sqrt(L * C)
             // Damping determines oscillation decay
@@ -216,8 +205,7 @@ namespace Sparky.Tests
             double prevVoltage = 0;
             bool rising = true;
 
-            for (int i = 0; i < steps; i++)
-            {
+            for (int i = 0; i < steps; i++) {
                 _sim.Step(dt);
                 double v = _sim.GetVoltage(nCap);
 
@@ -253,8 +241,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void CascadedTransformers_MultiplyRatios()
-        {
+        public void CascadedTransformers_MultiplyRatios() {
             // Two transformers in series multiply their ratios
             // 10V -> T1 (2:1) -> T2 (3:1) -> Load
             // Expected output: 10V * 2 * 3 = 60V
@@ -291,8 +278,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void VoltageRegulator_ClampsOutput()
-        {
+        public void VoltageRegulator_ClampsOutput() {
             // Simple diode voltage clamp
             // Vin -> R -> Vout
             //              |
@@ -339,8 +325,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void MotorWithBackEMF_CurrentLimits()
-        {
+        public void MotorWithBackEMF_CurrentLimits() {
             // Motor modeled as R + L with back-EMF opposing current
             // Supply -> R_series -> L_motor -> BackEMF -> Ground
             //
@@ -373,8 +358,7 @@ namespace Sparky.Tests
             double initialCurrent = vAcrossR / R;
 
             // Run for 5 time constants to reach steady state
-            for (int i = 0; i < 50; i++)
-            {
+            for (int i = 0; i < 50; i++) {
                 _sim.Step(dt);
             }
 

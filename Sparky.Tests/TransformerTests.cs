@@ -3,14 +3,11 @@ using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
+namespace Sparky.Tests {
     [TestFixture]
-    public class TransformerTests
-    {
+    public class TransformerTests {
         [Test]
-        public void TestDCStepUp()
-        {
+        public void TestDCStepUp() {
             // Source: 10V DC
             // Transformer: Ratio = 2.0 (Step Up)
             // Load: 100 Ohm Resistor
@@ -54,8 +51,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestACStepDown()
-        {
+        public void TestACStepDown() {
             // Source: 120V AC
             // Transformer: Ratio = 0.1 (10:1 Step Down)
 
@@ -82,8 +78,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestIsolationAndPolarity()
-        {
+        public void TestIsolationAndPolarity() {
             // Test that swapping secondary leads inverts polarity
             // and that it works floating (isolation).
 
@@ -150,8 +145,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestPowerAndCurrentRatio()
-        {
+        public void TestPowerAndCurrentRatio() {
             // Primary: 20V source with 2 Ohm series resistor
             // Transformer: 2:1 step up (n = 2)
             // Secondary: 8 Ohm load
@@ -191,8 +185,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestFloatingSecondaryKeepsRatioAndPolarity()
-        {
+        public void TestFloatingSecondaryKeepsRatioAndPolarity() {
             const double ratio = 2.5;
             const double vPrimary = 5.0;
 

@@ -3,8 +3,7 @@ namespace Sparky.Game.Core;
 /// <summary>
 /// The type of a voxel, determining its electrical connectivity behavior.
 /// </summary>
-public enum VoxelType
-{
+public enum VoxelType {
     /// <summary>
     /// Empty space. Does not participate in connectivity.
     /// This is the default for unset voxels (sparse storage).

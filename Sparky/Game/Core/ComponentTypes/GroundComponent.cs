@@ -10,8 +10,7 @@ namespace Sparky.Game.Core.ComponentTypes;
 /// Ground has a single terminal region. All conductor voxels connected to this
 /// terminal (directly or transitively) will be at 0V.
 /// </remarks>
-public class GroundComponent : Component
-{
+public class GroundComponent : Component {
     private readonly TerminalRegion _terminal;
 
     public override ComponentType Type => ComponentType.Ground;
@@ -24,8 +23,7 @@ public class GroundComponent : Component
     /// <param name="origin">Component origin position.</param>
     /// <param name="terminalVoxels">The conductor voxels forming the ground terminal.</param>
     public GroundComponent(VoxelPos origin, IEnumerable<VoxelPos> terminalVoxels)
-        : base(origin)
-    {
+        : base(origin) {
         _terminal = new TerminalRegion("ground", terminalVoxels);
         Terminals = [_terminal];
     }
@@ -34,8 +32,7 @@ public class GroundComponent : Component
     /// Creates a ground component with a single terminal voxel.
     /// </summary>
     public GroundComponent(VoxelPos terminalVoxel)
-        : this(terminalVoxel, [terminalVoxel])
-    {
+        : this(terminalVoxel, [terminalVoxel]) {
     }
 
     /// <summary>
@@ -44,18 +41,15 @@ public class GroundComponent : Component
     /// </summary>
     public override void CreateMnaComponents(
         ISimulation sim,
-        IReadOnlyDictionary<string, NodeId> terminalNodes)
-    {
+        IReadOnlyDictionary<string, NodeId> terminalNodes) {
         // Ground is handled specially by TopologyBuilder - no MNA components needed
     }
 
-    public override void RemoveMnaComponents(ISimulation sim)
-    {
+    public override void RemoveMnaComponents(ISimulation sim) {
         // Nothing to remove
     }
 
-    public override ComponentVisualState ComputeVisualState(ISimulation sim)
-    {
+    public override ComponentVisualState ComputeVisualState(ISimulation sim) {
         return ComponentVisualState.Default;
     }
 }

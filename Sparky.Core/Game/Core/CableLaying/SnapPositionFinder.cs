@@ -5,8 +5,7 @@ namespace Sparky.Game.Core.CableLaying;
 /// Searches nearby positions to find optimal start points based on support quality.
 /// Returns the actual voxel positions where the cable should start.
 /// </summary>
-public static class SnapPositionFinder
-{
+public static class SnapPositionFinder {
     /// <summary>
     /// Finds the best start positions within 3 voxels of the clicked position.
     /// Returns the actual voxel positions that make up the cable's starting cross-section.
@@ -27,30 +26,24 @@ public static class SnapPositionFinder
         VoxelPos clicked,
         IWorldVoxelCache cache,
         CrossSection crossSection,
-        float currentTime)
-    {
+        float currentTime) {
         IReadOnlyList<VoxelPos> bestPositions = [clicked];
         int bestScore = int.MinValue;
 
         int maxSearch = 3;
 
-        for (int dx = -maxSearch; dx <= maxSearch; dx++)
-        {
-            for (int dy = -maxSearch; dy <= maxSearch; dy++)
-            {
-                for (int dz = -maxSearch; dz <= maxSearch; dz++)
-                {
+        for (int dx = -maxSearch; dx <= maxSearch; dx++) {
+            for (int dy = -maxSearch; dy <= maxSearch; dy++) {
+                for (int dz = -maxSearch; dz <= maxSearch; dz++) {
                     var anchor = clicked.Offset(dx, dy, dz);
 
                     // Try all support directions for this position
-                    foreach (var supportDir in VoxelDirectionExtensions.All)
-                    {
+                    foreach (var supportDir in VoxelDirectionExtensions.All) {
                         int score = ScorePositionWithSupport(
                             anchor, clicked, cache, crossSection, supportDir, currentTime,
                             out var positions);
 
-                        if (score > bestScore)
-                        {
+                        if (score > bestScore) {
                             bestScore = score;
                             bestPositions = positions;
                         }
@@ -73,8 +66,7 @@ public static class SnapPositionFinder
         CrossSection crossSection,
         VoxelDirection supportDir,
         float currentTime,
-        out IReadOnlyList<VoxelPos> chosenPositions)
-    {
+        out IReadOnlyList<VoxelPos> chosenPositions) {
         chosenPositions = [anchor];
 
         // Get the two perpendicular axes for travel direction
@@ -96,8 +88,7 @@ public static class SnapPositionFinder
         // Time-based preference: pick one of the 4 configurations to prefer
         int timePreference = (int)currentTime % 4;
 
-        foreach (var (travelDir, orientation, index) in candidates)
-        {
+        foreach (var (travelDir, orientation, index) in candidates) {
             var positions = crossSection.GetVoxelPositions(anchor, travelDir, orientation).ToList();
             int score = ScoreConfiguration(positions, target, cache, crossSection, supportDir);
 
@@ -105,8 +96,7 @@ public static class SnapPositionFinder
             if (index == timePreference)
                 score += 2;
 
-            if (score > bestScore)
-            {
+            if (score > bestScore) {
                 bestScore = score;
                 chosenPositions = positions;
             }
@@ -123,16 +113,14 @@ public static class SnapPositionFinder
         VoxelPos target,
         IWorldVoxelCache cache,
         CrossSection crossSection,
-        VoxelDirection supportDir)
-    {
+        VoxelDirection supportDir) {
         int n = crossSection.Width;
         int m = crossSection.Height;
         int totalVoxels = n * m;
         int requiredContact = Math.Max(n, m);
 
         // Rule 1: All N×M voxels must be Empty (or CableConductor for self-overlap)
-        foreach (var voxelPos in positions)
-        {
+        foreach (var voxelPos in positions) {
             if (!cache.IsInPathfindingBounds(voxelPos))
                 return int.MinValue;
 
@@ -145,8 +133,7 @@ public static class SnapPositionFinder
 
         // Rule 2: Exactly max(N,M) voxels must touch Insulator in the support direction
         int insulatorContact = 0;
-        foreach (var voxelPos in positions)
-        {
+        foreach (var voxelPos in positions) {
             var neighbor = voxelPos.Neighbor(supportDir);
             if (cache.GetState(neighbor) == CacheVoxelState.Insulation)
                 insulatorContact++;
@@ -173,11 +160,9 @@ public static class SnapPositionFinder
     /// <summary>
     /// Computes the geometric center of a list of voxel positions.
     /// </summary>
-    private static VoxelPos ComputeGeometricCenter(IReadOnlyList<VoxelPos> positions)
-    {
+    private static VoxelPos ComputeGeometricCenter(IReadOnlyList<VoxelPos> positions) {
         int sumX = 0, sumY = 0, sumZ = 0;
-        foreach (var p in positions)
-        {
+        foreach (var p in positions) {
             sumX += p.X;
             sumY += p.Y;
             sumZ += p.Z;
@@ -188,11 +173,9 @@ public static class SnapPositionFinder
     /// <summary>
     /// Counts how many voxels in the cross-section are adjacent to pre-existing conductor.
     /// </summary>
-    private static int CountAdjacentConductorVoxels(IReadOnlyList<VoxelPos> positions, IWorldVoxelCache cache)
-    {
+    private static int CountAdjacentConductorVoxels(IReadOnlyList<VoxelPos> positions, IWorldVoxelCache cache) {
         int count = 0;
-        foreach (var pos in positions)
-        {
+        foreach (var pos in positions) {
             if (cache.AnyCardinalNeighbor(pos, CacheVoxelState.PreExistingConductor))
                 count++;
         }
@@ -202,10 +185,8 @@ public static class SnapPositionFinder
     /// <summary>
     /// Converts an axis index (0=X, 1=Y, 2=Z) to a positive direction.
     /// </summary>
-    private static VoxelDirection AxisToDirection(int axis)
-    {
-        return axis switch
-        {
+    private static VoxelDirection AxisToDirection(int axis) {
+        return axis switch {
             0 => VoxelDirection.XPos,
             1 => VoxelDirection.YPos,
             2 => VoxelDirection.ZPos,

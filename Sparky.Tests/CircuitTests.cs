@@ -3,14 +3,11 @@ using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
+namespace Sparky.Tests {
     [TestFixture]
-    public class CircuitTests
-    {
+    public class CircuitTests {
         [Test]
-        public void TestVoltageDivider()
-        {
+        public void TestVoltageDivider() {
             // 10V Source -> R1 (100) -> Node 1 -> R2 (100) -> Ground
             // Expected: Node 1 = 5V
 
@@ -46,8 +43,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void DenseSolveHandlesResistorLadder()
-        {
+        public void DenseSolveHandlesResistorLadder() {
             // Ladder of 10x 100 Ohm resistors from 12V source to ground.
             // Current = 12 / (10 * 100) = 0.012A.
             // Node after i resistors should be V = 12 - I * R * i.
@@ -64,8 +60,7 @@ namespace Sparky.Tests
 
             var ladderNodes = new List<Node> { nSrc };
             Node prev = nSrc;
-            for (int i = 0; i < segments - 1; i++)
-            {
+            for (int i = 0; i < segments - 1; i++) {
                 var next = circuit.AddNode();
                 circuit.AddComponent(new Resistor(prev, next, r));
                 prev = next;
@@ -76,8 +71,7 @@ namespace Sparky.Tests
             circuit.Solve(0);
 
             double expected = 12.0;
-            for (int i = 1; i < ladderNodes.Count; i++)
-            {
+            for (int i = 1; i < ladderNodes.Count; i++) {
                 var node = ladderNodes[i];
                 expected -= current * r;
                 Assert.That(node.Voltage, Is.EqualTo(expected).Within(Tolerances.Voltage));
@@ -85,8 +79,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void SparseSolveHandlesLargeResistorLadder()
-        {
+        public void SparseSolveHandlesLargeResistorLadder() {
             // Large ladder to exercise the sparse path (>96 unknowns).
             // 12V source feeding 150 segments of 2 Ohms each.
             // Current = 12 / (150 * 2) = 0.04A.
@@ -102,8 +95,7 @@ namespace Sparky.Tests
             double current = 12.0 / (segments * r);
 
             Node prev = nSrc;
-            for (int i = 0; i < segments - 1; i++)
-            {
+            for (int i = 0; i < segments - 1; i++) {
                 var next = circuit.AddNode();
                 circuit.AddComponent(new Resistor(prev, next, r));
                 prev = next;
@@ -114,8 +106,7 @@ namespace Sparky.Tests
 
             // Check a few positions across the ladder.
             double[] checkpoints = { 1, segments / 2.0, segments - 1 };
-            foreach (double step in checkpoints)
-            {
+            foreach (double step in checkpoints) {
                 int nodeIndex = (int)step + 1; // ground=0, source=1
                 double expected = 12.0 - current * r * step;
                 Assert.That(

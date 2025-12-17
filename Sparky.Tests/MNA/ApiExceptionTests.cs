@@ -2,24 +2,20 @@ using System;
 using NUnit.Framework;
 using Sparky.MNA.Api;
 
-namespace Sparky.Tests.MNA
-{
+namespace Sparky.Tests.MNA {
     [TestFixture]
-    public class ApiExceptionTests
-    {
+    public class ApiExceptionTests {
         private SimulationManager _sim = null!;
 
         [SetUp]
-        public void SetUp()
-        {
+        public void SetUp() {
             _sim = new SimulationManager();
         }
 
         #region Invalid Node Tests
 
         [Test]
-        public void AddResistor_WithInvalidNode_ThrowsInvalidNodeException()
-        {
+        public void AddResistor_WithInvalidNode_ThrowsInvalidNodeException() {
             var validNode = _sim.CreateNode();
             var invalidNode = new NodeId(999);
 
@@ -32,8 +28,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void GetVoltage_InvalidNode_ThrowsInvalidNodeException()
-        {
+        public void GetVoltage_InvalidNode_ThrowsInvalidNodeException() {
             var invalidNode = new NodeId(999);
             _sim.Step(0.1); // Need to step to trigger the check
 
@@ -47,8 +42,7 @@ namespace Sparky.Tests.MNA
         #region Invalid Parameter Tests - Resistance
 
         [Test]
-        public void AddResistor_WithNegativeResistance_ThrowsInvalidParameterException()
-        {
+        public void AddResistor_WithNegativeResistance_ThrowsInvalidParameterException() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -62,8 +56,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void AddResistor_WithZeroResistance_ThrowsInvalidParameterException()
-        {
+        public void AddResistor_WithZeroResistance_ThrowsInvalidParameterException() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -78,8 +71,7 @@ namespace Sparky.Tests.MNA
         #region Invalid Parameter Tests - Capacitance
 
         [Test]
-        public void AddCapacitor_WithNegativeCapacitance_ThrowsInvalidParameterException()
-        {
+        public void AddCapacitor_WithNegativeCapacitance_ThrowsInvalidParameterException() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -97,8 +89,7 @@ namespace Sparky.Tests.MNA
         #region Invalid Parameter Tests - Inductance
 
         [Test]
-        public void AddInductor_WithNegativeInductance_ThrowsInvalidParameterException()
-        {
+        public void AddInductor_WithNegativeInductance_ThrowsInvalidParameterException() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -116,8 +107,7 @@ namespace Sparky.Tests.MNA
         #region Invalid Parameter Tests - Transformer Ratio
 
         [Test]
-        public void AddTransformer_WithZeroRatio_ThrowsInvalidParameterException()
-        {
+        public void AddTransformer_WithZeroRatio_ThrowsInvalidParameterException() {
             var p1 = _sim.CreateNode();
             var p2 = _sim.CreateNode();
             var s1 = _sim.CreateNode();
@@ -132,8 +122,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void AddTransformer_WithNegativeRatio_ThrowsInvalidParameterException()
-        {
+        public void AddTransformer_WithNegativeRatio_ThrowsInvalidParameterException() {
             var p1 = _sim.CreateNode();
             var p2 = _sim.CreateNode();
             var s1 = _sim.CreateNode();
@@ -152,8 +141,7 @@ namespace Sparky.Tests.MNA
         #region Invalid Component Tests
 
         [Test]
-        public void UpdateResistor_WithInvalidId_ThrowsInvalidComponentException()
-        {
+        public void UpdateResistor_WithInvalidId_ThrowsInvalidComponentException() {
             var invalidId = new ResistorId(999);
 
             var ex = Assert.Throws<InvalidComponentException>(() =>
@@ -165,8 +153,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void RemoveResistor_WithInvalidId_ThrowsInvalidComponentException()
-        {
+        public void RemoveResistor_WithInvalidId_ThrowsInvalidComponentException() {
             var invalidId = new ResistorId(999);
 
             var ex = Assert.Throws<InvalidComponentException>(() => _sim.RemoveResistor(invalidId));
@@ -180,8 +167,7 @@ namespace Sparky.Tests.MNA
         #region Node Removal Tests
 
         [Test]
-        public void RemoveNode_WithConnections_ThrowsNodeInUseException()
-        {
+        public void RemoveNode_WithConnections_ThrowsNodeInUseException() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
             _sim.AddResistor(n1, n2, 100.0);
@@ -193,8 +179,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void RemoveNode_Ground_ThrowsInvalidOperationException()
-        {
+        public void RemoveNode_Ground_ThrowsInvalidOperationException() {
             var groundNode = _sim.Ground;
 
             var ex = Assert.Throws<InvalidOperationException>(() => _sim.RemoveNode(groundNode));
@@ -207,10 +192,8 @@ namespace Sparky.Tests.MNA
         #region Bulk Update Tests
 
         [Test]
-        public void Step_DuringBulkUpdate_ThrowsInvalidOperationException()
-        {
-            using (_sim.BeginBulkUpdate())
-            {
+        public void Step_DuringBulkUpdate_ThrowsInvalidOperationException() {
+            using (_sim.BeginBulkUpdate()) {
                 var ex = Assert.Throws<InvalidOperationException>(() => _sim.Step(0.1));
 
                 Assert.That(ex!.Message, Does.Contain("bulk update"));

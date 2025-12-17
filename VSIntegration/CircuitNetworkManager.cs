@@ -19,13 +19,11 @@ namespace Sparky.VSIntegration;
 /// Manages all electrical networks in the game world.
 /// Handles network discovery, chunk coherence, and simulation ticking.
 /// </summary>
-public class CircuitNetworkManager
-{
+public class CircuitNetworkManager {
     /// <summary>
     /// State for a single connected electrical network.
     /// </summary>
-    public class NetworkState
-    {
+    public class NetworkState {
         public Guid Id { get; init; }
         public VoxelGrid Voxels { get; } = new();
         public TopologyBuilder Topology { get; } = new();
@@ -57,8 +55,7 @@ public class CircuitNetworkManager
     /// <summary>
     /// Initializes the network manager with the server API.
     /// </summary>
-    public void Initialize(ICoreServerAPI sapi)
-    {
+    public void Initialize(ICoreServerAPI sapi) {
         _sapi = sapi;
 
         // Register chunk events
@@ -74,10 +71,8 @@ public class CircuitNetworkManager
     /// <summary>
     /// Shuts down the network manager.
     /// </summary>
-    public void Shutdown()
-    {
-        if (_sapi != null)
-        {
+    public void Shutdown() {
+        if (_sapi != null) {
             _sapi.Event.UnregisterGameTickListener(_tickListenerId);
             _sapi.Event.ChunkColumnLoaded -= OnChunkColumnLoaded;
             _sapi.Event.ChunkColumnUnloaded -= OnChunkColumnUnloaded;
@@ -96,11 +91,9 @@ public class CircuitNetworkManager
     /// Registers a circuit block with the manager.
     /// Called from BlockEntityCircuit.Initialize().
     /// </summary>
-    public void RegisterBlock(BlockPos vsPos, BlockEntityCircuit be)
-    {
+    public void RegisterBlock(BlockPos vsPos, BlockEntityCircuit be) {
         // Check if this block already has a network assignment
-        if (be.NetworkId != Guid.Empty && _networks.ContainsKey(be.NetworkId))
-        {
+        if (be.NetworkId != Guid.Empty && _networks.ContainsKey(be.NetworkId)) {
             _blockToNetwork[vsPos] = be.NetworkId;
             return;
         }
@@ -113,26 +106,19 @@ public class CircuitNetworkManager
     /// Unregisters a circuit block from the manager.
     /// Called from BlockEntityCircuit.OnBlockRemoved().
     /// </summary>
-    public void UnregisterBlock(BlockPos vsPos)
-    {
-        if (_blockToNetwork.TryGetValue(vsPos, out var netId))
-        {
+    public void UnregisterBlock(BlockPos vsPos) {
+        if (_blockToNetwork.TryGetValue(vsPos, out var netId)) {
             _blockToNetwork.Remove(vsPos);
 
-            if (_networks.TryGetValue(netId, out var network))
-            {
+            if (_networks.TryGetValue(netId, out var network)) {
                 network.Blocks.Remove(vsPos);
 
                 // If network is now empty, remove it
-                if (network.Blocks.Count == 0)
-                {
+                if (network.Blocks.Count == 0) {
                     RemoveNetwork(netId);
-                }
-                else
-                {
+                } else {
                     // Mark remaining blocks dirty to detect network splits
-                    foreach (var block in network.Blocks)
-                    {
+                    foreach (var block in network.Blocks) {
                         _dirtyBlocks.Add(block);
                     }
                 }
@@ -143,8 +129,7 @@ public class CircuitNetworkManager
     /// <summary>
     /// Called when a block entity is unloaded (chunk unload).
     /// </summary>
-    public void OnBlockUnloaded(BlockPos vsPos)
-    {
+    public void OnBlockUnloaded(BlockPos vsPos) {
         // The block is still registered, but the chunk is unloading
         // This will be handled by OnChunkColumnUnloaded
     }
@@ -152,16 +137,14 @@ public class CircuitNetworkManager
     /// <summary>
     /// Called when a voxel in a block changes.
     /// </summary>
-    public void OnBlockVoxelChanged(BlockPos vsPos, int lx, int ly, int lz, VoxelType type, Material? material)
-    {
+    public void OnBlockVoxelChanged(BlockPos vsPos, int lx, int ly, int lz, VoxelType type, Material? material) {
         _dirtyBlocks.Add(vsPos);
     }
 
     /// <summary>
     /// Called when multiple voxels in a block change at once (e.g., cable placement).
     /// </summary>
-    public void OnBlockVoxelsChangedBatch(BlockPos vsPos)
-    {
+    public void OnBlockVoxelsChangedBatch(BlockPos vsPos) {
         _dirtyBlocks.Add(vsPos);
     }
 
@@ -169,31 +152,25 @@ public class CircuitNetworkManager
 
     #region Chunk Events
 
-    private void OnChunkColumnLoaded(Vec2i chunkCoord, IWorldChunk[] chunks)
-    {
+    private void OnChunkColumnLoaded(Vec2i chunkCoord, IWorldChunk[] chunks) {
         var columnKey = new Vec3i(chunkCoord.X, 0, chunkCoord.Y);
         _loadedChunks.Add(columnKey);
 
         // Check if any paused networks can resume
-        if (_chunkToNetworks.TryGetValue(columnKey, out var networks))
-        {
-            foreach (var netId in networks.ToList())
-            {
+        if (_chunkToNetworks.TryGetValue(columnKey, out var networks)) {
+            foreach (var netId in networks.ToList()) {
                 TryResumeNetwork(netId);
             }
         }
     }
 
-    private void OnChunkColumnUnloaded(Vec3i chunkCoord)
-    {
+    private void OnChunkColumnUnloaded(Vec3i chunkCoord) {
         var columnKey = new Vec3i(chunkCoord.X, 0, chunkCoord.Z);
         _loadedChunks.Remove(columnKey);
 
         // Pause all networks that have blocks in this chunk
-        if (_chunkToNetworks.TryGetValue(columnKey, out var networks))
-        {
-            foreach (var netId in networks.ToList())
-            {
+        if (_chunkToNetworks.TryGetValue(columnKey, out var networks)) {
+            foreach (var netId in networks.ToList()) {
                 PauseNetwork(netId);
             }
         }
@@ -203,8 +180,7 @@ public class CircuitNetworkManager
 
     #region Network Pause/Resume
 
-    private void PauseNetwork(Guid networkId)
-    {
+    private void PauseNetwork(Guid networkId) {
         if (!_networks.TryGetValue(networkId, out var network))
             return;
 
@@ -219,8 +195,7 @@ public class CircuitNetworkManager
         _sapi?.Logger.Debug($"[Sparky] Network {networkId} paused - chunk unloaded");
     }
 
-    private void TryResumeNetwork(Guid networkId)
-    {
+    private void TryResumeNetwork(Guid networkId) {
         if (!_networks.TryGetValue(networkId, out var network))
             return;
 
@@ -228,15 +203,13 @@ public class CircuitNetworkManager
             return;
 
         // Check if ALL chunks are now loaded
-        foreach (var chunk in network.ChunkColumns)
-        {
+        foreach (var chunk in network.ChunkColumns) {
             if (!_loadedChunks.Contains(chunk))
                 return; // Still missing chunks
         }
 
         // All chunks loaded - restore state and resume
-        if (network.PausedSimState != null)
-        {
+        if (network.PausedSimState != null) {
             // TODO: RestoreSimulationState(network.Simulation, network.PausedSimState);
             network.PausedSimState = null;
         }
@@ -245,19 +218,15 @@ public class CircuitNetworkManager
         _sapi?.Logger.Debug($"[Sparky] Network {networkId} resumed - all chunks loaded");
     }
 
-    private void RemoveNetwork(Guid networkId)
-    {
+    private void RemoveNetwork(Guid networkId) {
         if (!_networks.TryGetValue(networkId, out var network))
             return;
 
         // Remove from chunk mappings
-        foreach (var chunk in network.ChunkColumns)
-        {
-            if (_chunkToNetworks.TryGetValue(chunk, out var networks))
-            {
+        foreach (var chunk in network.ChunkColumns) {
+            if (_chunkToNetworks.TryGetValue(chunk, out var networks)) {
                 networks.Remove(networkId);
-                if (networks.Count == 0)
-                {
+                if (networks.Count == 0) {
                     _chunkToNetworks.Remove(chunk);
                 }
             }
@@ -271,26 +240,19 @@ public class CircuitNetworkManager
 
     #region Simulation Tick
 
-    private void OnTick(float dt)
-    {
+    private void OnTick(float dt) {
         // 1. Process dirty blocks
-        if (_dirtyBlocks.Count > 0)
-        {
+        if (_dirtyBlocks.Count > 0) {
             ProcessDirtyBlocks();
             _dirtyBlocks.Clear();
         }
 
         // 2. Step active simulations
-        foreach (var network in _networks.Values)
-        {
-            if (!network.IsPaused)
-            {
-                try
-                {
+        foreach (var network in _networks.Values) {
+            if (!network.IsPaused) {
+                try {
                     network.Simulation.Step(TimeStep);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     _sapi?.Logger.Error($"[Sparky] Simulation error in network {network.Id}: {ex.Message}");
                 }
             }
@@ -303,21 +265,18 @@ public class CircuitNetworkManager
 
     #region Topology Rebuild
 
-    private void ProcessDirtyBlocks()
-    {
+    private void ProcessDirtyBlocks() {
         if (_sapi == null || _dirtyBlocks.Count == 0)
             return;
 
         // Identify affected networks
         var affectedNetworks = new HashSet<Guid>();
-        foreach (var pos in _dirtyBlocks)
-        {
+        foreach (var pos in _dirtyBlocks) {
             if (_blockToNetwork.TryGetValue(pos, out var netId))
                 affectedNetworks.Add(netId);
 
             // Check neighbors for potential merges
-            foreach (var neighbor in GetNeighborBlockPositions(pos))
-            {
+            foreach (var neighbor in GetNeighborBlockPositions(pos)) {
                 if (_blockToNetwork.TryGetValue(neighbor, out netId))
                     affectedNetworks.Add(netId);
             }
@@ -325,12 +284,9 @@ public class CircuitNetworkManager
 
         // Collect all blocks from affected networks + new blocks
         var allBlocks = new HashSet<BlockPos>(_dirtyBlocks);
-        foreach (var netId in affectedNetworks)
-        {
-            if (_networks.TryGetValue(netId, out var existingNet))
-            {
-                foreach (var blockPos in existingNet.Blocks)
-                {
+        foreach (var netId in affectedNetworks) {
+            if (_networks.TryGetValue(netId, out var existingNet)) {
+                foreach (var blockPos in existingNet.Blocks) {
                     allBlocks.Add(blockPos);
                 }
             }
@@ -338,21 +294,19 @@ public class CircuitNetworkManager
 
         // Build merged voxel grid
         var mergedGrid = new VoxelGrid();
-        foreach (var blockPos in allBlocks)
-        {
+        foreach (var blockPos in allBlocks) {
             var be = _sapi.World.BlockAccessor.GetBlockEntity(blockPos) as BlockEntityCircuit;
-            if (be == null) continue;
+            if (be == null)
+                continue;
 
             var sparkyBlockPos = BlockEntityCircuit.ToSparkyBlockPos(blockPos);
             be.ExportToVoxelGrid(mergedGrid, sparkyBlockPos);
         }
 
         // Skip if no voxels
-        if (mergedGrid.VoxelCount == 0)
-        {
+        if (mergedGrid.VoxelCount == 0) {
             // Clean up old networks
-            foreach (var netId in affectedNetworks)
-            {
+            foreach (var netId in affectedNetworks) {
                 RemoveNetwork(netId);
             }
             return;
@@ -364,8 +318,7 @@ public class CircuitNetworkManager
 
         // Update network's voxel grid
         network.Voxels.Clear();
-        foreach (var (pos, voxel) in mergedGrid.GetAllVoxels())
-        {
+        foreach (var (pos, voxel) in mergedGrid.GetAllVoxels()) {
             if (voxel.Material != null)
                 network.Voxels.SetVoxel(pos, voxel.Material);
             else
@@ -379,13 +332,11 @@ public class CircuitNetworkManager
             network.Simulation);
 
         // Update block-to-network mapping
-        foreach (var block in allBlocks)
-        {
+        foreach (var block in allBlocks) {
             _blockToNetwork[block] = network.Id;
 
             var be = _sapi.World.BlockAccessor.GetBlockEntity(block) as BlockEntityCircuit;
-            if (be != null)
-            {
+            if (be != null) {
                 be.NetworkId = network.Id;
             }
         }
@@ -396,14 +347,11 @@ public class CircuitNetworkManager
         _sapi.Logger.Debug($"[Sparky] Rebuilt topology for network {network.Id}: {network.Voxels.VoxelCount} voxels, {allBlocks.Count} blocks");
     }
 
-    private NetworkState GetOrCreateNetwork(HashSet<Guid> affectedNetworks, HashSet<BlockPos> blocks)
-    {
+    private NetworkState GetOrCreateNetwork(HashSet<Guid> affectedNetworks, HashSet<BlockPos> blocks) {
         // Reuse existing network if there's exactly one
-        if (affectedNetworks.Count == 1)
-        {
+        if (affectedNetworks.Count == 1) {
             var netId = affectedNetworks.First();
-            if (_networks.TryGetValue(netId, out var existing))
-            {
+            if (_networks.TryGetValue(netId, out var existing)) {
                 existing.Blocks.Clear();
                 foreach (var block in blocks)
                     existing.Blocks.Add(block);
@@ -412,14 +360,12 @@ public class CircuitNetworkManager
         }
 
         // Remove old networks
-        foreach (var netId in affectedNetworks)
-        {
+        foreach (var netId in affectedNetworks) {
             RemoveNetwork(netId);
         }
 
         // Create new network
-        var newNetwork = new NetworkState
-        {
+        var newNetwork = new NetworkState {
             Id = Guid.NewGuid(),
             Simulation = new SimulationManager()
         };
@@ -431,29 +377,24 @@ public class CircuitNetworkManager
         return newNetwork;
     }
 
-    private void UpdateNetworkChunkMappings(NetworkState network)
-    {
+    private void UpdateNetworkChunkMappings(NetworkState network) {
         // Clear old mappings
-        foreach (var chunk in network.ChunkColumns.ToList())
-        {
-            if (_chunkToNetworks.TryGetValue(chunk, out var networks))
-            {
+        foreach (var chunk in network.ChunkColumns.ToList()) {
+            if (_chunkToNetworks.TryGetValue(chunk, out var networks)) {
                 networks.Remove(network.Id);
             }
         }
         network.ChunkColumns.Clear();
 
         // Add new mappings
-        foreach (var block in network.Blocks)
-        {
+        foreach (var block in network.Blocks) {
             var chunkX = block.X >> 5; // Divide by 32 (chunk size)
             var chunkZ = block.Z >> 5;
             var chunk = new Vec3i(chunkX, 0, chunkZ);
 
             network.ChunkColumns.Add(chunk);
 
-            if (!_chunkToNetworks.TryGetValue(chunk, out var networks))
-            {
+            if (!_chunkToNetworks.TryGetValue(chunk, out var networks)) {
                 networks = new HashSet<Guid>();
                 _chunkToNetworks[chunk] = networks;
             }
@@ -461,18 +402,15 @@ public class CircuitNetworkManager
         }
 
         // Check if network should be paused
-        foreach (var chunk in network.ChunkColumns)
-        {
-            if (!_loadedChunks.Contains(chunk))
-            {
+        foreach (var chunk in network.ChunkColumns) {
+            if (!_loadedChunks.Contains(chunk)) {
                 PauseNetwork(network.Id);
                 break;
             }
         }
     }
 
-    private static IEnumerable<BlockPos> GetNeighborBlockPositions(BlockPos pos)
-    {
+    private static IEnumerable<BlockPos> GetNeighborBlockPositions(BlockPos pos) {
         yield return pos.NorthCopy();
         yield return pos.SouthCopy();
         yield return pos.EastCopy();
@@ -488,10 +426,8 @@ public class CircuitNetworkManager
     /// <summary>
     /// Gets the network state for a block, if any.
     /// </summary>
-    public NetworkState? GetNetworkForBlock(BlockPos pos)
-    {
-        if (_blockToNetwork.TryGetValue(pos, out var netId))
-        {
+    public NetworkState? GetNetworkForBlock(BlockPos pos) {
+        if (_blockToNetwork.TryGetValue(pos, out var netId)) {
             _networks.TryGetValue(netId, out var network);
             return network;
         }

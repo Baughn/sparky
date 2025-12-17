@@ -15,8 +15,7 @@ namespace Sparky.Tests.TwoD;
 /// These tests act as the client, sending InputEvents and verifying RenderCommands.
 /// </summary>
 [TestFixture]
-public class GameServerIntegrationTests
-{
+public class GameServerIntegrationTests {
     /// <summary>
     /// Tests a simple battery-resistor-ground circuit with DC analysis.
     /// Components use 3-cell layout: terminal - body - terminal.
@@ -30,8 +29,7 @@ public class GameServerIntegrationTests
     /// Bridge path (Region 2): Z=3 row from X=2 to X=11
     /// </summary>
     [Test]
-    public void SimpleCircuit_DCAnalysis_CorrectVoltageDistribution()
-    {
+    public void SimpleCircuit_DCAnalysis_CorrectVoltageDistribution() {
         var server = new GameServer(16, 16);
 
         // Resistor at (0, 5) rot=0: RA at (0,0,5), body at (1,0,5), RB at (2,0,5)
@@ -88,8 +86,7 @@ public class GameServerIntegrationTests
     /// Uses the same isolated layout as the DC test.
     /// </summary>
     [Test]
-    public void SimpleCircuit_TransientAnalysis_StableAfterConstruction()
-    {
+    public void SimpleCircuit_TransientAnalysis_StableAfterConstruction() {
         var server = new GameServer(16, 16);
         const float dt = 0.016f; // ~60fps frame time
 
@@ -104,8 +101,7 @@ public class GameServerIntegrationTests
         server.Tick(dt);
 
         // Region 1 return path (wires at Z=7)
-        for (int x = 0; x <= 9; x++)
-        {
+        for (int x = 0; x <= 9; x++) {
             server.HandleInput(new PlaceComponent(new GridPos(x, 7), CellType.Wire));
             server.Tick(dt);
         }
@@ -117,8 +113,7 @@ public class GameServerIntegrationTests
         server.Tick(dt);
         server.HandleInput(new PlaceComponent(new GridPos(2, 3), CellType.Wire));
         server.Tick(dt);
-        for (int x = 3; x <= 11; x++)
-        {
+        for (int x = 3; x <= 11; x++) {
             server.HandleInput(new PlaceComponent(new GridPos(x, 3), CellType.Wire));
             server.Tick(dt);
         }
@@ -130,8 +125,7 @@ public class GameServerIntegrationTests
         server.Tick(dt);
 
         // Run several more ticks to let simulation settle
-        for (int i = 0; i < 10; i++)
-        {
+        for (int i = 0; i < 10; i++) {
             server.Tick(dt);
         }
 
@@ -139,8 +133,7 @@ public class GameServerIntegrationTests
         var fullState = server.GetFullState().OfType<SetCell>().ToDictionary(c => c.Pos, c => c);
 
         // Verify no NaN values (simulation didn't blow up)
-        foreach (var (pos, cell) in fullState)
-        {
+        foreach (var (pos, cell) in fullState) {
             Assert.That(float.IsNaN(cell.State.VoltageNormalized), Is.False,
                 $"Voltage at {pos} should not be NaN");
             Assert.That(float.IsNaN(cell.State.CurrentNormalized), Is.False,
@@ -171,8 +164,7 @@ public class GameServerIntegrationTests
     /// Battery: B-(10) - body(11) - B+(12)
     /// </summary>
     [Test]
-    public void VoltageDivider_MiddleNodeHasIntermediateVoltage()
-    {
+    public void VoltageDivider_MiddleNodeHasIntermediateVoltage() {
         var server = new GameServer(16, 16);
 
         // R1 at (0, 5) rot=0: R1A at (0,0,5), R1B at (2,0,5)
@@ -228,8 +220,7 @@ public class GameServerIntegrationTests
     /// Region 2 (High, 5V): (3,0,5), (4,0,5), (5,0,5)
     /// </summary>
     [Test]
-    public void Debug_DirectTopologyBuilder_WorksWithIsolatedTerminals()
-    {
+    public void Debug_DirectTopologyBuilder_WorksWithIsolatedTerminals() {
         var grid = new VoxelGrid();
         var sim = new SimulationManager();
         var builder = new TopologyBuilder();
@@ -298,8 +289,7 @@ public class GameServerIntegrationTests
     /// Tests that multi-cell components render all 3 cells (origin, body, far terminal).
     /// </summary>
     [Test]
-    public void MultiCellComponents_RenderAll3Cells()
-    {
+    public void MultiCellComponents_RenderAll3Cells() {
         var server = new GameServer(16, 16);
 
         // Place a battery at (5, 5) with rotation 0
@@ -336,8 +326,7 @@ public class GameServerIntegrationTests
     /// Tests that removing any cell of a multi-cell component removes all 3 cells.
     /// </summary>
     [Test]
-    public void MultiCellComponents_RemoveAnyCell_RemovesAll()
-    {
+    public void MultiCellComponents_RemoveAnyCell_RemovesAll() {
         var server = new GameServer(16, 16);
 
         // Place a battery
@@ -366,8 +355,7 @@ public class GameServerIntegrationTests
     /// Both wires should show 5A current.
     /// </summary>
     [Test]
-    public void WireCells_ShowCorrectCurrent()
-    {
+    public void WireCells_ShowCorrectCurrent() {
         var server = new GameServer(16, 16);
 
         // Battery at (0,0) with rotation 1 (+Y): negative at (0,0), body at (0,1), positive at (0,2)
@@ -410,8 +398,7 @@ public class GameServerIntegrationTests
     /// All 6 wires should show ~5A current.
     /// </summary>
     [Test]
-    public void WireChain_AllWiresShowSameCurrent()
-    {
+    public void WireChain_AllWiresShowSameCurrent() {
         var server = new GameServer(16, 16);
 
         // Battery at (0,0) with rotation 1 (+Y)
@@ -442,8 +429,7 @@ public class GameServerIntegrationTests
         };
 
         // Debug: print all wire currents to understand what's happening
-        foreach (var pos in wirePositions)
-        {
+        foreach (var pos in wirePositions) {
             Assert.That(setCells.ContainsKey(pos), Is.True, $"Wire at {pos} should have SetCell");
         }
 
@@ -453,8 +439,7 @@ public class GameServerIntegrationTests
 
         // Current slightly less than 5A due to wire-terminal contact resistances
         // All wires should show approximately the same current
-        foreach (var (pos, current) in currents)
-        {
+        foreach (var (pos, current) in currents) {
             Assert.That(current, Is.EqualTo(4.9f).Within(0.3f),
                 $"Wire at {pos} should show ~4.9A current, got {current}. All currents: {currentsStr}");
         }

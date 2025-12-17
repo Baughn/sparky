@@ -6,8 +6,7 @@ namespace Sparky.MNA.Utilities;
 /// <summary>
 /// AC current source: I(t) = Offset + Amplitude × sin(2π × Frequency × t + Phase)
 /// </summary>
-public class AcCurrentSource : TimeVaryingSource
-{
+public class AcCurrentSource : TimeVaryingSource {
     /// <summary>The underlying current source ID.</summary>
     public CurrentSourceId Id { get; }
 
@@ -42,8 +41,7 @@ public class AcCurrentSource : TimeVaryingSource
         double phase = 0,
         double offset = 0
     )
-        : base(sim)
-    {
+        : base(sim) {
         Amplitude = amplitude;
         Frequency = frequency;
         Phase = phase;
@@ -55,21 +53,18 @@ public class AcCurrentSource : TimeVaryingSource
     }
 
     /// <inheritdoc />
-    public override double GetValue(double time)
-    {
+    public override double GetValue(double time) {
         return Offset + Amplitude * Math.Sin(2 * Math.PI * Frequency * time + Phase);
     }
 
     /// <inheritdoc />
-    public override void Update()
-    {
+    public override void Update() {
         double value = GetValue(Sim.SimulationTime);
         Sim.UpdateCurrentSource(Id, value);
     }
 
     /// <inheritdoc />
-    public override void Remove()
-    {
+    public override void Remove() {
         Sim.RemoveCurrentSource(Id);
     }
 

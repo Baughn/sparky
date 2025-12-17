@@ -6,8 +6,7 @@ namespace Sparky.Game.Core;
 /// Pure math functions for calculating voxel positions from hit positions and face normals.
 /// Extracted from ItemWireTool to enable unit testing without VS dependencies.
 /// </summary>
-public static class VoxelPositionHelper
-{
+public static class VoxelPositionHelper {
     /// <summary>
     /// Gets the voxel coordinates (0-15) of the voxel whose face was clicked.
     /// This is the voxel "behind" the clicked face.
@@ -21,8 +20,7 @@ public static class VoxelPositionHelper
     /// <returns>Voxel coordinates (0-15 each axis)</returns>
     public static (int X, int Y, int Z) GetClickedVoxel(
         double hitX, double hitY, double hitZ,
-        float faceNormalX, float faceNormalY, float faceNormalZ)
-    {
+        float faceNormalX, float faceNormalY, float faceNormalZ) {
         // Offset hit position slightly inward from the face to get inside the clicked voxel
         // Face normal points outward, so subtract it to go inward
         const double inset = 0.01;
@@ -51,8 +49,7 @@ public static class VoxelPositionHelper
     /// <returns>Voxel coordinates (0-15 each axis)</returns>
     public static (int X, int Y, int Z) GetAdjacentVoxel(
         double hitX, double hitY, double hitZ,
-        float faceNormalX, float faceNormalY, float faceNormalZ)
-    {
+        float faceNormalX, float faceNormalY, float faceNormalZ) {
         var (x, y, z, _) = GetAdjacentVoxelWithOverflow(
             hitX, hitY, hitZ,
             faceNormalX, faceNormalY, faceNormalZ);
@@ -73,8 +70,7 @@ public static class VoxelPositionHelper
     /// <returns>Voxel coords (wrapped if outside) and whether it's outside the block</returns>
     public static (int X, int Y, int Z, bool OutsideBlock) GetAdjacentVoxelWithOverflow(
         double hitX, double hitY, double hitZ,
-        float faceNormalX, float faceNormalY, float faceNormalZ)
-    {
+        float faceNormalX, float faceNormalY, float faceNormalZ) {
         // Offset hit position slightly outward from the face to get in the adjacent voxel
         const double outset = 0.01;
         double x = hitX + faceNormalX * outset;
@@ -90,12 +86,18 @@ public static class VoxelPositionHelper
         bool outside = vx < 0 || vx > 15 || vy < 0 || vy > 15 || vz < 0 || vz > 15;
 
         // Wrap coordinates to adjacent block's local space
-        if (vx < 0) vx = 15;
-        else if (vx > 15) vx = 0;
-        if (vy < 0) vy = 15;
-        else if (vy > 15) vy = 0;
-        if (vz < 0) vz = 15;
-        else if (vz > 15) vz = 0;
+        if (vx < 0)
+            vx = 15;
+        else if (vx > 15)
+            vx = 0;
+        if (vy < 0)
+            vy = 15;
+        else if (vy > 15)
+            vy = 0;
+        if (vz < 0)
+            vz = 15;
+        else if (vz > 15)
+            vz = 0;
 
         return (vx, vy, vz, outside);
     }

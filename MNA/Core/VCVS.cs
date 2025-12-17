@@ -1,7 +1,6 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA.Core
-{
+namespace Sparky.MNA.Core {
     /// <summary>
     /// Voltage-Controlled Voltage Source (VCVS).
     /// Output voltage is proportional to input voltage:
@@ -11,8 +10,7 @@ namespace Sparky.MNA.Core
     /// The output is an ideal voltage source.
     /// Uses one auxiliary equation to track output current.
     /// </summary>
-    public class VCVS : Component
-    {
+    public class VCVS : Component {
         public Node ControlPos { get; }
         public Node ControlNeg { get; }
 
@@ -47,8 +45,7 @@ namespace Sparky.MNA.Core
             Gain = gain;
         }
 
-        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
-        {
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0) {
             if (MatrixIndex == -1)
                 return;
 

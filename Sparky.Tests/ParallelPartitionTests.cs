@@ -2,22 +2,18 @@ using NUnit.Framework;
 using Sparky.MNA.Api;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
+namespace Sparky.Tests {
     [TestFixture]
-    public class ParallelPartitionTests
-    {
+    public class ParallelPartitionTests {
         private SimulationManager _sim = null!;
 
         [SetUp]
-        public void SetUp()
-        {
+        public void SetUp() {
             _sim = new SimulationManager();
         }
 
         [Test]
-        public void TwoPartitions_BothSolveCorrectly()
-        {
+        public void TwoPartitions_BothSolveCorrectly() {
             // Create two independent circuits (only connected through ground)
             // Verify both solve correctly and don't interfere with each other
 
@@ -64,8 +60,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void ManyPartitions_AllSolveCorrectly()
-        {
+        public void ManyPartitions_AllSolveCorrectly() {
             // Create 10 independent partitions with different voltage sources
             // Verify all solve correctly in parallel
 
@@ -74,8 +69,7 @@ namespace Sparky.Tests
             var midNodes = new NodeId[partitionCount];
             var expectedVoltages = new double[partitionCount];
 
-            for (int i = 0; i < partitionCount; i++)
-            {
+            for (int i = 0; i < partitionCount; i++) {
                 double sourceVoltage = (i + 1) * 5.0; // 5V, 10V, 15V, ... 50V
                 double r1 = 100.0;
                 double r2 = 100.0 * (i + 1); // Different ratio for each
@@ -101,8 +95,7 @@ namespace Sparky.Tests
             );
 
             // Verify all partitions solved correctly
-            for (int i = 0; i < partitionCount; i++)
-            {
+            for (int i = 0; i < partitionCount; i++) {
                 Assert.That(
                     _sim.GetVoltage(midNodes[i]),
                     Is.EqualTo(expectedVoltages[i]).Within(Tolerances.Voltage),
@@ -112,8 +105,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void PartitionsWithDifferentComplexity_AllComplete()
-        {
+        public void PartitionsWithDifferentComplexity_AllComplete() {
             // Partition A: Simple linear circuit (1 iteration)
             // Partition B: Nonlinear circuit with diode (multiple Newton-Raphson iterations)
             // Both should solve correctly despite different iteration counts
@@ -161,8 +153,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void ConnectingPartitions_MergesIntoOne()
-        {
+        public void ConnectingPartitions_MergesIntoOne() {
             // Start with two separate partitions
             // Add a resistor connecting them
             // Verify partition count drops to 1 and combined solution is correct

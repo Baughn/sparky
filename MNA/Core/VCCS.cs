@@ -1,7 +1,6 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA.Core
-{
+namespace Sparky.MNA.Core {
     /// <summary>
     /// Voltage-Controlled Current Source (VCCS).
     /// Output current is proportional to input voltage:
@@ -10,8 +9,7 @@ namespace Sparky.MNA.Core
     /// The input draws no current (infinite input impedance).
     /// The output is an ideal current source.
     /// </summary>
-    public class VCCS : Component
-    {
+    public class VCCS : Component {
         public Node ControlPos { get; }
         public Node ControlNeg { get; }
 
@@ -39,8 +37,7 @@ namespace Sparky.MNA.Core
             Transconductance = transconductance;
         }
 
-        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
-        {
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0) {
             int ctrlP = ControlPos.Id;
             int ctrlN = ControlNeg.Id;
             int outP = Node1.Id; // Output positive
@@ -61,16 +58,14 @@ namespace Sparky.MNA.Core
             //   A[outN, ctrlP] += gm
             //   A[outN, ctrlN] -= gm
 
-            if (outP != 0)
-            {
+            if (outP != 0) {
                 if (ctrlP != 0)
                     A.At(outP, ctrlP, -gm);
                 if (ctrlN != 0)
                     A.At(outP, ctrlN, gm);
             }
 
-            if (outN != 0)
-            {
+            if (outN != 0) {
                 if (ctrlP != 0)
                     A.At(outN, ctrlP, gm);
                 if (ctrlN != 0)

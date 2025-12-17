@@ -1,10 +1,8 @@
 using System;
 using CSparse.Storage;
 
-namespace Sparky.MNA.Core
-{
-    public class Diode : Component
-    {
+namespace Sparky.MNA.Core {
+    public class Diode : Component {
         // Shockley diode equation parameters
         // I = Is * (exp(Vd / (n * Vt)) - 1)
         private const double Is = 1e-12; // Saturation current
@@ -21,8 +19,7 @@ namespace Sparky.MNA.Core
         public override bool IsNonLinear => true;
         public override bool RequiresIteration => true;
 
-        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
-        {
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0) {
             // Linearize around _vd
             // I = Is * (exp(_vd / (n*Vt)) - 1)
             // G_eq = dI/dV = (Is / (n*Vt)) * exp(_vd / (n*Vt))
@@ -59,16 +56,14 @@ namespace Sparky.MNA.Core
             int n2 = Node2.Id;
 
             // Stamp Conductance
-            if (n1 != 0)
-            {
+            if (n1 != 0) {
                 A.At(n1, n1, gEq);
                 if (n2 != 0)
                     A.At(n1, n2, -gEq);
                 Z[n1] -= iEq;
             }
 
-            if (n2 != 0)
-            {
+            if (n2 != 0) {
                 A.At(n2, n2, gEq);
                 if (n1 != 0)
                     A.At(n2, n1, -gEq);
@@ -76,8 +71,7 @@ namespace Sparky.MNA.Core
             }
         }
 
-        public override void UpdateOperatingPoint(double[] x)
-        {
+        public override void UpdateOperatingPoint(double[] x) {
             double v1 = (Node1.Id == 0) ? 0 : x[Node1.Id];
             double v2 = (Node2.Id == 0) ? 0 : x[Node2.Id];
             double newVd = v1 - v2;
@@ -95,8 +89,7 @@ namespace Sparky.MNA.Core
             OperatingVoltage = newVd;
         }
 
-        public override void AccumulateEnergy(double[] x, double dt)
-        {
+        public override void AccumulateEnergy(double[] x, double dt) {
             // P = V × I (always positive - dissipated as heat in forward bias)
             // Compute current from Shockley equation at operating point
             double vdLimited = Math.Max(-5.0, Math.Min(OperatingVoltage, 0.9));

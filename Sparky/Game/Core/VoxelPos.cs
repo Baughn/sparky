@@ -16,8 +16,7 @@ namespace Sparky.Game.Core;
 /// VoxelPos is the primary coordinate system for the voxel-based connectivity model.
 /// Adjacent conductor voxels automatically connect - topology is determined by physical adjacency.
 /// </remarks>
-public readonly record struct VoxelPos(int X, int Y, int Z)
-{
+public readonly record struct VoxelPos(int X, int Y, int Z) {
     /// <summary>The origin (0, 0, 0).</summary>
     public static VoxelPos Zero => new(0, 0, 0);
 
@@ -46,10 +45,8 @@ public readonly record struct VoxelPos(int X, int Y, int Z)
     /// <summary>
     /// Gets the local position within the containing block (0-15 each axis).
     /// </summary>
-    public (int X, int Y, int Z) Local
-    {
-        get
-        {
+    public (int X, int Y, int Z) Local {
+        get {
             var block = Block;
             return (
                 X - block.X * VoxelsPerBlock,
@@ -62,8 +59,7 @@ public readonly record struct VoxelPos(int X, int Y, int Z)
     /// <summary>
     /// Returns the neighboring voxel in the given direction.
     /// </summary>
-    public VoxelPos Neighbor(VoxelDirection dir) => dir switch
-    {
+    public VoxelPos Neighbor(VoxelDirection dir) => dir switch {
         VoxelDirection.XPos => new(X + 1, Y, Z),
         VoxelDirection.XNeg => new(X - 1, Y, Z),
         VoxelDirection.YPos => new(X, Y + 1, Z),
@@ -84,8 +80,7 @@ public readonly record struct VoxelPos(int X, int Y, int Z)
 /// <summary>
 /// The 6 directions a voxel can connect to neighbors.
 /// </summary>
-public enum VoxelDirection
-{
+public enum VoxelDirection {
     XPos,  // +X (East)
     XNeg,  // -X (West)
     YPos,  // +Y (Up)
@@ -97,8 +92,7 @@ public enum VoxelDirection
 /// <summary>
 /// Extension methods for VoxelDirection.
 /// </summary>
-public static class VoxelDirectionExtensions
-{
+public static class VoxelDirectionExtensions {
     /// <summary>All 6 directions.</summary>
     public static readonly VoxelDirection[] All =
     [
@@ -110,8 +104,7 @@ public static class VoxelDirectionExtensions
     /// <summary>
     /// Returns the opposite direction.
     /// </summary>
-    public static VoxelDirection Opposite(this VoxelDirection dir) => dir switch
-    {
+    public static VoxelDirection Opposite(this VoxelDirection dir) => dir switch {
         VoxelDirection.XPos => VoxelDirection.XNeg,
         VoxelDirection.XNeg => VoxelDirection.XPos,
         VoxelDirection.YPos => VoxelDirection.YNeg,
@@ -124,8 +117,7 @@ public static class VoxelDirectionExtensions
     /// <summary>
     /// Returns the unit offset for this direction.
     /// </summary>
-    public static (int X, int Y, int Z) Offset(this VoxelDirection dir) => dir switch
-    {
+    public static (int X, int Y, int Z) Offset(this VoxelDirection dir) => dir switch {
         VoxelDirection.XPos => (1, 0, 0),
         VoxelDirection.XNeg => (-1, 0, 0),
         VoxelDirection.YPos => (0, 1, 0),
@@ -138,8 +130,7 @@ public static class VoxelDirectionExtensions
     /// <summary>
     /// Returns the axis index (0=X, 1=Y, 2=Z) for this direction.
     /// </summary>
-    public static int Axis(this VoxelDirection dir) => dir switch
-    {
+    public static int Axis(this VoxelDirection dir) => dir switch {
         VoxelDirection.XPos or VoxelDirection.XNeg => 0,
         VoxelDirection.YPos or VoxelDirection.YNeg => 1,
         VoxelDirection.ZPos or VoxelDirection.ZNeg => 2,
@@ -149,8 +140,7 @@ public static class VoxelDirectionExtensions
     /// <summary>
     /// Returns true if this is a positive direction (+X, +Y, +Z).
     /// </summary>
-    public static bool IsPositive(this VoxelDirection dir) => dir switch
-    {
+    public static bool IsPositive(this VoxelDirection dir) => dir switch {
         VoxelDirection.XPos or VoxelDirection.YPos or VoxelDirection.ZPos => true,
         _ => false
     };

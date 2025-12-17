@@ -1,21 +1,17 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA.Core
-{
-    public class CurrentSource : Component
-    {
+namespace Sparky.MNA.Core {
+    public class CurrentSource : Component {
         public double Current { get; set; }
 
         public override bool RequiresPerStepRestamp => true;
 
         public CurrentSource(Node node1, Node node2, double current)
-            : base(node1, node2)
-        {
+            : base(node1, node2) {
             Current = current;
         }
 
-        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
-        {
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0) {
             int n1 = Node1.Id;
             int n2 = Node2.Id;
 
@@ -36,8 +32,7 @@ namespace Sparky.MNA.Core
                 Z[n2] += Current;
         }
 
-        public override void AccumulateEnergy(double[] x, double dt)
-        {
+        public override void AccumulateEnergy(double[] x, double dt) {
             // P = V × I (positive = delivering power to circuit)
             // Current flows from Node1 to Node2
             // Voltage across source = V1 - V2

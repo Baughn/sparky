@@ -8,8 +8,7 @@ namespace Sparky.Game.Core.CableLaying;
 /// <remarks>
 /// This is a wrapper struct around the enum to satisfy SparseVoxelOctree's IEquatable constraint.
 /// </remarks>
-public readonly struct CacheVoxelState : IEquatable<CacheVoxelState>
-{
+public readonly struct CacheVoxelState : IEquatable<CacheVoxelState> {
     /// <summary>The underlying state value.</summary>
     public CacheVoxelStateValue Value { get; }
 
@@ -34,8 +33,7 @@ public readonly struct CacheVoxelState : IEquatable<CacheVoxelState>
 /// <summary>
 /// Voxel state values for the WorldVoxelCache.
 /// </summary>
-public enum CacheVoxelStateValue : byte
-{
+public enum CacheVoxelStateValue : byte {
     /// <summary>
     /// Air within a Circuit block or an air block.
     /// Cable can occupy this space.

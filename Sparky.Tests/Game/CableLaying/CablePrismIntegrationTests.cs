@@ -9,14 +9,12 @@ namespace Sparky.Tests.Game.CableLaying;
 /// Uses fuzz-style test generation to catch cornering bugs and other geometry issues.
 /// </summary>
 [TestFixture]
-public class CablePrismIntegrationTests
-{
+public class CablePrismIntegrationTests {
     private MockWorldVoxelCache _cache = null!;
     private VoxelPos _origin;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _origin = new VoxelPos(50, 50, 50);
         _cache = new MockWorldVoxelCache(_origin);
     }
@@ -33,8 +31,7 @@ public class CablePrismIntegrationTests
     [TestCase(1, 2, Description = "1x2 cross-section")]
     [TestCase(2, 2, Description = "2x2 cross-section")]
     [TestCase(2, 3, Description = "2x3 cross-section")]
-    public void AllGeneratedCables_HaveValidPrisms(int width, int height)
-    {
+    public void AllGeneratedCables_HaveValidPrisms(int width, int height) {
         var crossSection = new CrossSection(width, height);
         var random = new Random(42); // Deterministic seed for reproducibility
         const int numTests = 50;
@@ -44,13 +41,12 @@ public class CablePrismIntegrationTests
 
         var failures = new List<string>();
 
-        for (int i = 0; i < numTests; i++)
-        {
-	    // Stop if we already have enough failures.
-	    if (failures.Count > 1) {
-	      break;
-	    }
-	
+        for (int i = 0; i < numTests; i++) {
+            // Stop if we already have enough failures.
+            if (failures.Count > 1) {
+                break;
+            }
+
             // Generate random start/goal within the floor area
             var (start, goal) = GenerateRandomStartGoal(random, 25, 75, 46);
 
@@ -63,8 +59,7 @@ public class CablePrismIntegrationTests
             var result = pathfinder.FindPath(GetStartPositions(start, crossSection, primaryDir), goal);
 
             // Skip unsolvable cases
-            if (result.Type == PathResultType.NoProgress || result.Path.Count == 0)
-            {
+            if (result.Type == PathResultType.NoProgress || result.Path.Count == 0) {
                 _cache.ClearCableConductors();
                 continue;
             }
@@ -73,32 +68,25 @@ public class CablePrismIntegrationTests
             var prisms = TestPrismBuilder.BuildPrisms(result.Path);
 
             // Validate Criterion 1: Prism dimensions
-            try
-            {
+            try {
                 TestPrismBuilder.ValidatePrismDimensions(prisms, crossSection);
-            }
-            catch (CableValidationException ex)
-            {
+            } catch (CableValidationException ex) {
                 failures.Add($"Test {i} ({start}->{goal}): Dimension validation failed - {ex.Message}");
                 _cache.ClearCableConductors();
                 continue;
             }
 
             // Validate Criterion 2: Contact areas
-            try
-            {
+            try {
                 TestPrismBuilder.ValidatePrismContactAreas(prisms, crossSection);
-            }
-            catch (CableValidationException ex)
-            {
+            } catch (CableValidationException ex) {
                 failures.Add($"Test {i} ({start}->{goal}): Contact area validation failed - {ex.Message}");
             }
 
             _cache.ClearCableConductors();
         }
 
-        if (failures.Count > 0)
-        {
+        if (failures.Count > 0) {
             Assert.Fail($"Prism validation failures ({failures.Count}):\n{string.Join("\n", failures)}");
         }
     }
@@ -111,8 +99,7 @@ public class CablePrismIntegrationTests
     [TestCase(1, 2)]
     [TestCase(2, 2)]
     [TestCase(2, 3)]
-    public void CablesWithTurns_HaveValidPrisms(int width, int height)
-    {
+    public void CablesWithTurns_HaveValidPrisms(int width, int height) {
         var crossSection = new CrossSection(width, height);
 
         // Create L-shaped floor to force turns
@@ -129,14 +116,12 @@ public class CablePrismIntegrationTests
 
         var failures = new List<string>();
 
-        foreach (var (start, goal) in testCases)
-        {
+        foreach (var (start, goal) in testCases) {
             var pathfinder = new CablePathfinder(_cache, crossSection);
             var primaryDir = GetPrimaryDirection(start, goal);
             var result = pathfinder.FindPath(GetStartPositions(start, crossSection, primaryDir), goal);
 
-            if (result.Type == PathResultType.NoProgress || result.Path.Count == 0)
-            {
+            if (result.Type == PathResultType.NoProgress || result.Path.Count == 0) {
                 _cache.ClearCableConductors();
                 continue;
             }
@@ -144,21 +129,17 @@ public class CablePrismIntegrationTests
             // Build prisms using test helper (no 16³ block limits)
             var prisms = TestPrismBuilder.BuildPrisms(result.Path);
 
-            try
-            {
+            try {
                 TestPrismBuilder.ValidatePrismDimensions(prisms, crossSection);
                 TestPrismBuilder.ValidatePrismContactAreas(prisms, crossSection);
-            }
-            catch (CableValidationException ex)
-            {
+            } catch (CableValidationException ex) {
                 failures.Add($"{start}->{goal}: {ex.Message}");
             }
 
             _cache.ClearCableConductors();
         }
 
-        if (failures.Count > 0)
-        {
+        if (failures.Count > 0) {
             Assert.Fail($"Turn test failures ({crossSection}):\n{string.Join("\n", failures)}");
         }
     }
@@ -169,8 +150,7 @@ public class CablePrismIntegrationTests
     /// </summary>
     [Test]
     [TestCase(1, 1)]
-    public void CableAroundExteriorCorner_HasValidPrisms(int width, int height)
-    {
+    public void CableAroundExteriorCorner_HasValidPrisms(int width, int height) {
         var crossSection = new CrossSection(width, height);
 
         // Create a floating cube to route around
@@ -208,8 +188,7 @@ public class CablePrismIntegrationTests
     [TestCase(1, 2)]
     [TestCase(2, 2)]
     [TestCase(2, 3)]
-    public void StraightCable_ProducesExpectedPrismCount(int width, int height)
-    {
+    public void StraightCable_ProducesExpectedPrismCount(int width, int height) {
         var crossSection = new CrossSection(width, height);
 
         // Create floor for a long straight cable
@@ -241,8 +220,7 @@ public class CablePrismIntegrationTests
 
     #region Helper Methods
 
-    private (VoxelPos Start, VoxelPos Goal) GenerateRandomStartGoal(Random random, int min, int max, int y)
-    {
+    private (VoxelPos Start, VoxelPos Goal) GenerateRandomStartGoal(Random random, int min, int max, int y) {
         var startX = random.Next(min, max);
         var startZ = random.Next(min, max);
         var goalX = random.Next(min, max);
@@ -251,25 +229,18 @@ public class CablePrismIntegrationTests
         return (new VoxelPos(startX, y, startZ), new VoxelPos(goalX, y, goalZ));
     }
 
-    private void CreateFloor(int y, int xMin, int xMax, int zMin, int zMax)
-    {
-        for (int x = xMin; x <= xMax; x++)
-        {
-            for (int z = zMin; z <= zMax; z++)
-            {
+    private void CreateFloor(int y, int xMin, int xMax, int zMin, int zMax) {
+        for (int x = xMin; x <= xMax; x++) {
+            for (int z = zMin; z <= zMax; z++) {
                 _cache.SetState(new VoxelPos(x, y, z), CacheVoxelState.Insulation);
             }
         }
     }
 
-    private void CreateCube(VoxelPos origin, int size)
-    {
-        for (int x = 0; x < size; x++)
-        {
-            for (int y = 0; y < size; y++)
-            {
-                for (int z = 0; z < size; z++)
-                {
+    private void CreateCube(VoxelPos origin, int size) {
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
                     _cache.SetState(new VoxelPos(origin.X + x, origin.Y + y, origin.Z + z),
                         CacheVoxelState.Insulation);
                 }
@@ -283,16 +254,14 @@ public class CablePrismIntegrationTests
     private static IReadOnlyList<VoxelPos> GetStartPositions(
         VoxelPos anchor,
         CrossSection crossSection,
-        VoxelDirection direction = VoxelDirection.XPos)
-    {
+        VoxelDirection direction = VoxelDirection.XPos) {
         return crossSection.GetVoxelPositions(anchor, direction, CrossSectionOrientation.Flat).ToList();
     }
 
     /// <summary>
     /// Gets the primary travel direction from start to goal based on the largest delta.
     /// </summary>
-    private static VoxelDirection GetPrimaryDirection(VoxelPos start, VoxelPos goal)
-    {
+    private static VoxelDirection GetPrimaryDirection(VoxelPos start, VoxelPos goal) {
         int dx = goal.X - start.X;
         int dy = goal.Y - start.Y;
         int dz = goal.Z - start.Z;

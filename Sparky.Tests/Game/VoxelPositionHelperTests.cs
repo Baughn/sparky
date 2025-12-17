@@ -4,8 +4,7 @@ using Sparky.Game.Core;
 namespace Sparky.Tests.Game;
 
 [TestFixture]
-public class VoxelPositionHelperTests
-{
+public class VoxelPositionHelperTests {
     // Face normals (same as VS uses)
     private static readonly (float X, float Y, float Z) North = (0, 0, -1);
     private static readonly (float X, float Y, float Z) South = (0, 0, 1);
@@ -17,8 +16,7 @@ public class VoxelPositionHelperTests
     #region GetClickedVoxel Tests
 
     [Test]
-    public void GetClickedVoxel_CenterOfUpFace_ReturnsMiddleVoxel()
-    {
+    public void GetClickedVoxel_CenterOfUpFace_ReturnsMiddleVoxel() {
         // Clicking the center of the top face of voxel (8,7,8)
         var (x, y, z) = VoxelPositionHelper.GetClickedVoxel(
             0.5, 0.5, 0.5,  // Center of block
@@ -30,8 +28,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetClickedVoxel_EastFaceOfVoxel5_ReturnsVoxel5()
-    {
+    public void GetClickedVoxel_EastFaceOfVoxel5_ReturnsVoxel5() {
         // Click east face of voxel at x=5: hit at x=6/16=0.375
         var (x, y, z) = VoxelPositionHelper.GetClickedVoxel(
             0.375, 0.0625, 0.5,
@@ -41,8 +38,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetClickedVoxel_WestFaceOfVoxel5_ReturnsVoxel5()
-    {
+    public void GetClickedVoxel_WestFaceOfVoxel5_ReturnsVoxel5() {
         // Click west face of voxel at x=5: hit at x=5/16=0.3125
         var (x, y, z) = VoxelPositionHelper.GetClickedVoxel(
             0.3125, 0.0625, 0.5,
@@ -52,8 +48,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetClickedVoxel_NorthFaceOfVoxel8_ReturnsVoxel8()
-    {
+    public void GetClickedVoxel_NorthFaceOfVoxel8_ReturnsVoxel8() {
         // Click north face of voxel at z=8: hit at z=8/16=0.5
         var (x, y, z) = VoxelPositionHelper.GetClickedVoxel(
             0.5, 0.0625, 0.5,
@@ -63,8 +58,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetClickedVoxel_SouthFaceOfVoxel8_ReturnsVoxel8()
-    {
+    public void GetClickedVoxel_SouthFaceOfVoxel8_ReturnsVoxel8() {
         // Click south face of voxel at z=8: hit at z=9/16=0.5625
         var (x, y, z) = VoxelPositionHelper.GetClickedVoxel(
             0.5, 0.0625, 0.5625,
@@ -74,8 +68,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetClickedVoxel_DownFaceOfVoxel5_ReturnsVoxel5()
-    {
+    public void GetClickedVoxel_DownFaceOfVoxel5_ReturnsVoxel5() {
         // Click down face of voxel at y=5: hit at y=5/16=0.3125
         var (x, y, z) = VoxelPositionHelper.GetClickedVoxel(
             0.5, 0.3125, 0.5,
@@ -85,8 +78,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetClickedVoxel_UpFaceOfVoxel5_ReturnsVoxel5()
-    {
+    public void GetClickedVoxel_UpFaceOfVoxel5_ReturnsVoxel5() {
         // Click up face of voxel at y=5: hit at y=6/16=0.375
         var (x, y, z) = VoxelPositionHelper.GetClickedVoxel(
             0.5, 0.375, 0.5,
@@ -96,8 +88,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetClickedVoxel_CornerVoxel0_ReturnsVoxel0()
-    {
+    public void GetClickedVoxel_CornerVoxel0_ReturnsVoxel0() {
         // Click the corner voxel at (0,0,0) from various faces
         var (x1, y1, z1) = VoxelPositionHelper.GetClickedVoxel(
             0.0, 0.0625, 0.0625,
@@ -116,8 +107,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetClickedVoxel_CornerVoxel15_ReturnsVoxel15()
-    {
+    public void GetClickedVoxel_CornerVoxel15_ReturnsVoxel15() {
         // Click the corner voxel at (15,15,15) from various faces
         var (x1, y1, z1) = VoxelPositionHelper.GetClickedVoxel(
             1.0, 0.9375, 0.9375,
@@ -140,8 +130,7 @@ public class VoxelPositionHelperTests
     #region GetAdjacentVoxel Tests (no overflow)
 
     [Test]
-    public void GetAdjacentVoxel_EastFaceOfVoxel5_ReturnsVoxel6()
-    {
+    public void GetAdjacentVoxel_EastFaceOfVoxel5_ReturnsVoxel6() {
         var (x, y, z) = VoxelPositionHelper.GetAdjacentVoxel(
             0.375, 0.0625, 0.5,  // East face of voxel 5
             East.X, East.Y, East.Z);
@@ -150,8 +139,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetAdjacentVoxel_WestFaceOfVoxel5_ReturnsVoxel4()
-    {
+    public void GetAdjacentVoxel_WestFaceOfVoxel5_ReturnsVoxel4() {
         var (x, y, z) = VoxelPositionHelper.GetAdjacentVoxel(
             0.3125, 0.0625, 0.5,  // West face of voxel 5
             West.X, West.Y, West.Z);
@@ -160,8 +148,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetAdjacentVoxel_NorthFaceOfVoxel8_ReturnsVoxel7()
-    {
+    public void GetAdjacentVoxel_NorthFaceOfVoxel8_ReturnsVoxel7() {
         var (x, y, z) = VoxelPositionHelper.GetAdjacentVoxel(
             0.5, 0.0625, 0.5,  // North face of voxel 8
             North.X, North.Y, North.Z);
@@ -170,8 +157,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetAdjacentVoxel_SouthFaceOfVoxel8_ReturnsVoxel9()
-    {
+    public void GetAdjacentVoxel_SouthFaceOfVoxel8_ReturnsVoxel9() {
         var (x, y, z) = VoxelPositionHelper.GetAdjacentVoxel(
             0.5, 0.0625, 0.5625,  // South face of voxel 8
             South.X, South.Y, South.Z);
@@ -180,8 +166,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetAdjacentVoxel_UpFaceOfVoxel5_ReturnsVoxel6()
-    {
+    public void GetAdjacentVoxel_UpFaceOfVoxel5_ReturnsVoxel6() {
         var (x, y, z) = VoxelPositionHelper.GetAdjacentVoxel(
             0.5, 0.375, 0.5,  // Up face of voxel 5
             Up.X, Up.Y, Up.Z);
@@ -190,8 +175,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetAdjacentVoxel_DownFaceOfVoxel5_ReturnsVoxel4()
-    {
+    public void GetAdjacentVoxel_DownFaceOfVoxel5_ReturnsVoxel4() {
         var (x, y, z) = VoxelPositionHelper.GetAdjacentVoxel(
             0.5, 0.3125, 0.5,  // Down face of voxel 5
             Down.X, Down.Y, Down.Z);
@@ -204,8 +188,7 @@ public class VoxelPositionHelperTests
     #region GetAdjacentVoxelWithOverflow Tests (boundary crossings)
 
     [Test]
-    public void GetAdjacentVoxelWithOverflow_EastFaceOfVoxel15_OverflowsToNextBlock()
-    {
+    public void GetAdjacentVoxelWithOverflow_EastFaceOfVoxel15_OverflowsToNextBlock() {
         // Click east face of voxel at x=15: hit at x=16/16=1.0
         var (x, y, z, outside) = VoxelPositionHelper.GetAdjacentVoxelWithOverflow(
             1.0, 0.0625, 0.5,
@@ -216,8 +199,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetAdjacentVoxelWithOverflow_WestFaceOfVoxel0_OverflowsToNextBlock()
-    {
+    public void GetAdjacentVoxelWithOverflow_WestFaceOfVoxel0_OverflowsToNextBlock() {
         // Click west face of voxel at x=0: hit at x=0/16=0.0
         var (x, y, z, outside) = VoxelPositionHelper.GetAdjacentVoxelWithOverflow(
             0.0, 0.0625, 0.5,
@@ -228,8 +210,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetAdjacentVoxelWithOverflow_NorthFaceOfVoxel0_OverflowsToNextBlock()
-    {
+    public void GetAdjacentVoxelWithOverflow_NorthFaceOfVoxel0_OverflowsToNextBlock() {
         var (x, y, z, outside) = VoxelPositionHelper.GetAdjacentVoxelWithOverflow(
             0.5, 0.0625, 0.0,
             North.X, North.Y, North.Z);
@@ -239,8 +220,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetAdjacentVoxelWithOverflow_SouthFaceOfVoxel15_OverflowsToNextBlock()
-    {
+    public void GetAdjacentVoxelWithOverflow_SouthFaceOfVoxel15_OverflowsToNextBlock() {
         var (x, y, z, outside) = VoxelPositionHelper.GetAdjacentVoxelWithOverflow(
             0.5, 0.0625, 1.0,
             South.X, South.Y, South.Z);
@@ -250,8 +230,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetAdjacentVoxelWithOverflow_UpFaceOfVoxel15_OverflowsToNextBlock()
-    {
+    public void GetAdjacentVoxelWithOverflow_UpFaceOfVoxel15_OverflowsToNextBlock() {
         var (x, y, z, outside) = VoxelPositionHelper.GetAdjacentVoxelWithOverflow(
             0.5, 1.0, 0.5,
             Up.X, Up.Y, Up.Z);
@@ -261,8 +240,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetAdjacentVoxelWithOverflow_DownFaceOfVoxel0_OverflowsToNextBlock()
-    {
+    public void GetAdjacentVoxelWithOverflow_DownFaceOfVoxel0_OverflowsToNextBlock() {
         var (x, y, z, outside) = VoxelPositionHelper.GetAdjacentVoxelWithOverflow(
             0.5, 0.0, 0.5,
             Down.X, Down.Y, Down.Z);
@@ -272,8 +250,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetAdjacentVoxelWithOverflow_InteriorVoxel_NoOverflow()
-    {
+    public void GetAdjacentVoxelWithOverflow_InteriorVoxel_NoOverflow() {
         // Click east face of voxel at x=5, which should place at x=6 (no overflow)
         var (x, y, z, outside) = VoxelPositionHelper.GetAdjacentVoxelWithOverflow(
             0.375, 0.0625, 0.5,
@@ -288,8 +265,7 @@ public class VoxelPositionHelperTests
     #region Edge Case Tests
 
     [Test]
-    public void GetClickedVoxel_ExactlyOnVoxelBoundary_ReturnsCorrectVoxel()
-    {
+    public void GetClickedVoxel_ExactlyOnVoxelBoundary_ReturnsCorrectVoxel() {
         // Hit exactly at x = 0.5 (voxel boundary between 7 and 8)
         // Clicking east face should return voxel 7 (behind the boundary)
         var (x, _, _) = VoxelPositionHelper.GetClickedVoxel(
@@ -300,8 +276,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetAdjacentVoxel_ExactlyOnVoxelBoundary_ReturnsCorrectVoxel()
-    {
+    public void GetAdjacentVoxel_ExactlyOnVoxelBoundary_ReturnsCorrectVoxel() {
         // Hit exactly at x = 0.5 (voxel boundary between 7 and 8)
         // Clicking east face should place at voxel 8 (in front of the boundary)
         var (x, _, _) = VoxelPositionHelper.GetAdjacentVoxel(
@@ -312,16 +287,14 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void GetClickedVoxel_AllFacesOfSameVoxel_ReturnsSameVoxel()
-    {
+    public void GetClickedVoxel_AllFacesOfSameVoxel_ReturnsSameVoxel() {
         // Voxel at (8, 8, 8) - click each face and verify we get the same voxel
         // Center of voxel is at (8.5/16, 8.5/16, 8.5/16) = (0.53125, 0.53125, 0.53125)
 
         var faces = new[] { North, South, East, West, Up, Down };
         var expected = (8, 8, 8);
 
-        foreach (var face in faces)
-        {
+        foreach (var face in faces) {
             // Adjust hit position to be on the appropriate face
             double hitX = 0.53125 + face.X * 0.03125;  // Center + half voxel width in face direction
             double hitY = 0.53125 + face.Y * 0.03125;
@@ -346,8 +319,7 @@ public class VoxelPositionHelperTests
     /// </summary>
     private static (int X, int Y, int Z) GetVoxelPositionOnFace(
         double hitX, double hitY, double hitZ,
-        float faceNormalX, float faceNormalY, float faceNormalZ)
-    {
+        float faceNormalX, float faceNormalY, float faceNormalZ) {
         // Determine which axis the face is on
         bool isXAxis = Math.Abs(faceNormalX) > 0.5f;
         bool isYAxis = Math.Abs(faceNormalY) > 0.5f;
@@ -365,8 +337,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void SolidBlockClick_EastFace_PlacesVoxelAtX0()
-    {
+    public void SolidBlockClick_EastFace_PlacesVoxelAtX0() {
         // Click the east face of a solid block at hit position (1.0, 0.5, 0.5)
         // Should place voxel at x=0 in the adjacent (eastern) circuit block
         var (x, y, z) = GetVoxelPositionOnFace(
@@ -379,8 +350,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void SolidBlockClick_WestFace_PlacesVoxelAtX15()
-    {
+    public void SolidBlockClick_WestFace_PlacesVoxelAtX15() {
         // Click the west face of a solid block
         // Should place voxel at x=15 in the adjacent (western) circuit block
         var (x, y, z) = GetVoxelPositionOnFace(
@@ -391,8 +361,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void SolidBlockClick_NorthFace_PlacesVoxelAtZ15()
-    {
+    public void SolidBlockClick_NorthFace_PlacesVoxelAtZ15() {
         // Click the north face of a solid block
         // Should place voxel at z=15 in the adjacent (northern) circuit block
         var (x, y, z) = GetVoxelPositionOnFace(
@@ -403,8 +372,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void SolidBlockClick_SouthFace_PlacesVoxelAtZ0()
-    {
+    public void SolidBlockClick_SouthFace_PlacesVoxelAtZ0() {
         // Click the south face of a solid block
         // Should place voxel at z=0 in the adjacent (southern) circuit block
         var (x, y, z) = GetVoxelPositionOnFace(
@@ -415,8 +383,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void SolidBlockClick_UpFace_PlacesVoxelAtY0()
-    {
+    public void SolidBlockClick_UpFace_PlacesVoxelAtY0() {
         // Click the up face of a solid block
         // Should place voxel at y=0 in the adjacent (upper) circuit block
         var (x, y, z) = GetVoxelPositionOnFace(
@@ -427,8 +394,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void SolidBlockClick_DownFace_PlacesVoxelAtY15()
-    {
+    public void SolidBlockClick_DownFace_PlacesVoxelAtY15() {
         // Click the down face of a solid block
         // Should place voxel at y=15 in the adjacent (lower) circuit block
         var (x, y, z) = GetVoxelPositionOnFace(
@@ -439,8 +405,7 @@ public class VoxelPositionHelperTests
     }
 
     [Test]
-    public void SolidBlockClick_PreservesOtherAxes()
-    {
+    public void SolidBlockClick_PreservesOtherAxes() {
         // Click near a corner of the east face
         // Y and Z should be preserved from the hit position
         var (x, y, z) = GetVoxelPositionOnFace(

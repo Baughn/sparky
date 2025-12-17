@@ -2,24 +2,20 @@ using NUnit.Framework;
 using Sparky.MNA.Api;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests.MNA
-{
+namespace Sparky.Tests.MNA {
     [TestFixture]
-    public class ApiComponentLifecycleTests
-    {
+    public class ApiComponentLifecycleTests {
         private SimulationManager _sim = null!;
 
         [SetUp]
-        public void SetUp()
-        {
+        public void SetUp() {
             _sim = new SimulationManager();
         }
 
         #region Current Source Tests
 
         [Test]
-        public void CurrentSource_AddUpdateRemove_WorksCorrectly()
-        {
+        public void CurrentSource_AddUpdateRemove_WorksCorrectly() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -40,8 +36,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void CurrentSource_GetValue_ReturnsCorrectCurrent()
-        {
+        public void CurrentSource_GetValue_ReturnsCorrectCurrent() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -57,8 +52,7 @@ namespace Sparky.Tests.MNA
         #region Capacitor Tests
 
         [Test]
-        public void Capacitor_AddUpdateRemove_WorksCorrectly()
-        {
+        public void Capacitor_AddUpdateRemove_WorksCorrectly() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -79,8 +73,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Capacitor_GetCapacitance_ReturnsCorrectValue()
-        {
+        public void Capacitor_GetCapacitance_ReturnsCorrectValue() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -92,8 +85,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Capacitor_GetVoltage_ReturnsVoltageDifference()
-        {
+        public void Capacitor_GetVoltage_ReturnsVoltageDifference() {
             // 10V -- R(100) -- N1 -- C -- GND
             // After steady state, capacitor charges to 10V
             var nPos = _sim.CreateNode();
@@ -104,8 +96,7 @@ namespace Sparky.Tests.MNA
             var capId = _sim.AddCapacitor(n1, _sim.Ground, 1e-6);
 
             // Step many times to reach steady state (RC = 100 * 1e-6 = 0.1ms)
-            for (int i = 0; i < 100; i++)
-            {
+            for (int i = 0; i < 100; i++) {
                 _sim.Step(0.001); // 1ms steps, total 100ms >> 5*RC
             }
 
@@ -117,8 +108,7 @@ namespace Sparky.Tests.MNA
         #region Inductor Tests
 
         [Test]
-        public void Inductor_AddUpdateRemove_WorksCorrectly()
-        {
+        public void Inductor_AddUpdateRemove_WorksCorrectly() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -136,8 +126,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Inductor_GetInductance_ReturnsCorrectValue()
-        {
+        public void Inductor_GetInductance_ReturnsCorrectValue() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -150,8 +139,7 @@ namespace Sparky.Tests.MNA
         #region Diode Tests
 
         [Test]
-        public void Diode_AddRemove_WorksCorrectly()
-        {
+        public void Diode_AddRemove_WorksCorrectly() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -167,8 +155,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Diode_GetVoltage_ReturnsAnodeCathodeDifference()
-        {
+        public void Diode_GetVoltage_ReturnsAnodeCathodeDifference() {
             // 10V -- R(1k) -- anode -- D -- cathode(GND)
             // Forward biased diode, Vd ~ 0.7V
             var nPos = _sim.CreateNode();
@@ -190,8 +177,7 @@ namespace Sparky.Tests.MNA
         #region Transformer Tests
 
         [Test]
-        public void Transformer_AddUpdateRemove_WorksCorrectly()
-        {
+        public void Transformer_AddUpdateRemove_WorksCorrectly() {
             var p1 = _sim.CreateNode();
             var p2 = _sim.CreateNode();
             var s1 = _sim.CreateNode();
@@ -214,8 +200,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Transformer_GetRatio_ReturnsCorrectValue()
-        {
+        public void Transformer_GetRatio_ReturnsCorrectValue() {
             var p1 = _sim.CreateNode();
             var p2 = _sim.CreateNode();
             var s1 = _sim.CreateNode();
@@ -229,8 +214,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Transformer_GetCurrents_ReturnsPrimaryAndSecondary()
-        {
+        public void Transformer_GetCurrents_ReturnsPrimaryAndSecondary() {
             // Primary: 10V -- p1 -- XFMR -- p2 -- GND
             // Secondary: s1 -- XFMR -- s2 -- R(100) -- s1 (loop)
             // Ratio 2:1, so secondary voltage = 5V, secondary current = 0.05A
@@ -258,8 +242,7 @@ namespace Sparky.Tests.MNA
         #region Node Tests
 
         [Test]
-        public void Node_CreateAndRemove_WorksCorrectly()
-        {
+        public void Node_CreateAndRemove_WorksCorrectly() {
             var n1 = _sim.CreateNode();
             Assert.That(_sim.NodeExists(n1), Is.True);
 
@@ -268,8 +251,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Node_RemoveAfterComponentRemoval_Succeeds()
-        {
+        public void Node_RemoveAfterComponentRemoval_Succeeds() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -291,8 +273,7 @@ namespace Sparky.Tests.MNA
         #region Clear Tests
 
         [Test]
-        public void Clear_RemovesAllComponentsAndNodes()
-        {
+        public void Clear_RemovesAllComponentsAndNodes() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
 
@@ -319,8 +300,7 @@ namespace Sparky.Tests.MNA
         #region Existence Check Tests
 
         [Test]
-        public void ComponentExists_ReturnsTrueForExisting()
-        {
+        public void ComponentExists_ReturnsTrueForExisting() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
             var n3 = _sim.CreateNode();
@@ -344,8 +324,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void ComponentExists_ReturnsFalseAfterRemoval()
-        {
+        public void ComponentExists_ReturnsFalseAfterRemoval() {
             var n1 = _sim.CreateNode();
             var n2 = _sim.CreateNode();
             var n3 = _sim.CreateNode();

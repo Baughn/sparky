@@ -2,22 +2,18 @@ using NUnit.Framework;
 using Sparky.MNA.Api;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests.MNA
-{
+namespace Sparky.Tests.MNA {
     [TestFixture]
-    public class LineOptimizationTests
-    {
+    public class LineOptimizationTests {
         private SimulationManager _sim = null!;
 
         [SetUp]
-        public void SetUp()
-        {
+        public void SetUp() {
             _sim = new SimulationManager();
         }
 
         [Test]
-        public void Optimization_ThreeResistorChain_CorrectInterpolation()
-        {
+        public void Optimization_ThreeResistorChain_CorrectInterpolation() {
             // 10V -- R1(10) -- N1 -- R2(10) -- N2 -- R3(10) -- GND
             // Total 30 Ohm. Current = 1/3 A.
             // V(N1) = 20/3 = 6.666...
@@ -42,8 +38,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Optimization_ChainBrokenByCapacitor_PartialMerge()
-        {
+        public void Optimization_ChainBrokenByCapacitor_PartialMerge() {
             // 10V -- R1 -- n1 -- C -- n2 -- R2 -- GND
             // Capacitor breaks the resistor chain
             _sim.EnableLineOptimization = true;
@@ -65,8 +60,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Optimization_ChainBrokenByVoltageSource_PartialMerge()
-        {
+        public void Optimization_ChainBrokenByVoltageSource_PartialMerge() {
             // 10V -- R1 -- n1 -- V(5V) -- n2 -- R2 -- GND
             // Voltage source breaks the resistor chain
             _sim.EnableLineOptimization = true;
@@ -88,8 +82,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Optimization_SingleResistor_NoMerge()
-        {
+        public void Optimization_SingleResistor_NoMerge() {
             // 10V -- R -- GND (single resistor, nothing to optimize)
             _sim.EnableLineOptimization = true;
 
@@ -105,8 +98,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Optimization_BranchingNetwork_OnlyMergesLines()
-        {
+        public void Optimization_BranchingNetwork_OnlyMergesLines() {
             // T-junction: node n1 has 3 connections, cannot be optimized
             //     R
             //     |
@@ -134,8 +126,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Optimization_Disabled_NoInterpolation()
-        {
+        public void Optimization_Disabled_NoInterpolation() {
             // Same circuit as ThreeResistorChain but with optimization disabled
             _sim.EnableLineOptimization = false;
 
@@ -157,8 +148,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Optimization_EnabledMidSimulation_Rebuilds()
-        {
+        public void Optimization_EnabledMidSimulation_Rebuilds() {
             // Start disabled, step, then enable and trigger rebuild via topology change
             _sim.EnableLineOptimization = false;
 
@@ -186,8 +176,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Optimization_InterpolatedVoltage_MatchesExpected()
-        {
+        public void Optimization_InterpolatedVoltage_MatchesExpected() {
             // Compare results with optimization enabled vs disabled
             // They should produce the same voltage values
 
@@ -232,8 +221,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void Optimization_IsNodeOptimized_ReturnsTrue()
-        {
+        public void Optimization_IsNodeOptimized_ReturnsTrue() {
             // Verify IsNodeOptimized returns true for middle nodes in a chain
             _sim.EnableLineOptimization = true;
 

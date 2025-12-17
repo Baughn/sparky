@@ -10,8 +10,7 @@ namespace Sparky.Game.Core;
 /// of axis-aligned prisms (~10-20 typical). This provides ~1000x memory
 /// compression for typical cable geometry.
 /// </remarks>
-public class BlockVoxelData
-{
+public class BlockVoxelData {
     private readonly List<Prism> _prisms = new();
 
     /// <summary>
@@ -32,10 +31,8 @@ public class BlockVoxelData
     /// <summary>
     /// Finds the prism containing the given local position, or null if air.
     /// </summary>
-    public Prism? FindPrism(int localX, int localY, int localZ)
-    {
-        foreach (var prism in _prisms)
-        {
+    public Prism? FindPrism(int localX, int localY, int localZ) {
+        foreach (var prism in _prisms) {
             if (prism.Contains(localX, localY, localZ))
                 return prism;
         }
@@ -45,8 +42,7 @@ public class BlockVoxelData
     /// <summary>
     /// Gets the voxel type at the given local position.
     /// </summary>
-    public VoxelType GetVoxelType(int localX, int localY, int localZ)
-    {
+    public VoxelType GetVoxelType(int localX, int localY, int localZ) {
         var prism = FindPrism(localX, localY, localZ);
         return prism?.Type ?? VoxelType.Air;
     }
@@ -54,8 +50,7 @@ public class BlockVoxelData
     /// <summary>
     /// Gets the material at the given local position, or null if not a conductor.
     /// </summary>
-    public Material? GetMaterial(int localX, int localY, int localZ)
-    {
+    public Material? GetMaterial(int localX, int localY, int localZ) {
         var prism = FindPrism(localX, localY, localZ);
         return prism?.Material;
     }
@@ -67,8 +62,7 @@ public class BlockVoxelData
     /// Flat array of 4096 elements indexed as [x + y*16 + z*256].
     /// Each element is (VoxelType, Material?).
     /// </param>
-    public void RebuildFromVoxels((VoxelType Type, Material? Material)[] voxels)
-    {
+    public void RebuildFromVoxels((VoxelType Type, Material? Material)[] voxels) {
         _prisms.Clear();
 
         // Track which voxels have been claimed by a prism
@@ -80,14 +74,10 @@ public class BlockVoxelData
         ExtractPrisms(voxels, claimed, VoxelType.Insulator);
     }
 
-    private void ExtractPrisms((VoxelType Type, Material? Material)[] voxels, bool[] claimed, VoxelType targetType)
-    {
-        for (int z = 0; z < 16; z++)
-        {
-            for (int y = 0; y < 16; y++)
-            {
-                for (int x = 0; x < 16; x++)
-                {
+    private void ExtractPrisms((VoxelType Type, Material? Material)[] voxels, bool[] claimed, VoxelType targetType) {
+        for (int z = 0; z < 16; z++) {
+            for (int y = 0; y < 16; y++) {
+                for (int x = 0; x < 16; x++) {
                     int idx = x + y * 16 + z * 256;
                     if (claimed[idx])
                         continue;
@@ -112,36 +102,29 @@ public class BlockVoxelData
         (VoxelType Type, Material? Material)[] voxels,
         bool[] claimed,
         int startX, int startY, int startZ,
-        VoxelType type, Material? material)
-    {
+        VoxelType type, Material? material) {
         // Grow in +X direction first
         int endX = startX + 1;
-        while (endX < 16 && CanExtendX(voxels, claimed, startX, endX, startY, startY + 1, startZ, startZ + 1, type, material))
-        {
+        while (endX < 16 && CanExtendX(voxels, claimed, startX, endX, startY, startY + 1, startZ, startZ + 1, type, material)) {
             endX++;
         }
 
         // Grow in +Y direction
         int endY = startY + 1;
-        while (endY < 16 && CanExtendY(voxels, claimed, startX, endX, startY, endY, startZ, startZ + 1, type, material))
-        {
+        while (endY < 16 && CanExtendY(voxels, claimed, startX, endX, startY, endY, startZ, startZ + 1, type, material)) {
             endY++;
         }
 
         // Grow in +Z direction
         int endZ = startZ + 1;
-        while (endZ < 16 && CanExtendZ(voxels, claimed, startX, endX, startY, endY, startZ, endZ, type, material))
-        {
+        while (endZ < 16 && CanExtendZ(voxels, claimed, startX, endX, startY, endY, startZ, endZ, type, material)) {
             endZ++;
         }
 
         // Mark all voxels in this prism as claimed
-        for (int z = startZ; z < endZ; z++)
-        {
-            for (int y = startY; y < endY; y++)
-            {
-                for (int x = startX; x < endX; x++)
-                {
+        for (int z = startZ; z < endZ; z++) {
+            for (int y = startY; y < endY; y++) {
+                for (int x = startX; x < endX; x++) {
                     claimed[x + y * 16 + z * 256] = true;
                 }
             }
@@ -160,12 +143,9 @@ public class BlockVoxelData
     private bool CanExtendX(
         (VoxelType Type, Material? Material)[] voxels, bool[] claimed,
         int startX, int newX, int startY, int endY, int startZ, int endZ,
-        VoxelType type, Material? material)
-    {
-        for (int z = startZ; z < endZ; z++)
-        {
-            for (int y = startY; y < endY; y++)
-            {
+        VoxelType type, Material? material) {
+        for (int z = startZ; z < endZ; z++) {
+            for (int y = startY; y < endY; y++) {
                 int idx = newX + y * 16 + z * 256;
                 if (claimed[idx])
                     return false;
@@ -181,12 +161,9 @@ public class BlockVoxelData
     private bool CanExtendY(
         (VoxelType Type, Material? Material)[] voxels, bool[] claimed,
         int startX, int endX, int startY, int newY, int startZ, int endZ,
-        VoxelType type, Material? material)
-    {
-        for (int z = startZ; z < endZ; z++)
-        {
-            for (int x = startX; x < endX; x++)
-            {
+        VoxelType type, Material? material) {
+        for (int z = startZ; z < endZ; z++) {
+            for (int x = startX; x < endX; x++) {
                 int idx = x + newY * 16 + z * 256;
                 if (claimed[idx])
                     return false;
@@ -202,12 +179,9 @@ public class BlockVoxelData
     private bool CanExtendZ(
         (VoxelType Type, Material? Material)[] voxels, bool[] claimed,
         int startX, int endX, int startY, int endY, int startZ, int newZ,
-        VoxelType type, Material? material)
-    {
-        for (int y = startY; y < endY; y++)
-        {
-            for (int x = startX; x < endX; x++)
-            {
+        VoxelType type, Material? material) {
+        for (int y = startY; y < endY; y++) {
+            for (int x = startX; x < endX; x++) {
                 int idx = x + y * 16 + newZ * 256;
                 if (claimed[idx])
                     return false;
@@ -220,8 +194,7 @@ public class BlockVoxelData
         return true;
     }
 
-    private static bool MaterialEquals(Material? a, Material? b)
-    {
+    private static bool MaterialEquals(Material? a, Material? b) {
         // Reference equality for singleton materials
         return ReferenceEquals(a, b);
     }
@@ -229,19 +202,14 @@ public class BlockVoxelData
     /// <summary>
     /// Expands all prisms back into a 16³ voxel array.
     /// </summary>
-    public (VoxelType Type, Material? Material)[] ExpandToVoxels()
-    {
+    public (VoxelType Type, Material? Material)[] ExpandToVoxels() {
         var voxels = new (VoxelType Type, Material? Material)[4096];
 
-        foreach (var prism in _prisms)
-        {
+        foreach (var prism in _prisms) {
             var end = prism.End;
-            for (int z = prism.LocalZ; z < end.Z; z++)
-            {
-                for (int y = prism.LocalY; y < end.Y; y++)
-                {
-                    for (int x = prism.LocalX; x < end.X; x++)
-                    {
+            for (int z = prism.LocalZ; z < end.Z; z++) {
+                for (int y = prism.LocalY; y < end.Y; y++) {
+                    for (int x = prism.LocalX; x < end.X; x++) {
                         voxels[x + y * 16 + z * 256] = (prism.Type, prism.Material);
                     }
                 }

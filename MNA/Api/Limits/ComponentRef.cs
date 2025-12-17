@@ -4,8 +4,7 @@ namespace Sparky.MNA.Api.Limits;
 /// A type-erased reference to a simulation component.
 /// Used as a key for limit storage and in event payloads.
 /// </summary>
-public readonly record struct ComponentRef
-{
+public readonly record struct ComponentRef {
     /// <summary>The component type name (e.g., "Resistor", "VoltageSource").</summary>
     public required string ComponentType { get; init; }
 

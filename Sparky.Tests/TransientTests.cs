@@ -4,13 +4,10 @@ using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
-    public class TransientTests
-    {
+namespace Sparky.Tests {
+    public class TransientTests {
         [Test]
-        public void TestRCCircuit()
-        {
+        public void TestRCCircuit() {
             // RC Circuit:
             // 10V Source -> Resistor (1k) -> Node 1 -> Capacitor (1uF) -> Ground
             // Time constant tau = R * C = 1000 * 1e-6 = 1ms = 0.001s
@@ -41,8 +38,7 @@ namespace Sparky.Tests
             // If we start with 0V across C, then at t=0+, V_c should start rising.
 
             // Run for 5 tau (5ms)
-            for (int i = 0; i < 50; i++)
-            {
+            for (int i = 0; i < 50; i++) {
                 circuit.Solve(dt);
                 time += dt;
 
@@ -56,8 +52,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestRLCircuitCurrentRiseMatchesBackwardEuler()
-        {
+        public void TestRLCircuitCurrentRiseMatchesBackwardEuler() {
             // RL Circuit:
             // 5V Source -> Resistor (10 Ohm) -> Inductor (1mH) -> Ground
             // tau = L / R = 0.0001s. Steady-state current = 0.5A.
@@ -81,8 +76,7 @@ namespace Sparky.Tests
             double expectedCurrent = 0.0;
 
             // Run for 50 tau to reach steady state
-            for (int i = 0; i < 500; i++)
-            {
+            for (int i = 0; i < 500; i++) {
                 circuit.Solve(dt);
 
                 // Backward Euler discrete expectation for current:
@@ -98,8 +92,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestRCVariableTimeStepStillMatchesBackwardEuler()
-        {
+        public void TestRCVariableTimeStepStillMatchesBackwardEuler() {
             var circuit = new Circuit();
             var nSrc = circuit.AddNode();
             var n1 = circuit.AddNode();
@@ -118,8 +111,7 @@ namespace Sparky.Tests
             double dt1 = 1e-4;
             double alpha1 = dt1 / (R * C);
             double denom1 = 1.0 + alpha1;
-            for (int i = 0; i < 10; i++)
-            {
+            for (int i = 0; i < 10; i++) {
                 circuit.Solve(dt1);
                 expected = (expected + alpha1 * V) / denom1;
                 Assert.That(n1.Voltage, Is.EqualTo(expected).Within(Tolerances.Moderate));
@@ -128,8 +120,7 @@ namespace Sparky.Tests
             double dt2 = 2e-4;
             double alpha2 = dt2 / (R * C);
             double denom2 = 1.0 + alpha2;
-            for (int i = 0; i < 10; i++)
-            {
+            for (int i = 0; i < 10; i++) {
                 circuit.Solve(dt2);
                 expected = (expected + alpha2 * V) / denom2;
                 Assert.That(n1.Voltage, Is.EqualTo(expected).Within(Tolerances.Moderate));
@@ -137,8 +128,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestCurrentSourceStepIsRestampedEachSolve()
-        {
+        public void TestCurrentSourceStepIsRestampedEachSolve() {
             // Ground -> I -> Node -> C -> Ground
             // Expect V to integrate I*dt/C each step even when I changes.
 

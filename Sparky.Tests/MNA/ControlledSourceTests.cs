@@ -5,21 +5,18 @@ using Sparky.Tests.TestHelpers;
 namespace Sparky.Tests.MNA;
 
 [TestFixture]
-public class ControlledSourceTests
-{
+public class ControlledSourceTests {
     private SimulationManager _sim = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _sim = new SimulationManager();
     }
 
     #region VCVS Tests
 
     [Test]
-    public void VCVS_UnityGain_OutputMatchesInput()
-    {
+    public void VCVS_UnityGain_OutputMatchesInput() {
         // 10V -- (control) -- VCVS(gain=1) -- R(100) -- GND
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -34,8 +31,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void VCVS_Amplification_OutputIs10xInput()
-    {
+    public void VCVS_Amplification_OutputIs10xInput() {
         // 1V control, gain 10 => 10V output
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -50,8 +46,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void VCVS_Attenuation_OutputIsHalfInput()
-    {
+    public void VCVS_Attenuation_OutputIsHalfInput() {
         // 10V control, gain 0.5 => 5V output
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -66,8 +61,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void VCVS_NegativeGain_Inverts()
-    {
+    public void VCVS_NegativeGain_Inverts() {
         // 10V control, gain -1 => -10V output
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -82,8 +76,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void VCVS_LoadedOutput_CurrentFlows()
-    {
+    public void VCVS_LoadedOutput_CurrentFlows() {
         // VCVS with load resistor, check current
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -101,8 +94,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void VCVS_DifferentialInput()
-    {
+    public void VCVS_DifferentialInput() {
         // Control voltage between two nodes (not ground-referenced)
         // 10V source creates 2V difference across a voltage divider
         var nSrc = _sim.CreateNode();
@@ -124,8 +116,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void VCVS_Update_ChangesGain()
-    {
+    public void VCVS_Update_ChangesGain() {
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
 
@@ -146,8 +137,7 @@ public class ControlledSourceTests
     #region VCCS Tests
 
     [Test]
-    public void VCCS_BasicTransconductance()
-    {
+    public void VCCS_BasicTransconductance() {
         // 1V control, gm=0.01 => 10mA output current
         // Output through 100Ω resistor => V = I*R = 0.01 * 100 = 1V
         var nCtrl = _sim.CreateNode();
@@ -165,8 +155,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void VCCS_HigherTransconductance()
-    {
+    public void VCCS_HigherTransconductance() {
         // 10V control, gm=0.1 => 1A current through 10Ω => 10V
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -182,8 +171,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void VCCS_GetCurrent()
-    {
+    public void VCCS_GetCurrent() {
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
 
@@ -198,8 +186,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void VCCS_Update_ChangesTransconductance()
-    {
+    public void VCCS_Update_ChangesTransconductance() {
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
 
@@ -221,8 +208,7 @@ public class ControlledSourceTests
     #region CCCS Tests
 
     [Test]
-    public void CCCS_UnityGain_CurrentMirror()
-    {
+    public void CCCS_UnityGain_CurrentMirror() {
         // Simple current mirror: input current = output current
         // 10V -- R(100) -- CCCS_input -- GND
         //                  CCCS_output -- R(100) -- GND
@@ -253,8 +239,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CCCS_Amplification_CurrentGain10()
-    {
+    public void CCCS_Amplification_CurrentGain10() {
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -274,8 +259,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CCCS_InputAppearsAsShort()
-    {
+    public void CCCS_InputAppearsAsShort() {
         // The control terminals should have ~0V across them
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
@@ -294,8 +278,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CCCS_Update_ChangesGain()
-    {
+    public void CCCS_Update_ChangesGain() {
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -320,8 +303,7 @@ public class ControlledSourceTests
     #region CCVS Tests
 
     [Test]
-    public void CCVS_BasicTransresistance()
-    {
+    public void CCVS_BasicTransresistance() {
         // 0.1A input current, rm=100 => 10V output
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
@@ -341,8 +323,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CCVS_InputAppearsAsShort()
-    {
+    public void CCVS_InputAppearsAsShort() {
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -360,8 +341,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CCVS_OutputCurrent()
-    {
+    public void CCVS_OutputCurrent() {
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -380,8 +360,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CCVS_Update_ChangesTransresistance()
-    {
+    public void CCVS_Update_ChangesTransresistance() {
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -406,8 +385,7 @@ public class ControlledSourceTests
     #region Lifecycle Tests
 
     [Test]
-    public void VCVS_RemoveAndRecreate()
-    {
+    public void VCVS_RemoveAndRecreate() {
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
 
@@ -428,8 +406,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void VCCS_Remove()
-    {
+    public void VCCS_Remove() {
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
 
@@ -445,8 +422,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CCCS_Remove()
-    {
+    public void CCCS_Remove() {
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -462,8 +438,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CCVS_Remove()
-    {
+    public void CCVS_Remove() {
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -479,8 +454,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void InvalidId_Throws()
-    {
+    public void InvalidId_Throws() {
         Assert.Throws<InvalidComponentException>(() => _sim.GetVCVSGain(new VcvsId(999)));
         Assert.Throws<InvalidComponentException>(() =>
             _sim.GetVCCSTransconductance(new VccsId(999))
@@ -496,8 +470,7 @@ public class ControlledSourceTests
     #region Integration Tests
 
     [Test]
-    public void OpAmp_InvertingAmplifier()
-    {
+    public void OpAmp_InvertingAmplifier() {
         // Model op-amp as high-gain VCVS (idealized)
         // Inverting amplifier: Vout = -Rf/Rin * Vin
         // With Rin = 10k, Rf = 100k, Vin = 1V => Vout = -10V
@@ -527,8 +500,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void MultipleControlledSources_InSameCircuit()
-    {
+    public void MultipleControlledSources_InSameCircuit() {
         // Cascade: VCVS -> VCCS -> resistor
         var nSrc = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -556,8 +528,7 @@ public class ControlledSourceTests
     #region Edge Case Tests - Zero Gain
 
     [Test]
-    public void VCVS_ZeroGain_OutputIsZero()
-    {
+    public void VCVS_ZeroGain_OutputIsZero() {
         // Zero gain VCVS should produce 0V output regardless of input
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -572,8 +543,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void VCCS_ZeroTransconductance_OutputIsZero()
-    {
+    public void VCCS_ZeroTransconductance_OutputIsZero() {
         // Zero transconductance VCCS should produce 0A output
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -589,8 +559,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CCCS_ZeroGain_OutputIsZero()
-    {
+    public void CCCS_ZeroGain_OutputIsZero() {
         // Zero gain CCCS should produce 0A output
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
@@ -611,8 +580,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CCVS_ZeroTransresistance_OutputIsZero()
-    {
+    public void CCVS_ZeroTransresistance_OutputIsZero() {
         // Zero transresistance CCVS should produce 0V output
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
@@ -636,8 +604,7 @@ public class ControlledSourceTests
     #region Edge Case Tests - Very High Gain
 
     [Test]
-    public void VCVS_VeryHighGain_SolverConverges()
-    {
+    public void VCVS_VeryHighGain_SolverConverges() {
         // Test that solver handles very high gain (1e6) without numerical issues
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -653,8 +620,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void VCCS_VeryHighTransconductance_SolverConverges()
-    {
+    public void VCCS_VeryHighTransconductance_SolverConverges() {
         // High transconductance: small voltage creates large current
         var nCtrl = _sim.CreateNode();
         var nOut = _sim.CreateNode();
@@ -670,8 +636,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CCCS_VeryHighGain_SolverConverges()
-    {
+    public void CCCS_VeryHighGain_SolverConverges() {
         // High current gain
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
@@ -689,8 +654,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CCVS_VeryHighTransresistance_SolverConverges()
-    {
+    public void CCVS_VeryHighTransresistance_SolverConverges() {
         // High transresistance: small current creates large voltage
         var nSrc = _sim.CreateNode();
         var nCtrl = _sim.CreateNode();
@@ -712,8 +676,7 @@ public class ControlledSourceTests
     #region Edge Case Tests - Cascaded Sources
 
     [Test]
-    public void CascadedVCVS_ThreeStages()
-    {
+    public void CascadedVCVS_ThreeStages() {
         // Three VCVS in cascade: 1V -> 2V -> 4V -> 8V
         var nSrc = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -742,8 +705,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void CascadedCCCS_CurrentAmplification()
-    {
+    public void CascadedCCCS_CurrentAmplification() {
         // Two CCCS in cascade for current amplification
         // 0.01A -> 0.1A -> 1A
         var nSrc = _sim.CreateNode();
@@ -769,8 +731,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void MixedCascade_VCVS_VCCS_CCVS()
-    {
+    public void MixedCascade_VCVS_VCCS_CCVS() {
         // Mixed cascade: voltage -> voltage -> current -> voltage
         // 1V --(VCVS x5)--> 5V --(VCCS gm=0.1)--> 0.5A --(CCVS rm=20)--> 10V
         var nSrc = _sim.CreateNode();
@@ -799,8 +760,7 @@ public class ControlledSourceTests
     }
 
     [Test]
-    public void NegativeFeedback_StabilizesGain()
-    {
+    public void NegativeFeedback_StabilizesGain() {
         // Negative feedback configuration (non-inverting amplifier style)
         // Vout = Vin * (1 + Rf/R1) when A is very high
         // With Rf=9k, R1=1k: closed-loop gain ≈ 10

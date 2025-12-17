@@ -14,8 +14,7 @@ namespace Sparky.Game.Core;
 /// - Uniform nodes collapse (a 4³ cube of identical values = 1 node)
 /// - Lazy allocation (empty regions = null, returns default value)
 /// </remarks>
-public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
-{
+public class SparseVoxelOctree<T> where T : struct, IEquatable<T> {
     private readonly T _defaultValue;
     private OctreeNode<T>? _root;
     private int _rootSize;      // Size of root node (power of 2)
@@ -28,8 +27,7 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
     /// Creates a new sparse voxel octree.
     /// </summary>
     /// <param name="defaultValue">The value returned for unset positions. Setting to this value removes the voxel.</param>
-    public SparseVoxelOctree(T defaultValue = default)
-    {
+    public SparseVoxelOctree(T defaultValue = default) {
         _defaultValue = defaultValue;
     }
 
@@ -46,10 +44,8 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
     /// <summary>
     /// Sets a voxel at the given position.
     /// </summary>
-    public void Set(VoxelPos pos, T value)
-    {
-        if (value.Equals(_defaultValue))
-        {
+    public void Set(VoxelPos pos, T value) {
+        if (value.Equals(_defaultValue)) {
             Remove(pos);
             return;
         }
@@ -63,8 +59,7 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
     /// <summary>
     /// Removes a voxel (sets to default) at the given position.
     /// </summary>
-    public void Remove(VoxelPos pos)
-    {
+    public void Remove(VoxelPos pos) {
         if (_root == null)
             return;
 
@@ -77,8 +72,7 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
     /// Gets the voxel data at the given position.
     /// Returns the default value for empty positions.
     /// </summary>
-    public T Get(VoxelPos pos)
-    {
+    public T Get(VoxelPos pos) {
         if (_root == null)
             return _defaultValue;
 
@@ -91,10 +85,8 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
     /// <summary>
     /// Sets multiple voxels in a batch (more efficient than individual calls).
     /// </summary>
-    public void SetBatch(IEnumerable<(VoxelPos Pos, T Value)> voxels)
-    {
-        foreach (var (pos, value) in voxels)
-        {
+    public void SetBatch(IEnumerable<(VoxelPos Pos, T Value)> voxels) {
+        foreach (var (pos, value) in voxels) {
             Set(pos, value);
         }
     }
@@ -102,13 +94,11 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
     /// <summary>
     /// Enumerates all non-default voxels in the octree.
     /// </summary>
-    public IEnumerable<(VoxelPos Pos, T Value)> GetAllVoxels()
-    {
+    public IEnumerable<(VoxelPos Pos, T Value)> GetAllVoxels() {
         if (_root == null)
             yield break;
 
-        foreach (var v in EnumerateVoxels(_root, _rootSize, _rootOriginX, _rootOriginY, _rootOriginZ))
-        {
+        foreach (var v in EnumerateVoxels(_root, _rootSize, _rootOriginX, _rootOriginY, _rootOriginZ)) {
             yield return v;
         }
     }
@@ -116,8 +106,7 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
     /// <summary>
     /// Clears all voxels from the octree.
     /// </summary>
-    public void Clear()
-    {
+    public void Clear() {
         _root = null;
         _rootSize = 0;
         _voxelCount = 0;
@@ -127,13 +116,11 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
     /// Enumerates all leaf nodes (uniform regions or single voxels).
     /// Useful for building prisms from coalesced regions.
     /// </summary>
-    public IEnumerable<OctreeLeaf<T>> GetLeafNodes()
-    {
+    public IEnumerable<OctreeLeaf<T>> GetLeafNodes() {
         if (_root == null)
             yield break;
 
-        foreach (var leaf in EnumerateLeaves(_root, _rootSize, _rootOriginX, _rootOriginY, _rootOriginZ))
-        {
+        foreach (var leaf in EnumerateLeaves(_root, _rootSize, _rootOriginX, _rootOriginY, _rootOriginZ)) {
             yield return leaf;
         }
     }
@@ -141,17 +128,14 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
     #region Internal Implementation
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private bool Contains(int x, int y, int z)
-    {
+    private bool Contains(int x, int y, int z) {
         return x >= _rootOriginX && x < _rootOriginX + _rootSize &&
                y >= _rootOriginY && y < _rootOriginY + _rootSize &&
                z >= _rootOriginZ && z < _rootOriginZ + _rootSize;
     }
 
-    private void EnsureContains(int x, int y, int z)
-    {
-        if (_root == null)
-        {
+    private void EnsureContains(int x, int y, int z) {
+        if (_root == null) {
             // Initialize with size 16 centered roughly on the point
             _rootSize = 16;
             _rootOriginX = (x >> 4) << 4;  // Align to 16
@@ -162,14 +146,12 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
         }
 
         // Expand root until it contains the point
-        while (!Contains(x, y, z))
-        {
+        while (!Contains(x, y, z)) {
             ExpandRoot(x, y, z);
         }
     }
 
-    private void ExpandRoot(int targetX, int targetY, int targetZ)
-    {
+    private void ExpandRoot(int targetX, int targetY, int targetZ) {
         // Double the root size and reposition
         int newSize = _rootSize * 2;
         int halfSize = _rootSize;
@@ -200,16 +182,13 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
     /// <summary>
     /// Sets a value at the given position. Returns true if the old value was the default.
     /// </summary>
-    private bool SetInternal(int x, int y, int z, T value)
-    {
+    private bool SetInternal(int x, int y, int z, T value) {
         return SetRecursive(ref _root!, _rootSize, _rootOriginX, _rootOriginY, _rootOriginZ, x, y, z, value);
     }
 
     private bool SetRecursive(ref OctreeNode<T> node, int size, int originX, int originY, int originZ,
-        int x, int y, int z, T newValue)
-    {
-        if (size == 1)
-        {
+        int x, int y, int z, T newValue) {
+        if (size == 1) {
             // Leaf level - single voxel
             var wasDefault = node.LeafValue.Equals(_defaultValue);
             node.LeafValue = newValue;
@@ -218,8 +197,7 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
         }
 
         // If this is a uniform leaf, we need to split it
-        if (node.IsLeaf)
-        {
+        if (node.IsLeaf) {
             // Check if we're setting to the same value - no change needed
             if (node.LeafValue.Equals(newValue))
                 return node.LeafValue.Equals(_defaultValue);
@@ -229,10 +207,8 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
             node.IsLeaf = false;
 
             int halfSize = size / 2;
-            for (int i = 0; i < 8; i++)
-            {
-                var child = new OctreeNode<T>
-                {
+            for (int i = 0; i < 8; i++) {
+                var child = new OctreeNode<T> {
                     IsLeaf = true,
                     LeafValue = oldValue
                 };
@@ -261,8 +237,7 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
         return result;
     }
 
-    private void TryCollapse(ref OctreeNode<T> node)
-    {
+    private void TryCollapse(ref OctreeNode<T> node) {
         if (node.IsLeaf)
             return;
 
@@ -273,8 +248,7 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
 
         var value = firstChild.LeafValue;
 
-        for (int i = 1; i < 8; i++)
-        {
+        for (int i = 1; i < 8; i++) {
             var child = node.Children[i];
             if (child == null || !child.IsLeaf)
                 return;
@@ -290,10 +264,8 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
     }
 
     private T GetInternal(OctreeNode<T> node, int size, int originX, int originY, int originZ,
-        int x, int y, int z)
-    {
-        while (true)
-        {
+        int x, int y, int z) {
+        while (true) {
             if (node.IsLeaf)
                 return node.LeafValue;
 
@@ -316,20 +288,15 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
     }
 
     private IEnumerable<(VoxelPos, T)> EnumerateVoxels(
-        OctreeNode<T> node, int size, int originX, int originY, int originZ)
-    {
-        if (node.IsLeaf)
-        {
+        OctreeNode<T> node, int size, int originX, int originY, int originZ) {
+        if (node.IsLeaf) {
             if (node.LeafValue.Equals(_defaultValue))
                 yield break;
 
             // Enumerate all voxels in this uniform region
-            for (int z = 0; z < size; z++)
-            {
-                for (int y = 0; y < size; y++)
-                {
-                    for (int x = 0; x < size; x++)
-                    {
+            for (int z = 0; z < size; z++) {
+                for (int y = 0; y < size; y++) {
+                    for (int x = 0; x < size; x++) {
                         yield return (new VoxelPos(originX + x, originY + y, originZ + z),
                             node.LeafValue);
                     }
@@ -339,8 +306,7 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
         }
 
         int halfSize = size / 2;
-        for (int i = 0; i < 8; i++)
-        {
+        for (int i = 0; i < 8; i++) {
             var child = node.Children[i];
             if (child == null)
                 continue;
@@ -352,20 +318,16 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
             int childOriginY = originY + childY * halfSize;
             int childOriginZ = originZ + childZ * halfSize;
 
-            foreach (var v in EnumerateVoxels(child, halfSize, childOriginX, childOriginY, childOriginZ))
-            {
+            foreach (var v in EnumerateVoxels(child, halfSize, childOriginX, childOriginY, childOriginZ)) {
                 yield return v;
             }
         }
     }
 
     private IEnumerable<OctreeLeaf<T>> EnumerateLeaves(
-        OctreeNode<T> node, int size, int originX, int originY, int originZ)
-    {
-        if (node.IsLeaf)
-        {
-            if (!node.LeafValue.Equals(_defaultValue))
-            {
+        OctreeNode<T> node, int size, int originX, int originY, int originZ) {
+        if (node.IsLeaf) {
+            if (!node.LeafValue.Equals(_defaultValue)) {
                 yield return new OctreeLeaf<T>(
                     new VoxelPos(originX, originY, originZ),
                     size,
@@ -375,8 +337,7 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
         }
 
         int halfSize = size / 2;
-        for (int i = 0; i < 8; i++)
-        {
+        for (int i = 0; i < 8; i++) {
             var child = node.Children[i];
             if (child == null)
                 continue;
@@ -388,8 +349,7 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
             int childOriginY = originY + childY * halfSize;
             int childOriginZ = originZ + childZ * halfSize;
 
-            foreach (var leaf in EnumerateLeaves(child, halfSize, childOriginX, childOriginY, childOriginZ))
-            {
+            foreach (var leaf in EnumerateLeaves(child, halfSize, childOriginX, childOriginY, childOriginZ)) {
                 yield return leaf;
             }
         }
@@ -402,8 +362,7 @@ public class SparseVoxelOctree<T> where T : struct, IEquatable<T>
 /// Internal node of the sparse voxel octree.
 /// Can be either a branch (has children) or a leaf (uniform value).
 /// </summary>
-public class OctreeNode<T> where T : struct
-{
+public class OctreeNode<T> where T : struct {
     public OctreeNode<T>?[] Children { get; } = new OctreeNode<T>?[8];
     public bool IsLeaf { get; set; } = true;
     public T LeafValue { get; set; }

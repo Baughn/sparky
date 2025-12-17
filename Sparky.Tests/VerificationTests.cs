@@ -3,14 +3,11 @@ using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
+namespace Sparky.Tests {
     [TestFixture]
-    public class VerificationTests
-    {
+    public class VerificationTests {
         [Test]
-        public void TestInductorDC_ShortCircuitBehavior()
-        {
+        public void TestInductorDC_ShortCircuitBehavior() {
             // DC Source -> Inductor -> Resistor -> Ground
             // At DC (dt=0), Inductor should act as a short circuit (0V drop).
             // Current should be V / R.
@@ -40,8 +37,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void TestDiodeStability_HighVoltage()
-        {
+        public void TestDiodeStability_HighVoltage() {
             // High Voltage Source -> Diode -> Resistor -> Ground
             // This stresses the exponential model.
             // 100V source. Diode drop ~0.7-1.0V. Rest across resistor.

@@ -11,8 +11,7 @@ namespace Sparky.VSIntegration.Preview;
 /// <summary>
 /// Renders preview voxels for all players as transparent ghost blocks.
 /// </summary>
-public class VoxelPreviewRenderer : IRenderer
-{
+public class VoxelPreviewRenderer : IRenderer {
     /// <summary>
     /// Render after terrain (0.37) but before particles (0.6).
     /// </summary>
@@ -30,22 +29,19 @@ public class VoxelPreviewRenderer : IRenderer
     // Per-player preview state
     private readonly Dictionary<string, PlayerPreviewState> _playerStates = new();
 
-    private class PlayerPreviewState
-    {
+    private class PlayerPreviewState {
         public List<PreviewVoxel> Voxels = new();
         public MeshRef? MeshRef;
         public Vec3d MeshOrigin = new();
         public bool IsDirty;
     }
 
-    public VoxelPreviewRenderer(ICoreClientAPI capi)
-    {
+    public VoxelPreviewRenderer(ICoreClientAPI capi) {
         _capi = capi;
         // Texture lookup deferred to first render - atlas may not be ready during init
     }
 
-    private void EnsureTextureLoaded()
-    {
+    private void EnsureTextureLoaded() {
         if (_copperTexPos != null)
             return;
 
@@ -55,8 +51,7 @@ public class VoxelPreviewRenderer : IRenderer
         _copperTexPos = _capi.BlockTextureAtlas.GetPosition(copperBlock, "copper", true);
         _blockAtlasTextureId = _copperTexPos.atlasTextureId;
 
-        if (_blockAtlasTextureId == 0)
-        {
+        if (_blockAtlasTextureId == 0) {
             _capi.Logger.Warning("[Sparky] Got texture ID 0 for preview - texture resolution may have failed");
         }
     }
@@ -64,10 +59,8 @@ public class VoxelPreviewRenderer : IRenderer
     /// <summary>
     /// Sets the preview voxels for a player. Empty list clears the preview.
     /// </summary>
-    public void SetPlayerPreview(string playerUid, List<PreviewVoxel> voxels)
-    {
-        if (!_playerStates.TryGetValue(playerUid, out var state))
-        {
+    public void SetPlayerPreview(string playerUid, List<PreviewVoxel> voxels) {
+        if (!_playerStates.TryGetValue(playerUid, out var state)) {
             state = new PlayerPreviewState();
             _playerStates[playerUid] = state;
         }
@@ -79,10 +72,8 @@ public class VoxelPreviewRenderer : IRenderer
     /// <summary>
     /// Clears the preview for a player.
     /// </summary>
-    public void ClearPlayerPreview(string playerUid)
-    {
-        if (_playerStates.TryGetValue(playerUid, out var state))
-        {
+    public void ClearPlayerPreview(string playerUid) {
+        if (_playerStates.TryGetValue(playerUid, out var state)) {
             state.MeshRef?.Dispose();
             _playerStates.Remove(playerUid);
         }
@@ -91,31 +82,29 @@ public class VoxelPreviewRenderer : IRenderer
     /// <summary>
     /// Clears all previews.
     /// </summary>
-    public void ClearAllPreviews()
-    {
-        foreach (var state in _playerStates.Values)
-        {
+    public void ClearAllPreviews() {
+        foreach (var state in _playerStates.Values) {
             state.MeshRef?.Dispose();
         }
         _playerStates.Clear();
     }
 
-    public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
-    {
-        if (stage != EnumRenderStage.Opaque) return;
-        if (_playerStates.Count == 0) return;
+    public void OnRenderFrame(float deltaTime, EnumRenderStage stage) {
+        if (stage != EnumRenderStage.Opaque)
+            return;
+        if (_playerStates.Count == 0)
+            return;
 
         var rapi = _capi.Render;
         var player = _capi.World.Player;
-        if (player?.Entity == null) return;
+        if (player?.Entity == null)
+            return;
         var camPos = player.Entity.CameraPos;
 
         // Rebuild any dirty meshes
-        foreach (var kvp in _playerStates)
-        {
+        foreach (var kvp in _playerStates) {
             var state = kvp.Value;
-            if (state.IsDirty)
-            {
+            if (state.IsDirty) {
                 RebuildMesh(state);
                 state.IsDirty = false;
             }
@@ -146,10 +135,10 @@ public class VoxelPreviewRenderer : IRenderer
         prog.ViewMatrix = rapi.CameraMatrixOriginf;
         prog.ProjectionMatrix = rapi.CurrentProjectionMatrix;
 
-        foreach (var kvp in _playerStates)
-        {
+        foreach (var kvp in _playerStates) {
             var state = kvp.Value;
-            if (state.MeshRef == null || state.Voxels.Count == 0) continue;
+            if (state.MeshRef == null || state.Voxels.Count == 0)
+                continue;
 
             // Update model matrix for camera-relative positioning
             prog.ModelMatrix = new Matrixf()
@@ -175,24 +164,26 @@ public class VoxelPreviewRenderer : IRenderer
         rapi.GlEnableCullFace();
     }
 
-    private void RebuildMesh(PlayerPreviewState state)
-    {
+    private void RebuildMesh(PlayerPreviewState state) {
         // Dispose old mesh
         state.MeshRef?.Dispose();
         state.MeshRef = null;
 
-        if (state.Voxels.Count == 0) return;
+        if (state.Voxels.Count == 0)
+            return;
 
         // Ensure texture is loaded (deferred from init)
         EnsureTextureLoaded();
-        if (_copperTexPos == null) return;
+        if (_copperTexPos == null)
+            return;
 
         // Set mesh origin at minimum voxel position
         state.MeshOrigin = VoxelPreviewMesh.ComputeMeshOrigin(state.Voxels);
 
         // Build multi-voxel mesh with face culling
         var meshData = VoxelPreviewMesh.BuildVoxelMesh(state.Voxels);
-        if (meshData == null) return;
+        if (meshData == null)
+            return;
 
         // Map UVs from 0-1 to texture atlas position
         meshData.SetTexPos(_copperTexPos);
@@ -201,8 +192,7 @@ public class VoxelPreviewRenderer : IRenderer
         state.MeshRef = _capi.Render.UploadMesh(meshData);
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
         ClearAllPreviews();
     }
 }

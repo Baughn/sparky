@@ -5,21 +5,18 @@ using Sparky.Tests.TestHelpers;
 namespace Sparky.Tests.MNA;
 
 [TestFixture]
-public class ApiSwitchTests
-{
+public class ApiSwitchTests {
     private SimulationManager _sim = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _sim = new SimulationManager();
     }
 
     #region Lifecycle Tests
 
     [Test]
-    public void Switch_AddRemove_WorksCorrectly()
-    {
+    public void Switch_AddRemove_WorksCorrectly() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -31,8 +28,7 @@ public class ApiSwitchTests
     }
 
     [Test]
-    public void Switch_InitiallyOpen_DefaultState()
-    {
+    public void Switch_InitiallyOpen_DefaultState() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -41,8 +37,7 @@ public class ApiSwitchTests
     }
 
     [Test]
-    public void Switch_InitiallyClosed_WhenSpecified()
-    {
+    public void Switch_InitiallyClosed_WhenSpecified() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -51,8 +46,7 @@ public class ApiSwitchTests
     }
 
     [Test]
-    public void Switch_RemoveNonExistent_ThrowsInvalidComponentException()
-    {
+    public void Switch_RemoveNonExistent_ThrowsInvalidComponentException() {
         Assert.Throws<InvalidComponentException>(() => _sim.RemoveSwitch(new SwitchId(999)));
     }
 
@@ -61,8 +55,7 @@ public class ApiSwitchTests
     #region State Transition Tests
 
     [Test]
-    public void Switch_SetState_ChangesState()
-    {
+    public void Switch_SetState_ChangesState() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -77,8 +70,7 @@ public class ApiSwitchTests
     }
 
     [Test]
-    public void Switch_Toggle_InvertsState()
-    {
+    public void Switch_Toggle_InvertsState() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -93,8 +85,7 @@ public class ApiSwitchTests
     }
 
     [Test]
-    public void Switch_SetStateSameValue_NoOp()
-    {
+    public void Switch_SetStateSameValue_NoOp() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -110,8 +101,7 @@ public class ApiSwitchTests
     #region Circuit Behavior Tests
 
     [Test]
-    public void Switch_Open_BlocksCurrent()
-    {
+    public void Switch_Open_BlocksCurrent() {
         // 10V -- SW (open) -- R(100) -- GND
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -132,8 +122,7 @@ public class ApiSwitchTests
     }
 
     [Test]
-    public void Switch_Closed_AllowsCurrent()
-    {
+    public void Switch_Closed_AllowsCurrent() {
         // 10V -- SW (closed) -- R(100) -- GND
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -154,8 +143,7 @@ public class ApiSwitchTests
     }
 
     [Test]
-    public void Switch_Toggle_ChangesCircuitBehavior()
-    {
+    public void Switch_Toggle_ChangesCircuitBehavior() {
         // 10V -- SW -- R(100) -- GND
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -180,8 +168,7 @@ public class ApiSwitchTests
     }
 
     [Test]
-    public void Switch_InVoltageDivider_AffectsVoltageDistribution()
-    {
+    public void Switch_InVoltageDivider_AffectsVoltageDistribution() {
         // 10V -- R(100) -- N1 -- SW -- N2 -- R(100) -- GND
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -209,8 +196,7 @@ public class ApiSwitchTests
     #region Partitioning Tests
 
     [Test]
-    public void Switch_Open_DoesNotAffectPartitioning()
-    {
+    public void Switch_Open_DoesNotAffectPartitioning() {
         // Switch still exists as high-resistance resistor, so nodes remain connected
         // 10V -- R1 -- N1 -- SW(open) -- N2 -- R2 -- GND
         var n1 = _sim.CreateNode();
@@ -231,8 +217,7 @@ public class ApiSwitchTests
     #region Integration Tests
 
     [Test]
-    public void Switch_MultipleInCircuit_WorkIndependently()
-    {
+    public void Switch_MultipleInCircuit_WorkIndependently() {
         // 10V -- SW1 -- N1 -- SW2 -- N2 -- R(100) -- GND
         var nPos = _sim.CreateNode();
         var n1 = _sim.CreateNode();
@@ -261,8 +246,7 @@ public class ApiSwitchTests
     }
 
     [Test]
-    public void Switch_Clear_RemovesAllSwitches()
-    {
+    public void Switch_Clear_RemovesAllSwitches() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -275,8 +259,7 @@ public class ApiSwitchTests
     }
 
     [Test]
-    public void Switch_BulkUpdate_DefersSolve()
-    {
+    public void Switch_BulkUpdate_DefersSolve() {
         var n1 = _sim.CreateNode();
         var n2 = _sim.CreateNode();
 
@@ -284,8 +267,7 @@ public class ApiSwitchTests
         var swId = _sim.AddSwitch(n1, n2, initiallyClosed: true);
         _sim.AddResistor(n2, _sim.Ground, 100.0);
 
-        using (_sim.BeginBulkUpdate())
-        {
+        using (_sim.BeginBulkUpdate()) {
             _sim.ToggleSwitch(swId);
             _sim.ToggleSwitch(swId);
             _sim.ToggleSwitch(swId);
@@ -302,8 +284,7 @@ public class ApiSwitchTests
     #region Exception Tests
 
     [Test]
-    public void Switch_InvalidNode_ThrowsInvalidNodeException()
-    {
+    public void Switch_InvalidNode_ThrowsInvalidNodeException() {
         var n1 = _sim.CreateNode();
         var invalidNode = new NodeId(999);
 
@@ -311,28 +292,24 @@ public class ApiSwitchTests
     }
 
     [Test]
-    public void Switch_GetStateNonExistent_ThrowsInvalidComponentException()
-    {
+    public void Switch_GetStateNonExistent_ThrowsInvalidComponentException() {
         Assert.Throws<InvalidComponentException>(() => _sim.GetSwitchState(new SwitchId(999)));
     }
 
     [Test]
-    public void Switch_SetStateNonExistent_ThrowsInvalidComponentException()
-    {
+    public void Switch_SetStateNonExistent_ThrowsInvalidComponentException() {
         Assert.Throws<InvalidComponentException>(() =>
             _sim.SetSwitchState(new SwitchId(999), true)
         );
     }
 
     [Test]
-    public void Switch_ToggleNonExistent_ThrowsInvalidComponentException()
-    {
+    public void Switch_ToggleNonExistent_ThrowsInvalidComponentException() {
         Assert.Throws<InvalidComponentException>(() => _sim.ToggleSwitch(new SwitchId(999)));
     }
 
     [Test]
-    public void Switch_GetCurrentNonExistent_ThrowsInvalidComponentException()
-    {
+    public void Switch_GetCurrentNonExistent_ThrowsInvalidComponentException() {
         Assert.Throws<InvalidComponentException>(() => _sim.GetSwitchCurrent(new SwitchId(999)));
     }
 

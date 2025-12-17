@@ -5,27 +5,23 @@ using System.Linq;
 namespace Sparky.Tests.Game;
 
 [TestFixture]
-public class SparseVoxelOctreeTests
-{
+public class SparseVoxelOctreeTests {
     private SparseVoxelOctree<VoxelData> _svo = null!;
 
     [SetUp]
-    public void SetUp()
-    {
+    public void SetUp() {
         _svo = new SparseVoxelOctree<VoxelData>(VoxelData.Air);
     }
 
     #region Basic Operations
 
     [Test]
-    public void NewOctree_IsEmpty()
-    {
+    public void NewOctree_IsEmpty() {
         Assert.That(_svo.VoxelCount, Is.EqualTo(0));
     }
 
     [Test]
-    public void Set_SingleVoxel_CanBeRetrieved()
-    {
+    public void Set_SingleVoxel_CanBeRetrieved() {
         var pos = new VoxelPos(5, 5, 5);
         _svo.Set(pos, new VoxelData(VoxelType.Conductor, Material.Copper));
 
@@ -37,8 +33,7 @@ public class SparseVoxelOctreeTests
     }
 
     [Test]
-    public void Get_EmptyPosition_ReturnsAir()
-    {
+    public void Get_EmptyPosition_ReturnsAir() {
         var data = _svo.Get(new VoxelPos(99, 99, 99));
 
         Assert.That(data.Type, Is.EqualTo(VoxelType.Air));
@@ -46,8 +41,7 @@ public class SparseVoxelOctreeTests
     }
 
     [Test]
-    public void Set_Air_RemovesVoxel()
-    {
+    public void Set_Air_RemovesVoxel() {
         var pos = new VoxelPos(5, 5, 5);
         _svo.Set(pos, new VoxelData(VoxelType.Conductor, Material.Copper));
 
@@ -58,8 +52,7 @@ public class SparseVoxelOctreeTests
     }
 
     [Test]
-    public void Set_OverwriteExisting_UpdatesValue()
-    {
+    public void Set_OverwriteExisting_UpdatesValue() {
         var pos = new VoxelPos(5, 5, 5);
         _svo.Set(pos, new VoxelData(VoxelType.Conductor, Material.Copper));
 
@@ -76,8 +69,7 @@ public class SparseVoxelOctreeTests
     #region Negative Coordinates
 
     [Test]
-    public void Set_NegativeCoordinates_Works()
-    {
+    public void Set_NegativeCoordinates_Works() {
         var pos = new VoxelPos(-10, -20, -30);
         _svo.Set(pos, new VoxelData(VoxelType.Conductor, Material.Lead));
 
@@ -88,8 +80,7 @@ public class SparseVoxelOctreeTests
     }
 
     [Test]
-    public void Set_MixedCoordinates_AllAccessible()
-    {
+    public void Set_MixedCoordinates_AllAccessible() {
         var positions = new[]
         {
             new VoxelPos(-100, -100, -100),
@@ -98,13 +89,11 @@ public class SparseVoxelOctreeTests
             new VoxelPos(-50, 50, -50)
         };
 
-        foreach (var pos in positions)
-        {
+        foreach (var pos in positions) {
             _svo.Set(pos, new VoxelData(VoxelType.Conductor, Material.Copper));
         }
 
-        foreach (var pos in positions)
-        {
+        foreach (var pos in positions) {
             Assert.That(_svo.Get(pos).Type, Is.EqualTo(VoxelType.Conductor),
                 $"Position {pos} should be Conductor");
         }
@@ -117,8 +106,7 @@ public class SparseVoxelOctreeTests
     #region Uniform Node Collapse
 
     [Test]
-    public void Set_UniformCube_CollapsesToSingleLeaf()
-    {
+    public void Set_UniformCube_CollapsesToSingleLeaf() {
         // Fill a 2x2x2 cube with the same voxel type
         for (int z = 0; z < 2; z++)
             for (int y = 0; y < 2; y++)
@@ -136,8 +124,7 @@ public class SparseVoxelOctreeTests
     }
 
     [Test]
-    public void Set_MixedTypes_DoesNotCollapse()
-    {
+    public void Set_MixedTypes_DoesNotCollapse() {
         // Fill a 2x2x2 cube with different types
         _svo.Set(new VoxelPos(0, 0, 0), new VoxelData(VoxelType.Conductor, Material.Copper));
         _svo.Set(new VoxelPos(1, 0, 0), new VoxelData(VoxelType.Insulator, null));
@@ -147,8 +134,7 @@ public class SparseVoxelOctreeTests
     }
 
     [Test]
-    public void Remove_LastDifferentVoxel_RecollapsesPossible()
-    {
+    public void Remove_LastDifferentVoxel_RecollapsesPossible() {
         // Fill 2x2x2 uniformly, then change one, then change it back
         for (int z = 0; z < 2; z++)
             for (int y = 0; y < 2; y++)
@@ -171,8 +157,7 @@ public class SparseVoxelOctreeTests
     #region GetAllVoxels
 
     [Test]
-    public void GetAllVoxels_ReturnsAllNonAir()
-    {
+    public void GetAllVoxels_ReturnsAllNonAir() {
         _svo.Set(new VoxelPos(0, 0, 0), new VoxelData(VoxelType.Conductor, Material.Copper));
         _svo.Set(new VoxelPos(10, 10, 10), new VoxelData(VoxelType.Insulator, null));
         _svo.Set(new VoxelPos(-5, -5, -5), new VoxelData(VoxelType.ResistiveConductor, Material.Lead));
@@ -183,8 +168,7 @@ public class SparseVoxelOctreeTests
     }
 
     [Test]
-    public void GetAllVoxels_UniformCube_ReturnsAllVoxels()
-    {
+    public void GetAllVoxels_UniformCube_ReturnsAllVoxels() {
         // Fill a 4x4x4 cube
         for (int z = 0; z < 4; z++)
             for (int y = 0; y < 4; y++)
@@ -201,8 +185,7 @@ public class SparseVoxelOctreeTests
     #region SetBatch
 
     [Test]
-    public void SetBatch_MultipleVoxels_AllSet()
-    {
+    public void SetBatch_MultipleVoxels_AllSet() {
         var batch = new[]
         {
             (new VoxelPos(0, 0, 0), new VoxelData(VoxelType.Conductor, Material.Copper)),
@@ -222,8 +205,7 @@ public class SparseVoxelOctreeTests
     #region Large Scale
 
     [Test]
-    public void LargeWire_Performance()
-    {
+    public void LargeWire_Performance() {
         // Create a 3x3x192 wire (same as benchmark)
         for (int z = 0; z < 192; z++)
             for (int y = 0; y < 3; y++)
@@ -239,8 +221,7 @@ public class SparseVoxelOctreeTests
     }
 
     [Test]
-    public void Clear_RemovesAllVoxels()
-    {
+    public void Clear_RemovesAllVoxels() {
         _svo.Set(new VoxelPos(0, 0, 0), new VoxelData(VoxelType.Conductor, Material.Copper));
         _svo.Set(new VoxelPos(10, 10, 10), new VoxelData(VoxelType.Insulator, null));
 
@@ -255,8 +236,7 @@ public class SparseVoxelOctreeTests
     #region GetLeafNodes
 
     [Test]
-    public void GetLeafNodes_SingleVoxel_ReturnsLeafWithSize1()
-    {
+    public void GetLeafNodes_SingleVoxel_ReturnsLeafWithSize1() {
         _svo.Set(new VoxelPos(5, 5, 5), new VoxelData(VoxelType.Conductor, Material.Copper));
 
         var leaves = _svo.GetLeafNodes().ToList();
@@ -267,8 +247,7 @@ public class SparseVoxelOctreeTests
     }
 
     [Test]
-    public void GetLeafNodes_4x4x4Cube_ReturnsLeafWithSize4()
-    {
+    public void GetLeafNodes_4x4x4Cube_ReturnsLeafWithSize4() {
         // Fill aligned 4x4x4 cube
         for (int z = 0; z < 4; z++)
             for (int y = 0; y < 4; y++)

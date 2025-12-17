@@ -8,20 +8,17 @@ namespace Sparky.VSIntegration.CableLaying;
 /// Dialog for selecting wire tool mode via F key.
 /// Shows a 2x3 grid of mode buttons.
 /// </summary>
-public class WireToolModeDialog : GuiDialog
-{
+public class WireToolModeDialog : GuiDialog {
     public override string ToggleKeyCombinationCode => "wiretoolmode";
 
     private readonly Action<WireToolMode> _onModeSelected;
 
-    public WireToolModeDialog(ICoreClientAPI capi, Action<WireToolMode> onModeSelected) : base(capi)
-    {
+    public WireToolModeDialog(ICoreClientAPI capi, Action<WireToolMode> onModeSelected) : base(capi) {
         _onModeSelected = onModeSelected;
         Compose();
     }
 
-    private void Compose()
-    {
+    private void Compose() {
         const double buttonWidth = 100;
         const double buttonHeight = 30;
         const double padding = 5;
@@ -51,8 +48,7 @@ public class WireToolModeDialog : GuiDialog
             (WireToolMode.Cable3x5, "Cable 3x5")
         };
 
-        for (int i = 0; i < modes.Length; i++)
-        {
+        for (int i = 0; i < modes.Length; i++) {
             int col = i % cols;
             int row = i / cols;
             var mode = modes[i];
@@ -71,15 +67,13 @@ public class WireToolModeDialog : GuiDialog
         SingleComposer = composer.EndChildElements().Compose();
     }
 
-    private bool OnModeClicked(WireToolMode mode)
-    {
+    private bool OnModeClicked(WireToolMode mode) {
         _onModeSelected?.Invoke(mode);
         TryClose();
         return true;
     }
 
-    private void OnTitleBarClose()
-    {
+    private void OnTitleBarClose() {
         TryClose();
     }
 }

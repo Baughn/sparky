@@ -3,8 +3,7 @@ namespace Sparky.Game.Core.CableLaying;
 /// <summary>
 /// The type of pathfinding result.
 /// </summary>
-public enum PathResultType
-{
+public enum PathResultType {
     /// <summary>Path reaches the goal exactly.</summary>
     Complete,
 
@@ -26,8 +25,7 @@ public readonly record struct PathResult(
     PathResultType Type,
     IReadOnlyList<VoxelPos> Path,
     VoxelPos EndPosition,
-    int DistanceToGoal)
-{
+    int DistanceToGoal) {
     /// <summary>Creates a Complete result.</summary>
     public static PathResult Complete(IReadOnlyList<VoxelPos> path, VoxelPos goal) =>
         new(PathResultType.Complete, path, goal, 0);

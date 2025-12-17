@@ -3,22 +3,18 @@ using NUnit.Framework;
 using Sparky.MNA.Api;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests.MNA
-{
+namespace Sparky.Tests.MNA {
     [TestFixture]
-    public class ApiTests
-    {
+    public class ApiTests {
         private SimulationManager _sim = null!;
 
         [SetUp]
-        public void SetUp()
-        {
+        public void SetUp() {
             _sim = new SimulationManager();
         }
 
         [Test]
-        public void TestSimpleResistorDivider()
-        {
+        public void TestSimpleResistorDivider() {
             // 10V -- R1(10) -- N1 -- R2(10) -- GND
             var n1 = _sim.CreateNode();
             var nPos = _sim.CreateNode();
@@ -36,8 +32,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void TestPartitioning()
-        {
+        public void TestPartitioning() {
             // Circuit 1: 10V -- R1(10) -- GND
             // Circuit 2: 5V -- R2(5) -- GND
 
@@ -58,8 +53,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void TestIncrementalUpdate_ValueChange()
-        {
+        public void TestIncrementalUpdate_ValueChange() {
             // 10V -- R1(10) -- GND
             var nPos = _sim.CreateNode();
             var nGnd = _sim.Ground;
@@ -91,8 +85,7 @@ namespace Sparky.Tests.MNA
         }
 
         [Test]
-        public void TestIncrementalUpdate_TopologyChange()
-        {
+        public void TestIncrementalUpdate_TopologyChange() {
             // 10V -- R1(10) -- N1 -- GND
             var nPos = _sim.CreateNode();
             var n1 = _sim.CreateNode();

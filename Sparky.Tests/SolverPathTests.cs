@@ -2,28 +2,23 @@ using NUnit.Framework;
 using Sparky.MNA.Core;
 using Sparky.Tests.TestHelpers;
 
-namespace Sparky.Tests
-{
+namespace Sparky.Tests {
     [TestFixture]
-    public class SolverPathTests
-    {
+    public class SolverPathTests {
         [Test]
-        public void SmallCircuit_UsesDenseSolver()
-        {
+        public void SmallCircuit_UsesDenseSolver() {
             // Circuit with < 96 nodes should use dense solver
             var circuit = new Circuit();
 
             // Create a small circuit (< 96 nodes)
             var nodes = new Node[10];
-            for (int i = 0; i < 10; i++)
-            {
+            for (int i = 0; i < 10; i++) {
                 nodes[i] = circuit.AddNode();
             }
 
             // Chain of resistors
             circuit.AddComponent(new VoltageSource(nodes[0], circuit.Ground, 10.0));
-            for (int i = 0; i < 9; i++)
-            {
+            for (int i = 0; i < 9; i++) {
                 circuit.AddComponent(new Resistor(nodes[i], nodes[i + 1], 100.0));
             }
             circuit.AddComponent(new Resistor(nodes[9], circuit.Ground, 100.0));
@@ -35,22 +30,19 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void LargeCircuit_UsesSparseSOlver()
-        {
+        public void LargeCircuit_UsesSparseSOlver() {
             // Circuit with > 96 nodes should use sparse solver
             var circuit = new Circuit();
 
             // Create a large circuit (> 96 nodes)
             var nodes = new Node[100];
-            for (int i = 0; i < 100; i++)
-            {
+            for (int i = 0; i < 100; i++) {
                 nodes[i] = circuit.AddNode();
             }
 
             // Chain of resistors
             circuit.AddComponent(new VoltageSource(nodes[0], circuit.Ground, 10.0));
-            for (int i = 0; i < 99; i++)
-            {
+            for (int i = 0; i < 99; i++) {
                 circuit.AddComponent(new Resistor(nodes[i], nodes[i + 1], 100.0));
             }
             circuit.AddComponent(new Resistor(nodes[99], circuit.Ground, 100.0));
@@ -62,8 +54,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void AtThreshold_UsesDenseSolver()
-        {
+        public void AtThreshold_UsesDenseSolver() {
             // Matrix size = nodeCount + extraEqCount
             // Threshold is 96, so we need matrix size <= 96
             // Ground is node 0, voltage source adds 1 extra equation
@@ -71,15 +62,13 @@ namespace Sparky.Tests
             var circuit = new Circuit();
 
             var nodes = new Node[94];
-            for (int i = 0; i < 94; i++)
-            {
+            for (int i = 0; i < 94; i++) {
                 nodes[i] = circuit.AddNode();
             }
 
             // Chain of resistors with current source (no extra equation)
             circuit.AddComponent(new VoltageSource(nodes[0], circuit.Ground, 10.0));
-            for (int i = 0; i < 93; i++)
-            {
+            for (int i = 0; i < 93; i++) {
                 circuit.AddComponent(new Resistor(nodes[i], nodes[i + 1], 100.0));
             }
             circuit.AddComponent(new Resistor(nodes[93], circuit.Ground, 100.0));
@@ -91,22 +80,19 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void JustAboveThreshold_UsesSparse()
-        {
+        public void JustAboveThreshold_UsesSparse() {
             // Circuit with 97 nodes should use sparse solver
             var circuit = new Circuit();
 
             // Create 96 nodes (ground is index 0, so 97 total)
             var nodes = new Node[96];
-            for (int i = 0; i < 96; i++)
-            {
+            for (int i = 0; i < 96; i++) {
                 nodes[i] = circuit.AddNode();
             }
 
             // Chain of resistors (sparse structure)
             circuit.AddComponent(new VoltageSource(nodes[0], circuit.Ground, 10.0));
-            for (int i = 0; i < 95; i++)
-            {
+            for (int i = 0; i < 95; i++) {
                 circuit.AddComponent(new Resistor(nodes[i], nodes[i + 1], 100.0));
             }
             circuit.AddComponent(new Resistor(nodes[95], circuit.Ground, 100.0));
@@ -118,15 +104,13 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void DenseMatrix_AboveThreshold_StillUsesDense()
-        {
+        public void DenseMatrix_AboveThreshold_StillUsesDense() {
             // Large circuit but with high density (>= 0.18) should still use dense
             var circuit = new Circuit();
 
             // Create 100 nodes
             var nodes = new Node[100];
-            for (int i = 0; i < 100; i++)
-            {
+            for (int i = 0; i < 100; i++) {
                 nodes[i] = circuit.AddNode();
             }
 
@@ -136,12 +120,10 @@ namespace Sparky.Tests
             circuit.AddComponent(new VoltageSource(nodes[0], circuit.Ground, 10.0));
 
             // Create a mesh: connect each node to ground and to next few nodes
-            for (int i = 0; i < 100; i++)
-            {
+            for (int i = 0; i < 100; i++) {
                 circuit.AddComponent(new Resistor(nodes[i], circuit.Ground, 1000.0));
                 // Connect to next 5 nodes (creates dense structure)
-                for (int j = 1; j <= 5 && i + j < 100; j++)
-                {
+                for (int j = 1; j <= 5 && i + j < 100; j++) {
                     circuit.AddComponent(new Resistor(nodes[i], nodes[i + j], 100.0));
                 }
             }
@@ -154,8 +136,7 @@ namespace Sparky.Tests
         }
 
         [Test]
-        public void BothPaths_ProduceSameResult()
-        {
+        public void BothPaths_ProduceSameResult() {
             // Create same circuit at different sizes to force different solver paths
             // Results should be numerically equivalent
 
@@ -177,15 +158,13 @@ namespace Sparky.Tests
 
             // Add many dummy nodes to force sparse solver
             var dummyNodes = new Node[100];
-            for (int i = 0; i < 100; i++)
-            {
+            for (int i = 0; i < 100; i++) {
                 dummyNodes[i] = largeCircuit.AddNode();
             }
 
             // Dummy chain (isolated from main circuit)
             largeCircuit.AddComponent(new VoltageSource(dummyNodes[0], largeCircuit.Ground, 5.0));
-            for (int i = 0; i < 99; i++)
-            {
+            for (int i = 0; i < 99; i++) {
                 largeCircuit.AddComponent(new Resistor(dummyNodes[i], dummyNodes[i + 1], 100.0));
             }
             largeCircuit.AddComponent(new Resistor(dummyNodes[99], largeCircuit.Ground, 100.0));

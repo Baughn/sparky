@@ -1,7 +1,6 @@
 using CSparse.Storage;
 
-namespace Sparky.MNA.Core
-{
+namespace Sparky.MNA.Core {
     /// <summary>
     /// Ideal Transformer.
     /// Relations:
@@ -14,8 +13,7 @@ namespace Sparky.MNA.Core
     /// Ip = I_aux
     /// Is = -(1/n) * I_aux
     /// </summary>
-    public class Transformer : Component
-    {
+    public class Transformer : Component {
         public Node Node3 { get; }
         public Node Node4 { get; }
         public double Ratio { get; set; } // n = Ns / Np
@@ -35,15 +33,13 @@ namespace Sparky.MNA.Core
         public override bool HasExtraEquation => true;
 
         public Transformer(Node node1, Node node2, Node node3, Node node4, double ratio)
-            : base(node1, node2)
-        {
+            : base(node1, node2) {
             Node3 = node3;
             Node4 = node4;
             Ratio = ratio;
         }
 
-        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0)
-        {
+        public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 0) {
             if (MatrixIndex == -1)
                 return;
 

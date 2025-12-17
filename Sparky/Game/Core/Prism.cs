@@ -10,8 +10,7 @@ namespace Sparky.Game.Core;
 ///
 /// Memory: ~14 bytes per prism vs ~50 bytes per voxel in dictionary storage.
 /// </remarks>
-public readonly record struct Prism
-{
+public readonly record struct Prism {
     /// <summary>
     /// Local X position within the block (0-15).
     /// </summary>
@@ -57,8 +56,7 @@ public readonly record struct Prism
     /// </summary>
     public Prism(byte localX, byte localY, byte localZ,
                  byte sizeX, byte sizeY, byte sizeZ,
-                 VoxelType type, Material? material = null)
-    {
+                 VoxelType type, Material? material = null) {
         LocalX = localX;
         LocalY = localY;
         LocalZ = localZ;
@@ -73,16 +71,14 @@ public readonly record struct Prism
     /// Creates a single-voxel prism (1×1×1).
     /// </summary>
     public static Prism SingleVoxel(byte localX, byte localY, byte localZ,
-                                     VoxelType type, Material? material = null)
-    {
+                                     VoxelType type, Material? material = null) {
         return new Prism(localX, localY, localZ, 1, 1, 1, type, material);
     }
 
     /// <summary>
     /// Returns true if the given local position is within this prism.
     /// </summary>
-    public bool Contains(int localX, int localY, int localZ)
-    {
+    public bool Contains(int localX, int localY, int localZ) {
         return localX >= LocalX && localX < LocalX + SizeX
             && localY >= LocalY && localY < LocalY + SizeY
             && localZ >= LocalZ && localZ < LocalZ + SizeZ;
@@ -91,8 +87,7 @@ public readonly record struct Prism
     /// <summary>
     /// Returns true if the given local position tuple is within this prism.
     /// </summary>
-    public bool Contains((int X, int Y, int Z) local)
-    {
+    public bool Contains((int X, int Y, int Z) local) {
         return Contains(local.X, local.Y, local.Z);
     }
 

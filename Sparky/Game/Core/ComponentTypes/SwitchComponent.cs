@@ -12,8 +12,7 @@ namespace Sparky.Game.Core.ComponentTypes;
 /// When closed, it acts as a near-zero resistance connection.
 /// When open, it acts as a near-infinite resistance (open circuit).
 /// </remarks>
-public class SwitchComponent : Component
-{
+public class SwitchComponent : Component {
     private readonly TerminalRegion _terminalA;
     private readonly TerminalRegion _terminalB;
 
@@ -40,8 +39,7 @@ public class SwitchComponent : Component
         IEnumerable<VoxelPos> terminalAVoxels,
         IEnumerable<VoxelPos> terminalBVoxels,
         bool initiallyClosed = false)
-        : base(origin)
-    {
+        : base(origin) {
         _terminalA = new TerminalRegion("a", terminalAVoxels);
         _terminalB = new TerminalRegion("b", terminalBVoxels);
         Terminals = [_terminalA, _terminalB];
@@ -52,22 +50,19 @@ public class SwitchComponent : Component
     /// Creates a switch with single-voxel terminals.
     /// </summary>
     public SwitchComponent(VoxelPos terminalA, VoxelPos terminalB, bool initiallyClosed = false)
-        : this(terminalA, [terminalA], [terminalB], initiallyClosed)
-    {
+        : this(terminalA, [terminalA], [terminalB], initiallyClosed) {
     }
 
     /// <summary>
     /// Creates a switch with a single voxel (both terminals at same position).
     /// </summary>
     public SwitchComponent(VoxelPos voxel, bool initiallyClosed = false)
-        : this(voxel, [voxel], [voxel], initiallyClosed)
-    {
+        : this(voxel, [voxel], [voxel], initiallyClosed) {
     }
 
     public override void CreateMnaComponents(
         ISimulation sim,
-        IReadOnlyDictionary<string, NodeId> terminalNodes)
-    {
+        IReadOnlyDictionary<string, NodeId> terminalNodes) {
         if (!terminalNodes.TryGetValue("a", out var nodeA))
             throw new InvalidOperationException("Switch missing terminal A node");
         if (!terminalNodes.TryGetValue("b", out var nodeB))
@@ -76,10 +71,8 @@ public class SwitchComponent : Component
         _switchId = sim.AddSwitch(nodeA, nodeB, IsClosed);
     }
 
-    public override void RemoveMnaComponents(ISimulation sim)
-    {
-        if (_switchId.HasValue)
-        {
+    public override void RemoveMnaComponents(ISimulation sim) {
+        if (_switchId.HasValue) {
             sim.RemoveSwitch(_switchId.Value);
             _switchId = null;
         }
@@ -88,17 +81,14 @@ public class SwitchComponent : Component
     /// <summary>
     /// Toggles the switch state and updates the MNA simulation.
     /// </summary>
-    public void Toggle(ISimulation sim)
-    {
+    public void Toggle(ISimulation sim) {
         IsClosed = !IsClosed;
-        if (_switchId.HasValue)
-        {
+        if (_switchId.HasValue) {
             sim.SetSwitchState(_switchId.Value, IsClosed);
         }
     }
 
-    public override ComponentVisualState ComputeVisualState(ISimulation sim)
-    {
+    public override ComponentVisualState ComputeVisualState(ISimulation sim) {
         if (!_switchId.HasValue)
             return ComponentVisualState.Default;
 

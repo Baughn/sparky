@@ -13,8 +13,7 @@ namespace Sparky.Game.Core;
 /// Used for prism indexing to support fast "which prisms touch position P?" queries.
 /// Cell size of 16 matches the VS block size for locality.
 /// </remarks>
-public class SpatialHash<T> where T : notnull
-{
+public class SpatialHash<T> where T : notnull {
     private readonly int _cellSize;
     private readonly int _cellShift;
     private readonly Dictionary<CellPos, HashSet<T>> _cells = new();
@@ -24,8 +23,7 @@ public class SpatialHash<T> where T : notnull
     /// Creates a spatial hash with the given cell size (must be power of 2).
     /// </summary>
     /// <param name="cellSize">Size of each cell (default 16, must be power of 2).</param>
-    public SpatialHash(int cellSize = 16)
-    {
+    public SpatialHash(int cellSize = 16) {
         if (cellSize <= 0 || (cellSize & (cellSize - 1)) != 0)
             throw new ArgumentException("Cell size must be a positive power of 2", nameof(cellSize));
 
@@ -51,8 +49,7 @@ public class SpatialHash<T> where T : notnull
     /// <summary>
     /// Adds an item with a single-point extent.
     /// </summary>
-    public void Add(T item, VoxelPos pos)
-    {
+    public void Add(T item, VoxelPos pos) {
         Add(item, pos, pos);
     }
 
@@ -62,18 +59,15 @@ public class SpatialHash<T> where T : notnull
     /// <param name="item">The item to add.</param>
     /// <param name="min">Minimum corner (inclusive).</param>
     /// <param name="max">Maximum corner (inclusive).</param>
-    public void Add(T item, VoxelPos min, VoxelPos max)
-    {
+    public void Add(T item, VoxelPos min, VoxelPos max) {
         if (_itemCells.ContainsKey(item))
             throw new ArgumentException("Item already exists in spatial hash", nameof(item));
 
         var cells = GetIntersectingCells(min, max);
         _itemCells[item] = cells;
 
-        foreach (var cell in cells)
-        {
-            if (!_cells.TryGetValue(cell, out var set))
-            {
+        foreach (var cell in cells) {
+            if (!_cells.TryGetValue(cell, out var set)) {
                 set = new HashSet<T>();
                 _cells[cell] = set;
             }
@@ -85,15 +79,12 @@ public class SpatialHash<T> where T : notnull
     /// Removes an item from the spatial hash.
     /// </summary>
     /// <returns>True if the item was found and removed.</returns>
-    public bool Remove(T item)
-    {
+    public bool Remove(T item) {
         if (!_itemCells.TryGetValue(item, out var cells))
             return false;
 
-        foreach (var cell in cells)
-        {
-            if (_cells.TryGetValue(cell, out var set))
-            {
+        foreach (var cell in cells) {
+            if (_cells.TryGetValue(cell, out var set)) {
                 set.Remove(item);
                 if (set.Count == 0)
                     _cells.Remove(cell);
@@ -107,8 +98,7 @@ public class SpatialHash<T> where T : notnull
     /// <summary>
     /// Updates an item's bounds in the spatial hash.
     /// </summary>
-    public void Update(T item, VoxelPos min, VoxelPos max)
-    {
+    public void Update(T item, VoxelPos min, VoxelPos max) {
         Remove(item);
         Add(item, min, max);
     }
@@ -120,11 +110,9 @@ public class SpatialHash<T> where T : notnull
     /// Returns items in cells that contain the point. Caller should perform
     /// precise intersection tests if needed.
     /// </remarks>
-    public IEnumerable<T> Query(VoxelPos pos)
-    {
+    public IEnumerable<T> Query(VoxelPos pos) {
         var cell = GetCellPos(pos);
-        if (_cells.TryGetValue(cell, out var set))
-        {
+        if (_cells.TryGetValue(cell, out var set)) {
             foreach (var item in set)
                 yield return item;
         }
@@ -140,13 +128,10 @@ public class SpatialHash<T> where T : notnull
     /// if an item spans multiple cells in the query region.
     /// Use QueryDistinct for deduplicated results.
     /// </remarks>
-    public IEnumerable<T> Query(VoxelPos min, VoxelPos max)
-    {
+    public IEnumerable<T> Query(VoxelPos min, VoxelPos max) {
         var cells = GetIntersectingCells(min, max);
-        foreach (var cell in cells)
-        {
-            if (_cells.TryGetValue(cell, out var set))
-            {
+        foreach (var cell in cells) {
+            if (_cells.TryGetValue(cell, out var set)) {
                 foreach (var item in set)
                     yield return item;
             }
@@ -158,11 +143,9 @@ public class SpatialHash<T> where T : notnull
     /// </summary>
     /// <param name="min">Minimum corner (inclusive).</param>
     /// <param name="max">Maximum corner (inclusive).</param>
-    public IEnumerable<T> QueryDistinct(VoxelPos min, VoxelPos max)
-    {
+    public IEnumerable<T> QueryDistinct(VoxelPos min, VoxelPos max) {
         var seen = new HashSet<T>();
-        foreach (var item in Query(min, max))
-        {
+        foreach (var item in Query(min, max)) {
             if (seen.Add(item))
                 yield return item;
         }
@@ -171,16 +154,14 @@ public class SpatialHash<T> where T : notnull
     /// <summary>
     /// Returns all items in the spatial hash.
     /// </summary>
-    public IEnumerable<T> GetAll()
-    {
+    public IEnumerable<T> GetAll() {
         return _itemCells.Keys;
     }
 
     /// <summary>
     /// Clears all items from the spatial hash.
     /// </summary>
-    public void Clear()
-    {
+    public void Clear() {
         _cells.Clear();
         _itemCells.Clear();
     }
@@ -188,29 +169,23 @@ public class SpatialHash<T> where T : notnull
     /// <summary>
     /// Checks if an item exists in the spatial hash.
     /// </summary>
-    public bool Contains(T item)
-    {
+    public bool Contains(T item) {
         return _itemCells.ContainsKey(item);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private CellPos GetCellPos(VoxelPos pos)
-    {
+    private CellPos GetCellPos(VoxelPos pos) {
         return new CellPos(pos.X >> _cellShift, pos.Y >> _cellShift, pos.Z >> _cellShift);
     }
 
-    private List<CellPos> GetIntersectingCells(VoxelPos min, VoxelPos max)
-    {
+    private List<CellPos> GetIntersectingCells(VoxelPos min, VoxelPos max) {
         var minCell = GetCellPos(min);
         var maxCell = GetCellPos(max);
 
         var cells = new List<CellPos>();
-        for (int z = minCell.Z; z <= maxCell.Z; z++)
-        {
-            for (int y = minCell.Y; y <= maxCell.Y; y++)
-            {
-                for (int x = minCell.X; x <= maxCell.X; x++)
-                {
+        for (int z = minCell.Z; z <= maxCell.Z; z++) {
+            for (int y = minCell.Y; y <= maxCell.Y; y++) {
+                for (int x = minCell.X; x <= maxCell.X; x++) {
                     cells.Add(new CellPos(x, y, z));
                 }
             }
@@ -227,19 +202,16 @@ public class SpatialHash<T> where T : notnull
 /// <summary>
 /// Bit manipulation utilities.
 /// </summary>
-internal static class BitOperations
-{
+internal static class BitOperations {
     /// <summary>
     /// Returns the log base 2 of a value (position of highest set bit).
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Log2(uint value)
-    {
+    public static int Log2(uint value) {
         // Use de Bruijn sequence for O(1) log2
         // This is faster than a loop and works for powers of 2
         int r = 0;
-        while (value > 1)
-        {
+        while (value > 1) {
             value >>= 1;
             r++;
         }

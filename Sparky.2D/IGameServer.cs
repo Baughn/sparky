@@ -9,8 +9,7 @@ namespace Sparky.TwoD;
 /// The server owns the grid state, components, and simulation.
 /// It processes input events from clients and emits render commands.
 /// </remarks>
-public interface IGameServer
-{
+public interface IGameServer {
     /// <summary>
     /// Grid width in cells.
     /// </summary>
