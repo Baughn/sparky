@@ -5,13 +5,9 @@
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Sparky.Core</AssemblyName>
+    <RootNamespace>Sparky</RootNamespace>
   </PropertyGroup>
-
-  <!-- Include MNA and Game source files from parent directory -->
-  <ItemGroup>
-    <Compile Include="..\MNA\**\*.cs" LinkBase="MNA" />
-    <Compile Include="..\Sparky\Game\**\*.cs" LinkBase="Game" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CSparse" Version="4.3.0" />

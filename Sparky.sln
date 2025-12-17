@@ -1,17 +1,17 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparky", "Sparky.csproj", "{6D16D2FB-8F94-47C3-9DF9-ED1B3483BC0C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mod", "src\mod\mod.csproj", "{6D16D2FB-8F94-47C3-9DF9-ED1B3483BC0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparky.Tests", "Sparky.Tests\Sparky.Tests.csproj", "{2D31D107-BD49-42C1-B8AA-7AD8E0C01150}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests", "tests\tests.csproj", "{2D31D107-BD49-42C1-B8AA-7AD8E0C01150}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparky.Benchmarks", "Sparky.Benchmarks\Sparky.Benchmarks.Runner.csproj", "{070789FB-B689-4A30-9E2B-7EB5EA0319F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "benchmarks", "benchmarks\benchmarks.csproj", "{070789FB-B689-4A30-9E2B-7EB5EA0319F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparky.2D", "Sparky.2D\Sparky.2D.csproj", "{235B7238-D493-4EC0-B1DF-329E62CB651A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2d", "src\2d\2d.csproj", "{235B7238-D493-4EC0-B1DF-329E62CB651A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparky.Core", "Sparky.Core\Sparky.Core.csproj", "{27828D2F-A4F6-4A86-BBB5-D8EA6BDC0E13}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "core", "src\core\core.csproj", "{27828D2F-A4F6-4A86-BBB5-D8EA6BDC0E13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

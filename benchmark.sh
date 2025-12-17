@@ -2,7 +2,7 @@
 set -euo pipefail
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-project="$root_dir/Sparky.Benchmarks/Sparky.Benchmarks.Runner.csproj"
+project="$root_dir/benchmarks/benchmarks.csproj"
 results_dir="$root_dir/BenchmarkDotNet.Artifacts/results"
 default_csv="$(ls -t "$results_dir"/*-report.csv 2>/dev/null | head -n1 || true)"
 

@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Critical design docs are in the root directory. Localized design docs (e.g. for the tablet game) are in subdirectories. Subsystem and cross-cutting docs are generally in context/.
+Design documentation is consolidated in `context/`. Project source code lives in `src/` (core, mod, 2d), with tests in `tests/` and benchmarks in `benchmarks/`.
 
 ## Project Overview
 
@@ -16,7 +16,7 @@ nix develop
 
 # Build
 dotnet build                    # Debug build
-dotnet build -c Release         # Release build (creates bin/Sparky.zip)
+dotnet build -c Release         # Release build (creates src/mod/bin/Sparky.zip)
 
 # Test
 dotnet test                     # Run all tests
@@ -32,17 +32,17 @@ dotnet test --filter "FullyQualifiedName~TestName"  # Run specific test
 
 ### Three-Layer Design
 
-1. **Core Layer (`MNA/Core/`)**: Low-level solver handling matrix assembly and linear algebra
+1. **Core Layer (`src/core/mna/core/`)**: Low-level solver handling matrix assembly and linear algebra
    - `Circuit.cs`: Main solver with Newton-Raphson iteration, dense/sparse path selection
    - `Component.cs`: Abstract base for all circuit elements
    - Component implementations: `Resistor`, `VoltageSource`, `CurrentSource`, `Capacitor`, `Inductor`, `Diode`, `Transformer`
 
-2. **API Layer (`MNA/Api/`)**: High-level interface for game integration
+2. **API Layer (`src/core/mna/api/`)**: High-level interface for game integration
    - `ISimulation.cs`: Public interface with strongly-typed IDs
    - `SimulationManager.cs`: Implementation with graph partitioning and line optimization
    - `Exceptions.cs`, `Ids.cs`: Type-safe ID wrappers and custom exceptions
 
-3. **Game Layer (`Game/Core/`)**: Voxel-based world representation
+3. **Game Layer (`src/core/game/core/`)**: Voxel-based world representation
    - `VoxelGrid.cs`: Sparse voxel storage with O(log n) access via SVO
    - `TopologyBuilder.cs`: Converts voxel geometry to MNA circuit topology
    - `SparseVoxelOctree.cs`, `IncrementalPrismBuilder.cs`: Optimized storage internals
@@ -58,12 +58,13 @@ dotnet test --filter "FullyQualifiedName~TestName"  # Run specific test
 
 ## Design Documentation
 
-- `MNA.md`: MNA theory, component stamps, solver architecture
-- `MNA/API.md`: High-level API design, partitioning, line optimization
+All design docs are in `context/`:
+- `context/mna-theory.md`: MNA theory, component stamps, solver architecture
+- `context/mna-api.md`: High-level API design, partitioning, line optimization
 - `context/voxel-storage.md`: VoxelGrid SVO + incremental prism architecture
-- `TEST-PLAN.md`: Comprehensive test coverage roadmap
+- `context/vsintegration.md`: Vintage Story mod integration layer
 
-When making changes, update the relevant design docs (*.md in root and MNA/) to stay aligned. Prefer adding detailed subsystem knowledge to context files rather than this file.
+When making changes, update the relevant design docs in `context/` to stay aligned.
 
 ## Bugs
 
@@ -74,11 +75,11 @@ When fixing bugs, always make a regression test first.
 - C# .NET 8.0, nullable enabled, LangVersion latest
 - 4-space indents, braces on same line (K&R style)
 - PascalCase types/methods/properties, camelCase locals/parameters
-- Keep solver math well-commented; align terminology with `MNA.md`
+- Keep solver math well-commented; align terminology with `context/mna-theory.md`
 
 ## Testing
 
-Tests use NUnit in `Sparky.Tests/`. Name tests as scenario + expectation (e.g., `TestVoltageDivider`). Use tolerance checks like `Within(1e-6)` for floating-point comparisons.
+Tests use NUnit in `tests/`. Name tests as scenario + expectation (e.g., `TestVoltageDivider`). Use tolerance checks like `Within(1e-6)` for floating-point comparisons.
 
 ## Version Control
 

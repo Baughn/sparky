@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Sparky.2D</AssemblyName>
+    <RootNamespace>Sparky</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,8 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Reference to Sparky.Core for MNA solver, VoxelGrid, TopologyBuilder, etc. -->
-    <!-- Does NOT depend on Vintage Story -->
-    <ProjectReference Include="..\Sparky.Core\Sparky.Core.csproj" />
+    <ProjectReference Include="../core/core.csproj" />
   </ItemGroup>
 </Project>

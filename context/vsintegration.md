@@ -2,11 +2,11 @@
 
 *Last updated: 2025-12-16*
 
-The VSIntegration folder bridges Vintage Story's game world and Sparky's electrical simulation system.
+The `src/mod/vsintegration/` folder bridges Vintage Story's game world and Sparky's electrical simulation system.
 
-Whenever you make a change to this code, also change VSIntegration/CLAUDE.md.
+Whenever you make a change to this code, also update this file (`context/vsintegration.md`).
 
-See CABLE-LAYER.md for details on the cable-laying tool.
+See `context/cable-layer.md` for details on the cable-laying tool.
 
 ## Architecture Overview
 
@@ -85,7 +85,7 @@ Player tool for building circuits:
 - **F key**: Open mode selection dialog
 - **Modes**: SingleVoxel (default), Cable1x1, Cable1x2, Cable2x2, Cable2x3, Cable3x5
 
-Uses `VoxelPositionHelper` (in `Sparky.Core/Game/Core/`) for pure-math hit-position calculations, including overflow handling when placement crosses block boundaries.
+Uses `VoxelPositionHelper` (in `src/core/game/core/`) for pure-math hit-position calculations, including overflow handling when placement crosses block boundaries.
 
 **Important: Singleton Pattern**
 `Item` classes are singletons in VS - all players share the same `ItemWireTool` instance. Per-player/per-item state MUST NOT be stored as instance fields. Instead:
@@ -168,7 +168,7 @@ The `Preview/` folder implements ghost voxel rendering for wire tool placement f
 ### Architecture
 
 ```
-VSIntegration/Preview/
+src/mod/vsintegration/Preview/
 ├── PreviewState.cs           # Protobuf network messages (preview + placement)
 ├── VoxelPreviewSystem.cs     # ModSystem: preview sync, placement handling
 ├── VoxelPreviewRenderer.cs   # IRenderer: GPU mesh rendering
@@ -266,7 +266,7 @@ The `CableLaying/` folder implements pathfinding-based cable placement.
 ### Architecture
 
 ```
-Sparky.Core/Game/Core/CableLaying/   (VS-independent)
+src/core/game/core/CableLaying/   (VS-independent)
 ├── CacheVoxelState.cs       # Voxel state enum for pathfinding
 ├── IWorldVoxelCache.cs      # Interface for world access
 ├── CrossSection.cs          # Cable cross-section types (1x1, 2x2, etc.)
@@ -274,7 +274,7 @@ Sparky.Core/Game/Core/CableLaying/   (VS-independent)
 ├── PathResult.cs            # Pathfinding result types
 └── CableValidator.cs        # Acceptance criteria for tests
 
-VSIntegration/CableLaying/
+src/mod/vsintegration/CableLaying/
 ├── WorldVoxelCache.cs       # VS-specific cache implementation
 ├── CableLayingState.cs      # State machine for two-click workflow
 └── WireToolModeDialog.cs    # F key mode selection GUI
