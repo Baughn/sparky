@@ -10,6 +10,7 @@ namespace Sparky.Tests.Game.CableLaying;
 /// </summary>
 [TestFixture]
 public class SnapPositionTests {
+    // Note: This class is public so benchmarks can reuse its setup and test methods.
     // 16³ cube of insulation floating in space
     private const int CubeOrigin = 50;
     private const int CubeSize = 16;

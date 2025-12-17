@@ -21,7 +21,7 @@ command="${1:-trailer}"
 
 case "$command" in
   run)
-    dotnet run -c Release --project "$project" --filter '*'
+    dotnet run -c Release --project "$project" "$@"
     latest_csv="$(ls -t "$results_dir"/*-report.csv 2>/dev/null | head -n1 || true)"
     if [[ -n "$latest_csv" ]]; then
       echo "Latest BenchmarkDotNet CSV: $latest_csv"

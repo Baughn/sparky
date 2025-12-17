@@ -3,8 +3,10 @@ using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 using Sparky.Game.Core;
+using Sparky.Game.Core.CableLaying;
 using Sparky.MNA.Api;
 using Sparky.MNA.Core;
+using Sparky.Tests.Game.CableLaying;
 
 namespace Sparky.Benchmarks {
     public class Program {
@@ -342,6 +344,29 @@ namespace Sparky.Benchmarks {
             for (int y = 0; y < 3; y++)
                 for (int x = 0; x < 3; x++)
                     yield return new VoxelPos(x, y, 191);
+        }
+    }
+
+    [MemoryDiagnoser]
+    public class SnapPositionBenchmarks {
+        private SnapPositionTests _testFixture = null!;
+
+        [GlobalSetup]
+        public void GlobalSetup() {
+            _testFixture = new SnapPositionTests();
+            _testFixture.SetUp();
+        }
+
+        [Benchmark(Description = "Snap position: 1x1 cross-section")]
+        public void FindSnapPosition_1x1() {
+            _testFixture.SnapPosition_TouchesSurface_WithCorrectContactCount(
+                CrossSection.Size1x1, VoxelDirection.XPos);
+        }
+
+        [Benchmark(Description = "Snap position: 3x5 cross-section")]
+        public void FindSnapPosition_3x5() {
+            _testFixture.SnapPosition_TouchesSurface_WithCorrectContactCount(
+                CrossSection.Size3x5, VoxelDirection.XPos);
         }
     }
 }

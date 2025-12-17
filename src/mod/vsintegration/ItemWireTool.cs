@@ -289,7 +289,7 @@ public class ItemWireTool : Item {
             var globalZ = pos.Z * 16 + localZ;
 
             var request = new VoxelPlacementRequest {
-                Voxels = new List<VoxelPlacement> { new VoxelPlacement(globalX, globalY, globalZ, matIndex) }
+                Voxels = [new VoxelPlacement(globalX, globalY, globalZ, matIndex)]
             };
             SendVoxelPlacement(request);
             handling = EnumHandHandling.PreventDefault;
@@ -306,7 +306,7 @@ public class ItemWireTool : Item {
             var globalZ = adjacentPos.Z * 16 + localZ;
 
             var request = new VoxelPlacementRequest {
-                Voxels = new List<VoxelPlacement> { new VoxelPlacement(globalX, globalY, globalZ, matIndex) }
+                Voxels = [new VoxelPlacement(globalX, globalY, globalZ, matIndex)]
             };
             SendVoxelPlacement(request);
             handling = EnumHandHandling.PreventDefault;

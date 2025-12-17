@@ -9,7 +9,7 @@ namespace Sparky.Tests.Game.CableLaying;
 /// Mock implementation of IWorldVoxelCache for testing.
 /// Uses the same octree storage as WorldVoxelCache but allows direct state setting.
 /// </summary>
-internal class MockWorldVoxelCache : IWorldVoxelCache {
+public class MockWorldVoxelCache : IWorldVoxelCache {
     private readonly SparseVoxelOctree<CacheVoxelState> _octree;
     private readonly VoxelPos _origin;
     private readonly HashSet<VoxelPos> _cableConductors = new();
