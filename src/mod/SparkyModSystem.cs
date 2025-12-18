@@ -68,9 +68,6 @@ public class SparkyModSystem : ModSystem {
         // Register block class
         api.RegisterBlockClass("BlockCircuit", typeof(BlockCircuit));
 
-        // Register block entity class (disabled - now using BEBehaviorCircuit)
-        // api.RegisterBlockEntityClass("BlockEntityCircuit", typeof(BlockEntityCircuit));
-
         // Register block entity behavior class
         api.RegisterBlockEntityBehaviorClass("sparky:circuit", typeof(BEBehaviorCircuit));
 
@@ -140,7 +137,6 @@ public class SparkyModSystem : ModSystem {
     /// </summary>
     private void RegisterConductorBlocks(ICoreAPI api) {
         // Clear any previous registrations
-        BlockEntityCircuit.ClearConductorRegistrations();
         BEBehaviorCircuit.ClearConductorRegistrations();
 
         // Map of conductor block codes to materials
@@ -155,8 +151,6 @@ public class SparkyModSystem : ModSystem {
         foreach (var (code, material) in conductorMap) {
             var block = api.World.GetBlock(new AssetLocation(code));
             if (block != null) {
-                // Register with both old entity and new behavior (during transition)
-                BlockEntityCircuit.RegisterConductor(block.BlockId, material);
                 BEBehaviorCircuit.RegisterConductor(block.BlockId, material);
                 api.Logger.Debug($"[Sparky] Registered conductor: {code} -> {material.Name}");
             } else {

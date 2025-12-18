@@ -234,12 +234,6 @@ public class WorldVoxelCache : IWorldVoxelCache {
             return;
         }
 
-        // Circuit block → conductors become PreExistingConductor, non-conductors → Insulation, unfilled → Empty
-        if (be is BlockEntityCircuit circuit) {
-            ProcessCircuitBlock(blockPos, circuit);
-            return;
-        }
-
         // Non-circuit microblock → filled voxels become Insulation, unfilled → Unroutable
         if (be is BlockEntityMicroBlock microblock) {
             ProcessMicroBlock(blockPos, microblock);
@@ -249,24 +243,6 @@ public class WorldVoxelCache : IWorldVoxelCache {
         // Regular solid block → all voxels become Insulation
         // For simplicity, treat any non-air, non-replaceable block as fully solid
         ProcessSolidBlock(blockPos, block);
-    }
-
-    /// <summary>
-    /// Processes a circuit block. Conductors → PreExistingConductor, non-conductors → Insulation.
-    /// Unfilled areas remain Empty (can be occupied by cable).
-    /// </summary>
-    private void ProcessCircuitBlock(VSBlockPos blockPos, BlockEntityCircuit circuit) {
-        if (circuit.VoxelCuboids == null || circuit.BlockIds == null)
-            return;
-
-        ApplyCircuitCuboids(
-            _octree,
-            blockPos.X * 16,
-            blockPos.Y * 16,
-            blockPos.Z * 16,
-            circuit.VoxelCuboids,
-            circuit.BlockIds,
-            BlockEntityCircuit.IsConductor);
     }
 
     /// <summary>

@@ -10,10 +10,11 @@ Convert the monolithic `BlockEntityCircuit` class into a `BEBehaviorCircuit` tha
 ## Design Decisions
 
 - **Storage:** Behavior uses its own voxel storage (not host's microblock storage)
-- **Migration:** Disable `BlockEntityCircuit` early, keep for reference
+- **Migration:** Disable `BlockEntityCircuit` early, remove once stable
 - **Injection:** Filter by `EntityClass == "Generic"` or `null`
 
 ## Current Architecture
+*Historical (pre-port) context*
 
 ```
 BlockEntityCircuit : BlockEntityMicroBlock
@@ -105,9 +106,9 @@ public class BEBehaviorCircuit : BlockEntityBehavior
 **Completed:**
 - ✅ `CircuitNetworkManager.cs`: Changed `RegisterBlock(BlockPos, BEBehaviorCircuit)`
 - ✅ `CircuitNetworkManager.cs`: Updated `ProcessDirtyBlocks()` to use `GetBehavior<BEBehaviorCircuit>()`
-- ✅ `SparkyModSystem.cs`: Commented out `RegisterBlockEntityClass("BlockEntityCircuit", ...)`
+- ✅ `SparkyModSystem.cs`: Removed `RegisterBlockEntityClass("BlockEntityCircuit", ...)`
 - ✅ `circuitblock.json`: Changed `entityClass` to `"Generic"`, added `entityBehaviors: [{ "name": "sparky:circuit" }]`
-- ✅ `BlockEntityCircuit.cs`: Disabled network manager calls (kept for reference)
+- ✅ `BlockEntityCircuit.cs`: Deprecated (removed in Phase 7)
 - ✅ `BEBehaviorCircuit.cs`: Enabled all network manager integration
 
 **Test:** Manual - place circuit block, verify network registration works
@@ -199,6 +200,11 @@ May need a `BlockBehaviorCircuit` that overrides `GetSelectionBoxes()` to includ
 - Remove commented registrations
 - Update `context/vsintegration.md` documentation
 
+**Completed:**
+- ✅ Deleted `BlockEntityCircuit.cs`
+- ✅ Removed legacy registrations
+- ✅ Updated `context/vsintegration.md`
+
 **Test:** Full regression
 
 ## Files to Modify
@@ -220,7 +226,7 @@ May need a `BlockBehaviorCircuit` that overrides `GetSelectionBoxes()` to includ
 ## Risk Mitigation
 
 - **Each phase has a checkpoint** - don't proceed until tests pass
-- **BlockEntityCircuit kept for reference** - can revert if needed
+- **BlockEntityCircuit removed** - history preserved in version control
 - **Behavior injection is additive** - doesn't break existing blocks without behaviors
 
 ---
@@ -420,6 +426,7 @@ The following are all **PUBLIC** and accessible from behaviors:
 **Trade-off:** For blocks that ARE microblocks, we could theoretically share storage. We chose not to for simplicity - the behavior is always self-contained.
 
 ### Coupling Analysis: What Uses BlockEntityCircuit
+*Historical (pre-port) references; retained for traceability*
 
 **CircuitNetworkManager.cs:**
 - `RegisterBlock(BlockPos, BlockEntityCircuit)` - receives instance on Initialize

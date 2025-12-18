@@ -163,9 +163,10 @@ BEBehaviorCircuit.RegisterConductor(blockId, Material.Copper);
 
 ## Behavior Injection
 
-During `SparkyModSystem.AssetsFinalize`, Sparky injects `BEBehaviorCircuit` into any block
-with `EntityClass == "Generic"` or `null` (unless it already has the behavior). If the
-entity class is null, it is set to `Generic` so the behavior can attach.
+During `SparkyModSystem.AssetsFinalize`, Sparky injects `BEBehaviorCircuit` as
+`sparky:circuit` into any block with `EntityClass == "Generic"` or `null` (unless it
+already has the behavior). If the entity class is null, it is set to `Generic` so the
+behavior can attach.
 
 This populates `BlockIdToMaterial`, enabling `ExportToVoxelGrid()` to distinguish conductor voxels from decorative/insulator blocks.
 
