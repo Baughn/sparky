@@ -85,6 +85,8 @@ Player tool for building circuits:
 - **F key**: Open mode selection dialog
 - **Modes**: SingleVoxel (default), Cable1x1, Cable1x2, Cable2x2, Cable2x3, Cable3x5
 
+Single-voxel placement/removal treats any block hosting `BEBehaviorCircuit` as a circuit block.
+
 Uses `VoxelPositionHelper` (in `src/core/game/core/`) for pure-math hit-position calculations, including overflow handling when placement crosses block boundaries.
 
 **Important: Singleton Pattern**
@@ -158,6 +160,12 @@ During mod initialization (`SparkyModSystem.AssetsFinalize`):
 ```csharp
 BEBehaviorCircuit.RegisterConductor(blockId, Material.Copper);
 ```
+
+## Behavior Injection
+
+During `SparkyModSystem.AssetsFinalize`, Sparky injects `BEBehaviorCircuit` into any block
+with `EntityClass == "Generic"` or `null` (unless it already has the behavior). If the
+entity class is null, it is set to `Generic` so the behavior can attach.
 
 This populates `BlockIdToMaterial`, enabling `ExportToVoxelGrid()` to distinguish conductor voxels from decorative/insulator blocks.
 

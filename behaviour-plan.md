@@ -89,7 +89,7 @@ public class BEBehaviorCircuit : BlockEntityBehavior
 **Completed:**
 - ✅ Created `BEBehaviorCircuit.cs` with own voxel storage
 - ✅ Duplicated static conductor registry (both classes have it during transition)
-- ✅ Registered behavior class `"Circuit"` in `SparkyModSystem.Start()`
+- ✅ Registered behavior class `"sparky:circuit"` in `SparkyModSystem.Start()`
 - ✅ Conductors registered with both old entity and new behavior
 - ✅ Network manager calls commented out with `// TODO Phase 2`
 
@@ -106,7 +106,7 @@ public class BEBehaviorCircuit : BlockEntityBehavior
 - ✅ `CircuitNetworkManager.cs`: Changed `RegisterBlock(BlockPos, BEBehaviorCircuit)`
 - ✅ `CircuitNetworkManager.cs`: Updated `ProcessDirtyBlocks()` to use `GetBehavior<BEBehaviorCircuit>()`
 - ✅ `SparkyModSystem.cs`: Commented out `RegisterBlockEntityClass("BlockEntityCircuit", ...)`
-- ✅ `circuitblock.json`: Changed `entityClass` to `"Generic"`, added `entityBehaviors: [{ "name": "Circuit" }]`
+- ✅ `circuitblock.json`: Changed `entityClass` to `"Generic"`, added `entityBehaviors: [{ "name": "sparky:circuit" }]`
 - ✅ `BlockEntityCircuit.cs`: Disabled network manager calls (kept for reference)
 - ✅ `BEBehaviorCircuit.cs`: Enabled all network manager integration
 
@@ -123,17 +123,23 @@ public class BEBehaviorCircuit : BlockEntityBehavior
 ```csharp
 foreach (Block block in api.World.Blocks) {
     if (block.Code == null || block.Id == 0) continue;
-    if (ShouldInjectCircuitBehavior(block)) {
-        var beh = new BlockEntityBehaviorType { Name = "Circuit" };
-        block.BlockEntityBehaviors = block.BlockEntityBehaviors.Append(beh).ToArray();
-        if (block.EntityClass == null) block.EntityClass = "Generic";
-    }
+    if (!ShouldInjectCircuitBehavior(block)) continue;
+    if (HasCircuitBehavior(block)) continue;
+    block.BlockEntityBehaviors = block.BlockEntityBehaviors
+        .Append(new BlockEntityBehaviorType { Name = "sparky:circuit" })
+        .ToArray();
+    if (block.EntityClass == null) block.EntityClass = "Generic";
 }
 
-bool ShouldInjectCircuitBehavior(Block block) {
-    return block.EntityClass == "Generic" || block.EntityClass == null;
-}
+bool ShouldInjectCircuitBehavior(Block block) =>
+    block.EntityClass == "Generic" || block.EntityClass == null;
+
+bool HasCircuitBehavior(Block block) =>
+    block.BlockEntityBehaviors?.Any(b => b?.Name == "sparky:circuit") == true;
 ```
+
+**Completed:**
+- ✅ `SparkyModSystem.cs`: Injects `BEBehaviorCircuit` into Generic/null blocks, avoids duplicates
 
 **Test:** Manual - verify fence posts, signs, etc. have the behavior attached
 
@@ -150,6 +156,10 @@ bool ShouldInjectCircuitBehavior(Block block) {
 - For blocks that already have behavior: return it
 - For replaceable blocks: place `sparky:circuitblock`, get behavior
 - Call `behavior.SetConductorVoxelsBatch()` / `behavior.RemoveVoxel()`
+- Update `ItemWireTool` to treat `BEBehaviorCircuit` blocks as circuit hosts
+
+**Completed:**
+- ✅ `ItemWireTool.cs`: Single-voxel place/remove treats behavior blocks as circuit hosts
 
 **Test:** Manual - use wire tool on fence post, see conductor voxels render
 
@@ -262,7 +272,7 @@ public class BlockEntityBehavior
 
 **1. Registration (in ModSystem.Start or StartServerSide):**
 ```csharp
-api.RegisterBlockEntityBehaviorClass("Circuit", typeof(BEBehaviorCircuit));
+api.RegisterBlockEntityBehaviorClass("sparky:circuit", typeof(BEBehaviorCircuit));
 ```
 
 **2. JSON declaration (in block's JSON file):**
@@ -270,7 +280,7 @@ api.RegisterBlockEntityBehaviorClass("Circuit", typeof(BEBehaviorCircuit));
 {
     "entityClass": "Generic",
     "entityBehaviors": [
-        { "name": "Circuit", "properties": { "someOption": true } }
+        { "name": "sparky:circuit", "properties": { "someOption": true } }
     ]
 }
 ```
@@ -319,7 +329,7 @@ private void addReinforcementBehavior()
 
 For **BlockEntityBehaviors**, the equivalent is:
 ```csharp
-var beh = new BlockEntityBehaviorType { Name = "Circuit" };
+var beh = new BlockEntityBehaviorType { Name = "sparky:circuit" };
 block.BlockEntityBehaviors = block.BlockEntityBehaviors.Append(beh).ToArray();
 ```
 

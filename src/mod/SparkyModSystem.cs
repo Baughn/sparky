@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Sparky.Game.Core.CableLaying;
 using Sparky.VSIntegration;
@@ -71,7 +72,7 @@ public class SparkyModSystem : ModSystem {
         // api.RegisterBlockEntityClass("BlockEntityCircuit", typeof(BlockEntityCircuit));
 
         // Register block entity behavior class
-        api.RegisterBlockEntityBehaviorClass("Circuit", typeof(BEBehaviorCircuit));
+        api.RegisterBlockEntityBehaviorClass("sparky:circuit", typeof(BEBehaviorCircuit));
 
         // Register item class
         api.RegisterItemClass("ItemWireTool", typeof(ItemWireTool));
@@ -87,6 +88,51 @@ public class SparkyModSystem : ModSystem {
 
         // Register conductor blocks as Sparky materials
         RegisterConductorBlocks(api);
+
+        // Inject circuit behavior into eligible blocks
+        InjectCircuitBehavior(api);
+    }
+
+    private static void InjectCircuitBehavior(ICoreAPI api) {
+        foreach (var block in api.World.Blocks) {
+            if (block?.Code == null || block.Id == 0)
+                continue;
+
+            if (!ShouldInjectCircuitBehavior(block))
+                continue;
+
+            if (HasCircuitBehavior(block))
+                continue;
+
+            var existing = block.BlockEntityBehaviors ?? Array.Empty<BlockEntityBehaviorType>();
+            var behaviors = new BlockEntityBehaviorType[existing.Length + 1];
+            Array.Copy(existing, behaviors, existing.Length);
+            behaviors[existing.Length] = new BlockEntityBehaviorType { Name = "sparky:circuit" };
+            block.BlockEntityBehaviors = behaviors;
+
+            if (block.EntityClass == null)
+                block.EntityClass = "Generic";
+        }
+    }
+
+    private static bool ShouldInjectCircuitBehavior(Block block) {
+        if (block.EntityClass != null && block.EntityClass != "Generic")
+            return false;
+
+        return true;
+    }
+
+    private static bool HasCircuitBehavior(Block block) {
+        var behaviors = block.BlockEntityBehaviors;
+        if (behaviors == null)
+            return false;
+
+        foreach (var behavior in behaviors) {
+            if (behavior?.Name == "sparky:circuit")
+                return true;
+        }
+
+        return false;
     }
 
     /// <summary>

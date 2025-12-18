@@ -2,7 +2,7 @@
     "code": "circuitblock",
     "class": "BlockCircuit",
     "entityClass": "Generic",
-    "entityBehaviors": [{ "name": "Circuit" }],
+    "entityBehaviors": [{ "name": "sparky:circuit" }],
     "creativeinventory": { "general": ["*"] },
     "behaviors": [],
     "variantgroups": [],

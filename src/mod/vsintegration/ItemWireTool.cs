@@ -176,17 +176,17 @@ public class ItemWireTool : Item {
         var world = byEntity.World;
 
         // Server side: prevent default, client sends network message
+        var block = world.BlockAccessor.GetBlock(blockSel.Position);
+
         if (world.Side == EnumAppSide.Server) {
-            var block = world.BlockAccessor.GetBlock(blockSel.Position);
-            if (block is BlockCircuit) {
+            if (IsCircuitHost(world, blockSel.Position, block)) {
                 handling = EnumHandHandling.PreventDefault;
             }
             return;
         }
 
         // Client side: send removal request to server
-        var clientBlock = world.BlockAccessor.GetBlock(blockSel.Position);
-        if (clientBlock is BlockCircuit) {
+        if (IsCircuitHost(world, blockSel.Position, block)) {
             var (localX, localY, localZ) = GetClickedVoxel(blockSel);
 
             // Convert to global voxel coordinates
@@ -261,8 +261,8 @@ public class ItemWireTool : Item {
         var block = world.BlockAccessor.GetBlock(pos);
         var matIndex = GetMaterialIndex(material);
 
-        // If targeting a circuit block, place voxel adjacent to clicked face
-        if (block is BlockCircuit) {
+        // If targeting a circuit host, place voxel adjacent to clicked face
+        if (IsCircuitHost(world, pos, block)) {
             var (localX, localY, localZ, outsideBlock) = GetAdjacentVoxelWithOverflow(blockSel);
             var targetPos = outsideBlock ? blockSel.Position.AddCopy(blockSel.Face) : blockSel.Position;
             var globalX = targetPos.X * 16 + localX;
@@ -299,7 +299,7 @@ public class ItemWireTool : Item {
         // If targeting a solid block, try to place on the adjacent face
         var adjacentPos = blockSel.Position.AddCopy(blockSel.Face);
         var adjacentBlock = world.BlockAccessor.GetBlock(adjacentPos);
-        if (adjacentBlock.Replaceable >= 6000 || adjacentBlock is BlockCircuit) {
+        if (adjacentBlock.Replaceable >= 6000 || IsCircuitHost(world, adjacentPos, adjacentBlock)) {
             var (localX, localY, localZ) = GetVoxelPositionOnFace(blockSel);
             var globalX = adjacentPos.X * 16 + localX;
             var globalY = adjacentPos.Y * 16 + localY;
@@ -314,6 +314,13 @@ public class ItemWireTool : Item {
         }
 
         base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
+    }
+
+    private static bool IsCircuitHost(IWorldAccessor world, Vintagestory.API.MathTools.BlockPos pos, Block block) {
+        if (block is BlockCircuit)
+            return true;
+
+        return world.BlockAccessor.GetBlockEntity(pos)?.GetBehavior<BEBehaviorCircuit>() != null;
     }
 
     /// <summary>
