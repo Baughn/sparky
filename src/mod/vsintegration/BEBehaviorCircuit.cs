@@ -20,6 +20,8 @@ namespace Sparky.VSIntegration;
 /// Provides self-contained conductor voxel storage and mesh rendering.
 /// </summary>
 public class BEBehaviorCircuit : BlockEntityBehavior {
+    public const string BehaviorName = "sparky:circuit";
+
     /// <summary>
     /// Network ID assigned by CircuitNetworkManager.
     /// </summary>
@@ -123,6 +125,12 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
 
         // Register with network manager on server
         if (api.Side == EnumAppSide.Server) {
+            if (!BlockSupportsCircuitBehavior(Blockentity.Block)) {
+                ClearConductors();
+                api.World.BlockAccessor.RemoveBlockEntity(Pos);
+                return;
+            }
+
             var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
             modSystem?.NetworkManager?.RegisterBlock(Pos, this);
         }
@@ -135,6 +143,11 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
 
     public override void OnBlockRemoved() {
         base.OnBlockRemoved();
+
+        if (ConductorCuboids.Count > 0) {
+            // TODO: Drop conductor materials when host block is broken.
+            ClearConductors();
+        }
 
         // Unregister from network manager on server
         if (Api?.Side == EnumAppSide.Server) {
@@ -373,6 +386,15 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
         Blockentity.MarkDirty(true);
     }
 
+    private void ClearConductors() {
+        ConductorCuboids.Clear();
+        ConductorBlockIds = Array.Empty<int>();
+        _meshDirty = true;
+        _conductorMesh = null;
+        _selectionDirty = true;
+        _selectionBoxes = Array.Empty<Cuboidf>();
+    }
+
     /// <summary>
     /// Gets or adds a material index for the given block ID.
     /// </summary>
@@ -420,6 +442,26 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
         y1 = (int)(((val >> 16) & 0xF) + 1);
         z1 = (int)(((val >> 20) & 0xF) + 1);
         material = (int)((val >> 24) & 0xFF);
+    }
+
+    #endregion
+
+    #region Behavior Checks
+
+    public static bool BlockSupportsCircuitBehavior(Block block) {
+        if (block == null || block.BlockId == 0)
+            return false;
+
+        var behaviors = block.BlockEntityBehaviors;
+        if (behaviors == null)
+            return false;
+
+        foreach (var behavior in behaviors) {
+            if (behavior?.Name == BehaviorName)
+                return true;
+        }
+
+        return false;
     }
 
     #endregion

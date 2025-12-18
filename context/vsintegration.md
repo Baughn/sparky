@@ -41,6 +41,7 @@ Behavior attached to `BlockEntityGeneric` with electrical semantics:
 - **`SetConductorVoxel(x, y, z, material)`**: Places a voxel, updates mesh, notifies manager
 - **`RemoveVoxel(x, y, z)`**: Removes a voxel, updates mesh, notifies manager
 - **`ExportToVoxelGrid(grid, sparkyBlockPos)`**: Converts VS cuboids → Sparky VoxelGrid
+- **Host cleanup**: Clears conductors on block removal (TODO drops) and removes stale block entities on load
 
 The export process:
 1. Iterates `ConductorCuboids`
@@ -167,6 +168,9 @@ During `SparkyModSystem.AssetsFinalize`, Sparky injects `BEBehaviorCircuit` as
 `sparky:circuit` into any block with `EntityClass == "Generic"` or `null` (unless it
 already has the behavior). If the entity class is null, it is set to `Generic` so the
 behavior can attach.
+
+On server load and chunk load, Sparky removes any stale block entities that still
+carry `BEBehaviorCircuit` but no longer belong to a block that declares the behavior.
 
 This populates `BlockIdToMaterial`, enabling `ExportToVoxelGrid()` to distinguish conductor voxels from decorative/insulator blocks.
 

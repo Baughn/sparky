@@ -69,7 +69,7 @@ public class SparkyModSystem : ModSystem {
         api.RegisterBlockClass("BlockCircuit", typeof(BlockCircuit));
 
         // Register block entity behavior class
-        api.RegisterBlockEntityBehaviorClass("sparky:circuit", typeof(BEBehaviorCircuit));
+        api.RegisterBlockEntityBehaviorClass(BEBehaviorCircuit.BehaviorName, typeof(BEBehaviorCircuit));
 
         // Register item class
         api.RegisterItemClass("ItemWireTool", typeof(ItemWireTool));
@@ -104,7 +104,7 @@ public class SparkyModSystem : ModSystem {
             var existing = block.BlockEntityBehaviors ?? Array.Empty<BlockEntityBehaviorType>();
             var behaviors = new BlockEntityBehaviorType[existing.Length + 1];
             Array.Copy(existing, behaviors, existing.Length);
-            behaviors[existing.Length] = new BlockEntityBehaviorType { Name = "sparky:circuit" };
+            behaviors[existing.Length] = new BlockEntityBehaviorType { Name = BEBehaviorCircuit.BehaviorName };
             block.BlockEntityBehaviors = behaviors;
 
             if (block.EntityClass == null)
@@ -120,16 +120,7 @@ public class SparkyModSystem : ModSystem {
     }
 
     private static bool HasCircuitBehavior(Block block) {
-        var behaviors = block.BlockEntityBehaviors;
-        if (behaviors == null)
-            return false;
-
-        foreach (var behavior in behaviors) {
-            if (behavior?.Name == "sparky:circuit")
-                return true;
-        }
-
-        return false;
+        return BEBehaviorCircuit.BlockSupportsCircuitBehavior(block);
     }
 
     /// <summary>
@@ -171,10 +162,49 @@ public class SparkyModSystem : ModSystem {
         NetworkManager = new CircuitNetworkManager();
         NetworkManager.Initialize(api);
 
+        api.Event.SaveGameLoaded += () => CleanupStaleCircuitBlockEntities(api);
+        api.Event.ChunkColumnLoaded += (_, chunks) => CleanupStaleCircuitBlockEntities(api, chunks);
+
         // Register network channel for future use
         _serverChannel = api.Network.RegisterChannel(CHANNEL_NAME);
 
         api.Logger.Notification("[Sparky] Server-side initialization complete");
+    }
+
+    private static void CleanupStaleCircuitBlockEntities(ICoreServerAPI api) {
+        var chunks = api.WorldManager.AllLoadedChunks;
+        if (chunks == null || chunks.Count == 0)
+            return;
+
+        CleanupStaleCircuitBlockEntities(api, chunks.Values);
+    }
+
+    private static void CleanupStaleCircuitBlockEntities(ICoreServerAPI api, IEnumerable<IWorldChunk> chunks) {
+        foreach (var chunk in chunks) {
+            var blockEntities = chunk?.BlockEntities;
+            if (blockEntities == null || blockEntities.Count == 0)
+                continue;
+
+            List<Vintagestory.API.MathTools.BlockPos>? toRemove = null;
+            foreach (var kvp in blockEntities) {
+                var behavior = kvp.Value?.GetBehavior<BEBehaviorCircuit>();
+                if (behavior == null)
+                    continue;
+
+                var block = api.World.BlockAccessor.GetBlock(kvp.Key);
+                if (!BEBehaviorCircuit.BlockSupportsCircuitBehavior(block)) {
+                    toRemove ??= new List<Vintagestory.API.MathTools.BlockPos>();
+                    toRemove.Add(kvp.Key);
+                }
+            }
+
+            if (toRemove == null)
+                continue;
+
+            foreach (var pos in toRemove) {
+                api.World.BlockAccessor.RemoveBlockEntity(pos);
+            }
+        }
     }
 
     /// <summary>

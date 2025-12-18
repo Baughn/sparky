@@ -204,6 +204,7 @@ May need a `BlockBehaviorCircuit` that overrides `GetSelectionBoxes()` to includ
 - ✅ Deleted `BlockEntityCircuit.cs`
 - ✅ Removed legacy registrations
 - ✅ Updated `context/vsintegration.md`
+- ✅ Added cleanup for stale behavior block entities on server load
 
 **Test:** Full regression
 
