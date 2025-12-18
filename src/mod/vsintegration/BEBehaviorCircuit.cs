@@ -48,6 +48,16 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
     /// </summary>
     private bool _meshDirty = true;
 
+    /// <summary>
+    /// Cached selection boxes for per-voxel targeting.
+    /// </summary>
+    private Cuboidf[] _selectionBoxes = Array.Empty<Cuboidf>();
+
+    /// <summary>
+    /// Whether selection boxes need regeneration.
+    /// </summary>
+    private bool _selectionDirty = true;
+
     #region Static Conductor Registry
 
     /// <summary>
@@ -193,6 +203,8 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
         // Mark mesh for regeneration
         _meshDirty = true;
         _conductorMesh = null;
+        _selectionDirty = true;
+        _selectionBoxes = Array.Empty<Cuboidf>();
     }
 
     #endregion
@@ -357,6 +369,7 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
     private void OnVoxelsChanged() {
         _meshDirty = true;
         _conductorMesh = null;
+        _selectionDirty = true;
         Blockentity.MarkDirty(true);
     }
 
@@ -439,6 +452,11 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
             return;
         }
 
+        if (ConductorBlockIds.Length == 0) {
+            _conductorMesh = null;
+            return;
+        }
+
         var capi = Api as ICoreClientAPI;
         if (capi == null) {
             _conductorMesh = null;
@@ -451,10 +469,44 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
             ConductorCuboids,
             ConductorBlockIds,
             null, // No decor
-            0,    // No decor rotations
-            null, // No original cuboids
             Pos
         );
+    }
+
+    #endregion
+
+    #region Selection Boxes
+
+    /// <summary>
+    /// Gets selection boxes for all conductor cuboids.
+    /// </summary>
+    public Cuboidf[] GetSelectionBoxes() {
+        if (!_selectionDirty)
+            return _selectionBoxes;
+
+        _selectionBoxes = BuildSelectionBoxes(ConductorCuboids);
+        _selectionDirty = false;
+        return _selectionBoxes;
+    }
+
+    /// <summary>
+    /// Builds selection boxes from packed cuboids.
+    /// </summary>
+    public static Cuboidf[] BuildSelectionBoxes(IReadOnlyList<uint> cuboids) {
+        if (cuboids == null || cuboids.Count == 0)
+            return Array.Empty<Cuboidf>();
+
+        const float inv16 = 1f / 16f;
+        var boxes = new Cuboidf[cuboids.Count];
+        for (int i = 0; i < cuboids.Count; i++) {
+            FromUint(cuboids[i], out int x0, out int y0, out int z0, out int x1, out int y1, out int z1, out _);
+            boxes[i] = new Cuboidf(
+                x0 * inv16, y0 * inv16, z0 * inv16,
+                x1 * inv16, y1 * inv16, z1 * inv16
+            );
+        }
+
+        return boxes;
     }
 
     #endregion

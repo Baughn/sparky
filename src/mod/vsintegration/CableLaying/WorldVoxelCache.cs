@@ -5,6 +5,7 @@ using Vintagestory.GameContent;
 
 using Sparky.Game.Core;
 using Sparky.Game.Core.CableLaying;
+using Sparky.VSIntegration;
 using VoxelPos = Sparky.Game.Core.VoxelPos;
 using VSBlockPos = Vintagestory.API.MathTools.BlockPos;
 
@@ -226,6 +227,13 @@ public class WorldVoxelCache : IWorldVoxelCache {
             return;
         }
 
+        // Circuit behavior → conductors become PreExistingConductor, non-conductors → Insulation
+        var behavior = be?.GetBehavior<BEBehaviorCircuit>();
+        if (behavior != null) {
+            ProcessCircuitBehavior(blockPos, behavior);
+            return;
+        }
+
         // Circuit block → conductors become PreExistingConductor, non-conductors → Insulation, unfilled → Empty
         if (be is BlockEntityCircuit circuit) {
             ProcessCircuitBlock(blockPos, circuit);
@@ -248,32 +256,65 @@ public class WorldVoxelCache : IWorldVoxelCache {
     /// Unfilled areas remain Empty (can be occupied by cable).
     /// </summary>
     private void ProcessCircuitBlock(VSBlockPos blockPos, BlockEntityCircuit circuit) {
-        if (circuit.VoxelCuboids == null)
+        if (circuit.VoxelCuboids == null || circuit.BlockIds == null)
             return;
 
-        int baseX = blockPos.X * 16;
-        int baseY = blockPos.Y * 16;
-        int baseZ = blockPos.Z * 16;
+        ApplyCircuitCuboids(
+            _octree,
+            blockPos.X * 16,
+            blockPos.Y * 16,
+            blockPos.Z * 16,
+            circuit.VoxelCuboids,
+            circuit.BlockIds,
+            BlockEntityCircuit.IsConductor);
+    }
 
-        foreach (var cuboid in circuit.VoxelCuboids) {
-            BlockEntityMicroBlock.FromUint(cuboid,
+    /// <summary>
+    /// Processes a circuit behavior. Conductors → PreExistingConductor, non-conductors → Insulation.
+    /// Unfilled areas remain Empty (can be occupied by cable).
+    /// </summary>
+    private void ProcessCircuitBehavior(VSBlockPos blockPos, BEBehaviorCircuit behavior) {
+        if (behavior.ConductorCuboids.Count == 0 || behavior.ConductorBlockIds.Length == 0)
+            return;
+
+        ApplyCircuitCuboids(
+            _octree,
+            blockPos.X * 16,
+            blockPos.Y * 16,
+            blockPos.Z * 16,
+            behavior.ConductorCuboids,
+            behavior.ConductorBlockIds,
+            BEBehaviorCircuit.IsConductor);
+    }
+
+    /// <summary>
+    /// Applies circuit cuboids to the cache octree.
+    /// </summary>
+    public static void ApplyCircuitCuboids(
+        SparseVoxelOctree<CacheVoxelState> octree,
+        int baseX,
+        int baseY,
+        int baseZ,
+        IReadOnlyList<uint> cuboids,
+        int[] blockIds,
+        System.Func<int, bool> isConductor) {
+        if (cuboids == null || cuboids.Count == 0 || blockIds == null)
+            return;
+
+        foreach (var cuboid in cuboids) {
+            BEBehaviorCircuit.FromUint(cuboid,
                 out int x0, out int y0, out int z0,
                 out int x1, out int y1, out int z1,
                 out int matIdx);
 
-            // Check if this cuboid is a conductor
-            bool isConductor = false;
-            if (circuit.BlockIds != null && matIdx < circuit.BlockIds.Length) {
-                isConductor = BlockEntityCircuit.IsConductor(circuit.BlockIds[matIdx]);
-            }
-
-            var state = isConductor ? CacheVoxelState.PreExistingConductor : CacheVoxelState.Insulation;
+            bool conductor = matIdx < blockIds.Length && isConductor(blockIds[matIdx]);
+            var state = conductor ? CacheVoxelState.PreExistingConductor : CacheVoxelState.Insulation;
 
             for (int z = z0; z < z1; z++) {
                 for (int y = y0; y < y1; y++) {
                     for (int x = x0; x < x1; x++) {
                         var pos = new VoxelPos(baseX + x, baseY + y, baseZ + z);
-                        _octree.Set(pos, state);
+                        octree.Set(pos, state);
                     }
                 }
             }

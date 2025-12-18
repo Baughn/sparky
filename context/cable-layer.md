@@ -1,7 +1,7 @@
 # Wire Tool Feature Plan
 
 *Created: 2025-12-15*
-*Updated: 2025-12-16*
+*Updated: 2025-12-18*
 
 ---
 
@@ -147,7 +147,7 @@ The `Unroutable` state handles architectural gaps (stairs, fences). Since cables
 | Source Block Type | Conversion |
 |-------------------|------------|
 | Air / replaceable blocks | All voxels → Empty |
-| `BlockEntityCircuit` | Conductors → PreExistingConductor, non-conductors → Insulation, unfilled → Empty |
+| `BEBehaviorCircuit` | Conductors → PreExistingConductor, non-conductors → Insulation, unfilled → Empty |
 | `BlockEntityMicroBlock` (non-circuit) | Filled voxels → Insulation, unfilled → Unroutable |
 | Other solid blocks | All voxels → Insulation |
 
@@ -416,7 +416,7 @@ Block-level interaction handler respects wire tool mode:
 - In single-voxel mode, calls `OnCircuitBlockInteract` directly
 - Bug fix (2025-12-16): Previously always called `OnCircuitBlockInteract`, bypassing cable mode's two-click workflow
 
-### BlockEntityCircuit.cs ✓
+### BEBehaviorCircuit.cs ✓
 
 Added batch method for efficient multi-voxel placement:
 ```csharp

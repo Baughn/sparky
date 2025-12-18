@@ -20,4 +20,16 @@
     <ProjectReference Include="../src/core/core.csproj" />
     <ProjectReference Include="../src/2d/2d.csproj" />
   </ItemGroup>
+
+  <ItemGroup Condition="'$(VINTAGE_STORY)' != ''">
+    <ProjectReference Include="../src/mod/mod.csproj" />
+    <Reference Include="VintagestoryAPI">
+      <HintPath>$(VINTAGE_STORY)/VintagestoryAPI.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(VINTAGE_STORY)' == ''">
+    <Compile Remove="mod/**" />
+  </ItemGroup>
 </Project>

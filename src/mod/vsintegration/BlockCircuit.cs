@@ -17,16 +17,14 @@ public class BlockCircuit : Block {
 
     /// <summary>
     /// Returns selection boxes for voxels in the block.
-    /// Uses inherited microblock selection box system.
+    /// Uses behavior-provided per-voxel selection boxes.
     /// </summary>
     public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos pos) {
-        var be = blockAccessor.GetBlockEntity(pos) as BlockEntityCircuit;
-        if (be != null) {
-            // Use microblock's selection boxes if available
-            var boxes = be.GetSelectionBoxes(blockAccessor, null);
-            if (boxes != null && boxes.Length > 0) {
+        var behavior = blockAccessor.GetBlockEntity(pos)?.GetBehavior<BEBehaviorCircuit>();
+        if (behavior != null) {
+            var boxes = behavior.GetSelectionBoxes();
+            if (boxes.Length > 0)
                 return boxes;
-            }
         }
 
         // Fallback to default full block selection
@@ -79,8 +77,8 @@ public class BlockCircuit : Block {
         BlockPos pos,
         IPlayer byPlayer,
         float dropQuantityMultiplier = 1) {
-        var be = world.BlockAccessor.GetBlockEntity(pos) as BlockEntityCircuit;
-        if (be != null) {
+        var behavior = world.BlockAccessor.GetBlockEntity(pos)?.GetBehavior<BEBehaviorCircuit>();
+        if (behavior != null) {
             // TODO: Drop materials based on voxel contents
             // For now, just remove the block
         }

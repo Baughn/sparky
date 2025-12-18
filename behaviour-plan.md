@@ -165,6 +165,10 @@ bool ShouldInjectCircuitBehavior(Block block) {
 - Read `behavior.ConductorCuboids` and `behavior.ConductorBlockIds`
 - Use `BEBehaviorCircuit.IsConductor()` (static method moved from old class)
 
+**Completed:**
+- ✅ `WorldVoxelCache.cs`: Uses `BEBehaviorCircuit` data to classify conductors/insulators
+- ✅ Added regression test for behavior cuboid mapping
+
 **Test:** Manual - cable pathfinding routes around existing conductors in fence posts
 
 **Checkpoint:** Full cable routing works with behavior-based blocks

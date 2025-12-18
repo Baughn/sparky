@@ -1,6 +1,6 @@
 # VSIntegration Layer
 
-*Last updated: 2025-12-16*
+*Last updated: 2025-12-18*
 
 The `src/mod/vsintegration/` folder bridges Vintage Story's game world and Sparky's electrical simulation system.
 
@@ -13,28 +13,28 @@ See `context/cable-layer.md` for details on the cable-laying tool.
 ```
 Player Interaction          VS World Layer              Sparky Simulation Layer
 ─────────────────          ──────────────              ───────────────────────
-ItemWireTool        →      BlockEntityCircuit   →      VoxelGrid (SVO)
-(place/remove)             (microblock storage)        TopologyBuilder (prisms)
-                           BlockCircuit                ISimulation (MNA solver)
+ItemWireTool        →      BEBehaviorCircuit    →      VoxelGrid (SVO)
+(place/remove)             (behavior storage)          TopologyBuilder (prisms)
+                           BlockCircuit (behavior)     ISimulation (MNA solver)
                            CircuitNetworkManager
 ```
 
-## Key Insight: Microblock Inheritance
+## Key Insight: Behavior-Based Microblocks
 
-`BlockEntityCircuit` extends VS's `BlockEntityMicroBlock`, inheriting:
+`BEBehaviorCircuit` attaches to `BlockEntityGeneric` and owns its voxel storage:
 
-- **Voxel storage** via `VoxelCuboids` (list of packed uint64 cuboids)
-- **Material palette** via `BlockIds` array mapping indices → VS block IDs
-- **Mesh generation** for rendering (handled by parent class)
-- **Selection boxes** for per-voxel click targeting
+- **Voxel storage** via `ConductorCuboids` (list of packed uint cuboids)
+- **Material palette** via `ConductorBlockIds` array mapping indices → VS block IDs
+- **Mesh generation** via `BlockEntityMicroBlock.CreateMesh()` (static helper)
+- **Selection boxes** built from packed cuboids for per-voxel targeting
 
-This gives us chisel-block-style voxel editing for free. The electrical simulation layer is built on top of this foundation.
+This keeps chisel-style rendering while avoiding a hard dependency on `BlockEntityMicroBlock`.
 
 ## Components
 
-### BlockEntityCircuit.cs
+### BEBehaviorCircuit.cs
 
-Extends `BlockEntityMicroBlock` with electrical semantics:
+Behavior attached to `BlockEntityGeneric` with electrical semantics:
 
 - **`NetworkId`**: Guid linking this block to a `NetworkState` in CircuitNetworkManager
 - **`BlockIdToMaterial`**: Static registry mapping VS block IDs → Sparky `Material` types
@@ -43,8 +43,8 @@ Extends `BlockEntityMicroBlock` with electrical semantics:
 - **`ExportToVoxelGrid(grid, sparkyBlockPos)`**: Converts VS cuboids → Sparky VoxelGrid
 
 The export process:
-1. Iterates `VoxelCuboids` (inherited from BlockEntityMicroBlock)
-2. Looks up each cuboid's material index in `BlockIds`
+1. Iterates `ConductorCuboids`
+2. Looks up each cuboid's material index in `ConductorBlockIds`
 3. Checks if that VS block ID is a registered conductor via `BlockIdToMaterial`
 4. If so, writes each voxel position to the Sparky `VoxelGrid`
 
@@ -64,7 +64,7 @@ Server-side singleton managing all electrical networks. Each `NetworkState` cont
 **Dirty block processing** (on game tick):
 1. Collect all dirty blocks + their neighbors (for connectivity)
 2. Find affected networks (may merge multiple networks)
-3. Export each `BlockEntityCircuit` → merged `VoxelGrid`
+3. Export each `BEBehaviorCircuit` → merged `VoxelGrid`
 4. Call `TopologyBuilder.BuildTopology(grid, components, simulation)`
 5. Step the simulation
 
@@ -74,7 +74,7 @@ Server-side singleton managing all electrical networks. Each `NetworkState` cont
 
 Block behavior class:
 - Enables per-voxel selection via `DoParticalSelection() => true`
-- Delegates selection/collision boxes to `BlockEntityCircuit`
+- Delegates selection/collision boxes to `BEBehaviorCircuit`
 - Routes interactions to `ItemWireTool` when player holds it
 
 ### ItemWireTool.cs
@@ -106,10 +106,10 @@ Client                              Server                          Other Client
 3. SendVoxelPlacement(request)  →   4. VoxelPreviewSystem.OnVoxelPlacementRequest()
                                        - Validates player distance (~15 blocks)
                                        - Groups voxels by block position
-                                       - GetOrCreateCircuitBlock() for each
+                                       - GetOrCreateCircuitBehavior() for each
                                        - SetConductorVoxelsBatch() or RemoveVoxel()
                                        ↓
-                                    5. BlockEntityCircuit notifies
+                                    5. BEBehaviorCircuit notifies
                                        CircuitNetworkManager.OnBlockVoxelsChangedBatch()
                                        ↓
                                     6. ProcessDirtyBlocks() on game tick
@@ -128,9 +128,9 @@ Client                              Server                          Other Client
 
 | System | Range | Used By |
 |--------|-------|---------|
-| VS BlockPos | World blocks | BlockEntityCircuit.Pos, CircuitNetworkManager |
+| VS BlockPos | World blocks | BEBehaviorCircuit.Pos, CircuitNetworkManager |
 | Sparky BlockPos | Same as VS | VoxelGrid, TopologyBuilder |
-| Local voxel (x,y,z) | 0-15 per axis | SetConductorVoxel, VS microblock storage |
+| Local voxel (x,y,z) | 0-15 per axis | SetConductorVoxel, behavior storage |
 | Global VoxelPos | Unbounded | Sparky VoxelGrid, SVO |
 
 Conversion: `VoxelPos.FromBlockLocal(sparkyBlockPos, localX, localY, localZ)`
@@ -139,9 +139,9 @@ Conversion: `VoxelPos.FromBlockLocal(sparkyBlockPos, localX, localY, localZ)`
 
 The translation happens at `ExportToVoxelGrid()`:
 
-**VS Side (inherited storage)**:
-- `VoxelCuboids`: List<uint> of packed cuboids (min/max coords + material index)
-- `BlockIds`: int[] mapping material indices → VS block IDs
+**VS Side (behavior storage)**:
+- `ConductorCuboids`: List<uint> of packed cuboids (min/max coords + material index)
+- `ConductorBlockIds`: int[] mapping material indices → VS block IDs
 
 **Sparky Side (after export)**:
 - `VoxelGrid`: Uses `IncrementalPrismBuilder` internally
@@ -156,7 +156,7 @@ The prism system's incremental updates (see `context/voxel-storage.md`) mean tha
 During mod initialization (`SparkyModSystem.AssetsFinalize`):
 
 ```csharp
-BlockEntityCircuit.RegisterConductor(blockId, Material.Copper);
+BEBehaviorCircuit.RegisterConductor(blockId, Material.Copper);
 ```
 
 This populates `BlockIdToMaterial`, enabling `ExportToVoxelGrid()` to distinguish conductor voxels from decorative/insulator blocks.
@@ -181,7 +181,7 @@ src/mod/vsintegration/Preview/
 - Receives `VoxelPlacementRequest` from clients
 - Validates player is within range (~15 blocks)
 - Groups voxels by block position
-- Creates circuit blocks as needed (`GetOrCreateCircuitBlock`)
+- Creates circuit blocks as needed (`GetOrCreateCircuitBehavior`)
 - Calls `SetConductorVoxelsBatch()` or `RemoveVoxel()` on server
 - VS auto-syncs block entity state to all clients
 
