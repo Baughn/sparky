@@ -39,8 +39,8 @@
 
   <!-- Copy resources to output folder on Release builds -->
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <None Include="../../resources/**" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="../../assets/**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../resources/**" CopyToOutputDirectory="PreserveNewest" Link="resources/%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Include="../../assets/**" CopyToOutputDirectory="PreserveNewest" Link="assets/%(RecursiveDir)%(Filename)%(Extension)" />
     <None Include="../../modinfo.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

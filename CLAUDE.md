@@ -76,6 +76,9 @@ When fixing bugs, always make a regression test first.
 - 4-space indents, braces on same line (K&R style)
 - PascalCase types/methods/properties, camelCase locals/parameters
 - Keep solver math well-commented; align terminology with `context/mna-theory.md`
+- Functions should *usually* have only a single purpose.
+- Important: When possible, make errors impossible through construction, not checks. Parse inputs. Avoid nullable types. Use newtypes and other type-system features to avoid any form of type confusion.
+  When it comes to API design, minimize the number of ways they can be used; ideally, any misuse should fail to type-check.
 
 ## Testing
 

@@ -111,11 +111,11 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
     public override void Initialize(ICoreAPI api, JsonObject properties) {
         base.Initialize(api, properties);
 
-        // TODO Phase 2: Register with network manager
-        // if (api.Side == EnumAppSide.Server) {
-        //     var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
-        //     modSystem?.NetworkManager?.RegisterBlock(Pos, this);
-        // }
+        // Register with network manager on server
+        if (api.Side == EnumAppSide.Server) {
+            var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
+            modSystem?.NetworkManager?.RegisterBlock(Pos, this);
+        }
 
         // Mark mesh for generation on client
         if (api.Side == EnumAppSide.Client && ConductorCuboids.Count > 0) {
@@ -126,21 +126,21 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
     public override void OnBlockRemoved() {
         base.OnBlockRemoved();
 
-        // TODO Phase 2: Unregister from network manager
-        // if (Api?.Side == EnumAppSide.Server) {
-        //     var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
-        //     modSystem?.NetworkManager?.UnregisterBlock(Pos);
-        // }
+        // Unregister from network manager on server
+        if (Api?.Side == EnumAppSide.Server) {
+            var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
+            modSystem?.NetworkManager?.UnregisterBlock(Pos);
+        }
     }
 
     public override void OnBlockUnloaded() {
         base.OnBlockUnloaded();
 
-        // TODO Phase 2: Notify network manager of chunk unload
-        // if (Api?.Side == EnumAppSide.Server) {
-        //     var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
-        //     modSystem?.NetworkManager?.OnBlockUnloaded(Pos);
-        // }
+        // Notify network manager of chunk unload on server
+        if (Api?.Side == EnumAppSide.Server) {
+            var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
+            modSystem?.NetworkManager?.OnBlockUnloaded(Pos);
+        }
     }
 
     #endregion
@@ -217,11 +217,11 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
         if (anyChanged) {
             OnVoxelsChanged();
 
-            // TODO Phase 2: Notify network manager
-            // if (Api?.Side == EnumAppSide.Server) {
-            //     var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
-            //     modSystem?.NetworkManager?.OnBlockVoxelsChangedBatch(Pos);
-            // }
+            // Notify network manager on server
+            if (Api?.Side == EnumAppSide.Server) {
+                var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
+                modSystem?.NetworkManager?.OnBlockVoxelsChangedBatch(Pos);
+            }
         }
     }
 
@@ -235,11 +235,11 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
         if (SetVoxelInternal(x, y, z, material)) {
             OnVoxelsChanged();
 
-            // TODO Phase 2: Notify network manager
-            // if (Api?.Side == EnumAppSide.Server) {
-            //     var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
-            //     modSystem?.NetworkManager?.OnBlockVoxelChanged(Pos, x, y, z, VoxelType.Conductor, material);
-            // }
+            // Notify network manager on server
+            if (Api?.Side == EnumAppSide.Server) {
+                var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
+                modSystem?.NetworkManager?.OnBlockVoxelChanged(Pos, x, y, z, VoxelType.Conductor, material);
+            }
         }
     }
 
@@ -253,11 +253,11 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
         if (RemoveVoxelInternal(x, y, z)) {
             OnVoxelsChanged();
 
-            // TODO Phase 2: Notify network manager
-            // if (Api?.Side == EnumAppSide.Server) {
-            //     var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
-            //     modSystem?.NetworkManager?.OnBlockVoxelChanged(Pos, x, y, z, VoxelType.Air, null);
-            // }
+            // Notify network manager on server
+            if (Api?.Side == EnumAppSide.Server) {
+                var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
+                modSystem?.NetworkManager?.OnBlockVoxelChanged(Pos, x, y, z, VoxelType.Air, null);
+            }
         }
     }
 

@@ -67,8 +67,8 @@ public class SparkyModSystem : ModSystem {
         // Register block class
         api.RegisterBlockClass("BlockCircuit", typeof(BlockCircuit));
 
-        // Register block entity class
-        api.RegisterBlockEntityClass("BlockEntityCircuit", typeof(BlockEntityCircuit));
+        // Register block entity class (disabled - now using BEBehaviorCircuit)
+        // api.RegisterBlockEntityClass("BlockEntityCircuit", typeof(BlockEntityCircuit));
 
         // Register block entity behavior class
         api.RegisterBlockEntityBehaviorClass("Circuit", typeof(BEBehaviorCircuit));

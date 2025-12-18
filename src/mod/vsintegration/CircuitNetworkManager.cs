@@ -89,12 +89,12 @@ public class CircuitNetworkManager {
 
     /// <summary>
     /// Registers a circuit block with the manager.
-    /// Called from BlockEntityCircuit.Initialize().
+    /// Called from BEBehaviorCircuit.Initialize().
     /// </summary>
-    public void RegisterBlock(BlockPos vsPos, BlockEntityCircuit be) {
+    public void RegisterBlock(BlockPos vsPos, BEBehaviorCircuit behavior) {
         // Check if this block already has a network assignment
-        if (be.NetworkId != Guid.Empty && _networks.ContainsKey(be.NetworkId)) {
-            _blockToNetwork[vsPos] = be.NetworkId;
+        if (behavior.NetworkId != Guid.Empty && _networks.ContainsKey(behavior.NetworkId)) {
+            _blockToNetwork[vsPos] = behavior.NetworkId;
             return;
         }
 
@@ -104,7 +104,7 @@ public class CircuitNetworkManager {
 
     /// <summary>
     /// Unregisters a circuit block from the manager.
-    /// Called from BlockEntityCircuit.OnBlockRemoved().
+    /// Called from BEBehaviorCircuit.OnBlockRemoved().
     /// </summary>
     public void UnregisterBlock(BlockPos vsPos) {
         if (_blockToNetwork.TryGetValue(vsPos, out var netId)) {
@@ -295,12 +295,13 @@ public class CircuitNetworkManager {
         // Build merged voxel grid
         var mergedGrid = new VoxelGrid();
         foreach (var blockPos in allBlocks) {
-            var be = _sapi.World.BlockAccessor.GetBlockEntity(blockPos) as BlockEntityCircuit;
-            if (be == null)
+            var be = _sapi.World.BlockAccessor.GetBlockEntity(blockPos);
+            var behavior = be?.GetBehavior<BEBehaviorCircuit>();
+            if (behavior == null)
                 continue;
 
-            var sparkyBlockPos = BlockEntityCircuit.ToSparkyBlockPos(blockPos);
-            be.ExportToVoxelGrid(mergedGrid, sparkyBlockPos);
+            var sparkyBlockPos = BEBehaviorCircuit.ToSparkyBlockPos(blockPos);
+            behavior.ExportToVoxelGrid(mergedGrid, sparkyBlockPos);
         }
 
         // Skip if no voxels
@@ -335,9 +336,10 @@ public class CircuitNetworkManager {
         foreach (var block in allBlocks) {
             _blockToNetwork[block] = network.Id;
 
-            var be = _sapi.World.BlockAccessor.GetBlockEntity(block) as BlockEntityCircuit;
-            if (be != null) {
-                be.NetworkId = network.Id;
+            var be = _sapi.World.BlockAccessor.GetBlockEntity(block);
+            var behavior = be?.GetBehavior<BEBehaviorCircuit>();
+            if (behavior != null) {
+                behavior.NetworkId = network.Id;
             }
         }
 

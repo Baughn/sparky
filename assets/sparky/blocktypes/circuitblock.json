@@ -1,7 +1,8 @@
 {
     "code": "circuitblock",
     "class": "BlockCircuit",
-    "entityClass": "BlockEntityCircuit",
+    "entityClass": "Generic",
+    "entityBehaviors": [{ "name": "Circuit" }],
     "creativeinventory": { "general": ["*"] },
     "behaviors": [],
     "variantgroups": [],

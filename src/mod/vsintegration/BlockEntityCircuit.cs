@@ -63,31 +63,34 @@ public class BlockEntityCircuit : BlockEntityMicroBlock {
     public override void Initialize(ICoreAPI api) {
         base.Initialize(api);
 
-        if (api.Side == EnumAppSide.Server) {
-            // Register with network manager
-            var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
-            modSystem?.NetworkManager?.RegisterBlock(Pos, this);
-        }
+        // DISABLED - now using BEBehaviorCircuit
+        // if (api.Side == EnumAppSide.Server) {
+        //     // Register with network manager
+        //     var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
+        //     modSystem?.NetworkManager?.RegisterBlock(Pos, this);
+        // }
     }
 
     public override void OnBlockRemoved() {
         base.OnBlockRemoved();
 
-        if (Api?.Side == EnumAppSide.Server) {
-            // Unregister from network manager
-            var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
-            modSystem?.NetworkManager?.UnregisterBlock(Pos);
-        }
+        // DISABLED - now using BEBehaviorCircuit
+        // if (Api?.Side == EnumAppSide.Server) {
+        //     // Unregister from network manager
+        //     var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
+        //     modSystem?.NetworkManager?.UnregisterBlock(Pos);
+        // }
     }
 
     public override void OnBlockUnloaded() {
         base.OnBlockUnloaded();
 
-        if (Api?.Side == EnumAppSide.Server) {
-            // Notify network manager of chunk unload
-            var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
-            modSystem?.NetworkManager?.OnBlockUnloaded(Pos);
-        }
+        // DISABLED - now using BEBehaviorCircuit
+        // if (Api?.Side == EnumAppSide.Server) {
+        //     // Notify network manager of chunk unload
+        //     var modSystem = Api.ModLoader.GetModSystem<SparkyModSystem>();
+        //     modSystem?.NetworkManager?.OnBlockUnloaded(Pos);
+        // }
     }
 
     #endregion

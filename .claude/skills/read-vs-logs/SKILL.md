@@ -5,11 +5,4 @@ description: Reads Vintage Story logs after manual testing by the user.
 
 # Read Vintage Story logs
 
-On Mac: Grep ~/Library/Application Support/VintageStoryData/Logs. Be sure to quote the space correctly.
-On Linux: Grep ~/.config/VintageStoryData/Logs.
-
-## Example
-
-```bash
-grep -a "Sparky" "~/Library/Application Support/VintageStoryData/Logs/*.log"
-```
+Search through .vs-logs/{client,server}-debug.log. {client,server}-main.log also exist, but are often misread as binary; the best method is grep -a.
