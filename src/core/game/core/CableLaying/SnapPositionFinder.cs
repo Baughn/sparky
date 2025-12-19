@@ -10,25 +10,34 @@ public static class SnapPositionFinder {
     /// Finds the best start positions within 3 voxels of the clicked position.
     /// Returns the actual voxel positions that make up the cable's starting cross-section.
     ///
+    /// The upright direction (from the clicked face) determines:
+    /// - Support direction = upright.Opposite() (where the insulating block is)
+    /// - Cable Height aligns with the upright direction
+    ///
     /// Scoring rules:
     /// - Negative infinity if not all N×M voxels are in Empty
     /// - -1000 if not precisely max(N,M) voxels touching Insulator
     /// - -manhattan distance from clicked to geometric center of snap
     /// - +3 if adjacent to exactly N×M pre-existing conductor voxels
-    /// - +2 for time-dependent direction preference
+    /// - +2 for time-dependent direction preference (cycles through 4 configurations)
     /// </summary>
     /// <param name="clicked">The voxel position the player clicked.</param>
     /// <param name="cache">The world voxel cache for checking neighbors.</param>
     /// <param name="crossSection">The cable cross-section.</param>
+    /// <param name="uprightDir">The face direction clicked - cable Height aligns with this.</param>
     /// <param name="currentTime">Current time for direction preference.</param>
     /// <returns>The voxel positions where the cable should start.</returns>
     public static IReadOnlyList<VoxelPos> FindBestPosition(
         VoxelPos clicked,
         IWorldVoxelCache cache,
         CrossSection crossSection,
+        VoxelDirection uprightDir,
         float currentTime) {
         IReadOnlyList<VoxelPos> bestPositions = [clicked];
         int bestScore = int.MinValue;
+
+        // Support direction is opposite of upright (where the insulating block is)
+        var supportDir = uprightDir.Opposite();
 
         int maxSearch = 3;
 
@@ -37,16 +46,13 @@ public static class SnapPositionFinder {
                 for (int dz = -maxSearch; dz <= maxSearch; dz++) {
                     var anchor = clicked.Offset(dx, dy, dz);
 
-                    // Try all support directions for this position
-                    foreach (var supportDir in VoxelDirectionExtensions.All) {
-                        int score = ScorePositionWithSupport(
-                            anchor, clicked, cache, crossSection, supportDir, currentTime,
-                            out var positions);
+                    int score = ScorePositionWithSupport(
+                        anchor, clicked, cache, crossSection, supportDir, uprightDir, currentTime,
+                        out var positions);
 
-                        if (score > bestScore) {
-                            bestScore = score;
-                            bestPositions = positions;
-                        }
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestPositions = positions;
                     }
                 }
             }
@@ -56,8 +62,8 @@ public static class SnapPositionFinder {
     }
 
     /// <summary>
-    /// Scores a position with a specific support direction.
-    /// Tries all combinations of travel direction and orientation.
+    /// Scores a position with the fixed support direction.
+    /// Tries all 4 travel directions perpendicular to support, with orientation derived from upright.
     /// </summary>
     private static int ScorePositionWithSupport(
         VoxelPos anchor,
@@ -65,35 +71,36 @@ public static class SnapPositionFinder {
         IWorldVoxelCache cache,
         CrossSection crossSection,
         VoxelDirection supportDir,
+        VoxelDirection uprightDir,
         float currentTime,
         out IReadOnlyList<VoxelPos> chosenPositions) {
         chosenPositions = [anchor];
 
         // Get the two perpendicular axes for travel direction
         var (axis1, axis2) = supportDir.GetPerpendicularAxes();
-        var travelDir1 = AxisToDirection(axis1);
-        var travelDir2 = AxisToDirection(axis2);
 
-        // Try all 4 combinations: 2 travel directions × 2 orientations
-        var candidates = new[]
+        // Both directions perpendicular to support
+        var travelDirs = new VoxelDirection[]
         {
-            (travelDir1, CrossSectionOrientation.Flat, 0),
-            (travelDir1, CrossSectionOrientation.Upright, 1),
-            (travelDir2, CrossSectionOrientation.Flat, 2),
-            (travelDir2, CrossSectionOrientation.Upright, 3)
+            AxisToDirection(axis1),
+            AxisToDirection(axis2),
         };
 
         int bestScore = int.MinValue;
 
-        // Time-based preference: pick one of the 4 configurations to prefer
-        int timePreference = (int)currentTime % 4;
+        // Time-based preference: pick one of the 2 configurations to prefer
+        int timePreference = (int)currentTime % 2;
 
-        foreach (var (travelDir, orientation, index) in candidates) {
+        for (int i = 0; i < travelDirs.Length; i++) {
+            var travelDir = travelDirs[i];
+            // Derive orientation so Height aligns with upright direction
+            var orientation = travelDir.GetOrientationForUpright(uprightDir);
+
             var positions = crossSection.GetVoxelPositions(anchor, travelDir, orientation).ToList();
             int score = ScoreConfiguration(positions, target, cache, crossSection, supportDir);
 
             // Add time preference bonus
-            if (index == timePreference)
+            if (i == timePreference)
                 score += 2;
 
             if (score > bestScore) {
@@ -183,7 +190,7 @@ public static class SnapPositionFinder {
     }
 
     /// <summary>
-    /// Converts an axis index (0=X, 1=Y, 2=Z) to a positive direction.
+    /// Converts an axis index (0=X, 1=Y, 2=Z) to a direction.
     /// </summary>
     private static VoxelDirection AxisToDirection(int axis) {
         return axis switch {

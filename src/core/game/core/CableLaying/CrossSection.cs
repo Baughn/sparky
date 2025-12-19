@@ -110,6 +110,27 @@ public static class CrossSectionExtensions {
     }
 
     /// <summary>
+    /// Gets the orientation that makes the cable lie flat on the surface.
+    /// Width (smaller dimension) aligns with the upright direction (perpendicular to surface).
+    /// Height (larger dimension) lies along the surface.
+    /// </summary>
+    /// <param name="travelDir">The direction the cable is traveling.</param>
+    /// <param name="uprightDir">The face direction (perpendicular to surface).</param>
+    /// <returns>The orientation that places the cable flat on the surface.</returns>
+    public static CrossSectionOrientation GetOrientationForUpright(
+        this VoxelDirection travelDir,
+        VoxelDirection uprightDir) {
+        var (first, second) = travelDir.GetPerpendicularAxes();
+        int uprightAxis = uprightDir.Axis();
+
+        // Width should align with upright direction (cable lies flat on surface)
+        // Flat: Width on first axis; Upright: Width on second axis
+        return uprightAxis == first
+            ? CrossSectionOrientation.Flat
+            : CrossSectionOrientation.Upright;
+    }
+
+    /// <summary>
     /// Enumerates all voxel positions in a cross-section at the given anchor position.
     /// The anchor is the minimum corner of the cross-section.
     /// </summary>

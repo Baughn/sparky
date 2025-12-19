@@ -54,7 +54,8 @@ public class SnapPositionTests {
         var clickPos = GetFaceCenterClickPosition(face);
 
         // Find the snapped voxel positions
-        var positions = SnapPositionFinder.FindBestPosition(clickPos, _cache, crossSection, 0f);
+        // The face parameter is the upright direction (direction the clicked face points)
+        var positions = SnapPositionFinder.FindBestPosition(clickPos, _cache, crossSection, face, 0f);
 
         // Count how many voxels touch insulation
         int insulationContact = 0;
@@ -89,7 +90,8 @@ public class SnapPositionTests {
         var clickPos = GetFaceCenterClickPosition(face);
 
         // Find the snapped voxel positions
-        var positions = SnapPositionFinder.FindBestPosition(clickPos, _cache, crossSection, 0f);
+        // The face parameter is the upright direction (direction the clicked face points)
+        var positions = SnapPositionFinder.FindBestPosition(clickPos, _cache, crossSection, face, 0f);
 
         // Check all positions are empty
         var embeddedPositions = new List<VoxelPos>();

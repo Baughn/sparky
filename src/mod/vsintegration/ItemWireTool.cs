@@ -332,8 +332,10 @@ public class ItemWireTool : Item {
         CableLayingState cableState,
         Material material,
         ref EnumHandHandling handling) {
-        // Calculate clicked voxel position
+        // Calculate clicked voxel position and face direction
         var voxelPos = GetTargetVoxelPos(blockSel);
+        var uprightDir = blockSel.Face.ToVoxelDirection();
+        float currentTime = (float)world.ElapsedMilliseconds / 1000f;
 
         api?.Logger.Debug($"[Sparky WireTool] HandleCableModeInteract: phase={cableState.CurrentPhase}, voxelPos={voxelPos}, side={world.Side}");
 
@@ -341,7 +343,7 @@ public class ItemWireTool : Item {
             case CableLayingState.Phase.Idle:
                 // First click: select start position
                 api?.Logger.Debug($"[Sparky WireTool] Selecting start at {voxelPos}");
-                cableState.SelectStart(voxelPos, world.BlockAccessor);
+                cableState.SelectStart(voxelPos, world.BlockAccessor, uprightDir, currentTime);
                 api?.Logger.Debug($"[Sparky WireTool] After SelectStart: phase={cableState.CurrentPhase}");
                 handling = EnumHandHandling.PreventDefault;
                 break;

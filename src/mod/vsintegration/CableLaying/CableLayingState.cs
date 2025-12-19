@@ -42,9 +42,9 @@ public class CableLayingState {
     private VoxelPos _lastGoalQueried;
     private readonly object _pathfindLock = new();
 
-    // Snap position cache (for preview optimization)
-    private VoxelPos? _lastSnapQueryPos;
-    private IReadOnlyList<VoxelPos>? _cachedSnappedPositions;
+    // Preview cache (small WorldVoxelCache for snap position finding)
+    private VSBlockPos? _lastPreviewCacheCenter;
+    private WorldVoxelCache? _previewCache;
 
     /// <summary>
     /// Creates a new cable laying state for the given cross-section.
@@ -71,7 +71,9 @@ public class CableLayingState {
     /// </summary>
     /// <param name="clickedPos">The voxel position the player clicked.</param>
     /// <param name="blockAccessor">Block accessor for building the cache.</param>
-    public void SelectStart(VoxelPos clickedPos, IBlockAccessor blockAccessor) {
+    /// <param name="uprightDir">The face direction clicked - cable Height aligns with this.</param>
+    /// <param name="currentTime">Current time for cycling between configurations.</param>
+    public void SelectStart(VoxelPos clickedPos, IBlockAccessor blockAccessor, VoxelDirection uprightDir, float currentTime) {
         // Build cache centered on clicked position
         var centerBlock = new VSBlockPos(
             clickedPos.X / 16,
@@ -80,7 +82,7 @@ public class CableLayingState {
         _cache = new WorldVoxelCache(blockAccessor, centerBlock);
 
         // Find the best start positions within a few voxels of clicked position
-        var positions = SnapPositionFinder.FindBestPosition(clickedPos, _cache, _crossSection, 0f);
+        var positions = SnapPositionFinder.FindBestPosition(clickedPos, _cache, _crossSection, uprightDir, currentTime);
         _startPositions = positions;
 
         // If snapping to existing cable, mark connected cable voxels as "our cable"
@@ -111,33 +113,31 @@ public class CableLayingState {
     /// <summary>
     /// Gets the snapped start positions for preview purposes without committing to it.
     /// Use this in Idle phase to show where the cable would actually start.
-    /// Results are cached when the query position hasn't moved.
+    /// The WorldVoxelCache is cached when the center block hasn't changed.
     /// </summary>
     /// <param name="clickedPos">The position the player is targeting.</param>
     /// <param name="blockAccessor">Block accessor for checking world state.</param>
+    /// <param name="uprightDir">The face direction clicked - cable Height aligns with this.</param>
+    /// <param name="currentTime">Current time for cycling between configurations.</param>
     /// <returns>The voxel positions where the cable would start.</returns>
     public IReadOnlyList<VoxelPos> GetSnappedStartPositions(
         VoxelPos clickedPos,
-        IBlockAccessor blockAccessor) {
-        // Return cached result if position hasn't moved
-        if (_lastSnapQueryPos.HasValue && clickedPos == _lastSnapQueryPos.Value && _cachedSnappedPositions != null) {
-            return _cachedSnappedPositions;
-        }
-
+        IBlockAccessor blockAccessor,
+        VoxelDirection uprightDir,
+        float currentTime) {
         // Build small cache (1-block radius = 27 blocks vs 2744 for full cache)
+        // Reuse if center block hasn't changed
         var centerBlock = new VSBlockPos(
             clickedPos.X / 16,
             clickedPos.Y / 16,
             clickedPos.Z / 16);
-        var tempCache = new WorldVoxelCache(blockAccessor, centerBlock, radius: 1);
 
-        var positions = SnapPositionFinder.FindBestPosition(clickedPos, tempCache, _crossSection, 0f);
+        if (_previewCache == null || _lastPreviewCacheCenter != centerBlock) {
+            _previewCache = new WorldVoxelCache(blockAccessor, centerBlock, radius: 1);
+            _lastPreviewCacheCenter = centerBlock;
+        }
 
-        // Cache the result
-        _lastSnapQueryPos = clickedPos;
-        _cachedSnappedPositions = positions;
-
-        return positions;
+        return SnapPositionFinder.FindBestPosition(clickedPos, _previewCache, _crossSection, uprightDir, currentTime);
     }
 
     /// <summary>
@@ -209,6 +209,8 @@ public class CableLayingState {
         _pathfinder = null;
         _currentPath = null;
         _pendingPathfind = null;
+        _previewCache = null;
+        _lastPreviewCacheCenter = null;
     }
 
 }

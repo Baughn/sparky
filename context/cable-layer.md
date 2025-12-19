@@ -286,20 +286,28 @@ Finds optimal starting position for cable placement.
 **Tests:** `Sparky.Tests/Game/CableLaying/SnapPositionTests.cs`
 
 **Algorithm:**
-1. Search within 3 voxels of clicked position
-2. For each candidate position, try all valid support directions
-3. For each support direction, try all travel direction + orientation combinations
-4. Score each configuration based on:
+The clicked block face determines the cable orientation:
+- **Upright direction**: Face normal (perpendicular to surface)
+- **Support direction**: Opposite of upright (toward the insulating block)
+- **Cable orientation**: Height (larger dimension) lies along surface, Width (smaller dimension) sticks out
+
+Steps:
+1. Derive support direction from the clicked face
+2. Search within 3 voxels of clicked position
+3. For each candidate position, try all 4 travel directions perpendicular to support
+4. Derive orientation from travel direction + upright direction using `GetOrientationForUpright()`
+5. Score each configuration based on:
    - All voxels must be Empty (negative infinity if not)
    - Exactly `max(N,M)` voxels must touch Insulator (-1000 penalty if not)
    - Manhattan distance from click to geometric center (negative)
    - +3 bonus if adjacent to exactly N×M pre-existing conductor voxels
-   - +2 bonus for time-based direction preference (visual variety)
+   - +2 bonus for time-based direction preference (cycles through 4 configurations)
 
 **Purpose:**
 - Ensures cables always start from a valid supported position
 - Allows snapping to existing cable ends for continuation
 - Provides smooth preview even when cursor is slightly off-target
+- Time-based preference lets user wait for desired orientation
 
 ### 4. CablePreviewRenderer (Implemented)
 

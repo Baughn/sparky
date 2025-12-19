@@ -274,7 +274,7 @@ public class VoxelPreviewSystem : ModSystem {
         var material = wireTool.GetSelectedMaterial(slot);
 
         // Get face direction for cross-section orientation
-        var faceDir = BlockFaceToVoxelDirection(blockSel.Face);
+        var faceDir = blockSel.Face.ToVoxelDirection();
 
         List<PreviewVoxel> voxels;
         if (mode.IsCableMode()) {
@@ -292,18 +292,6 @@ public class VoxelPreviewSystem : ModSystem {
         }
 
         SendPreviewUpdate(voxels);
-    }
-
-    private static VoxelDirection BlockFaceToVoxelDirection(Vintagestory.API.MathTools.BlockFacing face) {
-        return face.Index switch {
-            0 => VoxelDirection.ZNeg, // North
-            1 => VoxelDirection.XPos, // East
-            2 => VoxelDirection.ZPos, // South
-            3 => VoxelDirection.XNeg, // West
-            4 => VoxelDirection.YPos, // Up
-            5 => VoxelDirection.YNeg, // Down
-            _ => VoxelDirection.YPos
-        };
     }
 
     private List<PreviewVoxel> BuildSingleVoxelPreview(Material material, (int X, int Y, int Z) target) {
@@ -329,10 +317,13 @@ public class VoxelPreviewSystem : ModSystem {
 
         // Spammy: _capi?.Logger.Debug($"[Sparky Preview] BuildCablePreview: phase={cableState.CurrentPhase}, hasPath={cableState.CurrentPath != null}");
 
+        // Get current time for cycling through snap configurations
+        float currentTime = _capi != null ? (float)_capi.ElapsedMilliseconds / 1000f : 0f;
+
         switch (cableState.CurrentPhase) {
             case CableLayingState.Phase.Idle:
                 // Show cross-section preview at snapped positions (where cable would actually start)
-                var snappedPositions = cableState.GetSnappedStartPositions(targetPos, blockAccessor);
+                var snappedPositions = cableState.GetSnappedStartPositions(targetPos, blockAccessor, faceDir, currentTime);
                 return BuildPositionsPreview(snappedPositions, material);
 
             case CableLayingState.Phase.StartSelected:
