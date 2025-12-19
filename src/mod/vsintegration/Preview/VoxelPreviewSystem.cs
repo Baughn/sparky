@@ -4,6 +4,7 @@ using System.Linq;
 using Sparky.Game.Core;
 using Sparky.Game.Core.CableLaying;
 using Sparky.VSIntegration.CableLaying;
+using Sparky.VSIntegration.Debug;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -248,8 +249,24 @@ public class VoxelPreviewSystem : ModSystem {
         if (player == null)
             return;
 
-        // Check if player is holding wire tool
         var slot = player.InventoryManager?.ActiveHotbarSlot;
+        var modSystem = _capi.ModLoader.GetModSystem<SparkyModSystem>();
+
+        // Handle ItemCacheDebugTool
+        if (slot?.Itemstack?.Item is ItemCacheDebugTool) {
+            var debugState = modSystem.GetCacheDebugState(player.PlayerUID);
+            if (debugState != null && debugState.PreviewVoxels.Count > 0) {
+                SendPreviewUpdate(debugState.PreviewVoxels.ToList());
+            } else {
+                SendPreviewUpdate(new List<PreviewVoxel>());
+            }
+            return;
+        }
+
+        // Clear cache debug state when not holding the debug tool
+        modSystem.ClearCacheDebugState(player.PlayerUID);
+
+        // Check if player is holding wire tool
         if (slot?.Itemstack?.Item is not ItemWireTool wireTool) {
             SendPreviewUpdate(new List<PreviewVoxel>());
             return;
@@ -283,7 +300,6 @@ public class VoxelPreviewSystem : ModSystem {
                 voxels = BuildSingleVoxelPreview(material, targetVoxel.Value);
             } else {
                 // Get or create per-player cable state from ModSystem
-                var modSystem = _capi.ModLoader.GetModSystem<SparkyModSystem>();
                 var cableState = modSystem.GetOrCreateCableState(player.PlayerUID, crossSection.Value);
                 voxels = BuildCablePreview(cableState, mode, material, targetVoxel.Value, faceDir, _capi.World.BlockAccessor);
             }

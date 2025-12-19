@@ -1,0 +1,95 @@
+{
+    "code": "cachedebugtool",
+    "class": "ItemCacheDebugTool",
+    "creativeinventory": {
+        "general": [
+            "*"
+        ]
+    },
+    "maxstacksize": 1,
+    "tool": "Chisel",
+    "durability": 9999,
+    "damagedby": [],
+    "shape": {
+        "base": "game:item/tool/chisel"
+    },
+    "textures": {
+        "material": {
+            "base": "game:block/metal/plate/lead"
+        },
+        "handle": {
+            "base": "game:block/wood/debarked/oak"
+        }
+    },
+    "heldTpHitAnimation": "smithing",
+    "heldTpIdleAnimation": "holdunderarm",
+    "heldTpUseAnimation": "smithing",
+    "fpHandTransform": {
+        "translation": {
+            "x": 0.3,
+            "y": -0.05,
+            "z": 0.55
+        },
+        "rotation": {
+            "x": -32,
+            "y": 37,
+            "z": 0
+        }
+    },
+    "tpHandTransform": {
+        "translation": {
+            "x": -0.75,
+            "y": -0.08,
+            "z": -0.45
+        },
+        "rotation": {
+            "x": 90,
+            "y": 0,
+            "z": -10
+        },
+        "scale": 0.7
+    },
+    "guiTransform": {
+        "translation": {
+            "x": -1,
+            "y": 0,
+            "z": 0
+        },
+        "rotation": {
+            "x": 158,
+            "y": 60,
+            "z": -98
+        },
+        "origin": {
+            "x": 0.49,
+            "y": 0.06,
+            "z": 0.45
+        },
+        "scale": 2.0
+    },
+    "groundTransform": {
+        "translation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 2
+        },
+        "origin": {
+            "x": 0.5,
+            "y": 0,
+            "z": 0.5
+        },
+        "scale": 3.5
+    },
+    "attributes": {
+        "handbook": {
+            "groupBy": [
+                "cachedebugtool-*"
+            ]
+        }
+    }
+}

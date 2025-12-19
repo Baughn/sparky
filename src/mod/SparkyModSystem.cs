@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Sparky.Game.Core.CableLaying;
 using Sparky.VSIntegration;
 using Sparky.VSIntegration.CableLaying;
+using Sparky.VSIntegration.Debug;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
@@ -29,6 +30,9 @@ public class SparkyModSystem : ModSystem {
 
     // Per-player cable laying state (keyed by PlayerUID)
     private readonly Dictionary<string, CableLayingState> _playerCableStates = new();
+
+    // Per-player cache debug state (keyed by PlayerUID)
+    private readonly Dictionary<string, CacheDebugState> _playerCacheDebugStates = new();
 
     /// <summary>
     /// Gets the cable laying state for a player, or null if none exists.
@@ -60,6 +64,35 @@ public class SparkyModSystem : ModSystem {
     }
 
     /// <summary>
+    /// Gets the cache debug state for a player, or null if none exists.
+    /// </summary>
+    public CacheDebugState? GetCacheDebugState(string playerUid) {
+        _playerCacheDebugStates.TryGetValue(playerUid, out var state);
+        return state;
+    }
+
+    /// <summary>
+    /// Gets or creates a cache debug state for a player.
+    /// </summary>
+    public CacheDebugState GetOrCreateCacheDebugState(string playerUid) {
+        if (!_playerCacheDebugStates.TryGetValue(playerUid, out var state)) {
+            state = new CacheDebugState();
+            _playerCacheDebugStates[playerUid] = state;
+        }
+        return state;
+    }
+
+    /// <summary>
+    /// Clears the cache debug state for a player.
+    /// </summary>
+    public void ClearCacheDebugState(string playerUid) {
+        if (_playerCacheDebugStates.TryGetValue(playerUid, out var state)) {
+            state.Clear();
+            _playerCacheDebugStates.Remove(playerUid);
+        }
+    }
+
+    /// <summary>
     /// Called on both client and server during initialization.
     /// </summary>
     public override void Start(ICoreAPI api) {
@@ -71,8 +104,9 @@ public class SparkyModSystem : ModSystem {
         // Register block entity behavior class
         api.RegisterBlockEntityBehaviorClass(BEBehaviorCircuit.BehaviorName, typeof(BEBehaviorCircuit));
 
-        // Register item class
+        // Register item classes
         api.RegisterItemClass("ItemWireTool", typeof(ItemWireTool));
+        api.RegisterItemClass("ItemCacheDebugTool", typeof(ItemCacheDebugTool));
 
         api.Logger.Notification("[Sparky] Mod classes registered");
     }
