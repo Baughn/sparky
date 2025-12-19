@@ -227,16 +227,22 @@ public class WorldVoxelCache : IWorldVoxelCache {
             return;
         }
 
+        bool isMicroblockOfSomeSort = false;
+
+        // Non-circuit microblock → filled voxels become Insulation, unfilled → Empty
+        if (be is BlockEntityMicroBlock microblock) {
+            ProcessMicroBlock(blockPos, microblock);
+            isMicroblockOfSomeSort = true;
+        }
+
         // Circuit behavior → conductors become PreExistingConductor, non-conductors → Insulation
         var behavior = be?.GetBehavior<BEBehaviorCircuit>();
         if (behavior != null) {
             ProcessCircuitBehavior(blockPos, behavior);
-            return;
+            isMicroblockOfSomeSort = true;
         }
 
-        // Non-circuit microblock → filled voxels become Insulation, unfilled → Unroutable
-        if (be is BlockEntityMicroBlock microblock) {
-            ProcessMicroBlock(blockPos, microblock);
+        if (isMicroblockOfSomeSort) {
             return;
         }
 
