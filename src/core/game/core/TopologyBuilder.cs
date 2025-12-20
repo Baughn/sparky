@@ -39,8 +39,29 @@ public class TopologyBuilder {
 
     /// <summary>
     /// Default resistance per voxel face contact (ohms).
+    /// Used as fallback when material is not specified.
     /// </summary>
     public const double DefaultWireResistance = 0.01;
+
+    /// <summary>
+    /// Gets the effective resistivity for a contact between two regions.
+    /// Averages the materials of both sides (series resistance model).
+    /// </summary>
+    private static double GetContactResistivity(ConductorRegion regionA, ConductorRegion regionB) {
+        var resistivityA = GetRegionResistivity(regionA);
+        var resistivityB = GetRegionResistivity(regionB);
+        return (resistivityA + resistivityB) / 2;
+    }
+
+    /// <summary>
+    /// Gets the resistivity for a region based on its prism materials.
+    /// For resistive regions, uses the first prism's material.
+    /// </summary>
+    private static double GetRegionResistivity(ConductorRegion region) {
+        if (region.Prisms.Count == 0)
+            return DefaultWireResistance;
+        return region.Prisms[0].Prism.Material?.Resistivity ?? DefaultWireResistance;
+    }
 
     // Persistent state for incremental updates
     private Dictionary<VoxelPos, ConductorRegion>? _cachedRegions;
@@ -482,7 +503,8 @@ public class TopologyBuilder {
             if (_regionPairResistors.ContainsKey(pair))
                 continue;
 
-            var resistance = DefaultWireResistance / contactArea;
+            var resistivity = GetContactResistivity(region, otherRegion);
+            var resistance = resistivity / contactArea;
             var resistorId = sim.AddResistor(region.NodeId, otherRegion.NodeId, resistance);
             _regionPairResistors[pair] = resistorId;
             region.AdjacentResistors.Add(resistorId);
@@ -943,8 +965,7 @@ public class TopologyBuilder {
     /// </summary>
     private void CreateInterRegionResistorsIncremental(
         Dictionary<VoxelPos, ConductorRegion> newRegions,
-        ISimulation sim,
-        double resistancePerFace = DefaultWireResistance) {
+        ISimulation sim) {
         var uniqueNewRegions = new HashSet<ConductorRegion>(newRegions.Values);
         if (uniqueNewRegions.Count == 0)
             return;
@@ -1005,7 +1026,8 @@ public class TopologyBuilder {
             var actualArea = bothNew ? totalContactArea / 2 : totalContactArea;
 
             if (actualArea > 0) {
-                var resistance = resistancePerFace / actualArea;
+                var resistivity = GetContactResistivity(regionA, regionB);
+                var resistance = resistivity / actualArea;
                 var resistorId = sim.AddResistor(regionA.NodeId, regionB.NodeId, resistance);
 
                 regionA.AdjacentResistors.Add(resistorId);
@@ -1332,12 +1354,10 @@ public class TopologyBuilder {
     /// <param name="grid">The voxel grid (needed to check prism types).</param>
     /// <param name="regions">The conductor regions map.</param>
     /// <param name="sim">The simulation to add resistors to.</param>
-    /// <param name="resistancePerFace">Resistance per voxel face contact.</param>
     private void CreateInterRegionResistorsFull(
         VoxelGrid grid,
         Dictionary<VoxelPos, ConductorRegion> regions,
-        ISimulation sim,
-        double resistancePerFace = DefaultWireResistance) {
+        ISimulation sim) {
         // Get all unique regions
         var uniqueRegions = new HashSet<ConductorRegion>(regions.Values);
         if (uniqueRegions.Count == 0)
@@ -1394,7 +1414,8 @@ public class TopologyBuilder {
         foreach (var ((regionA, regionB), totalContactArea) in pairContactAreas) {
             var actualArea = totalContactArea / 2; // Each contact counted from both sides
             if (actualArea > 0) {
-                var resistance = resistancePerFace / actualArea;
+                var resistivity = GetContactResistivity(regionA, regionB);
+                var resistance = resistivity / actualArea;
                 var resistorId = sim.AddResistor(regionA.NodeId, regionB.NodeId, resistance);
 
                 regionA.AdjacentResistors.Add(resistorId);

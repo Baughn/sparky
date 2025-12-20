@@ -21,5 +21,5 @@
 {"assert":"cell","pos":{"x":12,"y":12},"state":{"voltage":0.25}}
 {"tick":2617,"event":{"$type":"ToggleSwitchInput","pos":{"x":9,"y":12}}}
 {"assert":"cell","pos":{"x":9,"y":12},"type":"Switch","state":{"switchClosed":true}}
-{"assert":"cell","pos":{"x":8,"y":12},"state":{"voltage":-0.002}}
-{"assert":"cell","pos":{"x":12,"y":12},"state":{"voltage":0.002}}
+{"assert":"cell","pos":{"x":8,"y":12},"state":{"voltage":-0.00028}}
+{"assert":"cell","pos":{"x":12,"y":12},"state":{"voltage":0.00022}}

@@ -23,8 +23,8 @@
 {"assert":"cell","pos":{"x":8,"y":12},"type":"Switch","state":{"switchClosed":false,"current":0}}
 {"assert":"cell","pos":{"x":4,"y":12},"type":"Battery","state":{"current":0}}
 {"tick":798,"event":{"$type":"ToggleSwitchInput","pos":{"x":8,"y":12}}}
-{"assert":"cell","pos":{"x":8,"y":12},"type":"Switch","state":{"switchClosed":true,"current":83.33}}
-{"assert":"cell","pos":{"x":4,"y":12},"type":"Battery","state":{"current":83.33}}
-{"assert":"cell","pos":{"x":7,"y":12},"type":"Wire","state":{"current":83.33}}
-{"assert":"cell","pos":{"x":11,"y":12},"type":"Wire","state":{"current":83.33}}
-{"assert":"cell","pos":{"x":3,"y":12},"type":"Wire","state":{"current":83.33}}
+{"assert":"cell","pos":{"x":8,"y":12},"type":"Switch","state":{"switchClosed":true,"current":833.33}}
+{"assert":"cell","pos":{"x":4,"y":12},"type":"Battery","state":{"current":833.33}}
+{"assert":"cell","pos":{"x":7,"y":12},"type":"Wire","state":{"current":833.33}}
+{"assert":"cell","pos":{"x":11,"y":12},"type":"Wire","state":{"current":833.33}}
+{"assert":"cell","pos":{"x":3,"y":12},"type":"Wire","state":{"current":833.33}}
