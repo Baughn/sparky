@@ -22,6 +22,11 @@ public class WorldVoxelCache : IWorldVoxelCache {
     /// <summary>Inner radius for pathfinding (cables can only be routed within this).</summary>
     public const int PathfindingRadius = 6;
 
+    /// <summary>
+    /// Optional logging callback for debugging. Set to enable detailed logging.
+    /// </summary>
+    public static Action<string>? Log { get; set; }
+
     private readonly SparseVoxelOctree<CacheVoxelState> _octree;
     private readonly VoxelPos _origin;
     private readonly IBlockAccessor _blockAccessor;
@@ -222,8 +227,15 @@ public class WorldVoxelCache : IWorldVoxelCache {
         var block = _blockAccessor.GetBlock(blockPos);
         var be = _blockAccessor.GetBlockEntity(blockPos);
 
+        Log?.Invoke($"[WorldVoxelCache] ProcessBlock({blockPos}): " +
+            $"block={block?.Code}, blockId={block?.BlockId}, " +
+            $"replaceable={block?.Replaceable}, " +
+            $"blockEntity={be?.GetType().Name ?? "null"}, " +
+            $"blockAccessorType={_blockAccessor.GetType().Name}");
+
         // Air or replaceable blocks → all Empty (default, nothing to set)
-        if (block.BlockId == 0 || block.Replaceable >= 6000) {
+        if (block == null || block.BlockId == 0 || block.Replaceable >= 6000) {
+            Log?.Invoke($"[WorldVoxelCache]   -> Skipped: air or replaceable (id={block?.BlockId}, replaceable={block?.Replaceable})");
             return;
         }
 
@@ -231,6 +243,7 @@ public class WorldVoxelCache : IWorldVoxelCache {
 
         // Non-circuit microblock → filled voxels become Insulation, unfilled → Empty
         if (be is BlockEntityMicroBlock microblock) {
+            Log?.Invoke($"[WorldVoxelCache]   -> Processing as microblock (cuboids={microblock.VoxelCuboids?.Count ?? 0})");
             ProcessMicroBlock(blockPos, microblock);
             isMicroblockOfSomeSort = true;
         }
@@ -238,6 +251,7 @@ public class WorldVoxelCache : IWorldVoxelCache {
         // Circuit behavior → conductors become PreExistingConductor, non-conductors → Insulation
         var behavior = be?.GetBehavior<BEBehaviorCircuit>();
         if (behavior != null) {
+            Log?.Invoke($"[WorldVoxelCache]   -> Processing circuit behavior (cuboids={behavior.ConductorCuboids.Count}, blockIds={behavior.ConductorBlockIds.Length})");
             ProcessCircuitBehavior(blockPos, behavior);
             isMicroblockOfSomeSort = true;
         }
@@ -248,6 +262,7 @@ public class WorldVoxelCache : IWorldVoxelCache {
 
         // Regular solid block → all voxels become Insulation
         // For simplicity, treat any non-air, non-replaceable block as fully solid
+        Log?.Invoke($"[WorldVoxelCache]   -> Processing as solid block");
         ProcessSolidBlock(blockPos, block);
     }
 

@@ -111,6 +111,51 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
 
     #endregion
 
+    #region Static Factory
+
+    /// <summary>
+    /// Gets an existing circuit behavior at a position, or creates one dynamically.
+    /// For replaceable blocks (air, grass), places a circuit block.
+    /// For solid blocks with a BlockEntity, dynamically adds the behavior.
+    /// Returns null if the block has no BlockEntity and isn't replaceable.
+    /// </summary>
+    public static BEBehaviorCircuit? GetOrCreateAt(IWorldAccessor world, BlockPos pos) {
+        var blockEntity = world.BlockAccessor.GetBlockEntity(pos);
+
+        // Check if existing block entity has circuit behavior
+        var behavior = blockEntity?.GetBehavior<BEBehaviorCircuit>();
+        if (behavior != null) {
+            return behavior;
+        }
+
+        // Check if block is replaceable - place a circuit block
+        var block = world.BlockAccessor.GetBlock(pos);
+        if (block.Replaceable >= 6000) {
+            var circuitBlock = world.GetBlock(new AssetLocation("sparky:circuitblock"));
+            if (circuitBlock == null) {
+                return null;
+            }
+
+            world.BlockAccessor.SetBlock(circuitBlock.BlockId, pos);
+            blockEntity = world.BlockAccessor.GetBlockEntity(pos);
+            return blockEntity?.GetBehavior<BEBehaviorCircuit>();
+        }
+
+        // Solid block with existing BlockEntity - dynamically add circuit behavior
+        if (blockEntity != null) {
+            var api = world.Api;
+            behavior = new BEBehaviorCircuit(blockEntity);
+            behavior.Initialize(api, new JsonObject(new Newtonsoft.Json.Linq.JObject()));
+            blockEntity.Behaviors.Add(behavior);
+            return behavior;
+        }
+
+        // Solid block without BlockEntity - can't add cables
+        return null;
+    }
+
+    #endregion
+
     #region Constructor
 
     public BEBehaviorCircuit(BlockEntity blockentity) : base(blockentity) {

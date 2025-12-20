@@ -160,7 +160,7 @@ public class VoxelPreviewSystem : ModSystem {
         // Process each block
         foreach (var (blockKey, voxels) in voxelsByBlock) {
             var blockPos = new Vintagestory.API.MathTools.BlockPos(blockKey.X, blockKey.Y, blockKey.Z);
-            var behavior = GetOrCreateCircuitBehavior(_sapi.World, blockPos);
+            var behavior = BEBehaviorCircuit.GetOrCreateAt(_sapi.World, blockPos);
             if (behavior == null)
                 continue;
 
@@ -182,36 +182,6 @@ public class VoxelPreviewSystem : ModSystem {
                 behavior.SetConductorVoxelsBatch(voxels.Select(v => (v.LocalX, v.LocalY, v.LocalZ, v.Material)));
             }
         }
-    }
-
-    /// <summary>
-    /// Gets an existing circuit behavior, or creates a new circuit block if the position is replaceable.
-    /// Returns null if the position is occupied by a block without circuit behavior and not replaceable.
-    /// </summary>
-    private BEBehaviorCircuit? GetOrCreateCircuitBehavior(IWorldAccessor world, Vintagestory.API.MathTools.BlockPos pos) {
-        var blockEntity = world.BlockAccessor.GetBlockEntity(pos);
-
-        // Check if existing block entity has circuit behavior
-        var behavior = blockEntity?.GetBehavior<BEBehaviorCircuit>();
-        if (behavior != null) {
-            return behavior;
-        }
-
-        // Check if block is replaceable
-        var block = world.BlockAccessor.GetBlock(pos);
-        if (block.Replaceable >= 6000) {
-            var circuitBlock = world.GetBlock(new AssetLocation("sparky:circuitblock"));
-            if (circuitBlock == null) {
-                _sapi?.Logger.Warning("[Sparky] Could not find sparky:circuitblock");
-                return null;
-            }
-
-            world.BlockAccessor.SetBlock(circuitBlock.BlockId, pos);
-            blockEntity = world.BlockAccessor.GetBlockEntity(pos);
-            return blockEntity?.GetBehavior<BEBehaviorCircuit>();
-        }
-
-        return null;
     }
 
     #endregion

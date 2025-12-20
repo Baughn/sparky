@@ -120,41 +120,8 @@ public class SparkyModSystem : ModSystem {
         // Register conductor blocks as Sparky materials
         RegisterConductorBlocks(api);
 
-        // Inject circuit behavior into eligible blocks
-        InjectCircuitBehavior(api);
-    }
-
-    private static void InjectCircuitBehavior(ICoreAPI api) {
-        foreach (var block in api.World.Blocks) {
-            if (block?.Code == null || block.Id == 0)
-                continue;
-
-            if (!ShouldInjectCircuitBehavior(block))
-                continue;
-
-            if (HasCircuitBehavior(block))
-                continue;
-
-            var existing = block.BlockEntityBehaviors ?? Array.Empty<BlockEntityBehaviorType>();
-            var behaviors = new BlockEntityBehaviorType[existing.Length + 1];
-            Array.Copy(existing, behaviors, existing.Length);
-            behaviors[existing.Length] = new BlockEntityBehaviorType { Name = BEBehaviorCircuit.BehaviorName };
-            block.BlockEntityBehaviors = behaviors;
-
-            if (block.EntityClass == null)
-                block.EntityClass = "Generic";
-        }
-    }
-
-    private static bool ShouldInjectCircuitBehavior(Block block) {
-        if (block.EntityClass != null && block.EntityClass != "Generic")
-            return false;
-
-        return true;
-    }
-
-    private static bool HasCircuitBehavior(Block block) {
-        return BEBehaviorCircuit.BlockSupportsCircuitBehavior(block);
+        // Note: Circuit behavior is NOT injected at startup.
+        // It's added dynamically when cables are placed via GetOrCreateCircuitBehavior().
     }
 
     /// <summary>
@@ -225,6 +192,11 @@ public class SparkyModSystem : ModSystem {
                 if (behavior == null)
                     continue;
 
+                // Keep behaviors that have conductors (dynamically added or otherwise)
+                if (behavior.HasConductors)
+                    continue;
+
+                // Remove empty circuit behaviors on blocks that don't natively support them
                 var block = api.World.BlockAccessor.GetBlock(kvp.Key);
                 if (!BEBehaviorCircuit.BlockSupportsCircuitBehavior(block)) {
                     toRemove ??= new List<Vintagestory.API.MathTools.BlockPos>();
@@ -261,6 +233,9 @@ public class SparkyModSystem : ModSystem {
 
         // Hook up pathfinder logging
         CablePathfinder.Log = msg => api.Logger.Debug(msg);
+
+        // Hook up cache debug logging
+        CacheDebugState.Log = msg => api.Logger.Debug(msg);
 
         api.Logger.Notification("[Sparky] Client-side initialization complete");
     }
