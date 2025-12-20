@@ -131,26 +131,21 @@ public class SparkyModSystem : ModSystem {
         // Clear any previous registrations
         BEBehaviorCircuit.ClearConductorRegistrations();
 
-        // Map of conductor block codes to materials
-        var conductorMap = new (string Code, Material Material)[]
-        {
-            ("sparky:conductor-copper", Material.Copper),
-            ("sparky:conductor-gold", Material.Gold),
-            ("sparky:conductor-lead", Material.Lead),
-            ("sparky:conductor-iron", Material.Iron)
-        };
+        // Load materials from JSON configuration
+        MaterialRegistry.Load(api);
 
-        foreach (var (code, material) in conductorMap) {
-            var block = api.World.GetBlock(new AssetLocation(code));
+        // Register each conductor from the registry
+        foreach (var conductor in MaterialRegistry.Conductors) {
+            var block = api.World.GetBlock(new AssetLocation(conductor.BlockCode));
             if (block != null) {
-                BEBehaviorCircuit.RegisterConductor(block.BlockId, material);
-                api.Logger.Debug($"[Sparky] Registered conductor: {code} -> {material.Name}");
+                BEBehaviorCircuit.RegisterConductor(block.BlockId, conductor.Material);
+                api.Logger.Debug($"[Sparky] Registered conductor: {conductor.BlockCode} -> {conductor.Material.Name}");
             } else {
-                api.Logger.Warning($"[Sparky] Conductor block not found: {code}");
+                api.Logger.Warning($"[Sparky] Conductor block not found: {conductor.BlockCode}");
             }
         }
 
-        api.Logger.Notification("[Sparky] Conductor blocks registered");
+        api.Logger.Notification($"[Sparky] Registered {MaterialRegistry.Conductors.Count} conductor blocks from JSON");
     }
 
     /// <summary>

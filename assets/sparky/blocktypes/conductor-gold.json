@@ -26,8 +26,10 @@
     "attributes": {
         "sparky": {
             "conductor": true,
-            "material": "gold",
-            "resistivity": 2.44e-8
+            "material": "Gold",
+            "resistivity": 0.0015,
+            "previewColor": "#FFD700",
+            "displayName": "Gold Wire"
         }
     }
 }

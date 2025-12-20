@@ -26,8 +26,10 @@
     "attributes": {
         "sparky": {
             "conductor": true,
-            "material": "lead",
-            "resistivity": 2.2e-7
+            "material": "Lead",
+            "resistivity": 0.01,
+            "previewColor": "#4A4A4A",
+            "displayName": "Lead Wire"
         }
     }
 }

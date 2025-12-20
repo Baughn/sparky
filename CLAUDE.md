@@ -79,6 +79,7 @@ When fixing bugs, always make a regression test first.
 - Functions should *usually* have only a single purpose.
 - Important: When possible, make errors impossible through construction, not checks. Parse inputs. Avoid nullable types. Use newtypes and other type-system features to avoid any form of type confusion.
   When it comes to API design, minimize the number of ways they can be used; ideally, any misuse should fail to type-check.
+- Important: When a condition should be impossible, prefer crashes to logging.
 
 ## Testing
 

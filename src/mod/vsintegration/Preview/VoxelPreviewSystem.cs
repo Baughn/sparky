@@ -19,7 +19,8 @@ namespace Sparky.VSIntegration.Preview;
 /// Server tracks all players' previews and broadcasts to clients.
 /// </summary>
 public class VoxelPreviewSystem : ModSystem {
-    private const string ChannelName = "sparky-preview";
+    // Use shared channel name from VoxelPlacementSystem
+    private const string ChannelName = VoxelPlacementSystem.ChannelName;
 
     // Server state
     private ICoreServerAPI? _sapi;
@@ -36,12 +37,10 @@ public class VoxelPreviewSystem : ModSystem {
     public override void StartServerSide(ICoreServerAPI api) {
         _sapi = api;
 
-        _serverChannel = api.Network.RegisterChannel(ChannelName)
-            .RegisterMessageType<PreviewState>()
-            .RegisterMessageType<PreviewUpdateRequest>()
-            .RegisterMessageType<VoxelPlacementRequest>()
-            .SetMessageHandler<PreviewUpdateRequest>(OnClientPreviewUpdate)
-            .SetMessageHandler<VoxelPlacementRequest>(OnVoxelPlacementRequest);
+        // Note: VoxelPlacementSystem registers this channel first and handles VoxelPlacementRequest.
+        // We just add our preview-specific handler here.
+        _serverChannel = api.Network.GetChannel(ChannelName)
+            .SetMessageHandler<PreviewUpdateRequest>(OnClientPreviewUpdate);
 
         // Broadcast all previews periodically (20Hz)
         api.Event.RegisterGameTickListener(OnServerTick, 50);
@@ -98,89 +97,6 @@ public class VoxelPreviewSystem : ModSystem {
                 PlayerUid = player.PlayerUID,
                 Voxels = new()
             });
-        }
-    }
-
-    /// <summary>
-    /// Material index mapping (same order as ItemWireTool.Materials).
-    /// </summary>
-    private static readonly Material[] Materials =
-    {
-        Material.Copper,
-        Material.Gold,
-        Material.Lead,
-        Material.Iron
-    };
-
-    private void OnVoxelPlacementRequest(IServerPlayer player, VoxelPlacementRequest request) {
-        if (_sapi == null || request.Voxels.Count == 0)
-            return;
-
-        // Basic distance validation: check if player is within ~10 blocks of any target voxel
-        var playerPos = player.Entity?.Pos?.XYZ;
-        if (playerPos == null)
-            return;
-
-        // Check first voxel's distance (reasonable approximation for the whole cable)
-        var firstVoxel = request.Voxels[0];
-        var voxelBlockPos = new Vec3d(firstVoxel.X / 16.0, firstVoxel.Y / 16.0, firstVoxel.Z / 16.0);
-        var distance = playerPos.DistanceTo(voxelBlockPos);
-        if (distance > 15) // ~15 blocks max
-        {
-            _sapi.Logger.Warning($"[Sparky] Player {player.PlayerName} voxel placement rejected: too far ({distance:F1} blocks)");
-            return;
-        }
-
-        _sapi.Logger.Debug($"[Sparky] OnVoxelPlacementRequest from {player.PlayerName}: {request.Voxels.Count} voxels, isRemoval={request.IsRemoval}");
-
-        // Group voxels by block position
-        var voxelsByBlock = new Dictionary<(int X, int Y, int Z), List<(int LocalX, int LocalY, int LocalZ, Material Material)>>();
-
-        foreach (var voxel in request.Voxels) {
-            // Handle negative coordinates properly for block position
-            var blockX = voxel.X >= 0 ? voxel.X / 16 : (voxel.X - 15) / 16;
-            var blockY = voxel.Y >= 0 ? voxel.Y / 16 : (voxel.Y - 15) / 16;
-            var blockZ = voxel.Z >= 0 ? voxel.Z / 16 : (voxel.Z - 15) / 16;
-            var localX = ((voxel.X % 16) + 16) % 16;
-            var localY = ((voxel.Y % 16) + 16) % 16;
-            var localZ = ((voxel.Z % 16) + 16) % 16;
-
-            var material = voxel.MaterialIndex >= 0 && voxel.MaterialIndex < Materials.Length
-                ? Materials[voxel.MaterialIndex]
-                : Material.Copper;
-
-            var blockKey = (blockX, blockY, blockZ);
-            if (!voxelsByBlock.TryGetValue(blockKey, out var list)) {
-                list = new List<(int, int, int, Material)>();
-                voxelsByBlock[blockKey] = list;
-            }
-            list.Add((localX, localY, localZ, material));
-        }
-
-        // Process each block
-        foreach (var (blockKey, voxels) in voxelsByBlock) {
-            var blockPos = new Vintagestory.API.MathTools.BlockPos(blockKey.X, blockKey.Y, blockKey.Z);
-            var behavior = BEBehaviorCircuit.GetOrCreateAt(_sapi.World, blockPos);
-            if (behavior == null)
-                continue;
-
-            if (request.IsRemoval) {
-                // Remove voxels
-                foreach (var (localX, localY, localZ, _) in voxels) {
-                    behavior.RemoveVoxel(localX, localY, localZ);
-                }
-
-                // If block is now empty and is a circuit block, remove it
-                if (behavior.ConductorCuboids.Count == 0) {
-                    var block = _sapi.World.BlockAccessor.GetBlock(blockPos);
-                    if (block is BlockCircuit) {
-                        _sapi.World.BlockAccessor.SetBlock(0, blockPos);
-                    }
-                }
-            } else {
-                // Place voxels using batch method for efficiency
-                behavior.SetConductorVoxelsBatch(voxels.Select(v => (v.LocalX, v.LocalY, v.LocalZ, v.Material)));
-            }
         }
     }
 

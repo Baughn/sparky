@@ -26,8 +26,10 @@
     "attributes": {
         "sparky": {
             "conductor": true,
-            "material": "copper",
-            "resistivity": 1.68e-8
+            "material": "Copper",
+            "resistivity": 0.001,
+            "previewColor": "#B87333",
+            "displayName": "Copper Wire"
         }
     }
 }

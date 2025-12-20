@@ -26,8 +26,10 @@
     "attributes": {
         "sparky": {
             "conductor": true,
-            "material": "iron",
-            "resistivity": 9.71e-8
+            "material": "Iron",
+            "resistivity": 0.005,
+            "previewColor": "#7F7F7F",
+            "displayName": "Iron Wire"
         }
     }
 }
