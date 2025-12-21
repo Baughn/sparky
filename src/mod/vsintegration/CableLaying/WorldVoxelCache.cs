@@ -8,6 +8,7 @@ using Sparky.Game.Core.CableLaying;
 using Sparky.VSIntegration;
 using VoxelPos = Sparky.Game.Core.VoxelPos;
 using VSBlockPos = Vintagestory.API.MathTools.BlockPos;
+using Cuboidf = Vintagestory.API.MathTools.Cuboidf;
 
 namespace Sparky.VSIntegration.CableLaying;
 
@@ -35,6 +36,11 @@ public class WorldVoxelCache : IWorldVoxelCache {
 
     // Track cable conductor positions for clearing
     private readonly HashSet<VoxelPos> _cableConductors = new();
+
+    // Coverage thresholds for collision box processing
+    private const float InsulationThreshold = 0.90f;
+    private const float EmptyThreshold = 0.10f;
+    private const float VoxelSize = 1f / 16f;
 
     /// <summary>
     /// Creates a new cache centered on the specified block.
@@ -358,21 +364,75 @@ public class WorldVoxelCache : IWorldVoxelCache {
     }
 
     /// <summary>
-    /// Processes a regular solid block. All voxels become Insulation.
+    /// Calculates intersection volume between a voxel and a collision box (both in block-space 0.0-1.0).
     /// </summary>
-    private void ProcessSolidBlock(VSBlockPos blockPos, Block block) {
-        int baseX = blockPos.X * 16;
-        int baseY = blockPos.Y * 16;
-        int baseZ = blockPos.Z * 16;
+    private static float CalculateIntersectionVolume(
+        float voxelMinX, float voxelMinY, float voxelMinZ,
+        float voxelMaxX, float voxelMaxY, float voxelMaxZ,
+        Cuboidf box) {
+        float overlapX = Math.Max(0f, Math.Min(voxelMaxX, box.X2) - Math.Max(voxelMinX, box.X1));
+        float overlapY = Math.Max(0f, Math.Min(voxelMaxY, box.Y2) - Math.Max(voxelMinY, box.Y1));
+        float overlapZ = Math.Max(0f, Math.Min(voxelMaxZ, box.Z2) - Math.Max(voxelMinZ, box.Z1));
+        return overlapX * overlapY * overlapZ;
+    }
 
-        // For now, treat all non-air, non-replaceable, non-microblock blocks as fully solid
-        // This includes stairs, fences, etc. - they become 16x16x16 Insulation blocks
-        // Future enhancement: use collision boxes for more accurate representation
+    /// <summary>
+    /// Calculates coverage fraction for a voxel given collision boxes.
+    /// </summary>
+    /// <remarks>
+    /// Sums intersections with all collision boxes. May overcount for overlapping boxes.
+    /// TODO: For precise calculation, compute union of box intersections.
+    /// </remarks>
+    private static float CalculateVoxelCoverage(int voxelX, int voxelY, int voxelZ, Cuboidf[] boxes) {
+        float minX = voxelX * VoxelSize, minY = voxelY * VoxelSize, minZ = voxelZ * VoxelSize;
+        float maxX = minX + VoxelSize, maxY = minY + VoxelSize, maxZ = minZ + VoxelSize;
+        const float voxelVolume = VoxelSize * VoxelSize * VoxelSize;
+
+        float totalIntersection = 0f;
+        foreach (var box in boxes) {
+            totalIntersection += CalculateIntersectionVolume(minX, minY, minZ, maxX, maxY, maxZ, box);
+        }
+        return totalIntersection / voxelVolume;
+    }
+
+    /// <summary>
+    /// Processes a solid block using collision boxes for accurate voxel states.
+    /// </summary>
+    /// <remarks>
+    /// Uses block collision boxes to determine per-voxel coverage:
+    /// - Coverage >= 90%: Insulation (solid, cable cannot pass)
+    /// - Coverage <= 10%: Empty (air, cable can pass)
+    /// - Coverage 10-90%: Unroutable (partial, cable cannot pass or use for support)
+    /// </remarks>
+    private void ProcessSolidBlock(VSBlockPos blockPos, Block block) {
+        int baseX = blockPos.X * 16, baseY = blockPos.Y * 16, baseZ = blockPos.Z * 16;
+
+        Cuboidf[]? collisionBoxes = block.GetCollisionBoxes(_blockAccessor, blockPos);
+
+        // Null/empty boxes: fallback to fully solid
+        if (collisionBoxes == null || collisionBoxes.Length == 0) {
+            for (int z = 0; z < 16; z++)
+                for (int y = 0; y < 16; y++)
+                    for (int x = 0; x < 16; x++)
+                        _octree.Set(new VoxelPos(baseX + x, baseY + y, baseZ + z), CacheVoxelState.Insulation);
+            return;
+        }
+
+        // Classify each voxel by coverage
         for (int z = 0; z < 16; z++) {
             for (int y = 0; y < 16; y++) {
                 for (int x = 0; x < 16; x++) {
-                    var pos = new VoxelPos(baseX + x, baseY + y, baseZ + z);
-                    _octree.Set(pos, CacheVoxelState.Insulation);
+                    float coverage = CalculateVoxelCoverage(x, y, z, collisionBoxes);
+
+                    CacheVoxelState state;
+                    if (coverage >= InsulationThreshold)
+                        state = CacheVoxelState.Insulation;
+                    else if (coverage <= EmptyThreshold)
+                        continue; // Leave as Empty (default)
+                    else
+                        state = CacheVoxelState.Unroutable;
+
+                    _octree.Set(new VoxelPos(baseX + x, baseY + y, baseZ + z), state);
                 }
             }
         }
