@@ -116,8 +116,8 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
     /// <summary>
     /// Gets an existing circuit behavior at a position, or creates one dynamically.
     /// For replaceable blocks (air, grass), places a circuit block.
-    /// For solid blocks with a BlockEntity, dynamically adds the behavior.
-    /// Returns null if the block has no BlockEntity and isn't replaceable.
+    /// For solid blocks, spawns a Generic BlockEntity if needed and adds the behavior.
+    /// Returns null only if BlockEntity creation fails.
     /// </summary>
     public static BEBehaviorCircuit? GetOrCreateAt(IWorldAccessor world, BlockPos pos) {
         var blockEntity = world.BlockAccessor.GetBlockEntity(pos);
@@ -141,17 +141,21 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
             return blockEntity?.GetBehavior<BEBehaviorCircuit>();
         }
 
-        // Solid block with existing BlockEntity - dynamically add circuit behavior
-        if (blockEntity != null) {
-            var api = world.Api;
-            behavior = new BEBehaviorCircuit(blockEntity);
-            behavior.Initialize(api, new JsonObject(new Newtonsoft.Json.Linq.JObject()));
-            blockEntity.Behaviors.Add(behavior);
-            return behavior;
+        // Solid block without BlockEntity - spawn a Generic BlockEntity first
+        if (blockEntity == null) {
+            world.BlockAccessor.SpawnBlockEntity("Generic", pos);
+            blockEntity = world.BlockAccessor.GetBlockEntity(pos);
+            if (blockEntity == null) {
+                return null; // Failed to create BlockEntity
+            }
         }
 
-        // Solid block without BlockEntity - can't add cables
-        return null;
+        // Add circuit behavior to the BlockEntity
+        var api = world.Api;
+        behavior = new BEBehaviorCircuit(blockEntity);
+        behavior.Initialize(api, new JsonObject(new Newtonsoft.Json.Linq.JObject()));
+        blockEntity.Behaviors.Add(behavior);
+        return behavior;
     }
 
     #endregion

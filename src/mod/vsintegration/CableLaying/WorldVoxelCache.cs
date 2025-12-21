@@ -428,7 +428,7 @@ public class WorldVoxelCache : IWorldVoxelCache {
                     if (coverage >= InsulationThreshold)
                         state = CacheVoxelState.Insulation;
                     else if (coverage <= EmptyThreshold)
-                        continue; // Leave as Empty (default)
+                        state = CacheVoxelState.Empty;
                     else
                         state = CacheVoxelState.Unroutable;
 

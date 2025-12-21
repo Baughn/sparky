@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Sparky.Game.Core;
 using Sparky.Game.Core.CableLaying;
 using Sparky.VSIntegration;
 using Sparky.VSIntegration.CableLaying;
@@ -33,6 +34,9 @@ public class SparkyModSystem : ModSystem {
 
     // Per-player cache debug state (keyed by PlayerUID)
     private readonly Dictionary<string, CacheDebugState> _playerCacheDebugStates = new();
+
+    // Per-player single voxel preview position (keyed by PlayerUID)
+    private readonly Dictionary<string, VoxelPos> _playerPreviewTargets = new();
 
     /// <summary>
     /// Gets the cable laying state for a player, or null if none exists.
@@ -90,6 +94,24 @@ public class SparkyModSystem : ModSystem {
             state.Clear();
             _playerCacheDebugStates.Remove(playerUid);
         }
+    }
+
+    /// <summary>
+    /// Gets the preview target position for a player, or null if none exists.
+    /// </summary>
+    public VoxelPos? GetPreviewTarget(string playerUid) {
+        _playerPreviewTargets.TryGetValue(playerUid, out var pos);
+        return pos;
+    }
+
+    /// <summary>
+    /// Sets the preview target position for a player.
+    /// </summary>
+    public void SetPreviewTarget(string playerUid, VoxelPos? pos) {
+        if (pos == null)
+            _playerPreviewTargets.Remove(playerUid);
+        else
+            _playerPreviewTargets[playerUid] = pos.Value;
     }
 
     /// <summary>
@@ -228,6 +250,9 @@ public class SparkyModSystem : ModSystem {
 
         // Hook up pathfinder logging
         CablePathfinder.Log = msg => api.Logger.Debug(msg);
+
+        // Hook up cable laying state logging
+        CableLayingState.Log = msg => api.Logger.Debug(msg);
 
         // Hook up cache debug logging
         CacheDebugState.Log = msg => api.Logger.Debug(msg);

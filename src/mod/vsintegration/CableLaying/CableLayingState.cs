@@ -66,29 +66,29 @@ public class CableLayingState {
     public CrossSection CrossSection => _crossSection;
 
     /// <summary>
-    /// Selects the start position for cable laying.
-    /// Searches nearby positions to find the best starting point.
+    /// Selects the start positions for cable laying using pre-computed snapped positions.
     /// </summary>
-    /// <param name="clickedPos">The voxel position the player clicked.</param>
+    /// <param name="snappedPositions">The snapped positions from GetSnappedStartPositions.</param>
     /// <param name="blockAccessor">Block accessor for building the cache.</param>
-    /// <param name="uprightDir">The face direction clicked - cable Height aligns with this.</param>
-    /// <param name="currentTime">Current time for cycling between configurations.</param>
-    public void SelectStart(VoxelPos clickedPos, IBlockAccessor blockAccessor, VoxelDirection uprightDir, float currentTime) {
-        // Build cache centered on clicked position
-        var centerBlock = new VSBlockPos(
-            clickedPos.X / 16,
-            clickedPos.Y / 16,
-            clickedPos.Z / 16);
+    public void SelectStart(IReadOnlyList<VoxelPos> snappedPositions, IBlockAccessor blockAccessor) {
+        Log?.Invoke($"[CableLayingState] SelectStart: received {snappedPositions.Count} positions: {string.Join(", ", snappedPositions)}");
+
+        if (snappedPositions.Count == 0)
+            return;
+
+        // Build cache centered on first snapped position
+        var first = snappedPositions[0];
+        var centerBlock = new VSBlockPos(first.X / 16, first.Y / 16, first.Z / 16);
+        Log?.Invoke($"[CableLayingState] SelectStart: building full cache at {centerBlock}");
         _cache = new WorldVoxelCache(blockAccessor, centerBlock);
 
-        // Find the best start positions within a few voxels of clicked position
-        var positions = SnapPositionFinder.FindBestPosition(clickedPos, _cache, _crossSection, uprightDir, currentTime);
-        _startPositions = positions;
+        // Use the provided snapped positions directly (same as preview showed)
+        _startPositions = snappedPositions;
 
         // If snapping to existing cable, mark connected cable voxels as "our cable"
         // so pathfinder doesn't reject adjacency to them
-        if (IsAdjacentToPreExistingConductor(positions)) {
-            _cache.MarkConnectedConductorAsCable(positions[0], maxDistance: 4);
+        if (IsAdjacentToPreExistingConductor(snappedPositions)) {
+            _cache.MarkConnectedConductorAsCable(snappedPositions[0], maxDistance: 4);
         }
 
         _pathfinder = new CablePathfinder(_cache, _crossSection);
@@ -133,11 +133,14 @@ public class CableLayingState {
             clickedPos.Z / 16);
 
         if (_previewCache == null || _lastPreviewCacheCenter != centerBlock) {
+            Log?.Invoke($"[CableLayingState] GetSnappedStartPositions: building new preview cache at {centerBlock}");
             _previewCache = new WorldVoxelCache(blockAccessor, centerBlock, radius: 1);
             _lastPreviewCacheCenter = centerBlock;
         }
 
-        return SnapPositionFinder.FindBestPosition(clickedPos, _previewCache, _crossSection, uprightDir, currentTime);
+        var result = SnapPositionFinder.FindBestPosition(clickedPos, _previewCache, _crossSection, uprightDir, currentTime);
+        Log?.Invoke($"[CableLayingState] GetSnappedStartPositions: clicked={clickedPos}, upright={uprightDir}, snapped to {result.Count} positions: {string.Join(", ", result)}");
+        return result;
     }
 
     /// <summary>

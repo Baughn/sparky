@@ -33,6 +33,7 @@ public class VoxelPreviewSystem : ModSystem {
     private VoxelPreviewRenderer? _renderer;
     private long _clientTickListenerId;
     private PreviewState? _lastSentState;
+    private (int X, int Y, int Z)? _lastLoggedPreviewPos; // For edge-triggered logging
 
     public override void StartServerSide(ICoreServerAPI api) {
         _sapi = api;
@@ -154,6 +155,7 @@ public class VoxelPreviewSystem : ModSystem {
 
         // Check if player is holding wire tool
         if (slot?.Itemstack?.Item is not ItemWireTool wireTool) {
+            modSystem.SetPreviewTarget(player.PlayerUID, null);
             SendPreviewUpdate(new List<PreviewVoxel>());
             return;
         }
@@ -161,6 +163,7 @@ public class VoxelPreviewSystem : ModSystem {
         // Check if looking at a block
         var blockSel = player.CurrentBlockSelection;
         if (blockSel == null) {
+            modSystem.SetPreviewTarget(player.PlayerUID, null);
             SendPreviewUpdate(new List<PreviewVoxel>());
             return;
         }
@@ -168,6 +171,7 @@ public class VoxelPreviewSystem : ModSystem {
         // Calculate target voxel position
         var targetVoxel = CalculateTargetVoxel(blockSel);
         if (targetVoxel == null) {
+            modSystem.SetPreviewTarget(player.PlayerUID, null);
             SendPreviewUpdate(new List<PreviewVoxel>());
             return;
         }
@@ -179,8 +183,20 @@ public class VoxelPreviewSystem : ModSystem {
         // Get face direction for cross-section orientation
         var faceDir = blockSel.Face.ToVoxelDirection();
 
+        // Edge-triggered logging: log when preview position changes
+        if (_lastLoggedPreviewPos != targetVoxel.Value) {
+            _lastLoggedPreviewPos = targetVoxel.Value;
+            var block = _capi.World.BlockAccessor.GetBlock(blockSel.Position);
+            _capi.Logger.Debug($"[Sparky Preview] Target voxel: ({targetVoxel.Value.X}, {targetVoxel.Value.Y}, {targetVoxel.Value.Z}), " +
+                $"hit=({blockSel.HitPosition.X:F3}, {blockSel.HitPosition.Y:F3}, {blockSel.HitPosition.Z:F3}), " +
+                $"face={blockSel.Face}, block={block?.Code}, mode={mode}");
+        }
+
         List<PreviewVoxel> voxels;
         if (mode.IsCableMode()) {
+            // Cable mode: clear single-voxel target (we use cable path instead)
+            modSystem.SetPreviewTarget(player.PlayerUID, null);
+
             var crossSection = mode.GetCrossSection();
             if (crossSection == null) {
                 voxels = BuildSingleVoxelPreview(material, targetVoxel.Value);
@@ -190,6 +206,9 @@ public class VoxelPreviewSystem : ModSystem {
                 voxels = BuildCablePreview(cableState, mode, material, targetVoxel.Value, faceDir, _capi.World.BlockAccessor);
             }
         } else {
+            // Single-voxel mode: store target for placement
+            modSystem.SetPreviewTarget(player.PlayerUID,
+                new VoxelPos(targetVoxel.Value.X, targetVoxel.Value.Y, targetVoxel.Value.Z));
             voxels = BuildSingleVoxelPreview(material, targetVoxel.Value);
         }
 

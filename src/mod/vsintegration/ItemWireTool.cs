@@ -245,10 +245,15 @@ public class ItemWireTool : Item {
 
         api?.Logger.Debug($"[Sparky WireTool] OnHeldInteractStart: mode={mode}, isCableMode={mode.IsCableMode()}, side={world.Side}");
 
+        if (api == null) {
+            base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
+            return;
+        }
+
+        var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
+
         // Handle cable laying modes
-        if (mode.IsCableMode() && api != null) {
-            // Get or create per-player cable state from ModSystem
-            var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
+        if (mode.IsCableMode()) {
             var crossSection = mode.GetCrossSection()!.Value;
             var cableState = modSystem.GetOrCreateCableState(player.PlayerUID, crossSection);
 
@@ -256,64 +261,19 @@ public class ItemWireTool : Item {
             return;
         }
 
-        // SingleVoxel mode - send placement request to server
-        var pos = blockSel.Position;
-        var block = world.BlockAccessor.GetBlock(pos);
+        // SingleVoxel mode - use preview's pre-calculated position
+        var target = modSystem.GetPreviewTarget(player.PlayerUID);
+        if (target == null) {
+            base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
+            return;
+        }
+
         var matIndex = GetMaterialIndex(material);
-
-        // If targeting a circuit host, place voxel adjacent to clicked face
-        if (IsCircuitHost(world, pos, block)) {
-            var (localX, localY, localZ, outsideBlock) = GetAdjacentVoxelWithOverflow(blockSel);
-            var targetPos = outsideBlock ? blockSel.Position.AddCopy(blockSel.Face) : blockSel.Position;
-            var globalX = targetPos.X * 16 + localX;
-            var globalY = targetPos.Y * 16 + localY;
-            var globalZ = targetPos.Z * 16 + localZ;
-
-            var request = new VoxelPlacementRequest {
-                Voxels = new List<VoxelPlacement> { new VoxelPlacement(globalX, globalY, globalZ, matIndex) }
-            };
-            SendVoxelPlacement(request);
-            handling = EnumHandHandling.PreventDefault;
-            return;
-        }
-
-        // If targeting a replaceable block (air, grass, etc), place new circuit block
-        if (block.Replaceable >= 6000) {
-            var hitPos = blockSel.HitPosition;
-            var face = blockSel.Face;
-            var (localX, localY, localZ) = VoxelPositionHelper.GetAdjacentVoxel(
-                hitPos.X, hitPos.Y, hitPos.Z,
-                face.Normalf.X, face.Normalf.Y, face.Normalf.Z);
-            var globalX = pos.X * 16 + localX;
-            var globalY = pos.Y * 16 + localY;
-            var globalZ = pos.Z * 16 + localZ;
-
-            var request = new VoxelPlacementRequest {
-                Voxels = [new VoxelPlacement(globalX, globalY, globalZ, matIndex)]
-            };
-            SendVoxelPlacement(request);
-            handling = EnumHandHandling.PreventDefault;
-            return;
-        }
-
-        // If targeting a solid block, try to place on the adjacent face
-        var adjacentPos = blockSel.Position.AddCopy(blockSel.Face);
-        var adjacentBlock = world.BlockAccessor.GetBlock(adjacentPos);
-        if (adjacentBlock.Replaceable >= 6000 || IsCircuitHost(world, adjacentPos, adjacentBlock)) {
-            var (localX, localY, localZ) = GetVoxelPositionOnFace(blockSel);
-            var globalX = adjacentPos.X * 16 + localX;
-            var globalY = adjacentPos.Y * 16 + localY;
-            var globalZ = adjacentPos.Z * 16 + localZ;
-
-            var request = new VoxelPlacementRequest {
-                Voxels = [new VoxelPlacement(globalX, globalY, globalZ, matIndex)]
-            };
-            SendVoxelPlacement(request);
-            handling = EnumHandHandling.PreventDefault;
-            return;
-        }
-
-        base.OnHeldInteractStart(slot, byEntity, blockSel, entitySel, firstEvent, ref handling);
+        var request = new VoxelPlacementRequest {
+            Voxels = [new VoxelPlacement(target.Value.X, target.Value.Y, target.Value.Z, matIndex)]
+        };
+        SendVoxelPlacement(request);
+        handling = EnumHandHandling.PreventDefault;
     }
 
     private static bool IsCircuitHost(IWorldAccessor world, Vintagestory.API.MathTools.BlockPos pos, Block block) {
@@ -341,9 +301,10 @@ public class ItemWireTool : Item {
 
         switch (cableState.CurrentPhase) {
             case CableLayingState.Phase.Idle:
-                // First click: select start position
-                api?.Logger.Debug($"[Sparky WireTool] Selecting start at {voxelPos}");
-                cableState.SelectStart(voxelPos, world.BlockAccessor, uprightDir, currentTime);
+                // First click: use same snapping logic as preview to get consistent positions
+                var snappedPositions = cableState.GetSnappedStartPositions(voxelPos, world.BlockAccessor, uprightDir, currentTime);
+                api?.Logger.Debug($"[Sparky WireTool] Selecting start at snapped positions (count={snappedPositions.Count})");
+                cableState.SelectStart(snappedPositions, world.BlockAccessor);
                 api?.Logger.Debug($"[Sparky WireTool] After SelectStart: phase={cableState.CurrentPhase}");
                 handling = EnumHandHandling.PreventDefault;
                 break;
@@ -440,31 +401,6 @@ public class ItemWireTool : Item {
         return VoxelPositionHelper.GetAdjacentVoxelWithOverflow(
             hitPos.X, hitPos.Y, hitPos.Z,
             face.Normalf.X, face.Normalf.Y, face.Normalf.Z);
-    }
-
-    /// <summary>
-    /// Gets the voxel position when clicking a solid block to place in an adjacent circuit block.
-    /// The voxel should be on the face of the circuit block that touches the solid block.
-    /// </summary>
-    private (int X, int Y, int Z) GetVoxelPositionOnFace(BlockSelection solidBlockSel) {
-        var face = solidBlockSel.Face;
-        var hit = solidBlockSel.HitPosition;
-
-        // The hit position is on the solid block's face.
-        // We need to map this to the adjacent block's coordinate space.
-        // The voxel should be on the face of the adjacent block that touches the solid block.
-        // That's the OPPOSITE face from where we clicked.
-
-        // Map hit coordinates to the adjacent block's space
-        double adjX = face.Axis == EnumAxis.X ? (face.Normali.X > 0 ? 0.0 : 1.0) : hit.X;
-        double adjY = face.Axis == EnumAxis.Y ? (face.Normali.Y > 0 ? 0.0 : 1.0) : hit.Y;
-        double adjZ = face.Axis == EnumAxis.Z ? (face.Normali.Z > 0 ? 0.0 : 1.0) : hit.Z;
-
-        // Use GetClickedVoxel with the opposite face normal to get the voxel ON the face
-        // (not adjacent to it)
-        return VoxelPositionHelper.GetClickedVoxel(
-            adjX, adjY, adjZ,
-            -face.Normalf.X, -face.Normalf.Y, -face.Normalf.Z);
     }
 
     /// <summary>
