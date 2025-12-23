@@ -12,8 +12,8 @@ obj/
 *.sln.docstates
 
 # Build results
-[Dd]ebug/
-[Rr]elease/
+bin/
+obj/
 x64/
 x86/
 [Aa]rm/
