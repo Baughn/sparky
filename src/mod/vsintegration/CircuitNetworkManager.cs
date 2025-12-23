@@ -62,6 +62,11 @@ public class CircuitNetworkManager {
         sapi.Event.ChunkColumnLoaded += OnChunkColumnLoaded;
         sapi.Event.ChunkColumnUnloaded += OnChunkColumnUnloaded;
 
+        // Register block break event to clean up orphaned CircuitHost BEs.
+        // This is needed because dynamically-spawned BEs on blocks without EntityClass
+        // don't get their OnBlockRemoved called by VS.
+        sapi.Event.DidBreakBlock += OnDidBreakBlock;
+
         // Register game tick for simulation
         _tickListenerId = sapi.Event.RegisterGameTickListener(OnTick, TickIntervalMs);
 
@@ -76,6 +81,7 @@ public class CircuitNetworkManager {
             _sapi.Event.UnregisterGameTickListener(_tickListenerId);
             _sapi.Event.ChunkColumnLoaded -= OnChunkColumnLoaded;
             _sapi.Event.ChunkColumnUnloaded -= OnChunkColumnUnloaded;
+            _sapi.Event.DidBreakBlock -= OnDidBreakBlock;
         }
 
         _networks.Clear();
@@ -83,6 +89,38 @@ public class CircuitNetworkManager {
         _chunkToNetworks.Clear();
         _loadedChunks.Clear();
         _dirtyBlocks.Clear();
+    }
+
+    /// <summary>
+    /// Called when a block is broken by a player. Handles cleanup for dynamically-spawned
+    /// CircuitHost block entities that VS doesn't know to remove (because the block type
+    /// doesn't declare EntityClass).
+    /// </summary>
+    private void OnDidBreakBlock(IServerPlayer byPlayer, int oldblockId, BlockSelection blockSel) {
+        if (blockSel == null || _sapi == null) return;
+
+        var pos = blockSel.Position;
+        var blockEntity = _sapi.World.BlockAccessor.GetBlockEntity(pos);
+        if (blockEntity == null) return;
+
+        // Check if there's an orphaned CircuitHost at this position
+        if (blockEntity is BlockEntityCircuitHost circuitHost) {
+            _sapi.Logger.Debug($"[Sparky] OnDidBreakBlock: cleaning up orphaned CircuitHost at {pos}");
+            circuitHost.OnBlockRemoved();
+            return;
+        }
+
+        // Also check for BEBehaviorCircuit on any block entity whose block doesn't declare EntityClass
+        // (meaning VS won't call OnBlockRemoved automatically)
+        var behavior = blockEntity.GetBehavior<BEBehaviorCircuit>();
+        if (behavior != null) {
+            var block = _sapi.World.GetBlock(oldblockId);
+            if (block?.EntityClass == null) {
+                _sapi.Logger.Debug($"[Sparky] OnDidBreakBlock: cleaning up orphaned BEBehaviorCircuit at {pos} (block {block?.Code} has no EntityClass)");
+                behavior.OnBlockRemoved();
+                _sapi.World.BlockAccessor.RemoveBlockEntity(pos);
+            }
+        }
     }
 
     #region Block Registration
