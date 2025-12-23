@@ -111,66 +111,6 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
 
     #endregion
 
-    #region Static Factory
-
-    /// <summary>
-    /// Gets an existing circuit behavior at a position, or creates one dynamically.
-    /// For replaceable blocks (air, grass), places a circuit block.
-    /// For solid blocks, spawns a Generic BlockEntity if needed and adds the behavior.
-    /// Returns null only if BlockEntity creation fails.
-    /// </summary>
-    public static BEBehaviorCircuit? GetOrCreateAt(IWorldAccessor world, BlockPos pos) {
-        var api = world.Api;
-        var blockEntity = world.BlockAccessor.GetBlockEntity(pos);
-        var block = world.BlockAccessor.GetBlock(pos);
-
-        api.Logger.Debug($"[Sparky] GetOrCreateAt({pos}): block={block.Code}, hasBlockEntity={blockEntity != null}, beType={blockEntity?.GetType().Name}");
-
-        // Check if existing block entity has circuit behavior
-        var behavior = blockEntity?.GetBehavior<BEBehaviorCircuit>();
-        if (behavior != null) {
-            api.Logger.Debug($"[Sparky] GetOrCreateAt({pos}): found existing behavior with {behavior.ConductorCuboids.Count} cuboids");
-            return behavior;
-        }
-
-        // Check if block is replaceable - place a circuit block
-        if (block.Replaceable >= 6000) {
-            var circuitBlock = world.GetBlock(new AssetLocation("sparky:circuitblock"));
-            if (circuitBlock == null) {
-                api.Logger.Warning($"[Sparky] GetOrCreateAt({pos}): circuitblock asset not found");
-                return null;
-            }
-
-            world.BlockAccessor.SetBlock(circuitBlock.BlockId, pos);
-            blockEntity = world.BlockAccessor.GetBlockEntity(pos);
-            behavior = blockEntity?.GetBehavior<BEBehaviorCircuit>();
-            if (behavior == null) {
-                api.Logger.Warning($"[Sparky] GetOrCreateAt({pos}): placed circuitblock but no BEBehaviorCircuit found");
-            }
-            return behavior;
-        }
-
-        // Solid block without BlockEntity - spawn a Generic BlockEntity first
-        if (blockEntity == null) {
-            api.Logger.Debug($"[Sparky] GetOrCreateAt({pos}): spawning Generic BlockEntity for {block.Code}");
-            world.BlockAccessor.SpawnBlockEntity("Generic", pos);
-            blockEntity = world.BlockAccessor.GetBlockEntity(pos);
-            if (blockEntity == null) {
-                api.Logger.Warning($"[Sparky] GetOrCreateAt({pos}): SpawnBlockEntity(Generic) failed for {block.Code}");
-                return null;
-            }
-        }
-
-        // Add circuit behavior to the BlockEntity
-        api.Logger.Debug($"[Sparky] GetOrCreateAt({pos}): adding BEBehaviorCircuit to {block.Code} (BE type: {blockEntity.GetType().Name})");
-        behavior = new BEBehaviorCircuit(blockEntity);
-        behavior.Initialize(api, new JsonObject(new Newtonsoft.Json.Linq.JObject()));
-        blockEntity.Behaviors.Add(behavior);
-        return behavior;
-    }
-
-    #endregion
-
     #region Constructor
 
     public BEBehaviorCircuit(BlockEntity blockentity) : base(blockentity) {
@@ -184,14 +124,9 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
         base.Initialize(api, properties);
 
         // Register with network manager on server
+        // Note: Stale behavior cleanup is handled by SparkyModSystem.CleanupStaleCircuitBlockEntities
+        // on chunk load, not here, because ConductorCuboids may be empty during fresh creation.
         if (api.Side == EnumAppSide.Server) {
-            if (!BlockSupportsCircuitBehavior(Blockentity.Block)) {
-                api.Logger.Debug($"[Sparky] BEBehaviorCircuit at {Pos}: removing stale behavior (block {Blockentity.Block?.Code} no longer supports circuit behavior)");
-                ClearConductors();
-                api.World.BlockAccessor.RemoveBlockEntity(Pos);
-                return;
-            }
-
             var modSystem = api.ModLoader.GetModSystem<SparkyModSystem>();
             modSystem?.NetworkManager?.RegisterBlock(Pos, this);
         }
@@ -515,6 +450,10 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
 
     #region Behavior Checks
 
+    /// <summary>
+    /// Checks if a block has the circuit behavior declared in its BlockEntityBehaviors.
+    /// Used to detect stale behaviors on blocks that no longer support them.
+    /// </summary>
     public static bool BlockSupportsCircuitBehavior(Block block) {
         if (block == null || block.BlockId == 0)
             return false;

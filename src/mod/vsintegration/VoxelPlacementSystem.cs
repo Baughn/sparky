@@ -84,7 +84,7 @@ public class VoxelPlacementSystem : ModSystem {
         // Process each block
         foreach (var (blockKey, voxels) in voxelsByBlock) {
             var blockPos = new BlockPos(blockKey.X, blockKey.Y, blockKey.Z);
-            var behavior = BEBehaviorCircuit.GetOrCreateAt(_sapi.World, blockPos);
+            var behavior = CircuitBlockFactory.GetOrCreateAt(_sapi.World, blockPos);
             if (behavior == null) {
                 var block = _sapi.World.BlockAccessor.GetBlock(blockPos);
                 _sapi.Logger.Warning($"[Sparky] VoxelPlacement: GetOrCreateAt failed for block {block?.Code} at {blockPos}");

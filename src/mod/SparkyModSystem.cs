@@ -17,15 +17,11 @@ namespace Sparky;
 /// Sparky mod - electrical circuit simulation for Vintage Story
 /// </summary>
 public class SparkyModSystem : ModSystem {
-    private const string CHANNEL_NAME = "sparky";
-
     /// <summary>
     /// The circuit network manager (server-side only).
     /// </summary>
     public CircuitNetworkManager? NetworkManager { get; private set; }
 
-    private IServerNetworkChannel? _serverChannel;
-    private IClientNetworkChannel? _clientChannel;
     private ICoreClientAPI? _capi;
     private WireToolModeDialog? _modeDialog;
 
@@ -183,9 +179,6 @@ public class SparkyModSystem : ModSystem {
         api.Event.SaveGameLoaded += () => CleanupStaleCircuitBlockEntities(api);
         api.Event.ChunkColumnLoaded += (_, chunks) => CleanupStaleCircuitBlockEntities(api, chunks);
 
-        // Register network channel for future use
-        _serverChannel = api.Network.RegisterChannel(CHANNEL_NAME);
-
         api.Logger.Notification("[Sparky] Server-side initialization complete");
     }
 
@@ -236,9 +229,6 @@ public class SparkyModSystem : ModSystem {
     public override void StartClientSide(ICoreClientAPI api) {
         base.StartClientSide(api);
         _capi = api;
-
-        // Register network channel for future use
-        _clientChannel = api.Network.RegisterChannel(CHANNEL_NAME);
 
         // Register F key hotkey for wire tool mode selection
         api.Input.RegisterHotKey(
