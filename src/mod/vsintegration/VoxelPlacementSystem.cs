@@ -85,8 +85,11 @@ public class VoxelPlacementSystem : ModSystem {
         foreach (var (blockKey, voxels) in voxelsByBlock) {
             var blockPos = new BlockPos(blockKey.X, blockKey.Y, blockKey.Z);
             var behavior = BEBehaviorCircuit.GetOrCreateAt(_sapi.World, blockPos);
-            if (behavior == null)
+            if (behavior == null) {
+                var block = _sapi.World.BlockAccessor.GetBlock(blockPos);
+                _sapi.Logger.Warning($"[Sparky] VoxelPlacement: GetOrCreateAt failed for block {block?.Code} at {blockPos}");
                 continue;
+            }
 
             if (request.IsRemoval) {
                 // Remove voxels
@@ -103,7 +106,9 @@ public class VoxelPlacementSystem : ModSystem {
                 }
             } else {
                 // Place voxels using batch method for efficiency
+                _sapi.Logger.Debug($"[Sparky] VoxelPlacement: placing {voxels.Count} voxels at {blockPos}");
                 behavior.SetConductorVoxelsBatch(voxels.Select(v => (v.LocalX, v.LocalY, v.LocalZ, v.Material)));
+                _sapi.Logger.Debug($"[Sparky] VoxelPlacement: block now has {behavior.ConductorCuboids.Count} cuboids");
             }
         }
     }

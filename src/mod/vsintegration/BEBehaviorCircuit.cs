@@ -120,7 +120,9 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
     /// Returns null only if BlockEntity creation fails.
     /// </summary>
     public static BEBehaviorCircuit? GetOrCreateAt(IWorldAccessor world, BlockPos pos) {
+        var api = world.Api;
         var blockEntity = world.BlockAccessor.GetBlockEntity(pos);
+        var block = world.BlockAccessor.GetBlock(pos);
 
         // Check if existing block entity has circuit behavior
         var behavior = blockEntity?.GetBehavior<BEBehaviorCircuit>();
@@ -129,29 +131,35 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
         }
 
         // Check if block is replaceable - place a circuit block
-        var block = world.BlockAccessor.GetBlock(pos);
         if (block.Replaceable >= 6000) {
             var circuitBlock = world.GetBlock(new AssetLocation("sparky:circuitblock"));
             if (circuitBlock == null) {
+                api.Logger.Warning($"[Sparky] GetOrCreateAt({pos}): circuitblock asset not found");
                 return null;
             }
 
             world.BlockAccessor.SetBlock(circuitBlock.BlockId, pos);
             blockEntity = world.BlockAccessor.GetBlockEntity(pos);
-            return blockEntity?.GetBehavior<BEBehaviorCircuit>();
+            behavior = blockEntity?.GetBehavior<BEBehaviorCircuit>();
+            if (behavior == null) {
+                api.Logger.Warning($"[Sparky] GetOrCreateAt({pos}): placed circuitblock but no BEBehaviorCircuit found");
+            }
+            return behavior;
         }
 
         // Solid block without BlockEntity - spawn a Generic BlockEntity first
         if (blockEntity == null) {
+            api.Logger.Debug($"[Sparky] GetOrCreateAt({pos}): spawning Generic BlockEntity for {block.Code}");
             world.BlockAccessor.SpawnBlockEntity("Generic", pos);
             blockEntity = world.BlockAccessor.GetBlockEntity(pos);
             if (blockEntity == null) {
-                return null; // Failed to create BlockEntity
+                api.Logger.Warning($"[Sparky] GetOrCreateAt({pos}): SpawnBlockEntity(Generic) failed for {block.Code}");
+                return null;
             }
         }
 
         // Add circuit behavior to the BlockEntity
-        var api = world.Api;
+        api.Logger.Debug($"[Sparky] GetOrCreateAt({pos}): adding BEBehaviorCircuit to {block.Code} (BE type: {blockEntity.GetType().Name})");
         behavior = new BEBehaviorCircuit(blockEntity);
         behavior.Initialize(api, new JsonObject(new Newtonsoft.Json.Linq.JObject()));
         blockEntity.Behaviors.Add(behavior);
@@ -280,8 +288,10 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
         bool anyChanged = false;
 
         foreach (var (x, y, z, material) in voxels) {
-            if (x < 0 || x > 15 || y < 0 || y > 15 || z < 0 || z > 15)
+            if (x < 0 || x > 15 || y < 0 || y > 15 || z < 0 || z > 15) {
+                Api?.Logger.Warning($"[Sparky] SetConductorVoxelsBatch: coordinates out of range ({x}, {y}, {z}) at {Pos}");
                 continue;
+            }
 
             if (SetVoxelInternal(x, y, z, material)) {
                 anyChanged = true;
