@@ -124,9 +124,12 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
         var blockEntity = world.BlockAccessor.GetBlockEntity(pos);
         var block = world.BlockAccessor.GetBlock(pos);
 
+        api.Logger.Debug($"[Sparky] GetOrCreateAt({pos}): block={block.Code}, hasBlockEntity={blockEntity != null}, beType={blockEntity?.GetType().Name}");
+
         // Check if existing block entity has circuit behavior
         var behavior = blockEntity?.GetBehavior<BEBehaviorCircuit>();
         if (behavior != null) {
+            api.Logger.Debug($"[Sparky] GetOrCreateAt({pos}): found existing behavior with {behavior.ConductorCuboids.Count} cuboids");
             return behavior;
         }
 
@@ -183,6 +186,7 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
         // Register with network manager on server
         if (api.Side == EnumAppSide.Server) {
             if (!BlockSupportsCircuitBehavior(Blockentity.Block)) {
+                api.Logger.Debug($"[Sparky] BEBehaviorCircuit at {Pos}: removing stale behavior (block {Blockentity.Block?.Code} no longer supports circuit behavior)");
                 ClearConductors();
                 api.World.BlockAccessor.RemoveBlockEntity(Pos);
                 return;
@@ -201,6 +205,8 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
     public override void OnBlockRemoved() {
         base.OnBlockRemoved();
 
+        Api?.Logger.Debug($"[Sparky] BEBehaviorCircuit at {Pos}: block removed (had {ConductorCuboids.Count} conductor cuboids)");
+
         if (ConductorCuboids.Count > 0) {
             // TODO: Drop conductor materials when host block is broken.
             ClearConductors();
@@ -215,6 +221,8 @@ public class BEBehaviorCircuit : BlockEntityBehavior {
 
     public override void OnBlockUnloaded() {
         base.OnBlockUnloaded();
+
+        Api?.Logger.Debug($"[Sparky] BEBehaviorCircuit at {Pos}: block unloaded (chunk unload)");
 
         // Notify network manager of chunk unload on server
         if (Api?.Side == EnumAppSide.Server) {
