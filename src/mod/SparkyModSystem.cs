@@ -122,6 +122,9 @@ public class SparkyModSystem : ModSystem {
         // Register block entity behavior class
         api.RegisterBlockEntityBehaviorClass(BEBehaviorCircuit.BehaviorName, typeof(BEBehaviorCircuit));
 
+        // Register block entity class for hosting circuits in solid blocks
+        api.RegisterBlockEntityClass("CircuitHost", typeof(BlockEntityCircuitHost));
+
         // Register item classes
         api.RegisterItemClass("ItemWireTool", typeof(ItemWireTool));
         api.RegisterItemClass("ItemCacheDebugTool", typeof(ItemCacheDebugTool));

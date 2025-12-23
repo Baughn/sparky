@@ -38,9 +38,6 @@ public class BehaviorSyncSystem : ModSystem {
         _serverChannel = api.Network.RegisterChannel(ChannelName)
             .RegisterMessageType<BehaviorAddedPacket>();
 
-        // Handle chunk load to restore behaviors from saved data
-        api.Event.ChunkColumnLoaded += OnServerChunkLoaded;
-
         api.Logger.Debug("[Sparky] BehaviorSyncSystem server initialized");
     }
 
@@ -55,42 +52,6 @@ public class BehaviorSyncSystem : ModSystem {
         _serverChannel.BroadcastPacket(packet);
 
         _sapi?.Logger.Debug($"[Sparky] BehaviorSyncSystem: broadcast BehaviorAddedPacket for {pos}");
-    }
-
-    private void OnServerChunkLoaded(Vec2i chunkCoord, IWorldChunk[] chunks) {
-        // Scan loaded chunks for BEs with sparky data but no behavior
-        // This handles the case where a behavior was dynamically added, saved,
-        // then the chunk was unloaded and reloaded
-        foreach (var chunk in chunks) {
-            if (chunk?.BlockEntities == null) continue;
-
-            foreach (var kvp in chunk.BlockEntities) {
-                var be = kvp.Value;
-                if (be == null) continue;
-
-                // Skip if behavior already exists
-                if (be.GetBehavior<BEBehaviorCircuit>() != null) continue;
-
-                // Check if this BE has sparky data by examining stored attributes
-                // We do this by creating a temp tree and checking if it would have data
-                // after the BE serializes to it... but that won't work since the behavior
-                // doesn't exist yet.
-                //
-                // Instead, we need to check the raw stored data. VS stores tree attributes
-                // in the chunk. We can access them through the BE's internal state.
-                // However, VS doesn't expose this directly.
-                //
-                // Workaround: Check if this is a BlockEntityGeneric and if the block
-                // is one that could have had cables placed in it (non-replaceable, non-circuit).
-                // This is a heuristic that may have false negatives.
-                //
-                // For now, we'll rely on the stored data being present and use a different
-                // approach: hook into the BE lifecycle more directly.
-                //
-                // TODO: Implement proper chunk-load behavior restoration.
-                // For now, the sync packet handles runtime additions, which is the primary case.
-            }
-        }
     }
 
     #endregion
@@ -174,9 +135,6 @@ public class BehaviorSyncSystem : ModSystem {
     #endregion
 
     public override void Dispose() {
-        if (_sapi != null) {
-            _sapi.Event.ChunkColumnLoaded -= OnServerChunkLoaded;
-        }
         if (_capi != null) {
             _capi.Event.UnregisterGameTickListener(_retryTickListenerId);
         }
