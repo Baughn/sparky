@@ -13,20 +13,6 @@ namespace Sparky.Tests {
         }
 
         [Test]
-        public void CurrentSource_SetsNodeVoltage() {
-            // Current source (1A) through resistor (10 ohm) to ground
-            // V = I * R = 1 * 10 = 10V
-            var n1 = _sim.CreateNode();
-
-            _sim.AddCurrentSource(_sim.Ground, n1, 1.0); // 1A flows into n1
-            _sim.AddResistor(n1, _sim.Ground, 10.0);
-
-            _sim.Step(0.001);
-
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(10.0).Within(Tolerances.Voltage));
-        }
-
-        [Test]
         public void CurrentSource_Polarity_PositiveCurrentFlowsInToOut() {
             // Current flows from nodeIn to nodeOut
             // nodeIn is lower potential, nodeOut is higher when driving into a resistor
@@ -40,21 +26,6 @@ namespace Sparky.Tests {
 
             // n1 should be at positive voltage (current flows into it from source)
             Assert.That(_sim.GetVoltage(n1), Is.GreaterThan(0));
-        }
-
-        [Test]
-        public void CurrentSource_MultipleInParallel_CurrentsAdd() {
-            // Two 1A current sources in parallel = 2A total
-            // Through 10 ohm resistor: V = 2 * 10 = 20V
-            var n1 = _sim.CreateNode();
-
-            _sim.AddCurrentSource(_sim.Ground, n1, 1.0);
-            _sim.AddCurrentSource(_sim.Ground, n1, 1.0);
-            _sim.AddResistor(n1, _sim.Ground, 10.0);
-
-            _sim.Step(0.001);
-
-            Assert.That(_sim.GetVoltage(n1), Is.EqualTo(20.0).Within(Tolerances.Voltage));
         }
 
         [Test]

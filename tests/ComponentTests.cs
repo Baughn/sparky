@@ -7,26 +7,6 @@ namespace Sparky.Tests {
     [TestFixture]
     public class ComponentTests {
         [Test]
-        public void TestResistorsInSeries() {
-            // 10V -> R1 (100) -> R2 (100) -> Ground
-            // Total R = 200. I = 10/200 = 0.05A.
-            // V_mid = 10 - 0.05*100 = 5V.
-            var circuit = new Circuit();
-            var n1 = circuit.AddNode();
-            var n2 = circuit.AddNode();
-            var ground = circuit.Nodes[0];
-
-            circuit.AddComponent(new VoltageSource(n1, ground, 10.0));
-            circuit.AddComponent(new Resistor(n1, n2, 100.0));
-            circuit.AddComponent(new Resistor(n2, ground, 100.0));
-
-            circuit.Solve(0);
-
-            Assert.That(n2.Voltage, Is.EqualTo(5.0).Within(Tolerances.Voltage));
-            Assert.That(circuit.LastIterations, Is.EqualTo(1));
-        }
-
-        [Test]
         public void TestVoltageSourceRhsUpdatesAreNotCached() {
             var circuit = new Circuit();
             var n1 = circuit.AddNode();
@@ -42,32 +22,6 @@ namespace Sparky.Tests {
             circuit.Solve(0);
             Assert.That(n1.Voltage, Is.EqualTo(5.0).Within(Tolerances.Voltage));
             Assert.That(circuit.LastIterations, Is.EqualTo(1));
-        }
-
-        [Test]
-        public void TestResistorsInParallel() {
-            // 10V -> Node 1 -> R1 (100) -> Ground
-            //               -> R2 (100) -> Ground
-            // Req = 50. I_total = 10/50 = 0.2A.
-            // But we check voltages. Node 1 should be 10V (connected to source).
-            // Let's put a series resistor to make it interesting.
-            // 10V -> R_series (100) -> Node 1 -> R1 (100) || R2 (100) -> Ground
-            // Req_parallel = 50. Total R = 150.
-            // V_node1 = 10 * (50 / 150) = 3.333V.
-
-            var circuit = new Circuit();
-            var nSrc = circuit.AddNode();
-            var n1 = circuit.AddNode();
-            var ground = circuit.Nodes[0];
-
-            circuit.AddComponent(new VoltageSource(nSrc, ground, 10.0));
-            circuit.AddComponent(new Resistor(nSrc, n1, 100.0));
-            circuit.AddComponent(new Resistor(n1, ground, 100.0));
-            circuit.AddComponent(new Resistor(n1, ground, 100.0));
-
-            circuit.Solve(0);
-
-            Assert.That(n1.Voltage, Is.EqualTo(10.0 * 50.0 / 150.0).Within(Tolerances.Voltage));
         }
 
         [Test]

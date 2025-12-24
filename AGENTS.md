@@ -87,6 +87,38 @@ When fixing bugs, always make a regression test first.
 
 Tests use NUnit in `tests/`. Name tests as scenario + expectation (e.g., `TestVoltageDivider`). Use tolerance checks like `Within(1e-6)` for floating-point comparisons.
 
+### Testing Philosophy
+
+Tests should be **understandable, straightforward, and obviously correct**. Coverage matters, but not at the expense of readability. Prefer:
+
+- **Property-based tests** where the property definition IS the specification (e.g., Kirchhoff's laws, Ohm's law). If a property is hard to express clearly, that may indicate the code needs refactoring.
+- **Verifying relationships** over specific values. Arriving at the same result by two different methods (solver vs formula) is as reliable as checking hardcoded expected values.
+- **Relative tolerance** for numeric properties across wide value ranges, not absolute tolerance.
+
+### Property-Based Testing with CsCheck
+
+Use [CsCheck](https://github.com/AnthonyLloyd/CsCheck) for property-based testing. It was chosen over FsCheck for:
+- Cleaner numeric range syntax: `Gen.Double[1, 1_000_000]`
+- Better shrinking for dependent variables (e.g., failures when r1 ≈ r2)
+- More intuitive C# API
+
+```csharp
+// Example: Voltage divider property
+Gen.Select(
+    Gen.Double[1, 1000],      // voltage
+    Gen.Double[1, 1_000_000], // r1
+    Gen.Double[1, 1_000_000]  // r2
+).Sample((voltage, r1, r2) => {
+    var (vMid, _) = SolveVoltageDivider(voltage, r1, r2);
+    var expected = voltage * r2 / (r1 + r2);
+    var relErr = Math.Abs(vMid - expected) / expected;
+    if (relErr >= 1e-6)
+        throw new Exception($"vMid={vMid}, expected={expected}, relErr={relErr:e}");
+});
+```
+
+See `tests/PropertyTestCsCheck.cs` for examples.
+
 ## Version Control
 
 This project uses **Jujutsu (jj)** instead of git. Key commands:
