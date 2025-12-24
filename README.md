@@ -106,6 +106,8 @@ c.Step();
 
 ## Getting Started
 
+### Linux/macOS
+
 ```bash
 # Build
 dotnet build
@@ -115,4 +117,44 @@ dotnet test
 
 # Run benchmarks
 ./benchmark.sh run
+```
+
+### Windows 11
+
+To build and run:
+
+1. Install Vintage Story from the website.
+2. Launch Vintage Story and confirm that it is logged in and starts properly.
+3. Install the .net 8 SDK from Microsoft.
+4. Run `start.ps1` to launch the game with the mod enabled.
+
+#### Troubleshooting
+
+**Note: If the build fails with the following error:**
+
+```
+Could not execute because the application was not found or a compatible .NET SDK is not installed.
+Possible reasons for this include:
+  * You intended to execute a .NET program:
+      The application 'build' does not exist.
+  * You intended to execute a .NET SDK command:
+      It was not possible to find any installed .NET SDKs.
+      Install a .NET SDK from:
+        https://aka.ms/dotnet-download
+```
+
+but you know you installed the (64 bit) SDK, you will need to do the following:
+
+1. Open the Start menu and search for "Environment Variables".
+2. Select "Edit the system environment variables".
+3. Select "Environment Variables..." from the System Properties dialog.
+4. Find the `Path` variable underneath System Variables (not User Variables).
+5. Move the 64 bit dotnet path (`C:\Program Files\dotnet\`) above the x86 path (`C:\Program Files (x86)\dotnet\`).
+6. Close and reopen the command prompt that you are using (important!)
+7. Run `dotnet --list-sdks` and verify that the 64 bit path is listed (see below for example)`
+
+```
+PS C:\Users\jared\Projects\sparky> dotnet --list-sdks
+8.0.416 [C:\Program Files\dotnet\sdk]
+PS C:\Users\jared\Projects\sparky> 
 ```
