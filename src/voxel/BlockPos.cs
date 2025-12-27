@@ -1,6 +1,6 @@
 using System;
 
-namespace Sparky.Game.Core;
+namespace Sparky.Voxel;
 
 /// <summary>
 /// 3D block position following Vintage Story conventions.

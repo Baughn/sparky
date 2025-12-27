@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Sparky.Game.Core;
+namespace Sparky.Voxel;
 
 /// <summary>
 /// A sparse voxel octree for efficient storage and O(log n) access to voxel data.

@@ -1,4 +1,4 @@
-namespace Sparky.Game.Core;
+namespace Sparky.Voxel;
 
 /// <summary>
 /// Defines electrical properties of a conductor material.

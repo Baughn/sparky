@@ -1,6 +1,6 @@
 using System;
 
-namespace Sparky.Game.Core;
+namespace Sparky.Voxel;
 
 /// <summary>
 /// Which face of a block (6 possibilities).

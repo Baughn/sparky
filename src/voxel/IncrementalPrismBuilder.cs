@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Sparky.Game.Core;
+namespace Sparky.Voxel;
 
 /// <summary>
 /// The voxel data type stored in the octree: type + optional material.

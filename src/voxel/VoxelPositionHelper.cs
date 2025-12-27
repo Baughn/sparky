@@ -1,6 +1,6 @@
 using System;
 
-namespace Sparky.Game.Core;
+namespace Sparky.Voxel;
 
 /// <summary>
 /// Pure math functions for calculating voxel positions from hit positions and face normals.

@@ -1,4 +1,4 @@
-namespace Sparky.Game.Core;
+namespace Sparky.Voxel;
 
 /// <summary>
 /// An axis-aligned rectangular prism of voxels within a single VS block.

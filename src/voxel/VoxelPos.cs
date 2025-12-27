@@ -1,4 +1,4 @@
-namespace Sparky.Game.Core;
+namespace Sparky.Voxel;
 
 /// <summary>
 /// 3D voxel position at sub-block resolution.

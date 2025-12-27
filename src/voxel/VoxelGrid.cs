@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Sparky.Game.Core;
+namespace Sparky.Voxel;
 
 /// <summary>
 /// Sparse storage for voxels using SVO + prism coalescing for memory efficiency.

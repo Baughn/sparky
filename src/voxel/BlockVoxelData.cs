@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Sparky.Game.Core;
+namespace Sparky.Voxel;
 
 /// <summary>
 /// Stores voxel data for a single VS block (16³ voxels) as coalesced prisms.

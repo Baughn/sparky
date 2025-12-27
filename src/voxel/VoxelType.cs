@@ -1,4 +1,4 @@
-namespace Sparky.Game.Core;
+namespace Sparky.Voxel;
 
 /// <summary>
 /// The type of a voxel, determining its electrical connectivity behavior.
