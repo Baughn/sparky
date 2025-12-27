@@ -1,6 +1,7 @@
 # .NET build artifacts
 bin/
 obj/
+build/
 *.dll
 *.exe
 *.pdb
@@ -12,8 +13,6 @@ obj/
 *.sln.docstates
 
 # Build results
-bin/
-obj/
 x64/
 x86/
 [Aa]rm/

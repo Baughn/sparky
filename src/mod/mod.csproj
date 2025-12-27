@@ -46,8 +46,9 @@
 
   <!-- Package the mod as a zip file after building -->
   <Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
+    <MakeDir Directories="$(MSBuildProjectDirectory)/bin" />
     <ZipDirectory
-      DestinationFile="bin/$(TargetName).zip"
+      DestinationFile="$(MSBuildProjectDirectory)/bin/$(TargetName).zip"
       SourceDirectory="$(TargetDir)"
       Overwrite="true"
     />
