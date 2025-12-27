@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Sparky.Handbook</AssemblyName>
+    <RootNamespace>Sparky.Handbook</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CairoSharp" Version="3.24.24.95" />
+    <PackageReference Include="Silk.NET.Windowing" Version="2.21.0" />
+    <PackageReference Include="Silk.NET.Input" Version="2.21.0" />
+    <PackageReference Include="GtkSharp" Version="3.24.24.95" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../voxel/Sparky.Voxel.csproj" />
+    <ProjectReference Include="../mna/Sparky.Mna.csproj" />
+  </ItemGroup>
+</Project>
