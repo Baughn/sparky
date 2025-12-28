@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Sparky.MNA.Api.Energy;
-using Sparky.MNA.Api.Limits;
-using Sparky.MNA.Core;
+using Sparky.Mna.Api.Energy;
+using Sparky.Mna.Api.Limits;
+using Sparky.Mna.Solver;
 
-namespace Sparky.MNA.Api;
+namespace Sparky.Mna.Api;
 
 /// <summary>
 /// The simulation manager. Thread safety: All methods must be called from a single thread,

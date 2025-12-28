@@ -1,4 +1,4 @@
-namespace Sparky.MNA.Api.Limits;
+namespace Sparky.Mna.Api.Limits;
 
 /// <summary>
 /// A type-erased reference to a simulation component.

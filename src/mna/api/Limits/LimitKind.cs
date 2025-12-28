@@ -1,4 +1,4 @@
-namespace Sparky.MNA.Api.Limits;
+namespace Sparky.Mna.Api.Limits;
 
 /// <summary>
 /// Types of limits that can be set on simulation components.

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Sparky.MNA.Api;
+using Sparky.Mna.Api;
 
 namespace Sparky.Game.Core;
 

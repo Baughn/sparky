@@ -1,6 +1,6 @@
 using System;
 
-namespace Sparky.MNA.Api;
+namespace Sparky.Mna.Api;
 
 /// <summary>Base exception for simulation-related errors.</summary>
 public class SimulationException : Exception {

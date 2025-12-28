@@ -1,4 +1,4 @@
-namespace Sparky.MNA.Api;
+namespace Sparky.Mna.Api;
 
 /// <summary>Strongly-typed identifier for a circuit node.</summary>
 public readonly record struct NodeId(int Value) {

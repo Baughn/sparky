@@ -1,7 +1,7 @@
 using System;
-using Sparky.MNA.Api.Limits;
+using Sparky.Mna.Api.Limits;
 
-namespace Sparky.MNA.Api;
+namespace Sparky.Mna.Api;
 
 /// <summary>
 /// Statistics about the simulation state.

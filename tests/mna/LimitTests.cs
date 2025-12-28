@@ -1,6 +1,6 @@
 using NUnit.Framework;
-using Sparky.MNA.Api;
-using Sparky.MNA.Api.Limits;
+using Sparky.Mna.Api;
+using Sparky.Mna.Api.Limits;
 using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests.MNA;

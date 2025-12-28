@@ -1,6 +1,6 @@
 using Sparky.Game.Core;
 using Sparky.Game.Core.ComponentTypes;
-using Sparky.MNA.Api;
+using Sparky.Mna.Api;
 using Sparky.TwoD.Protocol;
 
 // Disambiguate types shared with Sparky.Game.Core

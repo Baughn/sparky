@@ -4,7 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using Sparky.Game.Core;
 using Sparky.Game.Core.ComponentTypes;
-using Sparky.MNA.Api;
+using Sparky.Mna.Api;
 
 namespace Sparky.Tests.Game;
 

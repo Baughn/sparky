@@ -4,7 +4,7 @@ using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 using Sparky.Game.Core;
 using Sparky.Game.Core.CableLaying;
-using Sparky.MNA.Api;
+using Sparky.Mna.Api;
 using Sparky.MNA.Core;
 using Sparky.Tests.Game.CableLaying;
 

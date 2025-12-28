@@ -1,4 +1,4 @@
-namespace Sparky.MNA.Api.Limits;
+namespace Sparky.Mna.Api.Limits;
 
 /// <summary>
 /// Event data fired when a component limit is exceeded or cleared.

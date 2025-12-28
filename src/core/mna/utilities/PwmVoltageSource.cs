@@ -1,4 +1,4 @@
-using Sparky.MNA.Api;
+using Sparky.Mna.Api;
 
 namespace Sparky.MNA.Utilities;
 

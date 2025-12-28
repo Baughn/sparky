@@ -1,4 +1,4 @@
-namespace Sparky.MNA.Api.Limits;
+namespace Sparky.Mna.Api.Limits;
 
 /// <summary>
 /// Configuration for a component limit.
