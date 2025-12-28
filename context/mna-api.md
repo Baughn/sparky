@@ -1,12 +1,12 @@
 # MNA High-Level API Design
 
 ## Overview
-The MNA library will be structured into two main layers:
-1.  **Core (`Sparky.MNA.Core`)**: The low-level solver (existing code). It deals with `Circuit`, `Node`, `Component`, and matrix solving. It is unaware of "game objects" or optimizations like resistor merging.
-2.  **API (`Sparky.MNA.Api`)**: The high-level interface for the game engine. It manages the `LogicalCircuit`, performs optimizations (Line Optimization), and maps logical IDs to physical nodes/components.
+The MNA library is structured into two main layers:
+1.  **Solver (`Sparky.Mna.Solver`, `src/mna/solver/`)**: The low-level solver. It deals with `Circuit`, `Node`, `Component`, and matrix solving. It is unaware of "game objects" or optimizations like resistor merging.
+2.  **API (`Sparky.Mna.Api`, `src/mna/api/`)**: The high-level interface for the game engine. It manages the `LogicalCircuit`, performs optimizations (Line Optimization), and maps logical IDs to physical nodes/components.
 
-## Core Refactoring
-The existing classes in `Sparky.MNA` will be moved to `Sparky.MNA.Core`.
+## Solver Layer
+The solver classes live in `src/mna/solver/`:
 - `Circuit`
 - `Node`
 - `Component` and subclasses
@@ -30,7 +30,7 @@ public readonly record struct TransformerId(int Value);
 The primary interface for the game engine.
 
 ```csharp
-namespace Sparky.MNA.Api
+namespace Sparky.Mna.Api
 {
     public interface ISimulation
     {
@@ -99,7 +99,7 @@ The concrete implementation of `ISimulation`.
 
 #### Data Structures
 - **`LogicalGraph`**: A graph representation of the user's circuit. Nodes are `NodeId`, edges are typed components.
-- **`PhysicalCircuit`**: The `Sparky.MNA.Core.Circuit` instance being solved.
+- **`PhysicalCircuit`**: The `Sparky.Mna.Solver.Circuit` instance being solved.
 - **`OptimizationMap`**: Stores mapping from Logical Nodes/Components to Physical ones.
     - `NodeId -> PhysicalNodeIndex` (direct mapping)
     - `NodeId -> InterpolationInfo` (for optimized nodes)
@@ -254,27 +254,24 @@ Time advances by `dt` after each `Step(dt)` call. `LimitEvent` includes `Simulat
 
 ## Directory Structure
 ```
-MNA/
-├── API.md
-├── Api/
+src/mna/
+├── Sparky.Mna.csproj
+├── api/
 │   ├── ISimulation.cs
 │   ├── SimulationManager.cs
 │   ├── Ids.cs
 │   ├── Exceptions.cs
-│   ├── Energy/
-│   │   └── EnergyCounter.cs
-│   ├── Limits/
-│   │   ├── LimitConfig.cs
-│   │   ├── LimitEvent.cs
-│   │   └── LimitKind.cs
 │   └── Utilities/
 │       ├── AcVoltageSource.cs
 │       ├── PwmVoltageSource.cs
 │       └── ...
-├── Core/
+├── solver/
 │   ├── Circuit.cs
 │   ├── Component.cs
 │   ├── Node.cs
 │   └── ...
-└── Tests/ (or separate project)
+├── topology/
+│   └── TopologyBuilder.cs
+└── utilities/
+    └── ...
 ```

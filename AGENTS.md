@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Design documentation is consolidated in `context/`. Project source code lives in `src/` (core, mod, 2d), with tests in `tests/` and benchmarks in `benchmarks/`.
+Design documentation is consolidated in `context/`. Project source code lives in `src/` (mna, voxel, handbook, mod), with tests in `tests/` and benchmarks in `benchmarks/`.
 
 ## Project Overview
 
@@ -30,23 +30,30 @@ dotnet test --filter "FullyQualifiedName~TestName"  # Run specific test
 
 ## Architecture
 
-### Three-Layer Design
+### Project Structure
 
-1. **Core Layer (`src/core/mna/core/`)**: Low-level solver handling matrix assembly and linear algebra
-   - `Circuit.cs`: Main solver with Newton-Raphson iteration, dense/sparse path selection
-   - `Component.cs`: Abstract base for all circuit elements
-   - Component implementations: `Resistor`, `VoltageSource`, `CurrentSource`, `Capacitor`, `Inductor`, `Diode`, `Transformer`
+1. **MNA Layer (`src/mna/`)**: Circuit solver with high-level API
+   - `solver/`: Low-level solver handling matrix assembly and linear algebra
+     - `Circuit.cs`: Main solver with Newton-Raphson iteration, dense/sparse path selection
+     - `Component.cs`: Abstract base for all circuit elements
+     - Component implementations: `Resistor`, `VoltageSource`, `CurrentSource`, `Capacitor`, `Inductor`, `Diode`, `Transformer`
+   - `api/`: High-level interface for game integration
+     - `ISimulation.cs`: Public interface with strongly-typed IDs
+     - `SimulationManager.cs`: Implementation with graph partitioning and line optimization
+     - `Exceptions.cs`, `Ids.cs`: Type-safe ID wrappers and custom exceptions
+   - `topology/`: Converts voxel geometry to MNA circuit topology
+     - `TopologyBuilder.cs`: Extracts prisms, runs union-find for conductor regions
 
-2. **API Layer (`src/core/mna/api/`)**: High-level interface for game integration
-   - `ISimulation.cs`: Public interface with strongly-typed IDs
-   - `SimulationManager.cs`: Implementation with graph partitioning and line optimization
-   - `Exceptions.cs`, `Ids.cs`: Type-safe ID wrappers and custom exceptions
-
-3. **Game Layer (`src/core/game/core/`)**: Voxel-based world representation
+2. **Voxel Layer (`src/voxel/`)**: Voxel-based world representation
    - `VoxelGrid.cs`: Sparse voxel storage with O(log n) access via SVO
-   - `TopologyBuilder.cs`: Converts voxel geometry to MNA circuit topology
    - `SparseVoxelOctree.cs`, `IncrementalPrismBuilder.cs`: Optimized storage internals
    - See `context/voxel-storage.md` for detailed architecture
+
+3. **Handbook Layer (`src/handbook/`)**: 2D visualization application
+   - Standalone GUI for testing and documentation
+
+4. **Mod Layer (`src/mod/`)**: Vintage Story mod integration
+   - See `context/vsintegration.md` for details
 
 ### Key Algorithms
 

@@ -30,7 +30,7 @@ This caused **O(4096)** work per voxel modification and allocated ~70KB per call
 
 ### Layer 1: Sparse Voxel Octree (SVO)
 
-File: `Sparky.Core/Game/Core/SparseVoxelOctree.cs`
+File: `src/voxel/SparseVoxelOctree.cs`
 
 The SVO provides O(log n) get/set operations with memory-efficient sparse storage.
 
@@ -71,7 +71,7 @@ int newOriginX = _rootOriginX - octantX * halfSize;
 
 ### Layer 2: Incremental Prism Builder
 
-File: `Sparky.Core/Game/Core/IncrementalPrismBuilder.cs`
+File: `src/voxel/IncrementalPrismBuilder.cs`
 
 Combines SVO storage with lazy per-block prism building.
 
@@ -112,7 +112,7 @@ public class IncrementalPrismBuilder
 
 ### Layer 3: VoxelGrid (Public API)
 
-File: `Sparky/Game/Core/VoxelGrid.cs`
+File: `src/voxel/VoxelGrid.cs`
 
 Thin wrapper that delegates to IncrementalPrismBuilder. Maintains backward-compatible API.
 
@@ -151,7 +151,7 @@ public class VoxelGrid
 
 ## Incremental Topology Updates
 
-File: `Sparky/Game/Core/TopologyBuilder.cs`
+File: `src/mna/topology/TopologyBuilder.cs`
 
 The TopologyBuilder maintains persistent state between `BuildTopology()` calls to enable incremental updates when only a few voxels change.
 
@@ -228,7 +228,7 @@ This enables O(1) topology updates for adding voxels to very large wires (180K+ 
 
 ### SpatialHash<T>
 
-File: `Sparky.Core/Game/Core/SpatialHash.cs`
+File: `src/voxel/SpatialHash.cs`
 
 Generic spatial hash grid for O(1) proximity queries. Currently unused but available for future incremental prism updates.
 

@@ -88,7 +88,7 @@ Player tool for building circuits:
 
 Single-voxel placement/removal treats any block hosting `BEBehaviorCircuit` as a circuit block.
 
-Uses `VoxelPositionHelper` (in `src/core/game/core/`) for pure-math hit-position calculations, including overflow handling when placement crosses block boundaries.
+Uses `VoxelPositionHelper` (in `src/voxel/`) for pure-math hit-position calculations, including overflow handling when placement crosses block boundaries.
 
 **Important: Singleton Pattern**
 `Item` classes are singletons in VS - all players share the same `ItemWireTool` instance. Per-player/per-item state MUST NOT be stored as instance fields. Instead:
@@ -279,7 +279,7 @@ The `CableLaying/` folder implements pathfinding-based cable placement.
 ### Architecture
 
 ```
-src/core/game/core/CableLaying/   (VS-independent)
+src/mna/utilities/CableLaying/   (VS-independent)
 ├── CacheVoxelState.cs       # Voxel state enum for pathfinding
 ├── IWorldVoxelCache.cs      # Interface for world access
 ├── CrossSection.cs          # Cable cross-section types (1x1, 2x2, etc.)
