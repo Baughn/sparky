@@ -1,6 +1,6 @@
 using Sparky.Mna.Api;
 
-namespace Sparky.MNA.Utilities;
+namespace Sparky.Mna.Utilities;
 
 /// <summary>
 /// PWM voltage source: V = VHigh when (t % period) &lt; DutyCycle × period, else VLow.

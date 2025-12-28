@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Sparky.MNA.Utilities;
+namespace Sparky.Mna.Utilities;
 
 /// <summary>
 /// Helper to manage multiple time-varying sources and update them together.

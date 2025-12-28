@@ -1,7 +1,7 @@
 using System;
 using NUnit.Framework;
 using Sparky.Mna.Api;
-using Sparky.MNA.Utilities;
+using Sparky.Mna.Utilities;
 using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests.MNA;

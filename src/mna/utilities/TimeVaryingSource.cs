@@ -1,6 +1,6 @@
 using Sparky.Mna.Api;
 
-namespace Sparky.MNA.Utilities;
+namespace Sparky.Mna.Utilities;
 
 /// <summary>
 /// Base class for sources that vary with simulation time.

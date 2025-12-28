@@ -1,16 +1,16 @@
 using System;
 using Sparky.Mna.Api;
 
-namespace Sparky.MNA.Utilities;
+namespace Sparky.Mna.Utilities;
 
 /// <summary>
-/// AC voltage source: V(t) = Offset + Amplitude × sin(2π × Frequency × t + Phase)
+/// AC current source: I(t) = Offset + Amplitude × sin(2π × Frequency × t + Phase)
 /// </summary>
-public class AcVoltageSource : TimeVaryingSource {
-    /// <summary>The underlying voltage source ID.</summary>
-    public VoltageSourceId Id { get; }
+public class AcCurrentSource : TimeVaryingSource {
+    /// <summary>The underlying current source ID.</summary>
+    public CurrentSourceId Id { get; }
 
-    /// <summary>Peak amplitude in volts.</summary>
+    /// <summary>Peak amplitude in amperes.</summary>
     public double Amplitude { get; set; }
 
     /// <summary>Frequency in Hz.</summary>
@@ -19,23 +19,23 @@ public class AcVoltageSource : TimeVaryingSource {
     /// <summary>Phase offset in radians.</summary>
     public double Phase { get; set; }
 
-    /// <summary>DC offset in volts.</summary>
+    /// <summary>DC offset in amperes.</summary>
     public double Offset { get; set; }
 
     /// <summary>
-    /// Creates an AC voltage source and adds it to the simulation.
+    /// Creates an AC current source and adds it to the simulation.
     /// </summary>
     /// <param name="sim">The simulation to add the source to.</param>
-    /// <param name="nodePos">Positive terminal node.</param>
-    /// <param name="nodeNeg">Negative terminal node.</param>
-    /// <param name="amplitude">Peak amplitude in volts.</param>
+    /// <param name="nodeIn">Node where current enters.</param>
+    /// <param name="nodeOut">Node where current exits.</param>
+    /// <param name="amplitude">Peak amplitude in amperes.</param>
     /// <param name="frequency">Frequency in Hz.</param>
     /// <param name="phase">Phase offset in radians (default 0).</param>
-    /// <param name="offset">DC offset in volts (default 0).</param>
-    public AcVoltageSource(
+    /// <param name="offset">DC offset in amperes (default 0).</param>
+    public AcCurrentSource(
         ISimulation sim,
-        NodeId nodePos,
-        NodeId nodeNeg,
+        NodeId nodeIn,
+        NodeId nodeOut,
         double amplitude,
         double frequency,
         double phase = 0,
@@ -49,7 +49,7 @@ public class AcVoltageSource : TimeVaryingSource {
 
         // Create with initial value at t=0
         double initialValue = GetValue(0);
-        Id = sim.AddVoltageSource(nodePos, nodeNeg, initialValue);
+        Id = sim.AddCurrentSource(nodeIn, nodeOut, initialValue);
     }
 
     /// <inheritdoc />
@@ -60,14 +60,14 @@ public class AcVoltageSource : TimeVaryingSource {
     /// <inheritdoc />
     public override void Update() {
         double value = GetValue(Sim.SimulationTime);
-        Sim.UpdateVoltageSource(Id, value);
+        Sim.UpdateCurrentSource(Id, value);
     }
 
     /// <inheritdoc />
     public override void Remove() {
-        Sim.RemoveVoltageSource(Id);
+        Sim.RemoveCurrentSource(Id);
     }
 
     /// <inheritdoc />
-    public override bool Exists => Sim.VoltageSourceExists(Id);
+    public override bool Exists => Sim.CurrentSourceExists(Id);
 }
