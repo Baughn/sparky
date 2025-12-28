@@ -93,4 +93,4 @@ public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 
     // RHS is zero (short circuit constraint)
     Z[k] = 0;
 }
-
+}

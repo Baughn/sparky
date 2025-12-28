@@ -6,12 +6,12 @@ using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
-using VoxelGrid = Sparky.Game.Core.VoxelGrid;
-using VoxelType = Sparky.Game.Core.VoxelType;
-using Material = Sparky.Game.Core.Material;
-using TopologyBuilder = Sparky.Game.Core.TopologyBuilder;
-using Component = Sparky.Game.Core.Component;
-using SparkyBlockPos = Sparky.Game.Core.BlockPos;
+using VoxelGrid = Sparky.Voxel.VoxelGrid;
+using VoxelType = Sparky.Voxel.VoxelType;
+using Material = Sparky.Voxel.Material;
+using TopologyBuilder = Sparky.Mna.Topology.TopologyBuilder;
+using Component = Sparky.Mna.Topology.Component;
+using SparkyBlockPos = Sparky.Voxel.BlockPos;
 
 namespace Sparky.VSIntegration;
 

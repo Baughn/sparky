@@ -1,7 +1,8 @@
-using Sparky.Game.Core;
-using Sparky.Game.Core.ComponentTypes;
 using Sparky.Mna.Api;
+using Sparky.Mna.Topology;
+using Sparky.Mna.Topology.ComponentTypes;
 using Sparky.TwoD.Protocol;
+using Sparky.Voxel;
 
 // Disambiguate types shared with Sparky.Game.Core
 using CellType = Sparky.TwoD.Protocol.CellType;

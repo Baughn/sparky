@@ -7,11 +7,11 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
-using VoxelGrid = Sparky.Game.Core.VoxelGrid;
-using VoxelType = Sparky.Game.Core.VoxelType;
-using Material = Sparky.Game.Core.Material;
-using VoxelPos = Sparky.Game.Core.VoxelPos;
-using SparkyBlockPos = Sparky.Game.Core.BlockPos;
+using VoxelGrid = Sparky.Voxel.VoxelGrid;
+using VoxelType = Sparky.Voxel.VoxelType;
+using Material = Sparky.Voxel.Material;
+using VoxelPos = Sparky.Voxel.VoxelPos;
+using SparkyBlockPos = Sparky.Voxel.BlockPos;
 
 namespace Sparky.VSIntegration;
 

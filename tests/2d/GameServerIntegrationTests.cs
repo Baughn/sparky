@@ -1,9 +1,10 @@
 using NUnit.Framework;
-using Sparky.Game.Core;
-using Sparky.Game.Core.ComponentTypes;
 using Sparky.Mna.Api;
+using Sparky.Mna.Topology;
+using Sparky.Mna.Topology.ComponentTypes;
 using Sparky.TwoD.Protocol;
 using Sparky.TwoD.Server;
+using Sparky.Voxel;
 
 // Use the Protocol CellType, not Game.Core.CellType
 using CellType = Sparky.TwoD.Protocol.CellType;

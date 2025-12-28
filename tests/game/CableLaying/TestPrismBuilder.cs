@@ -1,5 +1,5 @@
-using Sparky.Game.Core;
-using Sparky.Game.Core.CableLaying;
+using Sparky.Mna.Topology.CableLaying;
+using Sparky.Voxel;
 
 namespace Sparky.Tests.Game.CableLaying;
 

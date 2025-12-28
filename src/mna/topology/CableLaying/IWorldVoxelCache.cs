@@ -1,4 +1,6 @@
-namespace Sparky.Game.Core.CableLaying;
+using Sparky.Voxel;
+
+namespace Sparky.Mna.Topology.CableLaying;
 
 /// <summary>
 /// Interface for the world voxel cache used by the cable pathfinder.

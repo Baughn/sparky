@@ -1,4 +1,6 @@
-namespace Sparky.Game.Core.CableLaying;
+using Sparky.Voxel;
+
+namespace Sparky.Mna.Topology.CableLaying;
 
 /// <summary>
 /// A* pathfinder for cable routing with cross-section awareness.

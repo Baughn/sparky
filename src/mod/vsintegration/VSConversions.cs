@@ -1,4 +1,4 @@
-using Sparky.Game.Core;
+using Sparky.Voxel;
 
 namespace Sparky.VSIntegration;
 

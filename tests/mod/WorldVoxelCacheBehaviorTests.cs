@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using Sparky.Game.Core;
-using Sparky.Game.Core.CableLaying;
+using Sparky.Mna.Topology.CableLaying;
+using Sparky.Voxel;
 using Sparky.VSIntegration;
 using Sparky.VSIntegration.CableLaying;
 

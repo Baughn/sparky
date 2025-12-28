@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sparky.Game.Core;
-using Sparky.Game.Core.CableLaying;
+using Sparky.Mna.Topology.CableLaying;
+using Sparky.Voxel;
 using Sparky.VSIntegration.CableLaying;
 using Sparky.VSIntegration.Debug;
 using Vintagestory.API.Client;
@@ -10,7 +10,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
-using Material = Sparky.Game.Core.Material;
+using Material = Sparky.Voxel.Material;
 
 namespace Sparky.VSIntegration.Preview;
 
@@ -353,7 +353,7 @@ public class VoxelPreviewSystem : ModSystem {
         var face = blockSel.Face;
 
         // Get adjacent voxel (where we'd place)
-        var (localX, localY, localZ, outside) = Game.Core.VoxelPositionHelper.GetAdjacentVoxelWithOverflow(
+        var (localX, localY, localZ, outside) = Sparky.Voxel.VoxelPositionHelper.GetAdjacentVoxelWithOverflow(
             hitPos.X, hitPos.Y, hitPos.Z,
             face.Normalf.X, face.Normalf.Y, face.Normalf.Z);
 

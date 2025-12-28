@@ -111,12 +111,12 @@ namespace Sparky.Tests {
             double C = 1e-6; // 1uF
             double theoreticalPeriod = 2.0 * Math.PI * Math.Sqrt(L * C);
 
-            var circuit = new Sparky.MNA.Core.Circuit();
+            var circuit = new Sparky.Mna.Solver.Circuit();
             var nCap = circuit.AddNode();
             var ground = circuit.Ground;
 
-            var capacitor = new Sparky.MNA.Core.Capacitor(nCap, ground, C);
-            var inductor = new Sparky.MNA.Core.Inductor(nCap, ground, L);
+            var capacitor = new Sparky.Mna.Solver.Capacitor(nCap, ground, C);
+            var inductor = new Sparky.Mna.Solver.Inductor(nCap, ground, L);
 
             circuit.AddComponent(capacitor);
             circuit.AddComponent(inductor);
@@ -124,7 +124,7 @@ namespace Sparky.Tests {
             // Pre-charge capacitor using a current source for a brief time
             // Q = C*V, so to get 10V we need Q = 1e-6 * 10 = 10uC
             // Using I = 1A for dt = 10us gives Q = 10uC
-            var chargeSource = new Sparky.MNA.Core.CurrentSource(ground, nCap, 1.0);
+            var chargeSource = new Sparky.Mna.Solver.CurrentSource(ground, nCap, 1.0);
             circuit.AddComponent(chargeSource);
 
             // Charge for 10us

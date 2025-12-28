@@ -5,7 +5,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
-using Material = Sparky.Game.Core.Material;
+using Material = Sparky.Voxel.Material;
 
 namespace Sparky.VSIntegration;
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Sparky.Voxel;
 
-namespace Sparky.Game.Core;
+namespace Sparky.Mna.Topology;
 
 /// <summary>
 /// A named region of conductor voxels that forms a component terminal.

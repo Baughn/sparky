@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using Sparky.Game.Core;
+using Sparky.Voxel;
 
 namespace Sparky.Tests.Game;
 

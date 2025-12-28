@@ -118,4 +118,4 @@ public override void Stamp(CoordinateStorage<double> A, double[] Z, double dt = 
     Z[k1] = 0;
     Z[k2] = 0;
 }
-
+}

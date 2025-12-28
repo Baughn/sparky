@@ -2,11 +2,12 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
-using Sparky.Game.Core;
-using Sparky.Game.Core.CableLaying;
 using Sparky.Mna.Api;
-using Sparky.MNA.Core;
+using Sparky.Mna.Solver;
+using Sparky.Mna.Topology;
+using Sparky.Mna.Topology.CableLaying;
 using Sparky.Tests.Game.CableLaying;
+using Sparky.Voxel;
 
 namespace Sparky.Benchmarks {
     public class Program {

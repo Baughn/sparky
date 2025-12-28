@@ -22,6 +22,7 @@
           omnisharp-roslyn  # LSP for C#
           csharpier         # Code formatter
           imagemagick
+          sed
 
           # GTK3 for Sparky.2D GUI
           gtk3

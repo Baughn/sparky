@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Sparky.Game.Core;
-using Sparky.Game.Core.CableLaying;
+using Sparky.Mna.Topology.CableLaying;
+using Sparky.Voxel;
 using Sparky.VSIntegration.CableLaying;
 using Sparky.VSIntegration.Preview;
 using Vintagestory.API.Common;

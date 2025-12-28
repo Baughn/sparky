@@ -1,6 +1,6 @@
-using Sparky.Game.Core;
+using Sparky.Voxel;
 
-namespace Sparky.Game.Core.CableLaying;
+namespace Sparky.Mna.Topology.CableLaying;
 
 /// <summary>
 /// Test utility for validating acceptance criteria on generated cable paths.

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Vintagestory.API.Common;
 
-using Material = Sparky.Game.Core.Material;
+using Material = Sparky.Voxel.Material;
 
 namespace Sparky.VSIntegration;
 

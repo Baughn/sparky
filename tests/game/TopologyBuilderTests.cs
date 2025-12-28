@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using Sparky.Game.Core;
-using Sparky.Game.Core.ComponentTypes;
 using Sparky.Mna.Api;
+using Sparky.Mna.Topology;
+using Sparky.Mna.Topology.ComponentTypes;
+using Sparky.Voxel;
 
 namespace Sparky.Tests.Game;
 

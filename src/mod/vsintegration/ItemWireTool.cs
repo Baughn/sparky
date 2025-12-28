@@ -6,9 +6,9 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-using Material = Sparky.Game.Core.Material;
-using Sparky.Game.Core;
-using Sparky.Game.Core.CableLaying;
+using Material = Sparky.Voxel.Material;
+using Sparky.Mna.Topology.CableLaying;
+using Sparky.Voxel;
 using Sparky.VSIntegration.CableLaying;
 using Sparky.VSIntegration.Preview;
 

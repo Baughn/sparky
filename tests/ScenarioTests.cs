@@ -1,6 +1,6 @@
 using System;
 using NUnit.Framework;
-using Sparky.MNA.Core;
+using Sparky.Mna.Solver;
 using Sparky.Tests.TestHelpers;
 
 namespace Sparky.Tests {

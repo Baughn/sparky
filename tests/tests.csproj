@@ -18,7 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../src/core/core.csproj" />
+    <ProjectReference Include="../src/mna/Sparky.Mna.csproj" />
+    <ProjectReference Include="../src/voxel/Sparky.Voxel.csproj" />
     <ProjectReference Include="../src/2d/2d.csproj" />
   </ItemGroup>
 

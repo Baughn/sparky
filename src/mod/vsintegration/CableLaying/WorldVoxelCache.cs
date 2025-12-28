@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
-using Sparky.Game.Core;
-using Sparky.Game.Core.CableLaying;
+using Sparky.Mna.Topology.CableLaying;
+using Sparky.Voxel;
 using Sparky.VSIntegration;
-using VoxelPos = Sparky.Game.Core.VoxelPos;
+using VoxelPos = Sparky.Voxel.VoxelPos;
 using VSBlockPos = Vintagestory.API.MathTools.BlockPos;
 using Cuboidf = Vintagestory.API.MathTools.Cuboidf;
 

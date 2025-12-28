@@ -34,7 +34,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../core/core.csproj" />
+    <ProjectReference Include="../mna/Sparky.Mna.csproj" />
+    <ProjectReference Include="../voxel/Sparky.Voxel.csproj" />
   </ItemGroup>
 
   <!-- Copy resources to output folder on Release builds -->
