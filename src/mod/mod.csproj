@@ -7,6 +7,8 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <AssemblyName>Sparky</AssemblyName>
     <RootNamespace>Sparky</RootNamespace>
+    <!-- Override shared output path so zip only includes mod files -->
+    <BaseOutputPath>$(MSBuildProjectDirectory)/bin/</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -47,10 +49,9 @@
 
   <!-- Package the mod as a zip file after building -->
   <Target Name="Package" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
-    <MakeDir Directories="$(MSBuildProjectDirectory)/bin" />
     <ZipDirectory
-      DestinationFile="$(MSBuildProjectDirectory)/bin/$(TargetName).zip"
-      SourceDirectory="$(TargetDir)"
+      DestinationFile="$(BaseOutputPath)$(TargetName).zip"
+      SourceDirectory="$(OutputPath)"
       Overwrite="true"
     />
   </Target>
