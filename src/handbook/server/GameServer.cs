@@ -1,14 +1,14 @@
 using Sparky.Mna.Api;
 using Sparky.Mna.Topology;
 using Sparky.Mna.Topology.ComponentTypes;
-using Sparky.TwoD.Protocol;
+using Sparky.Handbook.Protocol;
 using Sparky.Voxel;
 
 // Disambiguate types shared with Sparky.Game.Core
-using CellType = Sparky.TwoD.Protocol.CellType;
-using CellVisualState = Sparky.TwoD.Protocol.CellVisualState;
+using CellType = Sparky.Handbook.Protocol.CellType;
+using CellVisualState = Sparky.Handbook.Protocol.CellVisualState;
 
-namespace Sparky.TwoD.Server;
+namespace Sparky.Handbook.Server;
 
 /// <summary>
 /// Game server that manages the circuit grid and simulation.

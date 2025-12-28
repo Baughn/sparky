@@ -1,4 +1,4 @@
-namespace Sparky.TwoD.Protocol;
+namespace Sparky.Handbook.Protocol;
 
 /// <summary>
 /// Defines the cell layout for each component type.

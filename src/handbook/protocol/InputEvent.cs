@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Sparky.TwoD.Protocol;
+namespace Sparky.Handbook.Protocol;
 
 /// <summary>
 /// Events sent from client to server for input handling.

@@ -1,9 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Sparky.TwoD;
-using Sparky.TwoD.Client;
-using Sparky.TwoD.Protocol;
-using Sparky.TwoD.Server;
+using Sparky.Handbook;
+using Sparky.Handbook.Client.Standalone;
+using Sparky.Handbook.Protocol;
+using Sparky.Handbook.Server;
 
 // Create server and client
 var server = new GameServer(width: 24, height: 24);

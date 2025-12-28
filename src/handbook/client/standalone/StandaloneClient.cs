@@ -2,9 +2,9 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using Cairo;
 using Gtk;
-using Sparky.TwoD.Protocol;
+using Sparky.Handbook.Protocol;
 
-namespace Sparky.TwoD.Client;
+namespace Sparky.Handbook.Client.Standalone;
 
 /// <summary>
 /// Standalone client using GTK + Cairo for rendering.

@@ -1,4 +1,4 @@
-namespace Sparky.TwoD.Protocol;
+namespace Sparky.Handbook.Protocol;
 
 /// <summary>
 /// 2D grid coordinate for the circuit editor.

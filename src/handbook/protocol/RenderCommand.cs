@@ -1,4 +1,4 @@
-namespace Sparky.TwoD.Protocol;
+namespace Sparky.Handbook.Protocol;
 
 /// <summary>
 /// Commands sent from server to client for rendering.

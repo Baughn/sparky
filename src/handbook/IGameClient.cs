@@ -1,6 +1,6 @@
-using Sparky.TwoD.Protocol;
+using Sparky.Handbook.Protocol;
 
-namespace Sparky.TwoD;
+namespace Sparky.Handbook;
 
 /// <summary>
 /// Client interface for rendering and input handling.

@@ -1,4 +1,4 @@
-namespace Sparky.TwoD.Protocol;
+namespace Sparky.Handbook.Protocol;
 
 /// <summary>
 /// Types of cells that can be placed on the 2D grid.
