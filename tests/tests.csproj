@@ -20,7 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="../src/mna/Sparky.Mna.csproj" />
     <ProjectReference Include="../src/voxel/Sparky.Voxel.csproj" />
-    <ProjectReference Include="../src/2d/2d.csproj" />
+    <ProjectReference Include="../src/handbook/Sparky.Handbook.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(VINTAGE_STORY)' != ''">

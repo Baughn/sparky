@@ -2,14 +2,14 @@ using NUnit.Framework;
 using Sparky.Mna.Api;
 using Sparky.Mna.Topology;
 using Sparky.Mna.Topology.ComponentTypes;
-using Sparky.TwoD.Protocol;
-using Sparky.TwoD.Server;
+using Sparky.Handbook.Protocol;
+using Sparky.Handbook.Server;
 using Sparky.Voxel;
 
 // Use the Protocol CellType, not Game.Core.CellType
-using CellType = Sparky.TwoD.Protocol.CellType;
+using CellType = Sparky.Handbook.Protocol.CellType;
 
-namespace Sparky.Tests.TwoD;
+namespace Sparky.Tests.Handbook;
 
 /// <summary>
 /// Integration tests for the 2D game's client-server protocol.

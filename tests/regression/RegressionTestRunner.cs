@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Sparky.TwoD.Protocol;
-using Sparky.TwoD.Server;
+using Sparky.Handbook.Protocol;
+using Sparky.Handbook.Server;
 
 namespace Sparky.Tests.Regression;
 
