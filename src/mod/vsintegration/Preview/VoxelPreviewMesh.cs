@@ -23,6 +23,32 @@ public static class VoxelPreviewMesh {
     private const float ZFightingScale = 0.999f;
 
     /// <summary>
+    /// Size of one sub-voxel (1/3 of a voxel) for Menger sponge rendering.
+    /// </summary>
+    private const float SubVoxelSize = VoxelSize / 3f;
+
+    /// <summary>
+    /// Shading for exterior faces (outer shell of Menger sponge).
+    /// </summary>
+    private const float ExteriorShading = 1.0f;
+
+    /// <summary>
+    /// Shading for interior faces (facing into the hollow).
+    /// </summary>
+    private const float InteriorShading = 0.6f;
+
+    /// <summary>
+    /// The 7 axial positions removed in a Menger sponge iteration 1.
+    /// Center + 6 face-centers.
+    /// </summary>
+    private static readonly HashSet<(int, int, int)> RemovedPositions = new() {
+        (1, 1, 1),  // center
+        (0, 1, 1), (2, 1, 1),  // X-axis face centers
+        (1, 0, 1), (1, 2, 1),  // Y-axis face centers
+        (1, 1, 0), (1, 1, 2),  // Z-axis face centers
+    };
+
+    /// <summary>
     /// Builds a mesh for one or more preview voxels.
     /// Culls internal faces where adjacent voxels are both in the preview set.
     /// Vertices are built relative to the minimum voxel position (mesh origin).
