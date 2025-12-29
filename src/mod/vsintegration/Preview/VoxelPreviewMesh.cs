@@ -70,8 +70,8 @@ public static class VoxelPreviewMesh {
         foreach (var v in voxels)
             voxelSet.Add((v.X, v.Y, v.Z));
 
-        // Create the output mesh with UVs, RGBA, and Flags
-        var mesh = new MeshData(24 * voxels.Count, 36 * voxels.Count, withUv: true, withRgba: true, withFlags: true);
+        // 20 sub-voxels per voxel, 24 vertices and 36 indices per sub-voxel max
+        var mesh = new MeshData(24 * 20 * voxels.Count, 36 * 20 * voxels.Count, withUv: true, withRgba: true, withFlags: true);
 
         foreach (var voxel in voxels) {
             AddVoxelToMesh(mesh, voxel, voxelSet, minX, minY, minZ);
