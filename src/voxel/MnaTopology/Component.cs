@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Sparky.Mna.Api;
 using Sparky.Voxel;
 
-namespace Sparky.Mna.Topology;
+namespace Sparky.Voxel.MnaTopology;
 
 /// <summary>
 /// Type of electrical component.

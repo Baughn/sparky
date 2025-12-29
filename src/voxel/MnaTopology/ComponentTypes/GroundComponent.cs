@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Sparky.Mna.Api;
 using Sparky.Voxel;
 
-namespace Sparky.Mna.Topology.ComponentTypes;
+namespace Sparky.Voxel.MnaTopology.ComponentTypes;
 
 /// <summary>
 /// Ground component - forces connected conductor region to MNA ground (node 0).

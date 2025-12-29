@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Sparky.Mna.Topology.CableLaying;
+using Sparky.Voxel.MnaTopology.CableLaying;
 using Sparky.Voxel;
 using Sparky.VSIntegration.CableLaying;
 using Sparky.VSIntegration.Preview;

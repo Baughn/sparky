@@ -5,6 +5,15 @@ The MNA library is structured into two main layers:
 1.  **Solver (`Sparky.Mna.Solver`, `src/mna/solver/`)**: The low-level solver. It deals with `Circuit`, `Node`, `Component`, and matrix solving. It is unaware of "game objects" or optimizations like resistor merging.
 2.  **API (`Sparky.Mna.Api`, `src/mna/api/`)**: The high-level interface for the game engine. It manages the `LogicalCircuit`, performs optimizations (Line Optimization), and maps logical IDs to physical nodes/components.
 
+## Layer Boundary
+
+MNA is a pure circuit math library with no spatial concepts. The Voxel layer provides:
+- `VoxelSimulation` - unified facade
+- `MnaTopologyBuilder` - extracts circuits from voxels
+
+Direct use of `ISimulation` for creating/stepping simulations is allowed.
+Querying voltage/current should go through `VoxelSimulation` spatial methods.
+
 ## Solver Layer
 The solver classes live in `src/mna/solver/`:
 - `Circuit`

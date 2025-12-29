@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sparky.Mna.Api;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
@@ -9,9 +8,8 @@ using Vintagestory.API.Server;
 using VoxelGrid = Sparky.Voxel.VoxelGrid;
 using VoxelType = Sparky.Voxel.VoxelType;
 using Material = Sparky.Voxel.Material;
-using TopologyBuilder = Sparky.Mna.Topology.TopologyBuilder;
-using Component = Sparky.Mna.Topology.Component;
 using SparkyBlockPos = Sparky.Voxel.BlockPos;
+using VoxelSimulation = Sparky.Voxel.VoxelSimulation;
 
 namespace Sparky.VSIntegration;
 
@@ -25,9 +23,7 @@ public class CircuitNetworkManager {
     /// </summary>
     public class NetworkState {
         public Guid Id { get; init; }
-        public VoxelGrid Voxels { get; } = new();
-        public TopologyBuilder Topology { get; } = new();
-        public ISimulation Simulation { get; init; } = null!;
+        public VoxelSimulation Simulation { get; } = new();
         public HashSet<BlockPos> Blocks { get; } = new();
         public HashSet<Vec3i> ChunkColumns { get; } = new();
         public bool IsPaused { get; set; }
@@ -356,19 +352,16 @@ public class CircuitNetworkManager {
         var network = GetOrCreateNetwork(affectedNetworks, allBlocks);
 
         // Update network's voxel grid
-        network.Voxels.Clear();
+        network.Simulation.Grid.Clear();
         foreach (var (pos, voxel) in mergedGrid.GetAllVoxels()) {
             if (voxel.Material != null)
-                network.Voxels.SetVoxel(pos, voxel.Material);
+                network.Simulation.Grid.SetVoxel(pos, voxel.Material);
             else
-                network.Voxels.SetVoxel(pos, voxel.Type);
+                network.Simulation.Grid.SetVoxel(pos, voxel.Type);
         }
 
         // Rebuild topology
-        var regions = network.Topology.BuildTopology(
-            network.Voxels,
-            Enumerable.Empty<Component>(), // TODO: Component support
-            network.Simulation);
+        network.Simulation.RebuildTopology();
 
         // Update block-to-network mapping
         foreach (var block in allBlocks) {
@@ -384,7 +377,7 @@ public class CircuitNetworkManager {
         // Update chunk mappings
         UpdateNetworkChunkMappings(network);
 
-        _sapi.Logger.Debug($"[Sparky] Rebuilt topology for network {network.Id}: {network.Voxels.VoxelCount} voxels, {allBlocks.Count} blocks");
+        _sapi.Logger.Debug($"[Sparky] Rebuilt topology for network {network.Id}: {network.Simulation.Grid.VoxelCount} voxels, {allBlocks.Count} blocks");
     }
 
     private NetworkState GetOrCreateNetwork(HashSet<Guid> affectedNetworks, HashSet<BlockPos> blocks) {
@@ -406,8 +399,8 @@ public class CircuitNetworkManager {
 
         // Create new network
         var newNetwork = new NetworkState {
-            Id = Guid.NewGuid(),
-            Simulation = new SimulationManager()
+            Id = Guid.NewGuid()
+            // Simulation is already initialized via property initializer
         };
 
         foreach (var block in blocks)

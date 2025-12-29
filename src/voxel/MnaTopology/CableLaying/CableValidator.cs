@@ -1,6 +1,6 @@
 using Sparky.Voxel;
 
-namespace Sparky.Mna.Topology.CableLaying;
+namespace Sparky.Voxel.MnaTopology.CableLaying;
 
 /// <summary>
 /// Test utility for validating acceptance criteria on generated cable paths.

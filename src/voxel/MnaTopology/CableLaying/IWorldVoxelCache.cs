@@ -1,6 +1,6 @@
 using Sparky.Voxel;
 
-namespace Sparky.Mna.Topology.CableLaying;
+namespace Sparky.Voxel.MnaTopology.CableLaying;
 
 /// <summary>
 /// Interface for the world voxel cache used by the cable pathfinder.

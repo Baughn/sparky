@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using Sparky.Mna.Api;
-using Sparky.Mna.Topology;
-using Sparky.Mna.Topology.ComponentTypes;
+using Sparky.Voxel.MnaTopology;
+using Sparky.Voxel.MnaTopology.ComponentTypes;
 using Sparky.Handbook.Protocol;
 using Sparky.Handbook.Server;
 using Sparky.Voxel;

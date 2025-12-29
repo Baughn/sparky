@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using Sparky.Mna.Topology.CableLaying;
+using Sparky.Voxel.MnaTopology.CableLaying;
 using Sparky.Voxel;
 using Sparky.VSIntegration;
 using Sparky.VSIntegration.CableLaying;

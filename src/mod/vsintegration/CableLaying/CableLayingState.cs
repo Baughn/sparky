@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Sparky.Mna.Topology.CableLaying;
+using Sparky.Voxel.MnaTopology.CableLaying;
 using Sparky.Voxel;
 using Vintagestory.API.Common;
 using VSBlockPos = Vintagestory.API.MathTools.BlockPos;

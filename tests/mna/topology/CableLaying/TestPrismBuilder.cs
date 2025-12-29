@@ -1,4 +1,4 @@
-using Sparky.Mna.Topology.CableLaying;
+using Sparky.Voxel.MnaTopology.CableLaying;
 using Sparky.Voxel;
 
 namespace Sparky.Tests.Game.CableLaying;

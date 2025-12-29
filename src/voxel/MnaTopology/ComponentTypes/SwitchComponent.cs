@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Sparky.Mna.Api;
 using Sparky.Voxel;
 
-namespace Sparky.Mna.Topology.ComponentTypes;
+namespace Sparky.Voxel.MnaTopology.ComponentTypes;
 
 /// <summary>
 /// Switch component - toggleable connection between two terminals.

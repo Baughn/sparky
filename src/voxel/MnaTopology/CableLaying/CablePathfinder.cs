@@ -1,6 +1,6 @@
 using Sparky.Voxel;
 
-namespace Sparky.Mna.Topology.CableLaying;
+namespace Sparky.Voxel.MnaTopology.CableLaying;
 
 /// <summary>
 /// A* pathfinder for cable routing with cross-section awareness.

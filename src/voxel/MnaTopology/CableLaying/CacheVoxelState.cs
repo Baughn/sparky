@@ -1,6 +1,6 @@
 using System;
 
-namespace Sparky.Mna.Topology.CableLaying;
+namespace Sparky.Voxel.MnaTopology.CableLaying;
 
 /// <summary>
 /// Voxel state in the WorldVoxelCache used for cable pathfinding.

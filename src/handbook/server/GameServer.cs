@@ -1,6 +1,5 @@
-using Sparky.Mna.Api;
-using Sparky.Mna.Topology;
-using Sparky.Mna.Topology.ComponentTypes;
+using Sparky.Voxel.MnaTopology;
+using Sparky.Voxel.MnaTopology.ComponentTypes;
 using Sparky.Handbook.Protocol;
 using Sparky.Voxel;
 
@@ -21,21 +20,11 @@ public class GameServer : IGameServer {
     private readonly int _width;
     private readonly int _height;
 
-    // Voxel grid for conductor connectivity
-    private readonly VoxelGrid _voxelGrid = new();
-
-    // MNA simulation
-    private readonly SimulationManager _simulation = new();
-    private readonly TopologyBuilder _topologyBuilder = new();
+    // Unified voxel simulation (owns VoxelGrid, MNA, and topology)
+    private readonly VoxelSimulation _simulation = new();
 
     // Cell data by position
     private readonly Dictionary<GridPos, CellData> _cells = new();
-
-    // Components (managed separately from voxels)
-    private readonly List<Component> _components = new();
-
-    // Regions from last topology build
-    private Dictionary<VoxelPos, TopologyBuilder.ConductorRegion> _regions = new();
 
     // Dirty tracking
     private bool _topologyDirty = false;
@@ -78,7 +67,9 @@ public class GameServer : IGameServer {
             return;
 
         if (cell.Component is SwitchComponent sw) {
-            sw.Toggle(_simulation);
+#pragma warning disable CS0618 // Type or member is obsolete
+            sw.Toggle(_simulation.MnaSimulation);
+#pragma warning restore CS0618
             // Mark all cells dirty - switch toggle affects entire circuit's currents
             MarkAllCellsDirty();
         }
@@ -104,21 +95,23 @@ public class GameServer : IGameServer {
             return;
         }
 
+#pragma warning disable CS0618 // Type or member is obsolete
         switch (cell.Component) {
             case BatteryComponent battery:
                 battery.Voltage = value;
-                battery.UpdateMnaValue(_simulation);
+                battery.UpdateMnaValue(_simulation.MnaSimulation);
                 // Mark all cells dirty - voltage change affects entire circuit
                 MarkAllCellsDirty();
                 break;
 
             case ResistorComponent resistor:
                 resistor.Resistance = value;
-                resistor.UpdateMnaValue(_simulation);
+                resistor.UpdateMnaValue(_simulation.MnaSimulation);
                 // Mark all cells dirty - resistance change affects entire circuit
                 MarkAllCellsDirty();
                 break;
         }
+#pragma warning restore CS0618
     }
 
     private void PlaceCell(GridPos pos, CellType type, int rotation) {
@@ -141,15 +134,16 @@ public class GameServer : IGameServer {
         _cells[pos] = cell;
 
         // Place voxels and component based on type
+#pragma warning disable CS0618 // Type or member is obsolete
         switch (type) {
             case CellType.Wire:
-                _voxelGrid.SetVoxel(voxelPos, VoxelType.ResistiveConductor);
+                _simulation.Grid.SetVoxel(voxelPos, VoxelType.ResistiveConductor);
                 break;
 
             case CellType.Ground:
-                _voxelGrid.SetVoxel(voxelPos, VoxelType.Conductor);
+                _simulation.Grid.SetVoxel(voxelPos, VoxelType.Conductor);
                 var ground = new GroundComponent(voxelPos);
-                _components.Add(ground);
+                _simulation.Components.Add(ground);
                 cell.Component = ground;
                 break;
 
@@ -172,12 +166,12 @@ public class GameServer : IGameServer {
                 var terminalAVoxelSw = voxelPos;
                 var terminalBVoxelSw = GetTerminalPos(voxelPos, rotation, 2);
 
-                _voxelGrid.SetVoxel(terminalAVoxelSw, VoxelType.Conductor);
+                _simulation.Grid.SetVoxel(terminalAVoxelSw, VoxelType.Conductor);
                 // Body is insulator - don't set it as conductor
-                _voxelGrid.SetVoxel(terminalBVoxelSw, VoxelType.Conductor);
+                _simulation.Grid.SetVoxel(terminalBVoxelSw, VoxelType.Conductor);
 
                 var sw = new SwitchComponent(terminalAVoxelSw, terminalBVoxelSw, false);
-                _components.Add(sw);
+                _simulation.Components.Add(sw);
                 cell.Component = sw;
 
                 // Create cell entries for body and terminal B
@@ -206,12 +200,12 @@ public class GameServer : IGameServer {
                 var negativeVoxel = voxelPos;
                 var positiveVoxel = GetTerminalPos(voxelPos, rotation, 2);
 
-                _voxelGrid.SetVoxel(negativeVoxel, VoxelType.Conductor);
+                _simulation.Grid.SetVoxel(negativeVoxel, VoxelType.Conductor);
                 // Body is insulator (or just air) - don't set it as conductor
-                _voxelGrid.SetVoxel(positiveVoxel, VoxelType.Conductor);
+                _simulation.Grid.SetVoxel(positiveVoxel, VoxelType.Conductor);
 
                 var battery = new BatteryComponent(negativeVoxel, positiveVoxel, 5.0);
-                _components.Add(battery);
+                _simulation.Components.Add(battery);
                 cell.Component = battery;
 
                 // Create cell entries for body and positive terminal
@@ -240,12 +234,12 @@ public class GameServer : IGameServer {
                 var terminalAVoxel = voxelPos;
                 var terminalBVoxel = GetTerminalPos(voxelPos, rotation, 2);
 
-                _voxelGrid.SetVoxel(terminalAVoxel, VoxelType.Conductor);
+                _simulation.Grid.SetVoxel(terminalAVoxel, VoxelType.Conductor);
                 // Body is insulator - don't set it as conductor
-                _voxelGrid.SetVoxel(terminalBVoxel, VoxelType.Conductor);
+                _simulation.Grid.SetVoxel(terminalBVoxel, VoxelType.Conductor);
 
                 var resistor = new ResistorComponent(terminalAVoxel, terminalBVoxel, 1.0);
-                _components.Add(resistor);
+                _simulation.Components.Add(resistor);
                 cell.Component = resistor;
 
                 // Create cell entries for body and terminal B
@@ -255,6 +249,7 @@ public class GameServer : IGameServer {
                 _dirtyCells.Add(terminalBGridPos);
                 break;
         }
+#pragma warning restore CS0618
 
         _topologyDirty = true;
         _dirtyCells.Add(pos);
@@ -273,25 +268,26 @@ public class GameServer : IGameServer {
         var voxelPos = GridToVoxel(pos);
 
         // Remove component
+#pragma warning disable CS0618 // Type or member is obsolete
         if (cell.Component != null) {
-            cell.Component.RemoveMnaComponents(_simulation);
-            _components.Remove(cell.Component);
+            cell.Component.RemoveMnaComponents(_simulation.MnaSimulation);
+            _simulation.Components.Remove(cell.Component);
         }
 
         // Remove voxels and cells based on type
         switch (cell.Type) {
             case CellType.Wire:
             case CellType.Ground:
-                _voxelGrid.SetVoxel(voxelPos, VoxelType.Air);
+                _simulation.Grid.SetVoxel(voxelPos, VoxelType.Air);
                 break;
 
             case CellType.Battery:
             case CellType.Resistor:
             case CellType.Switch:
                 // 3-cell components: clear both terminals and remove all 3 cell entries
-                _voxelGrid.SetVoxel(voxelPos, VoxelType.Air);
+                _simulation.Grid.SetVoxel(voxelPos, VoxelType.Air);
                 var farTerminalVoxel = GetTerminalPos(voxelPos, cell.Rotation, 2);
-                _voxelGrid.SetVoxel(farTerminalVoxel, VoxelType.Air);
+                _simulation.Grid.SetVoxel(farTerminalVoxel, VoxelType.Air);
 
                 // Remove body and far terminal cell entries
                 var bodyGridPos = GetTerminalGridPos(pos, cell.Rotation, 1);
@@ -307,6 +303,7 @@ public class GameServer : IGameServer {
                 }
                 break;
         }
+#pragma warning restore CS0618
 
         _cells.Remove(pos);
         _topologyDirty = true;
@@ -316,7 +313,7 @@ public class GameServer : IGameServer {
     public IEnumerable<RenderCommand> Tick(float dt) {
         // Rebuild topology if dirty
         if (_topologyDirty) {
-            _regions = _topologyBuilder.BuildTopology(_voxelGrid, _components, _simulation);
+            _simulation.RebuildTopology();
             _topologyDirty = false;
 
             // Mark all cells dirty for visual update
@@ -361,10 +358,11 @@ public class GameServer : IGameServer {
 
         var voxelPos = GridToVoxel(pos);
 
+#pragma warning disable CS0618 // Type or member is obsolete
         // Get voltage at this cell's position
         float voltage = 0f;
-        if (_regions.TryGetValue(voxelPos, out var region)) {
-            voltage = (float)(_simulation.GetVoltage(region.NodeId) / 10.0); // Normalize to 10V
+        if (_simulation.Regions.TryGetValue(voxelPos, out var region)) {
+            voltage = (float)(_simulation.MnaSimulation.GetVoltage(region.NodeId) / 10.0); // Normalize to 10V
         }
 
         // Get component - either directly on this cell or via OriginCell for far terminals
@@ -377,7 +375,7 @@ public class GameServer : IGameServer {
         }
 
         if (component != null) {
-            var compState = component.ComputeVisualState(_simulation);
+            var compState = component.ComputeVisualState(_simulation.MnaSimulation);
 
             // Special handling for switch to include closed state
             bool switchClosed = component is SwitchComponent sw && sw.IsClosed;
@@ -395,11 +393,11 @@ public class GameServer : IGameServer {
             float current = 0f;
 
             // Try to get current from inter-wire resistors first
-            if (_regions.TryGetValue(voxelPos, out var wireRegion) && wireRegion.AdjacentResistors.Count > 0) {
+            if (_simulation.Regions.TryGetValue(voxelPos, out var wireRegion) && wireRegion.AdjacentResistors.Count > 0) {
                 // Use max current (all should be ~equal in series, but handles end-of-chain case)
                 double maxCurrent = 0;
                 foreach (var rid in wireRegion.AdjacentResistors) {
-                    maxCurrent = Math.Max(maxCurrent, Math.Abs(_simulation.GetResistorCurrent(rid)));
+                    maxCurrent = Math.Max(maxCurrent, Math.Abs(_simulation.MnaSimulation.GetResistorCurrent(rid)));
                 }
                 current = (float)maxCurrent;
             } else {
@@ -409,6 +407,7 @@ public class GameServer : IGameServer {
             }
             return new CellVisualState(voltage, current, 0, false);
         }
+#pragma warning restore CS0618
 
         // Other cells without components - just show voltage
         return new CellVisualState(voltage, 0, 0, false);
@@ -434,11 +433,13 @@ public class GameServer : IGameServer {
                 }
             }
 
+#pragma warning disable CS0618 // Type or member is obsolete
             if (component != null) {
-                var compState = component.ComputeVisualState(_simulation);
+                var compState = component.ComputeVisualState(_simulation.MnaSimulation);
                 if (compState.CurrentNormalized != 0)
                     return compState.CurrentNormalized;
             }
+#pragma warning restore CS0618
         }
         return 0f;
     }

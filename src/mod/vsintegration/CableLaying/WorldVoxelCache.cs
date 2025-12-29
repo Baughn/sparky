@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
-using Sparky.Mna.Topology.CableLaying;
+using Sparky.Voxel.MnaTopology.CableLaying;
 using Sparky.Voxel;
 using Sparky.VSIntegration;
 using VoxelPos = Sparky.Voxel.VoxelPos;

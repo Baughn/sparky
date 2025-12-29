@@ -291,3 +291,40 @@ public readonly record struct OctreeLeaf(
 4. **SVO serialization**: For persistence, could serialize SVO directly instead of expanding to voxels.
 
 5. **Incremental merge handling**: Currently falls back to full rebuild when merging regions. Could implement proper merge logic to stay incremental.
+
+## VoxelSimulation
+
+`VoxelSimulation` is the unified facade for spatial simulation:
+
+- Owns `VoxelGrid` (spatial state)
+- Owns MNA simulation (electrical solver)
+- Owns `MnaTopologyBuilder` (voxels → circuit)
+- Provides spatial queries: `GetVoltageAt(pos)`, `GetCurrentThrough(pos)`
+
+Consumers should not interact with MNA node IDs directly. Query spatial positions instead.
+
+### Domain Toggles
+
+- `ElectricalEnabled` - enables/disables MNA stepping
+- Future: `ThermalEnabled`, `KineticEnabled`
+
+### Example Usage
+
+```csharp
+var sim = new VoxelSimulation();
+
+// Set up voxels
+sim.Grid.SetVoxel(new VoxelPos(0, 0, 0), VoxelType.Conductor);
+sim.Grid.SetVoxel(new VoxelPos(1, 0, 0), VoxelType.ResistiveConductor);
+
+// Add components
+sim.AddGround(new VoxelPos(0, 0, 0));
+sim.AddVoltageSource(positive, negative, 5.0);
+
+// Simulate
+sim.Step(0.001);
+
+// Query results spatially
+var voltage = sim.GetVoltageAt(pos);
+var current = sim.GetCurrentThrough(pos);
+```

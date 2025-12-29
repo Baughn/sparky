@@ -1,6 +1,6 @@
 using Sparky.Voxel;
 
-namespace Sparky.Mna.Topology.CableLaying;
+namespace Sparky.Voxel.MnaTopology.CableLaying;
 
 /// <summary>
 /// Finds the best snap position for cable placement.

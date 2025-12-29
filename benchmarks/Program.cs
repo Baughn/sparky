@@ -4,10 +4,10 @@ using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 using Sparky.Mna.Api;
 using Sparky.Mna.Solver;
-using Sparky.Mna.Topology;
-using Sparky.Mna.Topology.CableLaying;
-using Sparky.Tests.Game.CableLaying;
 using Sparky.Voxel;
+using Sparky.Voxel.MnaTopology;
+using Sparky.Voxel.MnaTopology.CableLaying;
+using Sparky.Tests.Game.CableLaying;
 
 namespace Sparky.Benchmarks {
     public class Program {

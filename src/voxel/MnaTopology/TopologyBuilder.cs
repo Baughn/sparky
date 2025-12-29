@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Sparky.Mna.Api;
 using Sparky.Voxel;
 
-namespace Sparky.Mna.Topology;
+namespace Sparky.Voxel.MnaTopology;
 
 /// <summary>
 /// Builds MNA topology from a voxel grid and components.
