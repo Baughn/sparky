@@ -192,7 +192,7 @@ public static class VoxelPreviewMesh {
     /// <param name="material">The conductor material.</param>
     /// <param name="alpha">Alpha value 0-255.</param>
     /// <returns>Color in VS ARGB format (same as ColorUtil.ToRgba).</returns>
-    public static int GetMaterialColor(Material material, byte alpha = 128) {
+    public static int GetMaterialColor(Material material, byte alpha = 255) {
         // Get RGB values for material
         var (r, g, b) = material.Name switch {
             "Copper" => (0xB8, 0x73, 0x33),
