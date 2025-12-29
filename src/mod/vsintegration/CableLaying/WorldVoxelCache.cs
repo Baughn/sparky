@@ -245,29 +245,37 @@ public class WorldVoxelCache : IWorldVoxelCache {
             return;
         }
 
-        bool isMicroblockOfSomeSort = false;
+        bool isMicroblock = false;
+        bool hasCircuitBehavior = false;
 
-        // Non-circuit microblock → filled voxels become Insulation, unfilled → Empty
+        // Non-circuit microblock → filled voxels become Insulation, unfilled → Unroutable
         if (be is BlockEntityMicroBlock microblock) {
             Log?.Invoke($"[WorldVoxelCache]   -> Processing as microblock (cuboids={microblock.VoxelCuboids?.Count ?? 0})");
             ProcessMicroBlock(blockPos, microblock);
-            isMicroblockOfSomeSort = true;
+            isMicroblock = true;
         }
 
         // Circuit behavior → conductors become PreExistingConductor, non-conductors → Insulation
         var behavior = be?.GetBehavior<BEBehaviorCircuit>();
         if (behavior != null) {
+            // If this is a CircuitHost on a solid block (not a microblock, not a dedicated circuit block),
+            // we need to process the solid block's collision boxes FIRST, then overlay the circuit voxels.
+            // This ensures the base block's shape is respected while conductors are placed on top.
+            if (!isMicroblock && be is BlockEntityCircuitHost) {
+                Log?.Invoke($"[WorldVoxelCache]   -> Processing solid block base for CircuitHost");
+                ProcessSolidBlock(blockPos, block);
+            }
+
             Log?.Invoke($"[WorldVoxelCache]   -> Processing circuit behavior (cuboids={behavior.ConductorCuboids.Count}, blockIds={behavior.ConductorBlockIds.Length})");
             ProcessCircuitBehavior(blockPos, behavior);
-            isMicroblockOfSomeSort = true;
+            hasCircuitBehavior = true;
         }
 
-        if (isMicroblockOfSomeSort) {
+        if (isMicroblock || hasCircuitBehavior) {
             return;
         }
 
-        // Regular solid block → all voxels become Insulation
-        // For simplicity, treat any non-air, non-replaceable block as fully solid
+        // Regular solid block → use collision boxes for accurate voxel states
         Log?.Invoke($"[WorldVoxelCache]   -> Processing as solid block");
         ProcessSolidBlock(blockPos, block);
     }
