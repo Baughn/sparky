@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Design documentation is consolidated in `context/`. Project source code lives in `src/` (mna, voxel, handbook, mod), with tests in `tests/` and benchmarks in `benchmarks/`.
+Design documentation is consolidated in `docs/`. Project source code lives in `src/` (mna, voxel, handbook, mod), with tests in `tests/` and benchmarks in `benchmarks/`.
 
 ## Project Overview
 
@@ -41,19 +41,20 @@ dotnet test --filter "FullyQualifiedName~TestName"  # Run specific test
      - `ISimulation.cs`: Public interface with strongly-typed IDs
      - `SimulationManager.cs`: Implementation with graph partitioning and line optimization
      - `Exceptions.cs`, `Ids.cs`: Type-safe ID wrappers and custom exceptions
-   - `topology/`: Converts voxel geometry to MNA circuit topology
-     - `TopologyBuilder.cs`: Extracts prisms, runs union-find for conductor regions
+   - See `docs/mna/theory.md`, `docs/mna/solver.md`, `docs/mna/api.md` for detailed documentation
 
 2. **Voxel Layer (`src/voxel/`)**: Voxel-based world representation
    - `VoxelGrid.cs`: Sparse voxel storage with O(log n) access via SVO
    - `SparseVoxelOctree.cs`, `IncrementalPrismBuilder.cs`: Optimized storage internals
-   - See `context/voxel-storage.md` for detailed architecture
+   - `MnaTopology/`: Converts voxel geometry to MNA circuit topology
+   - See `docs/voxel/storage.md`, `docs/voxel/topology.md` for detailed architecture
 
 3. **Handbook Layer (`src/handbook/`)**: 2D visualization application
    - Standalone GUI for testing and documentation
+   - See `docs/handbook/architecture.md`, `docs/handbook/design.md` for details
 
 4. **Mod Layer (`src/mod/`)**: Vintage Story mod integration
-   - See `context/vsintegration.md` for details
+   - See `docs/mod/integration.md`, `docs/mod/cable-layer.md` for details
 
 ### Key Algorithms
 
@@ -65,15 +66,16 @@ dotnet test --filter "FullyQualifiedName~TestName"  # Run specific test
 
 ## Design Documentation
 
-All design docs are in `context/`:
-- `context/mna-theory.md`: MNA theory, component stamps, solver architecture
-- `context/mna-api.md`: High-level API design, partitioning, line optimization
-- `context/voxel-storage.md`: VoxelGrid SVO + incremental prism architecture
-- `context/vsintegration.md`: Vintage Story mod integration layer
+All design docs are in `docs/`, organized by layer:
+- `docs/mna/`: MNA theory, solver internals, high-level API
+- `docs/voxel/`: VoxelGrid storage, topology extraction
+- `docs/handbook/`: 2D circuit editor architecture and design
+- `docs/mod/`: Vintage Story integration and cable laying system
+- `docs/plans/`: Implementation plans for past and current work
 
-API documentation is in apidocs/. This includes a complete copy of the Vintage Story documentation, but not the wiki.
+API documentation is in `apidocs/`. This includes a complete copy of the Vintage Story documentation, but not the wiki.
 
-When making changes, update the relevant design docs in `context/` to stay aligned.
+When making changes, update the relevant design docs in `docs/` to stay aligned.
 
 ## Bugs
 
@@ -84,7 +86,7 @@ When fixing bugs, always make a regression test first.
 - C# .NET 8.0, nullable enabled, LangVersion latest
 - 4-space indents, braces on same line (K&R style)
 - PascalCase types/methods/properties, camelCase locals/parameters
-- Keep solver math well-commented; align terminology with `context/mna-theory.md`
+- Keep solver math well-commented; align terminology with `docs/mna/theory.md`
 - Functions should *usually* have only a single purpose.
 - Important: When possible, make errors impossible through construction, not checks. Parse inputs. Avoid nullable types. Use newtypes and other type-system features to avoid any form of type confusion.
   When it comes to API design, minimize the number of ways they can be used; ideally, any misuse should fail to type-check.
