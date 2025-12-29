@@ -9,7 +9,7 @@ using ColorUtil = Vintagestory.API.MathTools.ColorUtil;
 namespace Sparky.VSIntegration.Preview;
 
 /// <summary>
-/// Renders preview voxels for all players as transparent ghost blocks.
+/// Renders preview voxels for all players as opaque Menger sponge patterns.
 /// </summary>
 public class VoxelPreviewRenderer : IRenderer {
     /// <summary>
@@ -110,8 +110,8 @@ public class VoxelPreviewRenderer : IRenderer {
             }
         }
 
-        // Set up rendering state for transparent meshes
-        rapi.GlToggleBlend(true, EnumBlendMode.Standard);
+        // Set up rendering state for opaque meshes
+        rapi.GlToggleBlend(false);
         rapi.GlDisableCullFace();
 
         // Use standard shader like ToolMoldRenderer does
