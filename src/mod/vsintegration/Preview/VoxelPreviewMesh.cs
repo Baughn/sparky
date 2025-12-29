@@ -89,37 +89,79 @@ public static class VoxelPreviewMesh {
     }
 
     /// <summary>
-    /// Adds a single voxel's faces to the mesh, culling faces adjacent to other preview voxels.
-    /// Positions are relative to the mesh origin (minX, minY, minZ).
+    /// Adds a voxel as a Menger sponge (iteration 1) to the mesh.
+    /// Generates 20 sub-voxels, culling faces between adjacent sub-voxels
+    /// and adjacent preview voxels.
     /// </summary>
     private static void AddVoxelToMesh(
         MeshData mesh,
         PreviewVoxel voxel,
         HashSet<(int X, int Y, int Z)> voxelSet,
         int originX, int originY, int originZ) {
-        // Position relative to mesh origin (for camera-relative rendering)
+
+        // Position relative to mesh origin
         float relX = (voxel.X - originX) * VoxelSize;
         float relY = (voxel.Y - originY) * VoxelSize;
         float relZ = (voxel.Z - originZ) * VoxelSize;
 
-        // Check each face for neighbors
-        // Shading values match CubeMeshUtil.DefaultBlockSideShadingsByFacing
-        var faces = new (BlockFacing Face, int Dx, int Dy, int Dz, float Shading)[]
-        {
-            (BlockFacing.NORTH, 0, 0, -1, 0.6f),
-            (BlockFacing.EAST, 1, 0, 0, 0.75f),
-            (BlockFacing.SOUTH, 0, 0, 1, 0.6f),
-            (BlockFacing.WEST, -1, 0, 0, 0.75f),
-            (BlockFacing.UP, 0, 1, 0, 1.0f),
-            (BlockFacing.DOWN, 0, -1, 0, 0.45f),
-        };
+        // Build the set of sub-voxels that exist (excluding removed positions)
+        // Also exclude sub-voxels on edges where adjacent preview voxels exist
+        var subVoxelSet = new HashSet<(int, int, int)>();
 
-        foreach (var (face, dx, dy, dz, shading) in faces) {
-            // Skip face if neighbor exists in preview set
-            if (voxelSet.Contains((voxel.X + dx, voxel.Y + dy, voxel.Z + dz)))
+        for (int sx = 0; sx < 3; sx++)
+        for (int sy = 0; sy < 3; sy++)
+        for (int sz = 0; sz < 3; sz++) {
+            if (RemovedPositions.Contains((sx, sy, sz)))
                 continue;
+            subVoxelSet.Add((sx, sy, sz));
+        }
 
-            AddFaceToMesh(mesh, face, relX, relY, relZ, voxel.Rgba, shading);
+        // For each direction, if an adjacent voxel exists, add "virtual" sub-voxels
+        // at positions 3/-1 to enable face culling at voxel boundaries
+        if (voxelSet.Contains((voxel.X - 1, voxel.Y, voxel.Z))) {
+            for (int sy = 0; sy < 3; sy++)
+            for (int sz = 0; sz < 3; sz++)
+                if (!RemovedPositions.Contains((2, sy, sz)))
+                    subVoxelSet.Add((-1, sy, sz));
+        }
+        if (voxelSet.Contains((voxel.X + 1, voxel.Y, voxel.Z))) {
+            for (int sy = 0; sy < 3; sy++)
+            for (int sz = 0; sz < 3; sz++)
+                if (!RemovedPositions.Contains((0, sy, sz)))
+                    subVoxelSet.Add((3, sy, sz));
+        }
+        if (voxelSet.Contains((voxel.X, voxel.Y - 1, voxel.Z))) {
+            for (int sx = 0; sx < 3; sx++)
+            for (int sz = 0; sz < 3; sz++)
+                if (!RemovedPositions.Contains((sx, 2, sz)))
+                    subVoxelSet.Add((sx, -1, sz));
+        }
+        if (voxelSet.Contains((voxel.X, voxel.Y + 1, voxel.Z))) {
+            for (int sx = 0; sx < 3; sx++)
+            for (int sz = 0; sz < 3; sz++)
+                if (!RemovedPositions.Contains((sx, 0, sz)))
+                    subVoxelSet.Add((sx, 3, sz));
+        }
+        if (voxelSet.Contains((voxel.X, voxel.Y, voxel.Z - 1))) {
+            for (int sx = 0; sx < 3; sx++)
+            for (int sy = 0; sy < 3; sy++)
+                if (!RemovedPositions.Contains((sx, sy, 2)))
+                    subVoxelSet.Add((sx, sy, -1));
+        }
+        if (voxelSet.Contains((voxel.X, voxel.Y, voxel.Z + 1))) {
+            for (int sx = 0; sx < 3; sx++)
+            for (int sy = 0; sy < 3; sy++)
+                if (!RemovedPositions.Contains((sx, sy, 0)))
+                    subVoxelSet.Add((sx, sy, 3));
+        }
+
+        // Generate sub-voxels
+        for (int sx = 0; sx < 3; sx++)
+        for (int sy = 0; sy < 3; sy++)
+        for (int sz = 0; sz < 3; sz++) {
+            if (RemovedPositions.Contains((sx, sy, sz)))
+                continue;
+            AddSubVoxelToMesh(mesh, relX, relY, relZ, sx, sy, sz, voxel.Rgba, subVoxelSet);
         }
     }
 
