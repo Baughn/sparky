@@ -187,6 +187,94 @@ public static class VoxelPreviewMesh {
     }
 
     /// <summary>
+    /// Determines if a sub-voxel face is interior (facing a removed position).
+    /// </summary>
+    private static bool IsInteriorFace(int sx, int sy, int sz, int dx, int dy, int dz) {
+        return RemovedPositions.Contains((sx + dx, sy + dy, sz + dz));
+    }
+
+    /// <summary>
+    /// Adds a single sub-voxel's faces to the mesh with Menger sponge shading.
+    /// </summary>
+    private static void AddSubVoxelToMesh(
+        MeshData mesh,
+        float voxelRelX, float voxelRelY, float voxelRelZ,
+        int sx, int sy, int sz,
+        int rgba,
+        HashSet<(int, int, int)> subVoxelSet) {
+
+        // Sub-voxel position relative to parent voxel corner
+        float subX = voxelRelX + sx * SubVoxelSize;
+        float subY = voxelRelY + sy * SubVoxelSize;
+        float subZ = voxelRelZ + sz * SubVoxelSize;
+
+        var faces = new (BlockFacing Face, int Dx, int Dy, int Dz)[] {
+            (BlockFacing.NORTH, 0, 0, -1),
+            (BlockFacing.EAST, 1, 0, 0),
+            (BlockFacing.SOUTH, 0, 0, 1),
+            (BlockFacing.WEST, -1, 0, 0),
+            (BlockFacing.UP, 0, 1, 0),
+            (BlockFacing.DOWN, 0, -1, 0),
+        };
+
+        foreach (var (face, dx, dy, dz) in faces) {
+            // Skip face if adjacent sub-voxel exists in the set
+            if (subVoxelSet.Contains((sx + dx, sy + dy, sz + dz)))
+                continue;
+
+            // Determine shading: interior faces are darker
+            float shading = IsInteriorFace(sx, sy, sz, dx, dy, dz)
+                ? InteriorShading
+                : ExteriorShading;
+
+            AddSubVoxelFaceToMesh(mesh, face, subX, subY, subZ, rgba, shading);
+        }
+    }
+
+    /// <summary>
+    /// Adds a single sub-voxel face quad to the mesh.
+    /// </summary>
+    private static void AddSubVoxelFaceToMesh(
+        MeshData mesh,
+        BlockFacing face,
+        float x, float y, float z,
+        int argbColor,
+        float shading) {
+        int baseVertex = mesh.VerticesCount;
+
+        int faceIndex = face.Index;
+        int vertexOffset = faceIndex * 4 * 3;
+        int uvOffset = faceIndex * 4 * 2;
+
+        int shadedColor = ApplyShading(argbColor, shading);
+
+        float halfSubVoxel = SubVoxelSize * 0.5f;
+
+        for (int i = 0; i < 4; i++) {
+            float vx = CubeMeshUtil.CubeVertices[vertexOffset + i * 3 + 0];
+            float vy = CubeMeshUtil.CubeVertices[vertexOffset + i * 3 + 1];
+            float vz = CubeMeshUtil.CubeVertices[vertexOffset + i * 3 + 2];
+
+            // Scale from -1..1 to sub-voxel size, apply z-fighting scale
+            float wx = x + halfSubVoxel + (vx * halfSubVoxel * ZFightingScale);
+            float wy = y + halfSubVoxel + (vy * halfSubVoxel * ZFightingScale);
+            float wz = z + halfSubVoxel + (vz * halfSubVoxel * ZFightingScale);
+
+            float u = CubeMeshUtil.CubeUvCoords[uvOffset + i * 2 + 0];
+            float v = CubeMeshUtil.CubeUvCoords[uvOffset + i * 2 + 1];
+
+            mesh.AddVertex(wx, wy, wz, u, v, shadedColor);
+        }
+
+        mesh.AddIndex(baseVertex + 0);
+        mesh.AddIndex(baseVertex + 1);
+        mesh.AddIndex(baseVertex + 2);
+        mesh.AddIndex(baseVertex + 0);
+        mesh.AddIndex(baseVertex + 2);
+        mesh.AddIndex(baseVertex + 3);
+    }
+
+    /// <summary>
     /// Gets the display color for a material.
     /// </summary>
     /// <param name="material">The conductor material.</param>
