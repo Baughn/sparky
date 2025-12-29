@@ -166,56 +166,6 @@ public static class VoxelPreviewMesh {
     }
 
     /// <summary>
-    /// Adds a single face quad to the mesh.
-    /// </summary>
-    private static void AddFaceToMesh(
-        MeshData mesh,
-        BlockFacing face,
-        float x, float y, float z,
-        int argbColor,
-        float shading) {
-        int baseVertex = mesh.VerticesCount;
-
-        // Get face vertices from CubeMeshUtil (these are in -1 to 1 range, centered)
-        int faceIndex = face.Index;
-        int vertexOffset = faceIndex * 4 * 3; // 4 vertices per face, 3 coords each
-        int uvOffset = faceIndex * 4 * 2;     // 4 vertices per face, 2 UV coords each
-
-        // Apply shading to color (multiply RGB, keep alpha)
-        int shadedColor = ApplyShading(argbColor, shading);
-
-        // Add 4 vertices for this face
-        // Voxel center offset (half voxel size)
-        float halfVoxel = VoxelSize * 0.5f;
-
-        for (int i = 0; i < 4; i++) {
-            // Get vertex position from cube template (-1 to 1 range)
-            float vx = CubeMeshUtil.CubeVertices[vertexOffset + i * 3 + 0];
-            float vy = CubeMeshUtil.CubeVertices[vertexOffset + i * 3 + 1];
-            float vz = CubeMeshUtil.CubeVertices[vertexOffset + i * 3 + 2];
-
-            // Scale from -1..1 to 0..VoxelSize, apply z-fighting scale around center
-            float wx = x + halfVoxel + (vx * halfVoxel * ZFightingScale);
-            float wy = y + halfVoxel + (vy * halfVoxel * ZFightingScale);
-            float wz = z + halfVoxel + (vz * halfVoxel * ZFightingScale);
-
-            // Get UV coordinates from cube template (0 to 1 range)
-            float u = CubeMeshUtil.CubeUvCoords[uvOffset + i * 2 + 0];
-            float v = CubeMeshUtil.CubeUvCoords[uvOffset + i * 2 + 1];
-
-            mesh.AddVertex(wx, wy, wz, u, v, shadedColor);
-        }
-
-        // Add 2 triangles (6 indices) for this face
-        mesh.AddIndex(baseVertex + 0);
-        mesh.AddIndex(baseVertex + 1);
-        mesh.AddIndex(baseVertex + 2);
-        mesh.AddIndex(baseVertex + 0);
-        mesh.AddIndex(baseVertex + 2);
-        mesh.AddIndex(baseVertex + 3);
-    }
-
-    /// <summary>
     /// Applies shading multiplier to RGB channels while preserving alpha.
     /// Input/output in VS ARGB format (same as ColorUtil.ToRgba).
     /// </summary>
